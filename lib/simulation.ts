@@ -42,7 +42,12 @@ function getRunningStyleBonus(style: string, bias: RaceCondition['trackBias']): 
 }
 
 // Single Race Simulation
-export function runRace(horses: Horse[], course: Course, condition: RaceCondition): RaceResult[] {
+export function runRace(
+    horses: Horse[],
+    course: Course,
+    condition: RaceCondition,
+    horseConditions?: { id: string, modifier: number }[]
+): RaceResult[] {
     // 1. Initialize Simulation State
     let currentPositions = horses.map(h => ({
         id: h.id,
@@ -66,21 +71,15 @@ export function runRace(horses: Horse[], course: Course, condition: RaceConditio
             if (pos.finished) return;
 
             const horse = horses.find(h => h.id === pos.id)!;
-
-            // Calculate Segment Factors
-            // (For MVP we use simple distance progress, later can use course.segments)
+            const raceConditionModifier = horseConditions?.find(c => c.id === horse.id)?.modifier || 1.0;
 
             // Speed Modifiers
-            const randomFlux = (Math.random() - 0.5) * MAX_SPEED_VARIANCE;
+            const randomFlux = (Math.random() - 0.5) * 1.5; // Increased variance (was MAX_SPEED_VARIANCE)
             const styleBonus = getRunningStyleBonus(horse.runningStyle, condition.trackBias);
             const predictionBonus = (horse.predictionCount > 0 ? Math.log10(horse.predictionCount) : 0) * PREDICTION_BONUS_FACTOR;
 
-            // Slope Logic (Simplified: Tokyo Uphill slows down non-power horses)
-            // We check if current distance is part of a slope segment
-            // (Improving this later with real segment mapping)
-
             // Determine Speed
-            let speed = pos.currentSpeed + randomFlux + styleBonus + predictionBonus;
+            let speed = (pos.currentSpeed + randomFlux + styleBonus + predictionBonus) * raceConditionModifier;
 
             // Stamina Check
             if (pos.stamina <= 0) {
@@ -123,7 +122,14 @@ export function runMonteCarlo(
     horses.forEach(h => stats.set(h.id, { wins: 0, bestTime: 9999 }));
 
     for (let i = 0; i < iterations; i++) {
-        const result = runRace(horses, course, condition);
+        // Assign "Race Day Condition" per horse for this specific race iteration
+        // Range: 0.985 to 1.015 (±1.5% variance)
+        const horseConditions = horses.map(h => ({
+            id: h.id,
+            modifier: 0.985 + Math.random() * 0.03
+        }));
+
+        const result = runRace(horses, course, condition, horseConditions);
 
         // Winner
         const winnerId = result[0].horseId;

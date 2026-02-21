@@ -18,7 +18,8 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
             name: horse ? horse.name : "Unknown",
             wins: r.winCount,
             bestTime: r.bestTime.toFixed(1) + "s",
-            odds: horse?.simulatedOdds?.toFixed(1) || "-"
+            odds: horse?.simulatedOdds?.toFixed(1) || "-",
+            horse: horse
         };
     });
 
@@ -46,9 +47,11 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                     <thead className="bg-slate-50 text-slate-600 uppercase">
                         <tr>
                             <th className="px-4 py-2">順位</th>
+                            <th className="px-4 py-2">馬番</th>
                             <th className="px-4 py-2">馬名</th>
+                            <th className="px-4 py-2">騎手</th>
                             <th className="px-4 py-2 text-right">勝率</th>
-                            <th className="px-4 py-2 text-right">シミュレーションオッズ</th>
+                            <th className="px-4 py-2 text-right">シミュオッズ</th>
                             <th className="px-4 py-2 text-right">世論オッズ</th>
                         </tr>
                     </thead>
@@ -56,7 +59,9 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                         {data.map((row, index) => (
                             <tr key={index} className="border-b border-slate-100">
                                 <td className="px-4 py-2 font-bold text-slate-500">#{index + 1}</td>
+                                <td className="px-4 py-2 text-slate-400 font-mono">{row.horse?.gateNumber}</td>
                                 <td className="px-4 py-2 font-medium text-slate-900">{row.name}</td>
+                                <td className="px-4 py-2 text-slate-500 text-xs">{row.horse?.jockey}</td>
                                 <td className="px-4 py-2 text-right font-bold text-blue-600">{row.wins}%</td>
                                 <td className="px-4 py-2 text-right text-slate-500">
                                     {(row.wins > 0 ? (100 / row.wins * 0.8).toFixed(1) : "999.9")}

@@ -8,10 +8,12 @@ export interface Horse {
   stamina: number;
   power: number;
   guts: number;
-  
+
   // Characteristics
   runningStyle: RunningStyle;
-  
+  gateNumber: number;
+  jockey: string;
+
   // External Factors
   predictionCount: number; // Number of votes/mentions
   simulatedOdds?: number;  // Calculated based on predictionCount

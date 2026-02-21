@@ -16,6 +16,8 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
         const newHorse: Horse = {
             id: Math.random().toString(36).substr(2, 9),
             name: `Horse ${horses.length + 1}`,
+            gateNumber: horses.length + 1,
+            jockey: "未定",
             speed: 70, // Default stats
             stamina: 70,
             power: 70,
@@ -61,10 +63,12 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
                 <table className="w-full text-sm text-left">
                     <thead className="bg-slate-50 text-slate-600 uppercase">
                         <tr>
+                            <th className="px-4 py-3 w-16">馬番</th>
                             <th className="px-4 py-3">馬名</th>
+                            <th className="px-4 py-3">騎手</th>
                             <th className="px-4 py-3">脚質</th>
-                            <th className="px-4 py-3 w-24">スピ</th>
-                            <th className="px-4 py-3 w-24">スタ</th>
+                            <th className="px-4 py-3 w-20">スピ</th>
+                            <th className="px-4 py-3 w-20">スタ</th>
                             <th className="px-4 py-3 w-32">予想数 (票)</th>
                             <th className="px-4 py-3 text-right">推定オッズ</th>
                             <th className="px-4 py-3"></th>
@@ -75,10 +79,26 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
                             <tr key={horse.id} className="border-b border-slate-100 hover:bg-slate-50">
                                 <td className="px-4 py-2">
                                     <input
+                                        type="number"
+                                        value={horse.gateNumber}
+                                        onChange={(e) => updateHorse(horse.id, 'gateNumber', parseInt(e.target.value))}
+                                        className="w-12 p-1 border rounded text-center font-bold"
+                                    />
+                                </td>
+                                <td className="px-4 py-2">
+                                    <input
                                         type="text"
                                         value={horse.name}
                                         onChange={(e) => updateHorse(horse.id, 'name', e.target.value)}
-                                        className="w-full bg-transparent border-b border-transparent focus:border-blue-500 outline-none"
+                                        className="w-full bg-transparent border-b border-transparent focus:border-blue-500 outline-none font-medium"
+                                    />
+                                </td>
+                                <td className="px-4 py-2">
+                                    <input
+                                        type="text"
+                                        value={horse.jockey}
+                                        onChange={(e) => updateHorse(horse.id, 'jockey', e.target.value)}
+                                        className="w-full bg-transparent border-b border-transparent focus:border-blue-500 outline-none text-slate-500"
                                     />
                                 </td>
                                 <td className="px-4 py-2">
