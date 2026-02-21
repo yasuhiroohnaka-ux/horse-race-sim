@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { COURSES } from "@/lib/courses";
 import { Horse, RaceCondition, TrackBias } from "@/lib/types";
-import { runMonteCarlo } from "@/lib/simulation";
+import { runMonteCarlo, calculateOdds } from "@/lib/simulation";
 import { CourseConfig } from "@/components/CourseConfig";
 import { HorseInput } from "@/components/HorseInput";
 import { SimulationResults } from "@/components/SimulationResults";
@@ -11,7 +11,7 @@ import { SimulationResults } from "@/components/SimulationResults";
 export default function SimulatorPage() {
     const [selectedCourseId, setSelectedCourseId] = useState(COURSES[0].id);
     const [bias, setBias] = useState<TrackBias>({ innerOuter: 0, frontBack: 0 });
-    const [horses, setHorses] = useState<Horse[]>([
+    const [horses, setHorses] = useState<Horse[]>(calculateOdds([
         { id: '1', gateNumber: 1, name: 'オメガギネス', jockey: '岩田康誠', speed: 85, stamina: 82, power: 80, guts: 80, runningStyle: 'Sashi', predictionCount: 20, simulatedOdds: 0 },
         { id: '2', gateNumber: 2, name: 'ハッピーマン', jockey: '高杉吏麒', speed: 80, stamina: 80, power: 78, guts: 75, runningStyle: 'Sashi', predictionCount: 5, simulatedOdds: 0 },
         { id: '3', gateNumber: 3, name: 'ブライアンセンス', jockey: '岩田望来', speed: 81, stamina: 82, power: 80, guts: 78, runningStyle: 'Sashi', predictionCount: 8, simulatedOdds: 0 },
@@ -28,7 +28,7 @@ export default function SimulatorPage() {
         { id: '14', gateNumber: 14, name: 'ウィルソンテソーロ', jockey: '川田将雅', speed: 85, stamina: 88, power: 90, guts: 92, runningStyle: 'Senko', predictionCount: 30, simulatedOdds: 0 },
         { id: '15', gateNumber: 15, name: 'ペプチドナイル', jockey: '富田暁', speed: 83, stamina: 85, power: 85, guts: 80, runningStyle: 'Senko', predictionCount: 12, simulatedOdds: 0 },
         { id: '16', gateNumber: 16, name: 'サイモンザナドゥ', jockey: '池添謙一', speed: 81, stamina: 84, power: 82, guts: 85, runningStyle: 'Sashi', predictionCount: 10, simulatedOdds: 0 },
-    ]);
+    ]));
     const [results, setResults] = useState<{ horseId: string; winCount: number; bestTime: number }[] | null>(null);
     const [isRunning, setIsRunning] = useState(false);
 
