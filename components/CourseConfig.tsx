@@ -1,7 +1,7 @@
 "use client";
 
-import { Course, COURSES } from "@/lib/courses";
-import { RaceCondition, TrackBias } from "@/lib/types";
+import { COURSES } from "@/lib/courses";
+import { Course, TrackBias } from "@/lib/types";
 import { Label } from "@radix-ui/react-label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/ui/select";
 import { Slider } from "@/lib/ui/slider";

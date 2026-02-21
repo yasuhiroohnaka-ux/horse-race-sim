@@ -1,7 +1,7 @@
 "use client";
 
-import { Horse, RunningStyle, calculateOdds } from "@/lib/simulation";
-import { calculateOdds as calcOddsHelper } from "@/lib/simulation"; // Import helper
+import { Horse } from "@/lib/types";
+import { RunningStyle, calculateOdds } from "@/lib/simulation";
 import { useState, useEffect } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
@@ -40,7 +40,8 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
 
     const updateHorses = (newList: Horse[]) => {
         // Recalculate odds whenever predictions change
-        const withOdds = calcOddsHelper(newList);
+        const withOdds = calculateOdds(newList);
+
         onHorsesChange(withOdds);
     };
 

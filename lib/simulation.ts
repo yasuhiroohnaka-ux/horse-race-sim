@@ -1,4 +1,6 @@
-import { Horse, Course, RaceCondition, RaceResult } from './types';
+import { Horse, Course, RaceCondition, RaceResult, RunningStyle } from "./types";
+export type { Horse, RunningStyle };
+
 
 // Constants
 const BASE_SPEED = 16.0; // m/s (approx 60km/h)
