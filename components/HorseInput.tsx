@@ -48,12 +48,12 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
     return (
         <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200 mt-6">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-slate-800">2. Horse Intelligence</h2>
+                <h2 className="text-xl font-bold text-slate-800">2. 出走馬データ</h2>
                 <button
                     onClick={addHorse}
                     className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
                 >
-                    <Plus size={16} /> Add Horse
+                    <Plus size={16} /> 馬を追加
                 </button>
             </div>
 
@@ -61,12 +61,12 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
                 <table className="w-full text-sm text-left">
                     <thead className="bg-slate-50 text-slate-600 uppercase">
                         <tr>
-                            <th className="px-4 py-3">Name</th>
-                            <th className="px-4 py-3">Style</th>
-                            <th className="px-4 py-3 w-24">Speed</th>
-                            <th className="px-4 py-3 w-24">Stamina</th>
-                            <th className="px-4 py-3 w-32">Prediction (Votes)</th>
-                            <th className="px-4 py-3 text-right">Simulated Odds</th>
+                            <th className="px-4 py-3">馬名</th>
+                            <th className="px-4 py-3">脚質</th>
+                            <th className="px-4 py-3 w-24">スピ</th>
+                            <th className="px-4 py-3 w-24">スタ</th>
+                            <th className="px-4 py-3 w-32">予想数 (票)</th>
+                            <th className="px-4 py-3 text-right">推定オッズ</th>
                             <th className="px-4 py-3"></th>
                         </tr>
                     </thead>
@@ -87,10 +87,10 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
                                         onChange={(e) => updateHorse(horse.id, 'runningStyle', e.target.value)}
                                         className="bg-transparent outline-none cursor-pointer"
                                     >
-                                        <option value="Nige">Nige (Lead)</option>
-                                        <option value="Senko">Senko (Forward)</option>
-                                        <option value="Sashi">Sashi (Mid)</option>
-                                        <option value="Oikomi">Oikomi (Back)</option>
+                                        <option value="Nige">逃げ</option>
+                                        <option value="Senko">先行</option>
+                                        <option value="Sashi">差し</option>
+                                        <option value="Oikomi">追込</option>
                                     </select>
                                 </td>
                                 <td className="px-4 py-2">
@@ -117,7 +117,7 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
                                             onChange={(e) => updateHorse(horse.id, 'predictionCount', Math.max(0, parseInt(e.target.value) || 0))}
                                             className="w-20 p-1 border border-blue-200 bg-blue-50 rounded text-center font-bold text-blue-700"
                                         />
-                                        <span className="text-xs text-slate-400">votes</span>
+                                        <span className="text-xs text-slate-400">票</span>
                                     </div>
                                 </td>
                                 <td className="px-4 py-2 text-right">

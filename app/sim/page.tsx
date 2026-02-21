@@ -12,10 +12,12 @@ export default function SimulatorPage() {
     const [selectedCourseId, setSelectedCourseId] = useState(COURSES[0].id);
     const [bias, setBias] = useState<TrackBias>({ innerOuter: 0, frontBack: 0 });
     const [horses, setHorses] = useState<Horse[]>([
-        { id: '1', name: 'Contrail', speed: 85, stamina: 80, power: 75, guts: 80, runningStyle: 'Sashi', predictionCount: 120, simulatedOdds: 0 },
-        { id: '2', name: 'Efforia', speed: 82, stamina: 85, power: 80, guts: 75, runningStyle: 'Senko', predictionCount: 80, simulatedOdds: 0 },
-        { id: '3', name: 'Titleholder', speed: 78, stamina: 90, power: 85, guts: 85, runningStyle: 'Nige', predictionCount: 50, simulatedOdds: 0 },
-        { id: '4', name: 'Gran Alegria', speed: 90, stamina: 60, power: 70, guts: 70, runningStyle: 'Sashi', predictionCount: 200, simulatedOdds: 0 },
+        { id: '1', name: 'ウィルソンテソーロ', speed: 88, stamina: 82, power: 85, guts: 80, runningStyle: 'Senko', predictionCount: 150, simulatedOdds: 0 },
+        { id: '2', name: 'コスタノバ', speed: 86, stamina: 80, power: 82, guts: 78, runningStyle: 'Senko', predictionCount: 120, simulatedOdds: 0 },
+        { id: '3', name: 'ダノンデサイル', speed: 84, stamina: 85, power: 80, guts: 82, runningStyle: 'Sashi', predictionCount: 100, simulatedOdds: 0 },
+        { id: '4', name: 'ラムジェット', speed: 82, stamina: 88, power: 88, guts: 85, runningStyle: 'Oikomi', predictionCount: 90, simulatedOdds: 0 },
+        { id: '5', name: 'ペプチドナイル', speed: 83, stamina: 82, power: 80, guts: 80, runningStyle: 'Senko', predictionCount: 70, simulatedOdds: 0 },
+        { id: '6', name: 'タガノビューティー', speed: 80, stamina: 84, power: 85, guts: 82, runningStyle: 'Oikomi', predictionCount: 60, simulatedOdds: 0 },
     ]);
     const [results, setResults] = useState<{ horseId: string; winCount: number; bestTime: number }[] | null>(null);
     const [isRunning, setIsRunning] = useState(false);
@@ -49,11 +51,12 @@ export default function SimulatorPage() {
         const favorite = [...horses].sort((a, b) => b.predictionCount - a.predictionCount)[0];
 
         const text = `
-Everyone's Favorite: ${favorite.name} (${favorite.predictionCount} votes)
-Simulation Winner: ${winner?.name} (Win Rate: ${results[0].winCount}%)
+【AI競馬シミュレーション結果】
+本命馬: ${favorite.name} (${favorite.predictionCount} 票)
+シミュレーション勝者: ${winner?.name} (勝率: ${results[0].winCount}%)
 
-Course: ${selectedCourse.name}
-#Keiba #Simulation
+コース: ${selectedCourse.name}
+#競馬 #シミュレーション #フェブラリーS
     `.trim();
 
         const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
@@ -64,8 +67,8 @@ Course: ${selectedCourse.name}
         <div className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans">
             <div className="max-w-4xl mx-auto">
                 <header className="mb-8 text-center">
-                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">🏇 AI Horse Racing Simulator</h1>
-                    <p className="text-slate-500 mt-2">Crowd Wisdom x Physics Engine</p>
+                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">🏇 AI競馬シミュレーター</h1>
+                    <p className="text-slate-500 mt-2">集合知 × 物理エンジン</p>
                 </header>
 
                 <div className="space-y-6">
@@ -88,7 +91,7 @@ Course: ${selectedCourse.name}
                                 disabled={isRunning}
                                 className="px-8 py-4 bg-blue-600 text-white text-xl font-bold rounded-full shadow-lg hover:bg-blue-700 hover:shadow-xl transition transform active:scale-95 disabled:opacity-50"
                             >
-                                {isRunning ? "Simulating Race..." : "Run 100 Simulations 🚀"}
+                                {isRunning ? "シミュレーション中..." : "100回シミュレーションを実行 🚀"}
                             </button>
                         </div>
                     )}

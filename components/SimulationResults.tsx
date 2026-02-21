@@ -24,7 +24,7 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200 mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="text-xl font-bold mb-4 text-slate-800">3. Simulation Results (100 Runs)</h2>
+            <h2 className="text-xl font-bold mb-4 text-slate-800">3. シミュレーション結果 (100回実行)</h2>
 
             <div className="h-64 w-full mb-6">
                 <ResponsiveContainer width="100%" height="100%">
@@ -36,7 +36,7 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                             cursor={{ fill: '#f1f5f9' }}
                         />
-                        <Bar dataKey="wins" fill="#3b82f6" radius={[0, 4, 4, 0]} name="Win Count" />
+                        <Bar dataKey="wins" fill="#3b82f6" radius={[0, 4, 4, 0]} name="勝利数" />
                     </BarChart>
                 </ResponsiveContainer>
             </div>
@@ -45,11 +45,11 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                 <table className="w-full text-sm text-left">
                     <thead className="bg-slate-50 text-slate-600 uppercase">
                         <tr>
-                            <th className="px-4 py-2">Rank</th>
-                            <th className="px-4 py-2">Horse</th>
-                            <th className="px-4 py-2 text-right">Win Rates</th>
-                            <th className="px-4 py-2 text-right">Simulated Odds</th>
-                            <th className="px-4 py-2 text-right">Crowd Odds</th>
+                            <th className="px-4 py-2">順位</th>
+                            <th className="px-4 py-2">馬名</th>
+                            <th className="px-4 py-2 text-right">勝率</th>
+                            <th className="px-4 py-2 text-right">シミュレーションオッズ</th>
+                            <th className="px-4 py-2 text-right">世論オッズ</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -59,7 +59,6 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                                 <td className="px-4 py-2 font-medium text-slate-900">{row.name}</td>
                                 <td className="px-4 py-2 text-right font-bold text-blue-600">{row.wins}%</td>
                                 <td className="px-4 py-2 text-right text-slate-500">
-                                    {/* Real Simulation Odds: 100 / win% * 0.8 */}
                                     {(row.wins > 0 ? (100 / row.wins * 0.8).toFixed(1) : "999.9")}
                                 </td>
                                 <td className="px-4 py-2 text-right font-mono text-slate-500">{row.odds}</td>
@@ -74,14 +73,14 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                     onClick={onReset}
                     className="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-50 transition"
                 >
-                    Reset
+                    リセット
                 </button>
                 <button
                     onClick={onPostToX}
                     className="flex items-center gap-2 px-6 py-2 bg-black text-white rounded-lg hover:bg-slate-800 transition shadow-lg hover:shadow-xl"
                 >
                     <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                    Post Result to X
+                    結果をXに投稿
                 </button>
             </div>
         </div>

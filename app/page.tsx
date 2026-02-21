@@ -4,12 +4,12 @@ import Link from "next/link";
 export default function Home() {
     return (
         <main style={{ padding: 24, fontFamily: "system-ui" }}>
-            <h1>Horse Race Simulation</h1>
-            <p>Deployed successfully.</p>
+            <h1>競馬シミュレーター</h1>
+            <p>デプロイ完了しました。</p>
 
             <ul>
                 <li>
-                    <Link href="/sim">Go to simulator</Link>
+                    <Link href="/sim">シミュレーターを開始する</Link>
                 </li>
             </ul>
         </main>
