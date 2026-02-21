@@ -152,9 +152,16 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
                                     <td className="px-4 py-2">
                                         <input
                                             type="number"
-                                            step="0.1"
                                             value={horse.speed}
                                             onChange={(e) => updateHorse(horse.id, 'speed', parseInt(e.target.value))}
+                                            className="w-14 p-1 border rounded text-center text-xs"
+                                        />
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        <input
+                                            type="number"
+                                            value={horse.stamina}
+                                            onChange={(e) => updateHorse(horse.id, 'stamina', parseInt(e.target.value))}
                                             className="w-14 p-1 border rounded text-center text-xs"
                                         />
                                     </td>
