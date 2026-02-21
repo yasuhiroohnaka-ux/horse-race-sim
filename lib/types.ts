@@ -17,6 +17,7 @@ export interface Horse {
   // External Factors
   predictionCount: number; // Number of votes/mentions
   simulatedOdds?: number;  // Calculated based on predictionCount
+  realOdds?: number;       // Official/Actual odds from market
 }
 
 export interface CourseSegment {

@@ -99,91 +99,106 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
                             <th className="px-4 py-3 w-20">スピ</th>
                             <th className="px-4 py-3 w-20">スタ</th>
                             <th className="px-4 py-3 w-32">予想数 (票)</th>
-                            <th className="px-4 py-3 text-right">推定オッズ</th>
+                            <th className="px-4 py-3 w-32 text-right">確定オッズ</th>
+                            <th className="px-4 py-3 w-32 text-right text-blue-600">世論オッズ</th>
+                            <th className="px-4 py-3 w-24 text-center">乖離</th>
                             <th className="px-4 py-3"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {horses.map((horse) => (
-                            <tr key={horse.id} className="border-b border-slate-100 hover:bg-slate-50">
-                                <td className="px-4 py-2">
-                                    <input
-                                        type="number"
-                                        value={horse.gateNumber}
-                                        onChange={(e) => updateHorse(horse.id, 'gateNumber', parseInt(e.target.value))}
-                                        className="w-12 p-1 border rounded text-center font-bold"
-                                    />
-                                </td>
-                                <td className="px-4 py-2">
-                                    <input
-                                        type="text"
-                                        value={horse.name}
-                                        onChange={(e) => updateHorse(horse.id, 'name', e.target.value)}
-                                        className="w-full bg-transparent border-b border-transparent focus:border-blue-500 outline-none font-medium"
-                                    />
-                                </td>
-                                <td className="px-4 py-2">
-                                    <input
-                                        type="text"
-                                        value={horse.jockey}
-                                        onChange={(e) => updateHorse(horse.id, 'jockey', e.target.value)}
-                                        className="w-full bg-transparent border-b border-transparent focus:border-blue-500 outline-none text-slate-500"
-                                    />
-                                </td>
-                                <td className="px-4 py-2">
-                                    <select
-                                        value={horse.runningStyle}
-                                        onChange={(e) => updateHorse(horse.id, 'runningStyle', e.target.value)}
-                                        className="bg-transparent outline-none cursor-pointer"
-                                    >
-                                        <option value="Nige">逃げ</option>
-                                        <option value="Senko">先行</option>
-                                        <option value="Sashi">差し</option>
-                                        <option value="Oikomi">追込</option>
-                                    </select>
-                                </td>
-                                <td className="px-4 py-2">
-                                    <input
-                                        type="number"
-                                        value={horse.speed}
-                                        onChange={(e) => updateHorse(horse.id, 'speed', parseInt(e.target.value))}
-                                        className="w-16 p-1 border rounded text-center"
-                                    />
-                                </td>
-                                <td className="px-4 py-2">
-                                    <input
-                                        type="number"
-                                        value={horse.stamina}
-                                        onChange={(e) => updateHorse(horse.id, 'stamina', parseInt(e.target.value))}
-                                        className="w-16 p-1 border rounded text-center"
-                                    />
-                                </td>
-                                <td className="px-4 py-2">
-                                    <div className="flex items-center gap-2">
+                        {horses.map((horse) => {
+                            const diff = (horse.simulatedOdds || 0) - (horse.realOdds || 0);
+                            const diffLabel = diff < 0 ? "強気" : "弱気";
+                            const diffColor = diff < 0 ? "text-red-600 bg-red-50" : "text-blue-600 bg-blue-50";
+
+                            return (
+                                <tr key={horse.id} className="border-b border-slate-100 hover:bg-slate-50">
+                                    <td className="px-4 py-2">
                                         <input
                                             type="number"
-                                            value={horse.predictionCount}
-                                            onChange={(e) => updateHorse(horse.id, 'predictionCount', Math.max(0, parseInt(e.target.value) || 0))}
-                                            className="w-20 p-1 border border-blue-200 bg-blue-50 rounded text-center font-bold text-blue-700"
+                                            value={horse.gateNumber}
+                                            onChange={(e) => updateHorse(horse.id, 'gateNumber', parseInt(e.target.value))}
+                                            className="w-12 p-1 border rounded text-center font-bold"
                                         />
-                                        <span className="text-xs text-slate-400">票</span>
-                                    </div>
-                                </td>
-                                <td className="px-4 py-2 text-right">
-                                    <span className="font-mono font-bold text-lg text-slate-800">
-                                        {horse.simulatedOdds?.toFixed(1)}
-                                    </span>
-                                </td>
-                                <td className="px-4 py-2 text-center">
-                                    <button
-                                        onClick={() => removeHorse(horse.id)}
-                                        className="text-slate-400 hover:text-red-500 transition"
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        <input
+                                            type="text"
+                                            value={horse.name}
+                                            onChange={(e) => updateHorse(horse.id, 'name', e.target.value)}
+                                            className="w-full bg-transparent border-b border-transparent focus:border-blue-500 outline-none font-medium"
+                                        />
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        <input
+                                            type="text"
+                                            value={horse.jockey}
+                                            onChange={(e) => updateHorse(horse.id, 'jockey', e.target.value)}
+                                            className="w-full bg-transparent border-b border-transparent focus:border-blue-500 outline-none text-slate-500"
+                                        />
+                                    </td>
+                                    <td className="px-4 py-2 text-xs">
+                                        <select
+                                            value={horse.runningStyle}
+                                            onChange={(e) => updateHorse(horse.id, 'runningStyle', e.target.value)}
+                                            className="bg-transparent outline-none cursor-pointer"
+                                        >
+                                            <option value="Nige">逃げ</option>
+                                            <option value="Senko">先行</option>
+                                            <option value="Sashi">差し</option>
+                                            <option value="Oikomi">追込</option>
+                                        </select>
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        <input
+                                            type="number"
+                                            step="0.1"
+                                            value={horse.speed}
+                                            onChange={(e) => updateHorse(horse.id, 'speed', parseInt(e.target.value))}
+                                            className="w-14 p-1 border rounded text-center text-xs"
+                                        />
+                                    </td>
+                                    <td className="px-4 py-2 text-xs">
+                                        <div className="flex items-center gap-1">
+                                            <input
+                                                type="number"
+                                                value={horse.predictionCount}
+                                                onChange={(e) => updateHorse(horse.id, 'predictionCount', Math.max(0, parseInt(e.target.value) || 0))}
+                                                className="w-16 p-1 border border-blue-200 bg-blue-50 rounded text-center font-bold text-blue-700"
+                                            />
+                                            <span className="text-slate-400">票</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-2 text-right">
+                                        <input
+                                            type="number"
+                                            step="0.1"
+                                            value={horse.realOdds}
+                                            onChange={(e) => updateHorse(horse.id, 'realOdds', parseFloat(e.target.value))}
+                                            className="w-20 p-1 border rounded text-right font-mono"
+                                        />
+                                    </td>
+                                    <td className="px-4 py-2 text-right">
+                                        <span className="font-mono font-bold text-blue-600">
+                                            {horse.simulatedOdds?.toFixed(1)}
+                                        </span>
+                                    </td>
+                                    <td className="px-4 py-2 text-center">
+                                        <span className={`px-2 py-1 rounded text-xs font-bold ${diffColor}`}>
+                                            {diffLabel}
+                                        </span>
+                                    </td>
+                                    <td className="px-4 py-2 text-center">
+                                        <button
+                                            onClick={() => removeHorse(horse.id)}
+                                            className="text-slate-400 hover:text-red-500 transition"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>

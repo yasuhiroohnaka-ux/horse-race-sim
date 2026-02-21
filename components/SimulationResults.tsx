@@ -51,24 +51,37 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                             <th className="px-4 py-2">馬名</th>
                             <th className="px-4 py-2">騎手</th>
                             <th className="px-4 py-2 text-right">勝率</th>
-                            <th className="px-4 py-2 text-right">シミュオッズ</th>
-                            <th className="px-4 py-2 text-right">世論オッズ</th>
+                            <th className="px-4 py-2 text-right">市場</th>
+                            <th className="px-4 py-2 text-right">世論</th>
+                            <th className="px-4 py-2 text-center">乖離</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {data.map((row, index) => (
-                            <tr key={index} className="border-b border-slate-100">
-                                <td className="px-4 py-2 font-bold text-slate-500">#{index + 1}</td>
-                                <td className="px-4 py-2 text-slate-400 font-mono">{row.horse?.gateNumber}</td>
-                                <td className="px-4 py-2 font-medium text-slate-900">{row.name}</td>
-                                <td className="px-4 py-2 text-slate-500 text-xs">{row.horse?.jockey}</td>
-                                <td className="px-4 py-2 text-right font-bold text-blue-600">{row.wins}%</td>
-                                <td className="px-4 py-2 text-right text-slate-500">
-                                    {(row.wins > 0 ? (100 / row.wins * 0.8).toFixed(1) : "999.9")}
-                                </td>
-                                <td className="px-4 py-2 text-right font-mono text-slate-500">{row.odds}</td>
-                            </tr>
-                        ))}
+                        {data.map((row, index) => {
+                            const diff = (row.horse?.simulatedOdds || 0) - (row.horse?.realOdds || 0);
+                            const diffColor = diff < 0 ? "text-red-600" : "text-blue-600";
+                            const deviation = (row.horse?.realOdds && row.horse?.simulatedOdds)
+                                ? (((row.horse.realOdds / row.horse.simulatedOdds) - 1) * 100).toFixed(0) + "%"
+                                : "-";
+
+                            return (
+                                <tr key={index} className="border-b border-slate-100">
+                                    <td className="px-4 py-2 font-bold text-slate-500">#{index + 1}</td>
+                                    <td className="px-4 py-2 text-slate-400 font-mono">{row.horse?.gateNumber}</td>
+                                    <td className="px-4 py-2 font-medium text-slate-900">{row.name}</td>
+                                    <td className="px-4 py-2 text-slate-500 text-xs">{row.horse?.jockey}</td>
+                                    <td className="px-4 py-2 text-right font-bold text-emerald-600">{row.wins}%</td>
+                                    <td className="px-4 py-2 text-right text-slate-500 font-mono">
+                                        {row.horse?.realOdds?.toFixed(1)}
+                                    </td>
+                                    <td className="px-4 py-2 text-right font-mono font-bold text-blue-600">{row.odds}</td>
+                                    <td className={`px-4 py-2 text-center font-bold ${diffColor}`}>
+                                        {diff < 0 ? "★強気" : "弱気"}
+                                        <div className="text-[10px] font-normal opacity-70">({deviation})</div>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
