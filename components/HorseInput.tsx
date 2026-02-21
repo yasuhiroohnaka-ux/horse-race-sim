@@ -40,6 +40,26 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
         updateHorses(newHorses);
     };
 
+    const handlePostPopularity = () => {
+        // Sort horses by predictionCount
+        const sorted = [...horses].sort((a, b) => b.predictionCount - a.predictionCount);
+        const top5 = sorted.slice(0, 5).filter(h => h.predictionCount > 0);
+
+        if (top5.length === 0) {
+            alert("集計データがありません（予想票が入っていません）");
+            return;
+        }
+
+        let text = "【X(旧Twitter) 競馬予想集計状況】\n";
+        top5.forEach((h, i) => {
+            text += `${i + 1}位: ${h.name} (${h.predictionCount}票 / 推定${h.simulatedOdds?.toFixed(1)}倍)\n`;
+        });
+        text += "\n#競馬 #シミュレーション #フェブラリーS #集計中";
+
+        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank');
+    };
+
     const updateHorses = (newList: Horse[]) => {
         // Recalculate odds whenever predictions change
         const withOdds = calculateOdds(newList);
@@ -51,12 +71,21 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
         <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200 mt-6">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold text-slate-800">2. 出走馬データ</h2>
-                <button
-                    onClick={addHorse}
-                    className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-                >
-                    <Plus size={16} /> 馬を追加
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={handlePostPopularity}
+                        className="flex items-center gap-2 px-3 py-1 border border-slate-300 text-slate-600 rounded-md hover:bg-slate-50 transition"
+                    >
+                        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                        集計をXに投稿
+                    </button>
+                    <button
+                        onClick={addHorse}
+                        className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                    >
+                        <Plus size={16} /> 馬を追加
+                    </button>
+                </div>
             </div>
 
             <div className="overflow-x-auto">
