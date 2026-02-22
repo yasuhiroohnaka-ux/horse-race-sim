@@ -60,10 +60,17 @@ export default function SimulatorPage() {
         // Find Crowd Favorite
         const favorite = [...horses].sort((a, b) => b.predictionCount - a.predictionCount)[0];
 
+        // Find dark horse: highest realOdds/simulatedOdds ratio
+        // = 市場は高く評価（高オッズ）なのにシミュでは低く評価 → AIが「実は強い」と判断
+        const darkHorse = [...horses]
+            .filter(h => h.simulatedOdds > 0 && h.realOdds > 0)
+            .sort((a, b) => (b.realOdds / b.simulatedOdds) - (a.realOdds / a.simulatedOdds))[0];
+
         const text = `
 【AI競馬シミュレーション結果】
 本命馬: ${favorite.name} (${favorite.predictionCount} 票)
 シミュレーション勝者: ${winner?.name} (勝率: ${results[0].winCount}%)
+穴馬候補: ${darkHorse?.name ?? "-"} (市場${darkHorse?.realOdds?.toFixed(1)}倍 / シミュ${darkHorse?.simulatedOdds?.toFixed(1)}倍)
 
 コース: ${selectedCourse.name}
 #競馬 #シミュレーション #フェブラリーS
