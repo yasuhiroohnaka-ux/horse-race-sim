@@ -52,7 +52,7 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
 
         let text = "【X(旧Twitter) 競馬予想集計状況】\n";
         top5.forEach((h, i) => {
-            text += `${i + 1}位: ${h.name} (${h.predictionCount}票 / 推定${h.simulatedOdds?.toFixed(1)}倍)\n`;
+            text += `${i + 1}位: ${h.name} (${h.predictionCount}pt / 推定${h.simulatedOdds?.toFixed(1)}倍)\n`;
         });
         text += "\n#競馬 #シミュレーション #フェブラリーS #集計中";
 
@@ -98,7 +98,10 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
                             <th className="px-4 py-3">脚質</th>
                             <th className="px-4 py-3 w-20">スピ</th>
                             <th className="px-4 py-3 w-20">スタ</th>
-                            <th className="px-4 py-3 w-32">予想数 (票)</th>
+                            <th
+                                className="px-4 py-3 w-32 cursor-help"
+                                title="◎×6 + 〇×4 + ▲×3 + △×2 + ☆×1 の合計を入力"
+                            >集合知スコア (?)</th>
                             <th className="px-4 py-3 w-32 text-right">確定オッズ</th>
                             <th className="px-4 py-3 w-32 text-right text-blue-600">世論オッズ</th>
                             <th className="px-4 py-3 w-24 text-center">乖離</th>
