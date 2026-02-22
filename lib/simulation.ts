@@ -6,7 +6,9 @@ export type { Horse, RunningStyle };
 const BASE_SPEED = 16.0; // m/s (approx 60km/h)
 const MAX_SPEED_VARIANCE = 0.5; // Random speed fluctuation
 const STAMINA_DRAIN_RATE = 1.0;
-const PREDICTION_BONUS_FACTOR = 0.05; // 5% boost for high prediction support
+// NOTE: predictionBonus は物理エンジンから除去済み。
+// 能力値（speed/stamina/power/guts）のみで純粋に競走する。
+// 集合知（predictionCount）は calculateCrowdWinRate() で別途計算する。
 
 // Helper to calculate odds
 export function calculateOdds(horses: Horse[]): Horse[] {
@@ -23,6 +25,17 @@ export function calculateOdds(horses: Horse[]): Horse[] {
         const odds = Math.floor((1 / probability) * 0.8 * 10) / 10; // 80% return rate
         return { ...horse, simulatedOdds: Math.max(1.0, odds) };
     });
+}
+
+// Crowd win rate from predictionCount (独立した集合知エンジン)
+// 物理シミュとは完全に分離。predictionCount の割合をそのまま勝率%に変換する。
+export function calculateCrowdWinRate(horses: Horse[]): Map<string, number> {
+    const total = horses.reduce((sum, h) => sum + h.predictionCount, 0);
+    if (total === 0) return new Map(horses.map(h => [h.id, 0]));
+    return new Map(horses.map(h => [
+        h.id,
+        Math.round((h.predictionCount / total) * 100)
+    ]));
 }
 
 // Helper to apply Track Bias
@@ -73,13 +86,12 @@ export function runRace(
             const horse = horses.find(h => h.id === pos.id)!;
             const raceConditionModifier = horseConditions?.find(c => c.id === horse.id)?.modifier || 1.0;
 
-            // Speed Modifiers
+            // Speed Modifiers (純粋な物理エンジン。集合知は混入しない)
             const randomFlux = (Math.random() - 0.5) * 1.5; // Increased variance (was MAX_SPEED_VARIANCE)
             const styleBonus = getRunningStyleBonus(horse.runningStyle, condition.trackBias);
-            const predictionBonus = (horse.predictionCount > 0 ? Math.log10(horse.predictionCount) : 0) * PREDICTION_BONUS_FACTOR;
 
             // Determine Speed
-            let speed = (pos.currentSpeed + randomFlux + styleBonus + predictionBonus) * raceConditionModifier;
+            let speed = (pos.currentSpeed + randomFlux + styleBonus) * raceConditionModifier;
 
             // Stamina Check
             if (pos.stamina <= 0) {
