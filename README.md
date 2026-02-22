@@ -72,5 +72,4 @@ git checkout -b feature/your-task-name
 ### Lint について
 
 `eslint` が `devDependencies` に追加されていないため、`npm run lint` は現在失敗する。
-`next build`（Vercel ビルド含む）での ESLint 実行は `next.config.ts` の `ignoreDuringBuilds` 設定で回避している。
 ESLint の正式導入は別タスクで対応予定。
