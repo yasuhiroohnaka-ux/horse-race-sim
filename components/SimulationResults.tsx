@@ -9,9 +9,11 @@ interface SimulationResultsProps {
     horses: Horse[];
     onReset: () => void;
     onPostToX: () => void;
+    onRunAgain: () => void;
+    isRunning: boolean;
 }
 
-export function SimulationResults({ results, horses, onReset, onPostToX }: SimulationResultsProps) {
+export function SimulationResults({ results, horses, onReset, onPostToX, onRunAgain, isRunning }: SimulationResultsProps) {
     // 集合知勝率（predictionCount の割合）を物理シミュとは独立して計算
     const crowdWinMap = calculateCrowdWinRate(horses);
 
@@ -59,7 +61,7 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                 <span className="inline-block w-3 h-3 rounded-sm bg-purple-400 mr-1 align-middle"></span>集合知（予想票の割合）
             </p>
 
-            <div className="flex gap-4 mb-6 h-72">
+            <div className="flex gap-4 mb-6 h-96">
                 {/* バーチャート */}
                 <div className="flex-1 min-w-0">
                     <ResponsiveContainer width="100%" height="100%">
@@ -79,7 +81,7 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                 </div>
 
                 {/* X 人気ランキング サイドパネル */}
-                <div className="w-44 shrink-0 bg-slate-50 rounded-lg p-3 flex flex-col">
+                <div className="w-52 shrink-0 bg-slate-50 rounded-lg p-3 flex flex-col">
                     <h3 className="text-xs font-bold text-slate-500 mb-2 flex items-center gap-1 shrink-0">
                         <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current shrink-0"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
                         人気ランキング
@@ -208,12 +210,19 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                 </table>
             </div>
 
-            <div className="flex gap-4 justify-end">
+            <div className="flex gap-3 justify-end flex-wrap">
                 <button
                     onClick={onReset}
                     className="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-50 transition"
                 >
                     リセット
+                </button>
+                <button
+                    onClick={onRunAgain}
+                    disabled={isRunning}
+                    className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition disabled:opacity-50"
+                >
+                    {isRunning ? "シミュレーション中..." : "もう一度試走 🔄"}
                 </button>
                 <button
                     onClick={onPostToX}

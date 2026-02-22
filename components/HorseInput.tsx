@@ -103,8 +103,11 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
                                 title="◎×6 + 〇×4 + ▲×3 + △×2 + ☆×1 の合計を入力"
                             >集合知スコア (?)</th>
                             <th className="px-4 py-3 w-32 text-right">確定オッズ</th>
-                            <th className="px-4 py-3 w-32 text-right text-blue-600">世論オッズ</th>
-                            <th className="px-4 py-3 w-24 text-center">乖離</th>
+                            <th className="px-4 py-3 w-32 text-right text-purple-600 border-l-2 border-slate-200"
+                                title="集合知スコアから算出した推定オッズ（自動計算）">
+                                世論オッズ
+                            </th>
+                            <th className="px-4 py-3 w-24 text-center text-slate-400">乖離</th>
                             <th className="px-4 py-3"></th>
                         </tr>
                     </thead>
@@ -188,8 +191,8 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
                                             className="w-20 p-1 border rounded text-right font-mono"
                                         />
                                     </td>
-                                    <td className="px-4 py-2 text-right">
-                                        <span className="font-mono font-bold text-blue-600">
+                                    <td className="px-4 py-2 text-right border-l-2 border-slate-100">
+                                        <span className="font-mono font-bold text-purple-600">
                                             {horse.simulatedOdds?.toFixed(1)}
                                         </span>
                                     </td>

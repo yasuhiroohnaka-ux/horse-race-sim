@@ -123,19 +123,9 @@ export default function SimulatorPage() {
                             horses={horses}
                             onReset={() => setResults(null)}
                             onPostToX={handlePostToX}
+                            onRunAgain={handleRunSimulation}
+                            isRunning={isRunning}
                         />
-                    )}
-
-                    {results && (
-                        <div className="text-center py-4">
-                            <button
-                                onClick={handleRunSimulation}
-                                disabled={isRunning}
-                                className="px-6 py-3 bg-slate-700 text-white text-base font-semibold rounded-full shadow hover:bg-slate-800 transition disabled:opacity-50"
-                            >
-                                {isRunning ? "シミュレーション中..." : "もう一度試走 🔄"}
-                            </button>
-                        </div>
                     )}
                 </div>
 
