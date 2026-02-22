@@ -51,9 +51,14 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                             <th className="px-4 py-2">馬名</th>
                             <th className="px-4 py-2">騎手</th>
                             <th className="px-4 py-2 text-right">勝率</th>
-                            <th className="px-4 py-2 text-right">市場</th>
-                            <th className="px-4 py-2 text-right">世論</th>
-                            <th className="px-4 py-2 text-center">乖離</th>
+                            <th className="px-4 py-2 text-right">市場オッズ</th>
+                            <th className="px-4 py-2 text-right">シミュ予想</th>
+                            <th
+                                className="px-4 py-2 text-center cursor-help"
+                                title="シミュ予想 < 市場オッズ → AIが過小評価＝狙い目(★強気)"
+                            >
+                                乖離 (?)
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -75,7 +80,12 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                                         {row.horse?.realOdds?.toFixed(1)}
                                     </td>
                                     <td className="px-4 py-2 text-right font-mono font-bold text-blue-600">{row.odds}</td>
-                                    <td className={`px-4 py-2 text-center font-bold ${diffColor}`}>
+                                    <td
+                                        className={`px-4 py-2 text-center font-bold cursor-help ${diffColor}`}
+                                        title={diff < 0
+                                            ? "AIシミュ < 市場オッズ：AIが過小評価＝買い場の可能性"
+                                            : "AIシミュ > 市場オッズ：市場より低く評価＝割高の可能性"}
+                                    >
                                         {diff < 0 ? "★強気" : "弱気"}
                                         <div className="text-[10px] font-normal opacity-70">({deviation})</div>
                                     </td>
