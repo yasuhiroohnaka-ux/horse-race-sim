@@ -9,9 +9,11 @@ interface SimulationResultsProps {
     horses: Horse[];
     onReset: () => void;
     onPostToX: () => void;
+    onRunAgain: () => void;
+    isRunning: boolean;
 }
 
-export function SimulationResults({ results, horses, onReset, onPostToX }: SimulationResultsProps) {
+export function SimulationResults({ results, horses, onReset, onPostToX, onRunAgain, isRunning }: SimulationResultsProps) {
     // 集合知勝率（predictionCount の割合）を物理シミュとは独立して計算
     const crowdWinMap = calculateCrowdWinRate(horses);
 
@@ -38,6 +40,19 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
         .filter(h => h.predictionCount > 0);
     const maxCount = popularityRanking[0]?.predictionCount ?? 1;
 
+    // X 人気ランキング 投稿ハンドラ
+    const handlePostRankingToX = () => {
+        const top5 = popularityRanking.slice(0, 5);
+        let text = "【X競馬予想 人気ランキング】\n";
+        top5.forEach((h, i) => {
+            const physResult = results.find(r => r.horseId === h.id);
+            const irrational = (physResult?.winCount ?? 0) === 0 && h.predictionCount >= 10;
+            text += `#${i + 1} ${h.name} ${h.predictionCount}pt${irrational ? " ⚠️" : ""}\n`;
+        });
+        text += "\n#競馬 #フェブラリーS #集合知";
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
+    };
+
     return (
         <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200 mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="text-xl font-bold mb-1 text-slate-800">3. シミュレーション結果 (100回実行)</h2>
@@ -46,7 +61,7 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                 <span className="inline-block w-3 h-3 rounded-sm bg-purple-400 mr-1 align-middle"></span>集合知（予想票の割合）
             </p>
 
-            <div className="flex gap-4 mb-6 h-72">
+            <div className="flex gap-4 mb-6 h-96">
                 {/* バーチャート */}
                 <div className="flex-1 min-w-0">
                     <ResponsiveContainer width="100%" height="100%">
@@ -66,42 +81,51 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                 </div>
 
                 {/* X 人気ランキング サイドパネル */}
-                <div className="w-44 shrink-0 bg-slate-50 rounded-lg p-3 overflow-y-auto">
-                    <h3 className="text-xs font-bold text-slate-500 mb-2 flex items-center gap-1">
+                <div className="w-52 shrink-0 bg-slate-50 rounded-lg p-3 flex flex-col">
+                    <h3 className="text-xs font-bold text-slate-500 mb-2 flex items-center gap-1 shrink-0">
                         <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current shrink-0"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
                         人気ランキング
                     </h3>
-                    {popularityRanking.length === 0 && (
-                        <p className="text-xs text-slate-400">予想票なし</p>
-                    )}
-                    {popularityRanking.map((h, i) => {
-                        // 物理シミュ結果と突合して非合理人気を検出
-                        const physResult = results.find(r => r.horseId === h.id);
-                        const isIrrational = (physResult?.winCount ?? 0) === 0 && h.predictionCount >= 10;
-                        return (
-                            <div key={h.id} className="mb-2.5">
-                                <div className="flex justify-between items-baseline mb-0.5">
-                                    <span className="text-[10px] text-slate-400">#{i + 1}</span>
-                                    <span className="text-[10px] font-bold text-purple-600">{h.predictionCount}pt</span>
+                    <div className="flex-1 overflow-y-auto">
+                        {popularityRanking.length === 0 && (
+                            <p className="text-xs text-slate-400">予想票なし</p>
+                        )}
+                        {popularityRanking.map((h, i) => {
+                            // 物理シミュ結果と突合して非合理人気を検出
+                            const physResult = results.find(r => r.horseId === h.id);
+                            const isIrrational = (physResult?.winCount ?? 0) === 0 && h.predictionCount >= 10;
+                            return (
+                                <div key={h.id} className="mb-2.5">
+                                    <div className="flex justify-between items-baseline mb-0.5">
+                                        <span className="text-[10px] text-slate-400">#{i + 1}</span>
+                                        <span className="text-[10px] font-bold text-purple-600">{h.predictionCount}pt</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 mb-0.5">
+                                        <span className="text-xs font-medium text-slate-800 truncate leading-tight">{h.name}</span>
+                                        {isIrrational && (
+                                            <span
+                                                className="text-[9px] font-bold text-orange-500 shrink-0 cursor-help"
+                                                title="物理エンジン勝率0%。集合知スコアに対して能力値が伴っていない可能性。"
+                                            >⚠️</span>
+                                        )}
+                                    </div>
+                                    <div className="h-1.5 bg-purple-100 rounded-full">
+                                        <div
+                                            className="h-1.5 bg-purple-400 rounded-full transition-all"
+                                            style={{ width: `${(h.predictionCount / maxCount) * 100}%` }}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-1 mb-0.5">
-                                    <span className="text-xs font-medium text-slate-800 truncate leading-tight">{h.name}</span>
-                                    {isIrrational && (
-                                        <span
-                                            className="text-[9px] font-bold text-orange-500 shrink-0 cursor-help"
-                                            title="物理エンジン勝率0%。集合知スコアに対して能力値が伴っていない可能性。"
-                                        >⚠️</span>
-                                    )}
-                                </div>
-                                <div className="h-1.5 bg-purple-100 rounded-full">
-                                    <div
-                                        className="h-1.5 bg-purple-400 rounded-full transition-all"
-                                        style={{ width: `${(h.predictionCount / maxCount) * 100}%` }}
-                                    />
-                                </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
+                    </div>
+                    <button
+                        onClick={handlePostRankingToX}
+                        className="mt-2 shrink-0 w-full flex items-center justify-center gap-1 px-2 py-1.5 bg-black text-white text-[10px] font-bold rounded-md hover:bg-slate-800 transition"
+                    >
+                        <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current shrink-0"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+                        投稿
+                    </button>
                 </div>
             </div>
 
@@ -186,12 +210,19 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                 </table>
             </div>
 
-            <div className="flex gap-4 justify-end">
+            <div className="flex gap-3 justify-end flex-wrap">
                 <button
                     onClick={onReset}
                     className="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-50 transition"
                 >
                     リセット
+                </button>
+                <button
+                    onClick={onRunAgain}
+                    disabled={isRunning}
+                    className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition disabled:opacity-50"
+                >
+                    {isRunning ? "シミュレーション中..." : "もう一度試走 🔄"}
                 </button>
                 <button
                     onClick={onPostToX}
