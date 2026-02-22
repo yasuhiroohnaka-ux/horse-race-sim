@@ -32,6 +32,12 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
         };
     });
 
+    // X 人気ランキング（predictionCount 降順、0票は除外）
+    const popularityRanking = [...horses]
+        .sort((a, b) => b.predictionCount - a.predictionCount)
+        .filter(h => h.predictionCount > 0);
+    const maxCount = popularityRanking[0]?.predictionCount ?? 1;
+
     return (
         <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200 mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="text-xl font-bold mb-1 text-slate-800">3. シミュレーション結果 (100回実行)</h2>
@@ -40,21 +46,63 @@ export function SimulationResults({ results, horses, onReset, onPostToX }: Simul
                 <span className="inline-block w-3 h-3 rounded-sm bg-purple-400 mr-1 align-middle"></span>集合知（予想票の割合）
             </p>
 
-            <div className="h-72 w-full mb-6">
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                        <XAxis type="number" domain={[0, 100]} unit="%" />
-                        <YAxis type="category" dataKey="name" width={100} />
-                        <Tooltip
-                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                            cursor={{ fill: '#f1f5f9' }}
-                        />
-                        <Legend />
-                        <Bar dataKey="wins" fill="#3b82f6" radius={[0, 4, 4, 0]} name="物理%" />
-                        <Bar dataKey="crowdWin" fill="#a855f7" radius={[0, 4, 4, 0]} name="集合知%" />
-                    </BarChart>
-                </ResponsiveContainer>
+            <div className="flex gap-4 mb-6 h-72">
+                {/* バーチャート */}
+                <div className="flex-1 min-w-0">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                            <XAxis type="number" domain={[0, 100]} unit="%" />
+                            <YAxis type="category" dataKey="name" width={100} />
+                            <Tooltip
+                                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                cursor={{ fill: '#f1f5f9' }}
+                            />
+                            <Legend />
+                            <Bar dataKey="wins" fill="#3b82f6" radius={[0, 4, 4, 0]} name="物理%" />
+                            <Bar dataKey="crowdWin" fill="#a855f7" radius={[0, 4, 4, 0]} name="集合知%" />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+
+                {/* X 人気ランキング サイドパネル */}
+                <div className="w-44 shrink-0 bg-slate-50 rounded-lg p-3 overflow-y-auto">
+                    <h3 className="text-xs font-bold text-slate-500 mb-2 flex items-center gap-1">
+                        <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current shrink-0"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+                        人気ランキング
+                    </h3>
+                    {popularityRanking.length === 0 && (
+                        <p className="text-xs text-slate-400">予想票なし</p>
+                    )}
+                    {popularityRanking.map((h, i) => {
+                        // 物理シミュ結果と突合して非合理人気を検出
+                        const physResult = results.find(r => r.horseId === h.id);
+                        const isIrrational = (physResult?.winCount ?? 0) === 0 && h.predictionCount >= 10;
+                        return (
+                            <div key={h.id} className="mb-2.5">
+                                <div className="flex justify-between items-baseline mb-0.5">
+                                    <span className="text-[10px] text-slate-400">#{i + 1}</span>
+                                    <span className="text-[10px] font-bold text-purple-600">{h.predictionCount}pt</span>
+                                </div>
+                                <div className="flex items-center gap-1 mb-0.5">
+                                    <span className="text-xs font-medium text-slate-800 truncate leading-tight">{h.name}</span>
+                                    {isIrrational && (
+                                        <span
+                                            className="text-[9px] font-bold text-orange-500 shrink-0 cursor-help"
+                                            title="物理エンジン勝率0%。集合知スコアに対して能力値が伴っていない可能性。"
+                                        >⚠️</span>
+                                    )}
+                                </div>
+                                <div className="h-1.5 bg-purple-100 rounded-full">
+                                    <div
+                                        className="h-1.5 bg-purple-400 rounded-full transition-all"
+                                        style={{ width: `${(h.predictionCount / maxCount) * 100}%` }}
+                                    />
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
 
             <div className="overflow-x-auto mb-6">
