@@ -89,7 +89,7 @@ export default function SimulatorPage() {
             <div className="max-w-4xl mx-auto">
                 <header className="mb-8 text-center">
                     <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">🏇 AI競馬シミュレーター</h1>
-                    <p className="text-slate-500 mt-2">集合知 × 物理エンジン</p>
+                    <p className="text-slate-500 mt-2">予想票を入力 → 100回試走 → 差分で狙い目を発見</p>
                 </header>
 
                 <div className="space-y-6">
@@ -124,6 +124,18 @@ export default function SimulatorPage() {
                             onReset={() => setResults(null)}
                             onPostToX={handlePostToX}
                         />
+                    )}
+
+                    {results && (
+                        <div className="text-center py-4">
+                            <button
+                                onClick={handleRunSimulation}
+                                disabled={isRunning}
+                                className="px-6 py-3 bg-slate-700 text-white text-base font-semibold rounded-full shadow hover:bg-slate-800 transition disabled:opacity-50"
+                            >
+                                {isRunning ? "シミュレーション中..." : "もう一度試走 🔄"}
+                            </button>
+                        </div>
                     )}
                 </div>
 
