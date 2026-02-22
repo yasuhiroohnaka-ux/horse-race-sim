@@ -62,9 +62,13 @@ export default function SimulatorPage() {
 
         // Find dark horse: highest realOdds/simulatedOdds ratio
         // = 市場は高く評価（高オッズ）なのにシミュでは低く評価 → AIが「実は強い」と判断
+        // simulatedOdds / realOdds は optional なので ?? でフォールバック
         const darkHorse = [...horses]
-            .filter(h => h.simulatedOdds > 0 && h.realOdds > 0)
-            .sort((a, b) => (b.realOdds / b.simulatedOdds) - (a.realOdds / a.simulatedOdds))[0];
+            .filter(h => (h.simulatedOdds ?? 0) > 0 && (h.realOdds ?? 0) > 0)
+            .sort((a, b) =>
+                ((b.realOdds ?? 0) / (b.simulatedOdds ?? 1)) -
+                ((a.realOdds ?? 0) / (a.simulatedOdds ?? 1))
+            )[0];
 
         const text = `
 【AI競馬シミュレーション結果】
