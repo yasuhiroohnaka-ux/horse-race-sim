@@ -81,15 +81,24 @@ export function runRace(
     const groundMod = getGroundConditionModifiers(condition.groundCondition, course.surface);
 
     // 1. Initialize Simulation State
-    let currentPositions = horses.map(h => ({
-        id: h.id,
-        distanceCovered: 0,
-        currentSpeed: h.speed * SPEED_ABILITY_FACTOR + BASE_SPEED,
-        stamina: h.stamina,
-        fatigue: 0,
-        finished: false,
-        finishTime: 0
-    }));
+    // 状態値: 0-10 (5=普通)。5から離れるほど速度に±3%影響
+    // 斤量: 57kgを基準に、1kgあたり±0.3%速度補正
+    let currentPositions = horses.map(h => {
+        const conditionVal = h.condition ?? 5;
+        const conditionMod = 1 + (conditionVal - 5) * 0.006;   // 0→-3%, 10→+3%
+        const weightVal = h.weight ?? 57;
+        const weightMod = 1 - (weightVal - 57) * 0.003;        // 55kg→+0.6%, 59kg→-0.6%
+
+        return {
+            id: h.id,
+            distanceCovered: 0,
+            currentSpeed: (h.speed * SPEED_ABILITY_FACTOR + BASE_SPEED) * conditionMod * weightMod,
+            stamina: h.stamina,
+            fatigue: 0,
+            finished: false,
+            finishTime: 0,
+        };
+    });
 
     const RACE_TICK = 1.0; // 1 second update
     let raceTime = 0;
