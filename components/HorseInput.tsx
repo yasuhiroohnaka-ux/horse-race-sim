@@ -8,9 +8,10 @@ import { Plus, Trash2 } from "lucide-react";
 interface HorseInputProps {
     horses: Horse[];
     onHorsesChange: (horses: Horse[]) => void;
+    hashtag?: string;
 }
 
-export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
+export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: HorseInputProps) {
 
     const addHorse = () => {
         const newHorse: Horse = {
@@ -54,7 +55,7 @@ export function HorseInput({ horses, onHorsesChange }: HorseInputProps) {
         top5.forEach((h, i) => {
             text += `${i + 1}位: ${h.name} (${h.predictionCount}pt / 推定${h.simulatedOdds?.toFixed(1)}倍)\n`;
         });
-        text += "\n#競馬 #シミュレーション #フェブラリーS #集計中";
+        text += `\n#競馬 #シミュレーション ${hashtag} #集計中`;
 
         const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
         window.open(url, '_blank');
