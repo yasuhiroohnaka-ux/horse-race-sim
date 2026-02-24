@@ -14,6 +14,11 @@ export interface Horse {
   gateNumber: number;
   jockey: string;
 
+  // Condition & Weight
+  condition?: number;    // 状態値 0-10 (5=普通, 高い=好調)
+  weight?: number;       // 斤量 (kg) — 混合戦牝馬は-2kg
+  sex?: 'M' | 'F';      // 性別 (牡=M, 牝=F)
+
   // External Factors
   predictionCount: number; // Number of votes/mentions
   simulatedOdds?: number;  // Calculated based on predictionCount
