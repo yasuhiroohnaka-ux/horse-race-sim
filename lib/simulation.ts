@@ -3,8 +3,8 @@ export type { Horse, RunningStyle };
 
 
 // Constants
-const BASE_SPEED = 16.0; // m/s (approx 60km/h)
-const MAX_SPEED_VARIANCE = 0.5; // Random speed fluctuation
+const BASE_SPEED = 16.0; // m/s base
+const SPEED_ABILITY_FACTOR = 0.06; // SP→速度変換（低めで差を縮め波乱を生む）
 const STAMINA_DRAIN_RATE = 1.0;
 // NOTE: predictionBonus は物理エンジンから除去済み。
 // 能力値（speed/stamina/power/guts）のみで純粋に競走する。
@@ -38,6 +38,22 @@ export function calculateCrowdWinRate(horses: Horse[]): Map<string, number> {
     ]));
 }
 
+// 馬場状態による速度・スタミナ補正
+// Turf は馬場の影響大、Dirt は小さめ
+function getGroundConditionModifiers(
+    groundCondition: string,
+    surface: string
+): { speedMod: number; staminaDrainMod: number } {
+    const sf = surface === 'Dirt' ? 0.5 : 1.0;
+    switch (groundCondition) {
+        case 'Firm':     return { speedMod: 1 + 0.01 * sf, staminaDrainMod: 1 - 0.05 * sf };
+        case 'Good':     return { speedMod: 1.0,            staminaDrainMod: 1.0 };
+        case 'Yielding': return { speedMod: 1 - 0.02 * sf, staminaDrainMod: 1 + 0.15 * sf };
+        case 'Soft':     return { speedMod: 1 - 0.04 * sf, staminaDrainMod: 1 + 0.35 * sf };
+        default:         return { speedMod: 1.0,            staminaDrainMod: 1.0 };
+    }
+}
+
 // Helper to apply Track Bias
 function getRunningStyleBonus(style: string, bias: RaceCondition['trackBias']): number {
     // Positive frontBack bias favors Front (Nige/Senko)
@@ -46,10 +62,10 @@ function getRunningStyleBonus(style: string, bias: RaceCondition['trackBias']): 
     const biasVal = bias.frontBack;
 
     if (style === 'Nige' || style === 'Senko') {
-        return biasVal > 0 ? biasVal * 0.2 : 0; // Front favored
+        return biasVal > 0 ? biasVal * 0.15 : 0; // Front favored
     }
     if (style === 'Sashi' || style === 'Oikomi') {
-        return biasVal < 0 ? Math.abs(biasVal) * 0.2 : 0; // Back favored
+        return biasVal < 0 ? Math.abs(biasVal) * 0.15 : 0; // Back favored
     }
     return 0;
 }
@@ -61,11 +77,14 @@ export function runRace(
     condition: RaceCondition,
     horseConditions?: { id: string, modifier: number }[]
 ): RaceResult[] {
+    // 馬場状態の補正値
+    const groundMod = getGroundConditionModifiers(condition.groundCondition, course.surface);
+
     // 1. Initialize Simulation State
     let currentPositions = horses.map(h => ({
         id: h.id,
         distanceCovered: 0,
-        currentSpeed: h.speed * 0.15 + BASE_SPEED, // Initial speed based on ability
+        currentSpeed: h.speed * SPEED_ABILITY_FACTOR + BASE_SPEED,
         stamina: h.stamina,
         fatigue: 0,
         finished: false,
@@ -87,17 +106,19 @@ export function runRace(
             const raceConditionModifier = horseConditions?.find(c => c.id === horse.id)?.modifier || 1.0;
 
             // Speed Modifiers (純粋な物理エンジン。集合知は混入しない)
-            const randomFlux = (Math.random() - 0.5) * 1.5; // Increased variance (was MAX_SPEED_VARIANCE)
+            const randomFlux = (Math.random() - 0.5) * 2.0; // ±1.0 m/s per tick
             const styleBonus = getRunningStyleBonus(horse.runningStyle, condition.trackBias);
 
-            // Determine Speed
-            let speed = (pos.currentSpeed + randomFlux + styleBonus) * raceConditionModifier;
+            // Determine Speed (馬場状態の速度補正を適用)
+            let speed = (pos.currentSpeed + randomFlux + styleBonus)
+                * raceConditionModifier
+                * groundMod.speedMod;
 
-            // Stamina Check
+            // Stamina Check (馬場状態のスタミナ消耗補正を適用)
             if (pos.stamina <= 0) {
                 speed *= 0.8; // Out of gas
             } else {
-                pos.stamina -= STAMINA_DRAIN_RATE * (speed / BASE_SPEED);
+                pos.stamina -= STAMINA_DRAIN_RATE * (speed / BASE_SPEED) * groundMod.staminaDrainMod;
             }
 
             // Update Distance
@@ -135,10 +156,10 @@ export function runMonteCarlo(
 
     for (let i = 0; i < iterations; i++) {
         // Assign "Race Day Condition" per horse for this specific race iteration
-        // Range: 0.985 to 1.015 (±1.5% variance)
+        // Range: 0.96 to 1.04 (±4% variance — 展開や位置取りのブレを表現)
         const horseConditions = horses.map(h => ({
             id: h.id,
-            modifier: 0.985 + Math.random() * 0.03
+            modifier: 0.96 + Math.random() * 0.08
         }));
 
         const result = runRace(horses, course, condition, horseConditions);

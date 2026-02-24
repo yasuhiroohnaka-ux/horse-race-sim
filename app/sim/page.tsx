@@ -37,6 +37,7 @@ function SimulatorContent() {
     const [bias, setBias] = useState<TrackBias>(
         initialCourse.defaultBias ?? { innerOuter: 0, frontBack: 0 }
     );
+    const [groundCondition, setGroundCondition] = useState<'Firm' | 'Good' | 'Yielding' | 'Soft'>('Good');
     const [horses, setHorses] = useState<Horse[]>(calculateOdds(getDefaultHorses(initialCourseId)));
     const [results, setResults] = useState<{ horseId: string; winCount: number; bestTime: number }[] | null>(null);
     const [isRunning, setIsRunning] = useState(false);
@@ -59,7 +60,7 @@ function SimulatorContent() {
             const condition: RaceCondition = {
                 courseId: selectedCourseId,
                 trackBias: bias,
-                groundCondition: 'Good'
+                groundCondition: groundCondition
             };
 
             const simResults = runMonteCarlo(horses, selectedCourse, condition, 100);
@@ -81,13 +82,14 @@ function SimulatorContent() {
                 ((a.realOdds ?? 0) / (a.simulatedOdds ?? 1))
             )[0];
 
+        const groundLabel: Record<string, string> = { Firm: '良', Good: '稍重', Yielding: '重', Soft: '不良' };
         const text = `
 【AI競馬シミュレーション結果】
 本命馬: ${favorite.name} (${favorite.predictionCount} 票)
 シミュレーション勝者: ${winner?.name} (勝率: ${results[0].winCount}%)
 穴馬候補: ${darkHorse?.name ?? "-"} (市場${darkHorse?.realOdds?.toFixed(1)}倍 / シミュ${darkHorse?.simulatedOdds?.toFixed(1)}倍)
 
-コース: ${selectedCourse.name}
+コース: ${selectedCourse.name} / 馬場: ${groundLabel[groundCondition] ?? '良'}
 #競馬 #シミュレーション ${selectedCourse.hashtag}
     `.trim();
 
@@ -115,8 +117,10 @@ function SimulatorContent() {
                     <CourseConfig
                         selectedCourse={selectedCourse}
                         bias={bias}
+                        groundCondition={groundCondition}
                         onCourseChange={handleCourseChange}
                         onBiasChange={setBias}
+                        onGroundConditionChange={(c) => setGroundCondition(c as 'Firm' | 'Good' | 'Yielding' | 'Soft')}
                     />
 
                     <HorseInput
