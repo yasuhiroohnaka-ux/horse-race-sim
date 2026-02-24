@@ -9,6 +9,28 @@ export default function Home() {
                     <p className="text-slate-500 mt-2">集合知 × 物理エンジンで市場の歪みを発見</p>
                 </header>
 
+                {/* 今週のレース */}
+                <div className="bg-white rounded-lg shadow-md border border-slate-200 p-6 mb-4">
+                    <h2 className="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        今週のレース (3/1)
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                        <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                            <p className="text-sm font-bold text-slate-800">中山記念</p>
+                            <p className="text-xs text-slate-500">中山 芝 1800m GII</p>
+                        </div>
+                        <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                            <p className="text-sm font-bold text-slate-800">オーシャンS</p>
+                            <p className="text-xs text-slate-500">中山 芝 1200m GIII</p>
+                        </div>
+                        <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                            <p className="text-sm font-bold text-slate-800">チューリップ賞</p>
+                            <p className="text-xs text-slate-500">阪神 芝 1600m GII</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="bg-white rounded-lg shadow-md border border-slate-200 p-8">
                     <p className="text-slate-700 leading-relaxed mb-2">
                         Xや掲示板の「みんなの予想」をオッズ化し、市場との差＝世論の偏りを発見。
@@ -45,6 +67,31 @@ export default function Home() {
                     <p className="text-center text-xs text-slate-400 mt-3">
                         馬パラメータ入力・100回試走・X投稿まで完結します。
                     </p>
+                </div>
+
+                {/* アーカイブセクション */}
+                <div className="mt-4 bg-white rounded-lg shadow-sm border border-slate-200 p-5">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <span className="text-slate-400">📦</span>
+                            <h3 className="text-sm font-bold text-slate-600">過去のレース</h3>
+                        </div>
+                        <Link
+                            href="/archive"
+                            className="text-sm text-blue-600 hover:underline"
+                        >
+                            一覧を見る →
+                        </Link>
+                    </div>
+                    <div className="mt-3 flex items-center gap-3">
+                        <Link
+                            href="/sim?archive=tokyo-dirt-1600"
+                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 hover:bg-slate-100 transition"
+                        >
+                            <span className="text-xs text-amber-600 font-bold">2/22</span>
+                            フェブラリーS
+                        </Link>
+                    </div>
                 </div>
 
                 <footer className="mt-8 text-center text-xs text-slate-400">

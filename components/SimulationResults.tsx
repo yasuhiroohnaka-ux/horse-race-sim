@@ -11,9 +11,10 @@ interface SimulationResultsProps {
     onPostToX: () => void;
     onRunAgain: () => void;
     isRunning: boolean;
+    hashtag?: string;
 }
 
-export function SimulationResults({ results, horses, onReset, onPostToX, onRunAgain, isRunning }: SimulationResultsProps) {
+export function SimulationResults({ results, horses, onReset, onPostToX, onRunAgain, isRunning, hashtag = '#競馬' }: SimulationResultsProps) {
     // 集合知勝率（predictionCount の割合）を物理シミュとは独立して計算
     const crowdWinMap = calculateCrowdWinRate(horses);
 
@@ -49,7 +50,7 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
             const irrational = (physResult?.winCount ?? 0) === 0 && h.predictionCount >= 10;
             text += `#${i + 1} ${h.name} ${h.predictionCount}pt${irrational ? " ⚠️" : ""}\n`;
         });
-        text += "\n#競馬 #フェブラリーS #集合知";
+        text += `\n#競馬 ${hashtag} #集合知`;
         window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
     };
 

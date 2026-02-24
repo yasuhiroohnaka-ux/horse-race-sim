@@ -1,6 +1,6 @@
 "use client";
 
-import { COURSES } from "@/lib/courses";
+import { ACTIVE_COURSES, ARCHIVED_COURSES } from "@/lib/courses";
 import { Course, TrackBias } from "@/lib/types";
 import { Label } from "@radix-ui/react-label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/ui/select";
@@ -31,9 +31,23 @@ export function CourseConfig({ selectedCourse, bias, onCourseChange, onBiasChang
                     value={selectedCourse.id}
                     onChange={(e) => onCourseChange(e.target.value)}
                 >
-                    {COURSES.map(c => (
-                        <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
+                    <optgroup label="今週のレース">
+                        {ACTIVE_COURSES.filter(c => ['nakayama-turf-1800', 'nakayama-turf-1200', 'hanshin-turf-1600'].includes(c.id)).map(c => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                    </optgroup>
+                    <optgroup label="その他コース">
+                        {ACTIVE_COURSES.filter(c => !['nakayama-turf-1800', 'nakayama-turf-1200', 'hanshin-turf-1600'].includes(c.id)).map(c => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                    </optgroup>
+                    {ARCHIVED_COURSES.length > 0 && (
+                        <optgroup label="アーカイブ">
+                            {ARCHIVED_COURSES.map(c => (
+                                <option key={c.id} value={c.id}>📦 {c.name}</option>
+                            ))}
+                        </optgroup>
+                    )}
                 </select>
                 <p className="text-sm text-slate-500 mt-1">
                     距離: {selectedCourse.distance}m | 直線: {selectedCourse.straightLength}m

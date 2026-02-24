@@ -33,6 +33,8 @@ export interface Course {
   surface: 'Turf' | 'Dirt';
   segments: CourseSegment[];
   straightLength: number; // Last straight length
+  hashtag: string;        // X投稿用ハッシュタグ
+  archived?: boolean;     // アーカイブ済みフラグ
 }
 
 export interface TrackBias {
