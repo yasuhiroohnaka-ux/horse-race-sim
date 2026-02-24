@@ -32,8 +32,11 @@ function SimulatorContent() {
         ? (COURSES.find(c => c.id === archiveParam)?.id ?? ACTIVE_COURSES[0].id)
         : ACTIVE_COURSES[0].id;
 
+    const initialCourse = COURSES.find(c => c.id === initialCourseId) || ACTIVE_COURSES[0];
     const [selectedCourseId, setSelectedCourseId] = useState(initialCourseId);
-    const [bias, setBias] = useState<TrackBias>({ innerOuter: 0, frontBack: 0 });
+    const [bias, setBias] = useState<TrackBias>(
+        initialCourse.defaultBias ?? { innerOuter: 0, frontBack: 0 }
+    );
     const [horses, setHorses] = useState<Horse[]>(calculateOdds(getDefaultHorses(initialCourseId)));
     const [results, setResults] = useState<{ horseId: string; winCount: number; bestTime: number }[] | null>(null);
     const [isRunning, setIsRunning] = useState(false);
@@ -41,12 +44,13 @@ function SimulatorContent() {
     const selectedCourse = COURSES.find(c => c.id === selectedCourseId) || ACTIVE_COURSES[0];
     const isArchive = selectedCourse.archived === true;
 
-    // コース変更時にデフォルト馬データをロード
+    // コース変更時にデフォルト馬データ＋デフォルトバイアスをロード
     const handleCourseChange = (courseId: string) => {
+        const course = COURSES.find(c => c.id === courseId);
         setSelectedCourseId(courseId);
         setHorses(calculateOdds(getDefaultHorses(courseId)));
         setResults(null);
-        setBias({ innerOuter: 0, frontBack: 0 });
+        setBias(course?.defaultBias ?? { innerOuter: 0, frontBack: 0 });
     };
 
     const handleRunSimulation = () => {

@@ -35,6 +35,7 @@ export interface Course {
   straightLength: number; // Last straight length
   hashtag: string;        // X投稿用ハッシュタグ
   archived?: boolean;     // アーカイブ済みフラグ
+  defaultBias?: TrackBias; // コース特性に基づくデフォルトバイアス
 }
 
 export interface TrackBias {
