@@ -11,49 +11,70 @@ export interface ArchivedRace {
 // ============================================================
 // SP/ST 算出ロジック
 // ============================================================
-// オッズから勝率を逆算し、能力値に変換する。
-// 勝率 = 0.8 / odds  (控除率80%想定)
-// SP   = 70 + 25 × (勝率の正規化)  → レンジ 70〜95
-// ST   = SP に距離適性補正を加味
+// 1. オッズ → ベース能力値（総合力）を算出
+// 2. 脚質でSP/STの配分を変える
+//    逃げ: SP寄り（瞬発力型）  差し: ST寄り（持続力型）
+// 3. 馬ごとに決定的バラつきを加え、同オッズでも差がつく
 //
-// イクイノックス級（odds 1.2〜1.5）→ SP 95, ST 93
-// 大穴（odds 100）→ SP 71, ST 70
+// 例: odds 3.5 → base 90
+//   逃げ → SP 93 / ST 87    差し → SP 87 / ST 93
 // ============================================================
 
+/** 文字列から決定的ハッシュ値を生成（乱数の代わり） */
+function hashStr(s: string): number {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) {
+        h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    }
+    return Math.abs(h);
+}
+
 /**
- * オッズからSP（スピード能力値）を算出
- * odds 1.5 → SP 95, odds 5 → SP 86, odds 20 → SP 78, odds 100 → SP 71
+ * オッズからベース能力値（総合力）を算出
+ * odds 1.5 → 95, odds 3 → 90, odds 10 → 82, odds 50 → 74, odds 100 → 71
  */
-function oddsToSpeed(odds: number): number {
+function oddsToBase(odds: number): number {
     if (!odds || odds <= 0) return 75;
-    const winProb = Math.min(0.8 / odds, 0.6); // 控除率80%で勝率算出、上限60%
-    // 対数スケールで正規化（1倍台〜100倍を0〜1に潰す）
-    const normalized = Math.max(0, (Math.log(0.6) - Math.log(Math.max(winProb, 0.005))) / (Math.log(0.6) - Math.log(0.005)));
-    return Math.round(95 - normalized * 25); // 95〜70
+    const winProb = Math.min(0.8 / odds, 0.6);
+    const normalized = Math.max(0,
+        (Math.log(0.6) - Math.log(Math.max(winProb, 0.005))) /
+        (Math.log(0.6) - Math.log(0.005))
+    );
+    return Math.round(95 - normalized * 25);
 }
 
-/**
- * SP にコース距離適性を加味してSTを算出
- * 短距離馬はST低め、長距離馬はST高め
- */
-function oddsToStamina(odds: number, distance: number): number {
-    const baseSt = oddsToSpeed(odds);
-    // 距離補正: 1200m → -3, 1600m → -1, 1800m → 0, 2400m → +2
-    const distAdj = Math.round((distance - 1800) / 300);
-    return Math.max(68, Math.min(95, baseSt + distAdj));
+/** 脚質ごとのSP/ST配分（SPシフト値、STは逆方向） */
+const STYLE_SPLIT: Record<string, { sp: number; st: number }> = {
+    Nige:   { sp: +3, st: -3 },  // 逃げ: 瞬発力型
+    Senko:  { sp: +1, st: -1 },  // 先行: やや速度型
+    Sashi:  { sp: -1, st: +2 },  // 差し: 持続力型
+    Oikomi: { sp: -3, st: +3 },  // 追込: スタミナ型
+};
+
+function clamp(v: number, min: number, max: number) {
+    return Math.max(min, Math.min(max, v));
 }
 
-/** オッズベースでHorse配列の SP/ST を一括算出 */
-function assignAbilities(horses: Omit<Horse, 'speed' | 'stamina' | 'power' | 'guts'>[], distance: number): Horse[] {
+/** オッズ＋脚質ベースでHorse配列の SP/ST を一括算出 */
+function assignAbilities(horses: Omit<Horse, 'speed' | 'stamina' | 'power' | 'guts'>[], _distance: number): Horse[] {
     return horses.map(h => {
-        const sp = oddsToSpeed(h.realOdds ?? 50);
-        const st = oddsToStamina(h.realOdds ?? 50, distance);
+        const base = oddsToBase(h.realOdds ?? 50);
+        const split = STYLE_SPLIT[h.runningStyle] ?? { sp: 0, st: 0 };
+
+        // 馬固有のバラつき（idベースで決定的、±2）
+        const hash = hashStr(h.id + h.name);
+        const spNoise = (hash % 5) - 2;         // -2 ~ +2
+        const stNoise = ((hash >> 3) % 5) - 2;  // -2 ~ +2
+
+        const sp = clamp(base + split.sp + spNoise, 68, 97);
+        const st = clamp(base + split.st + stNoise, 68, 97);
+
         return {
             ...h,
             speed: sp,
             stamina: st,
-            power: Math.round(sp * 0.95 + Math.random() * 3), // SP比 ±微調整
-            guts: Math.round(sp * 0.93 + Math.random() * 4),
+            power: clamp(base + ((hash >> 6) % 5) - 2, 68, 97),
+            guts:  clamp(base + ((hash >> 9) % 5) - 2, 68, 97),
         } as Horse;
     });
 }
