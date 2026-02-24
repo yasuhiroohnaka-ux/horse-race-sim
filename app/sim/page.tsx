@@ -94,21 +94,20 @@ function SimulatorContent() {
     return (
         <div className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans">
             <div className="max-w-4xl mx-auto">
-                <header className="mb-8 text-center">
-                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">🏇 AI競馬シミュレーター</h1>
-                    <p className="text-slate-500 mt-2">予想票を入力 → 100回試走 → 差分で狙い目を発見</p>
+                <header className="mb-4 text-center">
+                    <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">🏇 AI競馬シミュレーター</h1>
+                    <p className="text-slate-400 text-xs mt-1">予想票を入力 → 100回試走 → 差分で狙い目を発見</p>
                     {isArchive && (
-                        <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-amber-700 text-sm">
-                            <span>📦</span>
-                            <span className="font-medium">アーカイブモード: {selectedCourse.name}</span>
-                            <Link href="/sim" className="text-blue-600 hover:underline ml-2 text-xs">
-                                最新レースへ →
+                        <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-amber-50 border border-amber-200 rounded-full text-amber-700 text-xs">
+                            <span>📦 アーカイブ: {selectedCourse.name}</span>
+                            <Link href="/sim" className="text-blue-600 hover:underline ml-1">
+                                最新へ →
                             </Link>
                         </div>
                     )}
                 </header>
 
-                <div className="space-y-6">
+                <div className="space-y-3">
                     <CourseConfig
                         selectedCourse={selectedCourse}
                         bias={bias}

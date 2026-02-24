@@ -20,14 +20,12 @@ interface CourseConfigProps {
 
 export function CourseConfig({ selectedCourse, bias, onCourseChange, onBiasChange }: CourseConfigProps) {
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200">
-            <h2 className="text-xl font-bold mb-4 text-slate-800">1. レース設定</h2>
-
-            {/* Course Selection */}
-            <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-700 mb-2">コース選択</label>
+        <div className="bg-white p-4 rounded-lg shadow-md border border-slate-200">
+            {/* Course Selection - コンパクト横並び */}
+            <div className="flex flex-wrap items-center gap-3 mb-3">
+                <h2 className="text-sm font-bold text-slate-500 shrink-0">コース</h2>
                 <select
-                    className="w-full p-2 border border-slate-300 rounded-md"
+                    className="flex-1 min-w-[200px] p-2 text-sm border border-slate-300 rounded-md font-medium"
                     value={selectedCourse.id}
                     onChange={(e) => onCourseChange(e.target.value)}
                 >
@@ -49,18 +47,18 @@ export function CourseConfig({ selectedCourse, bias, onCourseChange, onBiasChang
                         </optgroup>
                     )}
                 </select>
-                <p className="text-sm text-slate-500 mt-1">
-                    距離: {selectedCourse.distance}m | 直線: {selectedCourse.straightLength}m
-                </p>
+                <span className="text-xs text-slate-400">
+                    {selectedCourse.distance}m / 直線{selectedCourse.straightLength}m
+                </span>
             </div>
 
-            {/* Track Bias Sliders */}
-            <div className="space-y-6">
+            {/* Track Bias Sliders - 2列横並び */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
                 <div>
-                    <div className="flex justify-between mb-2">
-                        <label className="text-sm font-medium text-slate-700">内外の馬場傾向</label>
-                        <span className="text-sm text-blue-600 font-bold">
-                            {bias.innerOuter === 0 ? "フラット" : bias.innerOuter < 0 ? `内有利 (${bias.innerOuter})` : `外有利 (+${bias.innerOuter})`}
+                    <div className="flex justify-between mb-1">
+                        <label className="text-xs text-slate-500">内外バイアス</label>
+                        <span className="text-xs text-blue-600 font-bold">
+                            {bias.innerOuter === 0 ? "フラット" : bias.innerOuter < 0 ? `内${bias.innerOuter}` : `外+${bias.innerOuter}`}
                         </span>
                     </div>
                     <input
@@ -68,20 +66,19 @@ export function CourseConfig({ selectedCourse, bias, onCourseChange, onBiasChang
                         min="-5" max="5" step="1"
                         value={bias.innerOuter}
                         onChange={(e) => onBiasChange({ ...bias, innerOuter: parseInt(e.target.value) })}
-                        className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                        className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer"
                     />
-                    <div className="flex justify-between text-xs text-slate-400 mt-1">
-                        <span>内有利 (-5)</span>
-                        <span>フラット</span>
-                        <span>外有利 (+5)</span>
+                    <div className="flex justify-between text-[10px] text-slate-300 mt-0.5">
+                        <span>内有利</span>
+                        <span>外有利</span>
                     </div>
                 </div>
 
                 <div>
-                    <div className="flex justify-between mb-2">
-                        <label className="text-sm font-medium text-slate-700">脚質傾向</label>
-                        <span className="text-sm text-green-600 font-bold">
-                            {bias.frontBack === 0 ? "フラット" : bias.frontBack > 0 ? `前有利 (+${bias.frontBack})` : `後有利 (${bias.frontBack})`}
+                    <div className="flex justify-between mb-1">
+                        <label className="text-xs text-slate-500">脚質バイアス</label>
+                        <span className="text-xs text-green-600 font-bold">
+                            {bias.frontBack === 0 ? "フラット" : bias.frontBack > 0 ? `前+${bias.frontBack}` : `後${bias.frontBack}`}
                         </span>
                     </div>
                     <input
@@ -89,12 +86,11 @@ export function CourseConfig({ selectedCourse, bias, onCourseChange, onBiasChang
                         min="-5" max="5" step="1"
                         value={bias.frontBack}
                         onChange={(e) => onBiasChange({ ...bias, frontBack: parseInt(e.target.value) })}
-                        className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                        className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer"
                     />
-                    <div className="flex justify-between text-xs text-slate-400 mt-1">
-                        <span>差し・追込有利 (-5)</span>
-                        <span>フラット</span>
-                        <span>逃げ・先行有利 (+5)</span>
+                    <div className="flex justify-between text-[10px] text-slate-300 mt-0.5">
+                        <span>差し有利</span>
+                        <span>先行有利</span>
                     </div>
                 </div>
             </div>
