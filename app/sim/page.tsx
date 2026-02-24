@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { COURSES, ACTIVE_COURSES } from "@/lib/courses";
 import { Horse, RaceCondition, TrackBias } from "@/lib/types";
@@ -12,6 +12,18 @@ import { SimulationResults } from "@/components/SimulationResults";
 import Link from "next/link";
 
 export default function SimulatorPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+                <p className="text-slate-500 text-lg">読み込み中...</p>
+            </div>
+        }>
+            <SimulatorContent />
+        </Suspense>
+    );
+}
+
+function SimulatorContent() {
     const searchParams = useSearchParams();
     const archiveParam = searchParams.get('archive');
 
