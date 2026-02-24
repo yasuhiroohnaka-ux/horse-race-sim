@@ -11,6 +11,8 @@ export const COURSES: Course[] = [
         surface: 'Turf',
         straightLength: 310,
         hashtag: '#中山記念',
+        // 中山：直線310m（短い）＋急坂 → 先行有利、内枠やや有利
+        defaultBias: { innerOuter: -1, frontBack: 2 },
         segments: [
             { distance: 176, slope: -0.5, type: 'straight' },
             { distance: 300, slope: 0, type: 'corner' },
@@ -27,6 +29,8 @@ export const COURSES: Course[] = [
         surface: 'Turf',
         straightLength: 310,
         hashtag: '#オーシャンS',
+        // 中山スプリント：短距離＋直線短い → 逃げ先行かなり有利、内枠有利
+        defaultBias: { innerOuter: -2, frontBack: 3 },
         segments: [
             { distance: 290, slope: -1.0, type: 'straight' },
             { distance: 300, slope: 0, type: 'corner' },
@@ -41,6 +45,8 @@ export const COURSES: Course[] = [
         surface: 'Turf',
         straightLength: 473.6,
         hashtag: '#チューリップ賞',
+        // 阪神外回り：直線473m（長い） → 差し有利、内外フラット
+        defaultBias: { innerOuter: 0, frontBack: -1 },
         segments: [
             { distance: 176, slope: 0, type: 'straight' },
             { distance: 300, slope: 0, type: 'corner' },
@@ -57,6 +63,8 @@ export const COURSES: Course[] = [
         surface: 'Turf',
         straightLength: 525.9,
         hashtag: '#日本ダービー',
+        // 東京：直線525m（最長）→ 差し追込有利、外回り広いのでフラット
+        defaultBias: { innerOuter: 0, frontBack: -2 },
         segments: [
             { distance: 300, slope: 0, type: 'straight' },
             { distance: 400, slope: 0, type: 'corner' },
@@ -74,6 +82,8 @@ export const COURSES: Course[] = [
         surface: 'Turf',
         straightLength: 310,
         hashtag: '#有馬記念',
+        // 中山長距離：直線短い＋2周 → 先行有利、内枠やや有利
+        defaultBias: { innerOuter: -1, frontBack: 1 },
         segments: [
             { distance: 200, slope: -1.0, type: 'straight' },
             { distance: 400, slope: 0, type: 'corner' },
@@ -96,6 +106,8 @@ export const COURSES: Course[] = [
         straightLength: 501.6,
         hashtag: '#フェブラリーS',
         archived: true,
+        // 東京ダート：直線長い＋砂 → やや差し有利、外枠やや有利
+        defaultBias: { innerOuter: 1, frontBack: -1 },
         segments: [
             { distance: 400, slope: 0, type: 'straight' },
             { distance: 350, slope: 0, type: 'corner' },
