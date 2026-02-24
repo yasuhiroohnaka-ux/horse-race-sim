@@ -14,14 +14,23 @@ import { Slider } from "@/lib/ui/slider";
 interface CourseConfigProps {
     selectedCourse: Course;
     bias: TrackBias;
+    groundCondition: string;
     onCourseChange: (courseId: string) => void;
     onBiasChange: (bias: TrackBias) => void;
+    onGroundConditionChange: (condition: string) => void;
 }
 
-export function CourseConfig({ selectedCourse, bias, onCourseChange, onBiasChange }: CourseConfigProps) {
+export function CourseConfig({ selectedCourse, bias, groundCondition, onCourseChange, onBiasChange, onGroundConditionChange }: CourseConfigProps) {
+    const groundLabels: Record<string, { label: string; color: string }> = {
+        Firm:     { label: '良',   color: 'text-green-600' },
+        Good:     { label: '稍重', color: 'text-yellow-600' },
+        Yielding: { label: '重',   color: 'text-orange-600' },
+        Soft:     { label: '不良', color: 'text-red-600' },
+    };
+
     return (
         <div className="bg-white p-4 rounded-lg shadow-md border border-slate-200">
-            {/* Course Selection - コンパクト横並び */}
+            {/* Course Selection + Ground Condition - コンパクト横並び */}
             <div className="flex flex-wrap items-center gap-3 mb-3">
                 <h2 className="text-sm font-bold text-slate-500 shrink-0">コース</h2>
                 <select
@@ -46,6 +55,16 @@ export function CourseConfig({ selectedCourse, bias, onCourseChange, onBiasChang
                             ))}
                         </optgroup>
                     )}
+                </select>
+                <select
+                    className={`p-2 text-sm border border-slate-300 rounded-md font-bold ${groundLabels[groundCondition]?.color ?? ''}`}
+                    value={groundCondition}
+                    onChange={(e) => onGroundConditionChange(e.target.value)}
+                >
+                    <option value="Firm">🟢 良</option>
+                    <option value="Good">🟡 稍重</option>
+                    <option value="Yielding">🟠 重</option>
+                    <option value="Soft">🔴 不良</option>
                 </select>
                 <span className="text-xs text-slate-400">
                     {selectedCourse.distance}m / 直線{selectedCourse.straightLength}m
