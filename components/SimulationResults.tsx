@@ -140,19 +140,15 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                             <th className="px-2 py-1.5 text-left w-16">騎手</th>
                             <th className="px-2 py-1.5 text-right text-blue-600 w-12">物理%</th>
                             <th className="px-2 py-1.5 text-right text-purple-600 w-12">集合知%</th>
-                            <th
-                                className="px-2 py-1.5 text-center cursor-help w-14"
-                                title="物理% − 集合知%。正(橙)=能力は高いが世論が気づいていない / 負(紫)=世論が物理より高く評価"
-                            >
-                                <span className="border-b border-dotted border-slate-400">差分</span>
+                            <th className="px-2 py-1.5 text-center w-14">
+                                <div className="leading-tight">
+                                    <span className="text-blue-600">物理</span>
+                                    <span className="text-slate-300">−</span>
+                                    <span className="text-purple-600">世論</span>
+                                </div>
                             </th>
-                            <th className="px-2 py-1.5 text-right w-14">市場オッズ</th>
-                            <th
-                                className="px-2 py-1.5 text-center cursor-help w-14"
-                                title="集合知オッズ < 市場オッズ → 世論が過小評価＝世論の狙い目(★強気)"
-                            >
-                                <span className="border-b border-dotted border-slate-400">乖離</span>
-                            </th>
+                            <th className="px-2 py-1.5 text-right w-14">市場</th>
+                            <th className="px-2 py-1.5 text-center w-14">妙味</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -162,16 +158,11 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                             const physVsCrowdColor =
                                 physVsCrowd > 10 ? "text-orange-600" :
                                 physVsCrowd < -10 ? "text-purple-600" : "text-slate-400";
-                            const physVsCrowdLabel =
-                                physVsCrowd > 10 ? "能力↑" :
-                                physVsCrowd < -10 ? "世論↑" : "-";
 
-                            // 集合知 vs 市場 の乖離
+                            // 妙味（集合知 vs 市場オッズ）
                             const marketDiff = (row.horse?.simulatedOdds || 0) - (row.horse?.realOdds || 0);
-                            const marketDiffColor = marketDiff < 0 ? "text-red-600" : "text-blue-600";
-                            const deviation = (row.horse?.realOdds && row.horse?.simulatedOdds)
-                                ? (((row.horse.realOdds / row.horse.simulatedOdds) - 1) * 100).toFixed(0) + "%"
-                                : "-";
+                            const marketLabel = marketDiff < 0 ? "穴" : marketDiff > 5 ? "過大" : "—";
+                            const marketColor = marketDiff < 0 ? "text-red-600" : marketDiff > 5 ? "text-blue-500" : "text-slate-300";
 
                             return (
                                 <tr key={index} className="border-b border-slate-100 hover:bg-slate-50/50">
@@ -181,28 +172,14 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                                     <td className="px-2 py-1.5 text-slate-400 truncate">{row.horse?.jockey}</td>
                                     <td className="px-2 py-1.5 text-right font-bold text-blue-600">{row.wins}%</td>
                                     <td className="px-2 py-1.5 text-right font-bold text-purple-600">{row.crowdWin}%</td>
-                                    <td
-                                        className={`px-2 py-1.5 text-center font-bold cursor-help ${physVsCrowdColor}`}
-                                        title={
-                                            physVsCrowd > 10 ? "物理エンジンが世論より高く評価。世論が気づいていない実力馬の可能性。" :
-                                            physVsCrowd < -10 ? "世論が物理エンジンより強く推している。人気先行の可能性あり。" :
-                                            "物理評価と世論評価が概ね一致。"
-                                        }
-                                    >
+                                    <td className={`px-2 py-1.5 text-center font-bold ${physVsCrowdColor}`}>
                                         {physVsCrowd > 0 ? `+${physVsCrowd}` : physVsCrowd}
-                                        <div className="text-[10px] font-normal">{physVsCrowdLabel}</div>
                                     </td>
                                     <td className="px-2 py-1.5 text-right text-slate-500 font-mono">
                                         {row.horse?.realOdds?.toFixed(1)}
                                     </td>
-                                    <td
-                                        className={`px-2 py-1.5 text-center font-bold cursor-help ${marketDiffColor}`}
-                                        title={marketDiff < 0
-                                            ? "集合知オッズ < 市場オッズ：世論は強く見ている＝市場が過小評価の可能性"
-                                            : "集合知オッズ > 市場オッズ：市場より人気が低い＝割高の可能性"}
-                                    >
-                                        {marketDiff < 0 ? "★強気" : "弱気"}
-                                        <div className="text-[10px] font-normal opacity-70">({deviation})</div>
+                                    <td className={`px-2 py-1.5 text-center font-bold ${marketColor}`}>
+                                        {marketLabel}
                                     </td>
                                 </tr>
                             );
