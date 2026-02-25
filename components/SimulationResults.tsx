@@ -55,26 +55,26 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
     };
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200 mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="text-xl font-bold mb-1 text-slate-800">3. シミュレーション結果 (100回実行)</h2>
+        <div className="bg-white p-4 rounded-lg shadow-md border border-slate-200 mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h2 className="text-sm font-bold mb-1 text-slate-800">3. シミュレーション結果 (100回実行)</h2>
             <p className="text-xs text-slate-400 mb-4">
                 <span className="inline-block w-3 h-3 rounded-sm bg-blue-500 mr-1 align-middle"></span>物理エンジン（能力値のみ）
                 <span className="inline-block w-3 h-3 rounded-sm bg-purple-400 mr-1 align-middle"></span>集合知（予想票の割合）
             </p>
 
-            <div className="flex gap-4 mb-6 h-96">
+            <div className="flex gap-4 mb-6" style={{ height: Math.max(320, data.length * 40) }}>
                 {/* バーチャート */}
                 <div className="flex-1 min-w-0">
                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
+                        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                            <XAxis type="number" domain={[0, 100]} unit="%" />
-                            <YAxis type="category" dataKey="name" width={100} />
+                            <XAxis type="number" domain={[0, 100]} unit="%" tick={{ fontSize: 11 }} />
+                            <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 11 }} />
                             <Tooltip
-                                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: 12 }}
                                 cursor={{ fill: '#f1f5f9' }}
                             />
-                            <Legend />
+                            <Legend wrapperStyle={{ fontSize: 11 }} />
                             <Bar dataKey="wins" fill="#3b82f6" radius={[0, 4, 4, 0]} name="物理%" />
                             <Bar dataKey="crowdWin" fill="#a855f7" radius={[0, 4, 4, 0]} name="集合知%" />
                         </BarChart>
@@ -130,28 +130,28 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                 </div>
             </div>
 
-            <div className="overflow-x-auto mb-6">
-                <table className="w-full text-sm text-left">
-                    <thead className="bg-slate-50 text-slate-600 uppercase">
-                        <tr>
-                            <th className="px-4 py-2">順位</th>
-                            <th className="px-4 py-2">馬番</th>
-                            <th className="px-4 py-2">馬名</th>
-                            <th className="px-4 py-2">騎手</th>
-                            <th className="px-4 py-2 text-right text-blue-600">物理%</th>
-                            <th className="px-4 py-2 text-right text-purple-600">集合知%</th>
+            <div className="overflow-x-auto -mx-6 px-6 mb-6">
+                <table className="w-full text-xs text-left border-collapse" style={{ minWidth: '700px' }}>
+                    <thead className="bg-slate-50 text-slate-500">
+                        <tr className="border-y border-slate-200">
+                            <th className="px-2 py-1.5 text-center w-10">順位</th>
+                            <th className="px-2 py-1.5 text-center w-10">馬番</th>
+                            <th className="px-2 py-1.5 text-left" style={{ minWidth: '100px' }}>馬名</th>
+                            <th className="px-2 py-1.5 text-left w-16">騎手</th>
+                            <th className="px-2 py-1.5 text-right text-blue-600 w-12">物理%</th>
+                            <th className="px-2 py-1.5 text-right text-purple-600 w-12">集合知%</th>
                             <th
-                                className="px-4 py-2 text-center cursor-help"
+                                className="px-2 py-1.5 text-center cursor-help w-14"
                                 title="物理% − 集合知%。正(橙)=能力は高いが世論が気づいていない / 負(紫)=世論が物理より高く評価"
                             >
-                                差分 (?)
+                                <span className="border-b border-dotted border-slate-400">差分</span>
                             </th>
-                            <th className="px-4 py-2 text-right">市場オッズ</th>
+                            <th className="px-2 py-1.5 text-right w-14">市場オッズ</th>
                             <th
-                                className="px-4 py-2 text-center cursor-help"
+                                className="px-2 py-1.5 text-center cursor-help w-14"
                                 title="集合知オッズ < 市場オッズ → 世論が過小評価＝世論の狙い目(★強気)"
                             >
-                                乖離 (?)
+                                <span className="border-b border-dotted border-slate-400">乖離</span>
                             </th>
                         </tr>
                     </thead>
@@ -174,15 +174,15 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                                 : "-";
 
                             return (
-                                <tr key={index} className="border-b border-slate-100">
-                                    <td className="px-4 py-2 font-bold text-slate-500">#{index + 1}</td>
-                                    <td className="px-4 py-2 text-slate-400 font-mono">{row.horse?.gateNumber}</td>
-                                    <td className="px-4 py-2 font-medium text-slate-900">{row.name}</td>
-                                    <td className="px-4 py-2 text-slate-500 text-xs">{row.horse?.jockey}</td>
-                                    <td className="px-4 py-2 text-right font-bold text-blue-600">{row.wins}%</td>
-                                    <td className="px-4 py-2 text-right font-bold text-purple-600">{row.crowdWin}%</td>
+                                <tr key={index} className="border-b border-slate-100 hover:bg-slate-50/50">
+                                    <td className="px-2 py-1.5 text-center font-bold text-slate-500">#{index + 1}</td>
+                                    <td className="px-2 py-1.5 text-center text-slate-400 font-mono">{row.horse?.gateNumber}</td>
+                                    <td className="px-2 py-1.5 font-bold text-slate-800 whitespace-nowrap">{row.name}</td>
+                                    <td className="px-2 py-1.5 text-slate-400 truncate">{row.horse?.jockey}</td>
+                                    <td className="px-2 py-1.5 text-right font-bold text-blue-600">{row.wins}%</td>
+                                    <td className="px-2 py-1.5 text-right font-bold text-purple-600">{row.crowdWin}%</td>
                                     <td
-                                        className={`px-4 py-2 text-center font-bold cursor-help ${physVsCrowdColor}`}
+                                        className={`px-2 py-1.5 text-center font-bold cursor-help ${physVsCrowdColor}`}
                                         title={
                                             physVsCrowd > 10 ? "物理エンジンが世論より高く評価。世論が気づいていない実力馬の可能性。" :
                                             physVsCrowd < -10 ? "世論が物理エンジンより強く推している。人気先行の可能性あり。" :
@@ -192,11 +192,11 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                                         {physVsCrowd > 0 ? `+${physVsCrowd}` : physVsCrowd}
                                         <div className="text-[10px] font-normal">{physVsCrowdLabel}</div>
                                     </td>
-                                    <td className="px-4 py-2 text-right text-slate-500 font-mono">
+                                    <td className="px-2 py-1.5 text-right text-slate-500 font-mono">
                                         {row.horse?.realOdds?.toFixed(1)}
                                     </td>
                                     <td
-                                        className={`px-4 py-2 text-center font-bold cursor-help ${marketDiffColor}`}
+                                        className={`px-2 py-1.5 text-center font-bold cursor-help ${marketDiffColor}`}
                                         title={marketDiff < 0
                                             ? "集合知オッズ < 市場オッズ：世論は強く見ている＝市場が過小評価の可能性"
                                             : "集合知オッズ > 市場オッズ：市場より人気が低い＝割高の可能性"}
