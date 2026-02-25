@@ -148,7 +148,9 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                                 </div>
                             </th>
                             <th className="px-2 py-1.5 text-right w-14">市場</th>
-                            <th className="px-2 py-1.5 text-center w-14">妙味</th>
+                            <th className="px-2 py-1.5 text-center w-16">
+                                <div className="leading-tight">市場の<br/>評価</div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -159,10 +161,10 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                                 physVsCrowd > 10 ? "text-orange-600" :
                                 physVsCrowd < -10 ? "text-purple-600" : "text-slate-400";
 
-                            // 妙味（集合知 vs 市場オッズ）
+                            // 市場の評価（集合知オッズ vs 市場オッズ）
                             const marketDiff = (row.horse?.simulatedOdds || 0) - (row.horse?.realOdds || 0);
-                            const marketLabel = marketDiff < 0 ? "穴" : marketDiff > 5 ? "過大" : "—";
-                            const marketColor = marketDiff < 0 ? "text-red-600" : marketDiff > 5 ? "text-blue-500" : "text-slate-300";
+                            const marketLabel = marketDiff < -3 ? "過小" : marketDiff > 5 ? "過大" : "妥当";
+                            const marketColor = marketDiff < -3 ? "text-red-600" : marketDiff > 5 ? "text-blue-500" : "text-slate-400";
 
                             return (
                                 <tr key={index} className="border-b border-slate-100 hover:bg-slate-50/50">
@@ -178,7 +180,7 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                                     <td className="px-2 py-1.5 text-right text-slate-500 font-mono">
                                         {row.horse?.realOdds?.toFixed(1)}
                                     </td>
-                                    <td className={`px-2 py-1.5 text-center font-bold ${marketColor}`}>
+                                    <td className={`px-2 py-1.5 text-center font-bold whitespace-nowrap ${marketColor}`}>
                                         {marketLabel}
                                     </td>
                                 </tr>
