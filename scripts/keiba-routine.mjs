@@ -122,6 +122,34 @@ function pickBestHorse(races, day, includeBodyWeight = false) {
   return best;
 }
 
+function listUndervaluedHorsesInRace(race, includeBodyWeight = false) {
+  const scored = race.horses.map((horse) => ({
+    horse,
+    score: scoreHorse(horse, race, includeBodyWeight),
+  }));
+  const scoreRank = new Map(
+    [...scored]
+      .sort((a, b) => b.score - a.score)
+      .map((x, idx) => [x.horse.id, idx + 1])
+  );
+  const popRank = new Map(
+    [...race.horses]
+      .sort((a, b) => (b.predictionCount ?? 0) - (a.predictionCount ?? 0))
+      .map((x, idx) => [x.id, idx + 1])
+  );
+
+  return race.horses
+    .map((horse) => {
+      const sRank = scoreRank.get(horse.id) ?? race.horses.length;
+      const pRank = popRank.get(horse.id) ?? race.horses.length;
+      const gap = pRank - sRank;
+      if (gap <= 0) return null;
+      return { horse, gap };
+    })
+    .filter((x) => x !== null)
+    .sort((a, b) => b.gap - a.gap);
+}
+
 async function handleMonday10(now) {
   const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { weekOf: isoDate(startOfWeekMonday(now)), races: [] }, archives: [] });
   const state = await readJson(STATE_PATH, {});
@@ -185,9 +213,16 @@ async function handleRecommendation(day, stage) {
 
   const race = best.race;
   const horse = best.horse;
+  const undervalued = listUndervaluedHorsesInRace(race, includeBodyWeight);
+  const undervaluedText =
+    undervalued.length > 0
+      ? undervalued
+          .map((x) => `${x.horse.name}(人気${x.horse.predictionCount}, 想定${x.horse.realOdds}倍, ギャップ+${x.gap})`)
+          .join("、")
+      : "該当なし";
   await publishOrQueuePost(
     stage,
-    `${day}重賞おすすめ: ${horse.name} (${race.label}) / score=${best.score.toFixed(1)} / 人気=${horse.predictionCount} / 想定オッズ=${horse.realOdds}`
+    `${day}重賞おすすめ: ${horse.name} (${race.label}) / score=${best.score.toFixed(1)} / 人気=${horse.predictionCount} / 想定オッズ=${horse.realOdds}\n過小評価馬(全頭): ${undervaluedText}`
   );
 }
 
