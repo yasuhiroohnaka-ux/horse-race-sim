@@ -161,10 +161,18 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                                 physVsCrowd > 10 ? "text-orange-600" :
                                 physVsCrowd < -10 ? "text-purple-600" : "text-slate-400";
 
-                            // 市場の評価（集合知オッズ vs 市場オッズ）
-                            const marketDiff = (row.horse?.simulatedOdds || 0) - (row.horse?.realOdds || 0);
-                            const marketLabel = marketDiff < -3 ? "過小" : marketDiff > 5 ? "過大" : "妥当";
-                            const marketColor = marketDiff < -3 ? "text-red-600" : marketDiff > 5 ? "text-blue-500" : "text-slate-400";
+                            // 市場の評価（物理勝率 vs 市場オッズ）
+                            const realOdds = row.horse?.realOdds || 0;
+                            let marketLabel = "妥当";
+                            let marketColor = "text-slate-400";
+                            if (row.wins > 0 && realOdds > 0) {
+                                const physImpliedOdds = 100 / row.wins;
+                                const ratio = realOdds / physImpliedOdds;
+                                if (ratio > 1.5) { marketLabel = "過小"; marketColor = "text-red-600"; }
+                                else if (ratio < 0.5) { marketLabel = "過大"; marketColor = "text-blue-500"; }
+                            } else if (row.wins === 0 && realOdds > 0 && realOdds < 30) {
+                                marketLabel = "過大"; marketColor = "text-blue-500";
+                            }
 
                             return (
                                 <tr key={index} className="border-b border-slate-100 hover:bg-slate-50/50">
