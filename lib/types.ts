@@ -13,6 +13,11 @@ export interface Horse {
   runningStyle: RunningStyle;
   gateNumber: number;
   jockey: string;
+  trainer?: string;
+  jockeyPower?: number; // 0-100 (netkeiba jockey metrics)
+  stablePower?: number; // 0-100 (netkeiba trainer/stable metrics)
+  trainingScore?: number; // -5 to +5 (Wed/Thu workout signal)
+  trainingNote?: string;  // Short memo for why trainingScore was set
 
   // Condition & Weight
   condition?: number;    // 状態値 0-10 (5=普通, 高い=好調)

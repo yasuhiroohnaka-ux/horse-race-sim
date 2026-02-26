@@ -2,6 +2,7 @@
 
 import { Horse } from "@/lib/types";
 import { RunningStyle, calculateOdds } from "@/lib/simulation";
+import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
 import { useState, useEffect } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
@@ -29,8 +30,9 @@ export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: Hors
             sex: 'M',
             weight: 57,
             condition: 5,
+            trainingScore: 0,
         };
-        updateHorses([...horses, newHorse]);
+        updateHorses([...horses, applyNetkeibaRatings(newHorse)]);
     };
 
     const removeHorse = (id: string) => {
@@ -41,7 +43,18 @@ export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: Hors
         const newHorses = horses.map(h =>
             h.id === id ? { ...h, [field]: value } : h
         );
-        updateHorses(newHorses);
+        const enriched = newHorses.map(h => {
+            if (h.id !== id) return h;
+            if (field === 'jockey' || field === 'trainer' || field === 'realOdds') {
+                return applyNetkeibaRatings({
+                    ...h,
+                    jockeyPower: undefined,
+                    stablePower: undefined,
+                });
+            }
+            return h;
+        });
+        updateHorses(enriched);
     };
 
     const handlePostPopularity = () => {
@@ -109,6 +122,9 @@ export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: Hors
                             <th className="px-1 py-2 text-center w-10">脚質</th>
                             <th className="px-1 py-2 text-center w-10">SP</th>
                             <th className="px-1 py-2 text-center w-10">ST</th>
+                            <th className="px-1 py-2 text-center w-10" title="Workout">
+                                追切
+                            </th>
                             <th className="px-1 py-2 text-center w-10"
                                 title="状態値 0-10 (好調→能力UP, 不調→能力DOWN)">
                                 <span className="cursor-help border-b border-dotted border-slate-400">調子</span>
@@ -205,6 +221,15 @@ export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: Hors
                                             value={horse.stamina}
                                             onChange={(e) => updateHorse(horse.id, 'stamina', parseInt(e.target.value))}
                                             className="w-10 p-0.5 border rounded text-center text-xs"
+                                        />
+                                    </td>
+                                    <td className="px-0.5 py-1.5 text-center">
+                                        <input
+                                            type="number"
+                                            min="-5" max="5" step="0.5"
+                                            value={horse.trainingScore ?? 0}
+                                            onChange={(e) => updateHorse(horse.id, 'trainingScore', Math.max(-5, Math.min(5, parseFloat(e.target.value) || 0)))}
+                                            className="w-10 p-0.5 border rounded text-center text-xs text-emerald-700 font-semibold"
                                         />
                                     </td>
                                     {/* 状態値 */}

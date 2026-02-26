@@ -1,4 +1,5 @@
 import { Horse, Course, RaceCondition, RaceResult, RunningStyle } from "./types";
+import { getUpsetScore } from "./raceVolatility";
 export type { Horse, RunningStyle };
 
 
@@ -70,6 +71,66 @@ function getRunningStyleBonus(style: string, bias: RaceCondition['trackBias']): 
     return 0;
 }
 
+function getPaceAdjustmentByStyle(horses: Horse[]): Map<string, number> {
+    const frontCount = horses.filter(h => h.runningStyle === 'Nige' || h.runningStyle === 'Senko').length;
+    const fieldSize = Math.max(horses.length, 1);
+    const frontRatio = frontCount / fieldSize;
+    const pressure = Math.max(-0.25, Math.min(0.25, frontRatio - 0.45));
+
+    return new Map(
+        horses.map((horse) => {
+            const isFront = horse.runningStyle === 'Nige' || horse.runningStyle === 'Senko';
+            const signed = isFront ? -pressure : pressure;
+            const modifier = Math.max(0.96, Math.min(1.04, 1 + signed * 0.20));
+            return [horse.id, modifier];
+        })
+    );
+}
+
+function getUndervaluedBoostMap(horses: Horse[], courseId: string): Map<string, number> {
+    const n = Math.max(horses.length, 1);
+    const upsetNorm = Math.max(0, Math.min(1, (getUpsetScore(courseId) - 50) / 50));
+    if (upsetNorm <= 0) {
+        return new Map(horses.map(h => [h.id, 1]));
+    }
+
+    const ability = new Map(
+        horses.map(h => [
+            h.id,
+            h.speed * 0.36 +
+            h.stamina * 0.28 +
+            h.power * 0.18 +
+            h.guts * 0.18 +
+            (h.trainingScore ?? 0) * 0.8 +
+            ((h.jockeyPower ?? 60) - 60) * 0.2 +
+            ((h.stablePower ?? 60) - 60) * 0.15
+        ])
+    );
+
+    const abilityRank = new Map(
+        [...horses]
+            .sort((a, b) => (ability.get(b.id) ?? 0) - (ability.get(a.id) ?? 0))
+            .map((h, idx) => [h.id, idx + 1])
+    );
+    const popularityRank = new Map(
+        [...horses]
+            .sort((a, b) => (b.predictionCount ?? 0) - (a.predictionCount ?? 0))
+            .map((h, idx) => [h.id, idx + 1])
+    );
+
+    return new Map(
+        horses.map(h => {
+            const aRank = abilityRank.get(h.id) ?? n;
+            const pRank = popularityRank.get(h.id) ?? n;
+            const rankGap = pRank - aRank; // >0 means underrated by popularity
+            const gapNorm = Math.max(0, rankGap / Math.max(1, n - 1));
+            const longshot = Math.max(0, Math.min(1, ((h.realOdds ?? 8) - 8) / 24));
+            const boost = 1 + upsetNorm * gapNorm * (0.018 + longshot * 0.022);
+            return [h.id, Math.max(0.98, Math.min(1.06, boost))];
+        })
+    );
+}
+
 // Single Race Simulation
 export function runRace(
     horses: Horse[],
@@ -79,6 +140,8 @@ export function runRace(
 ): RaceResult[] {
     // 馬場状態の補正値
     const groundMod = getGroundConditionModifiers(condition.groundCondition, course.surface);
+    const paceMap = getPaceAdjustmentByStyle(horses);
+    const undervaluedMap = getUndervaluedBoostMap(horses, course.id);
 
     // 1. Initialize Simulation State
     // 状態値: 0-10 (5=普通)。5から離れるほど速度に±3%影響
@@ -88,11 +151,19 @@ export function runRace(
         const conditionMod = 1 + (conditionVal - 5) * 0.006;   // 0→-3%, 10→+3%
         const weightVal = h.weight ?? 57;
         const weightMod = 1 - (weightVal - 57) * 0.003;        // 55kg→+0.6%, 59kg→-0.6%
+        const jockeyPower = h.jockeyPower ?? 60;
+        const stablePower = h.stablePower ?? 60;
+        const trainingScore = h.trainingScore ?? 0;
+        const jockeyMod = 1 + (jockeyPower - 60) * 0.0015;
+        const stableMod = 1 + (stablePower - 60) * 0.0010;
+        const trainingMod = 1 + trainingScore * 0.005;
+        const paceMod = paceMap.get(h.id) ?? 1.0;
+        const undervaluedMod = undervaluedMap.get(h.id) ?? 1.0;
 
         return {
             id: h.id,
             distanceCovered: 0,
-            currentSpeed: (h.speed * SPEED_ABILITY_FACTOR + BASE_SPEED) * conditionMod * weightMod,
+            currentSpeed: (h.speed * SPEED_ABILITY_FACTOR + BASE_SPEED) * conditionMod * weightMod * jockeyMod * stableMod * trainingMod * paceMod * undervaluedMod,
             stamina: h.stamina,
             fatigue: 0,
             finished: false,
