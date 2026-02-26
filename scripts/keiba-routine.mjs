@@ -95,7 +95,67 @@ function computePaceModifier(race) {
   return ratio - 0.45;
 }
 
-function scoreHorse(horse, race, includeBodyWeight = false) {
+function clamp(v, min, max) {
+  return Math.max(min, Math.min(max, v));
+}
+
+function isFrontStyle(style) {
+  return style === "Nige" || style === "Senko";
+}
+
+function isBackStyle(style) {
+  return style === "Sashi" || style === "Oikomi";
+}
+
+function getCourseInnerTiltFromId(courseId = "") {
+  const id = String(courseId).toLowerCase();
+  if (id.includes("nakayama")) return 0.7;
+  if (id.includes("chukyo")) return 0.2;
+  if (id.includes("hanshin")) return 0.1;
+  if (id.includes("tokyo")) return -0.2;
+  if (id.includes("niigata")) return -0.4;
+  return 0;
+}
+
+function buildDrawTacticalMap(race) {
+  const horses = race.horses || [];
+  const sorted = [...horses].sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999) || String(a.id).localeCompare(String(b.id)));
+  const n = Math.max(sorted.length, 1);
+  const innerTilt = getCourseInnerTiltFromId(race.courseId);
+  const bias = race.trackBias ?? { innerOuter: 0, frontBack: 0 };
+  const outerFav = clamp((bias.innerOuter ?? 0) / 5, -1, 1);
+  const frontFav = clamp((bias.frontBack ?? 0) / 5, -1, 1);
+
+  return new Map(
+    sorted.map((horse, i) => {
+      const lanePos = n <= 1 ? 0 : (i / (n - 1)) * 2 - 1; // -1 inner, +1 outer
+      const left = i > 0 ? sorted[i - 1] : null;
+      const right = i < n - 1 ? sorted[i + 1] : null;
+      const neighFront = [left, right].filter((x) => x && isFrontStyle(x.runningStyle)).length;
+      const neighBack = [left, right].filter((x) => x && isBackStyle(x.runningStyle)).length;
+
+      const lanePct = (-lanePos * innerTilt + lanePos * outerFav) * 0.015;
+      const styleBiasPct = isFrontStyle(horse.runningStyle) ? frontFav * 0.01 : isBackStyle(horse.runningStyle) ? -frontFav * 0.01 : 0;
+      let tacticalPct = 0;
+      if (horse.runningStyle === "Nige") {
+        if (right && isFrontStyle(right.runningStyle)) tacticalPct -= 0.01;
+        if (left && isFrontStyle(left.runningStyle)) tacticalPct -= 0.004;
+        if (neighFront === 0) tacticalPct += 0.006;
+      } else if (horse.runningStyle === "Senko") {
+        tacticalPct -= neighFront * 0.004;
+        if (neighFront >= 2) tacticalPct -= 0.003;
+      } else {
+        tacticalPct -= neighBack * 0.003;
+        if (lanePos < -0.3 && neighBack > 0) tacticalPct -= 0.002;
+      }
+
+      const modifier = clamp(1 + lanePct + styleBiasPct + tacticalPct, 0.95, 1.05);
+      return [horse.id, modifier];
+    })
+  );
+}
+
+function scoreHorse(horse, race, includeBodyWeight = false, drawMap = null) {
   const ability = horse.speed * 0.35 + horse.stamina * 0.25 + horse.power * 0.2 + horse.guts * 0.2;
   const popularity = horse.predictionCount;
   const simWinProxy = horse.realOdds > 0 ? 100 / horse.realOdds : 0;
@@ -103,7 +163,8 @@ function scoreHorse(horse, race, includeBodyWeight = false) {
   const isFront = horse.runningStyle === "Nige" || horse.runningStyle === "Senko";
   const paceAdvantage = isFront ? -pace * 10 : pace * 10;
   const bodyWeightBonus = includeBodyWeight ? Number(horse.bodyWeightDiff ?? 0) * -0.3 : 0;
-  return ability + popularity * 0.15 + simWinProxy * 0.35 + paceAdvantage + bodyWeightBonus;
+  const drawMod = drawMap?.get(horse.id) ?? 1.0;
+  return ability * drawMod + popularity * 0.15 + simWinProxy * 0.35 + paceAdvantage + bodyWeightBonus;
 }
 
 function pickBestHorse(races, day, includeBodyWeight = false) {
@@ -112,8 +173,9 @@ function pickBestHorse(races, day, includeBodyWeight = false) {
 
   let best = null;
   for (const race of candidates) {
+    const drawMap = buildDrawTacticalMap(race);
     for (const horse of race.horses) {
-      const score = scoreHorse(horse, race, includeBodyWeight);
+      const score = scoreHorse(horse, race, includeBodyWeight, drawMap);
       if (!best || score > best.score) {
         best = { race, horse, score };
       }
@@ -123,9 +185,10 @@ function pickBestHorse(races, day, includeBodyWeight = false) {
 }
 
 function listUndervaluedHorsesInRace(race, includeBodyWeight = false) {
+  const drawMap = buildDrawTacticalMap(race);
   const scored = race.horses.map((horse) => ({
     horse,
-    score: scoreHorse(horse, race, includeBodyWeight),
+    score: scoreHorse(horse, race, includeBodyWeight, drawMap),
   }));
   const scoreRank = new Map(
     [...scored]

@@ -87,6 +87,81 @@ function getPaceAdjustmentByStyle(horses: Horse[]): Map<string, number> {
     );
 }
 
+function clamp(v: number, min: number, max: number): number {
+    return Math.max(min, Math.min(max, v));
+}
+
+function isFrontStyle(style: RunningStyle): boolean {
+    return style === 'Nige' || style === 'Senko';
+}
+
+function isBackStyle(style: RunningStyle): boolean {
+    return style === 'Sashi' || style === 'Oikomi';
+}
+
+function getCourseInnerTilt(course: Course): number {
+    const cornerDistance = course.segments
+        .filter(s => s.type === 'corner')
+        .reduce((sum, s) => sum + s.distance, 0);
+    const cornerRatio = cornerDistance / Math.max(course.distance, 1);
+    const shortStraightNorm = clamp((420 - course.straightLength) / 220, -0.6, 0.8);
+    return clamp(cornerRatio * 1.1 + shortStraightNorm * 0.9, -1.0, 1.0); // + means inner-favored
+}
+
+function getDrawTacticalAdjustmentMap(
+    horses: Horse[],
+    course: Course,
+    condition: RaceCondition
+): Map<string, number> {
+    const sorted = [...horses].sort((a, b) => a.gateNumber - b.gateNumber);
+    const n = Math.max(sorted.length, 1);
+    const frontBackBias = clamp(condition.trackBias.frontBack / 5, -1, 1); // +front favored
+    const outerFavBias = clamp(condition.trackBias.innerOuter / 5, -1, 1); // +outer favored
+    const courseInnerTilt = getCourseInnerTilt(course); // +inner favored
+
+    const byId = new Map(sorted.map((h, i) => [h.id, { idx: i, horse: h }]));
+
+    return new Map(
+        sorted.map((horse) => {
+            const meta = byId.get(horse.id)!;
+            const idx = meta.idx;
+            const lanePos = n <= 1 ? 0 : (idx / (n - 1)) * 2 - 1; // -1 inner, +1 outer
+            const left = idx > 0 ? sorted[idx - 1] : null;
+            const right = idx < n - 1 ? sorted[idx + 1] : null;
+            const neighFront = [left, right].filter(x => x && isFrontStyle(x.runningStyle as RunningStyle)).length;
+            const neighBack = [left, right].filter(x => x && isBackStyle(x.runningStyle as RunningStyle)).length;
+
+            // Lane value from course shape + daily inner/outer bias.
+            const lanePct = (-lanePos * courseInnerTilt + lanePos * outerFavBias) * 0.015; // about +/-1.5%
+
+            // Daily front/back bias by running style.
+            const styleBiasPct = isFrontStyle(horse.runningStyle)
+                ? frontBackBias * 0.010
+                : isBackStyle(horse.runningStyle)
+                    ? -frontBackBias * 0.010
+                    : 0;
+
+            // Post-position tactical crowding / pressure.
+            let tacticalPct = 0;
+            if (horse.runningStyle === 'Nige') {
+                if (right && isFrontStyle(right.runningStyle)) tacticalPct -= 0.010; // likely covered from outside
+                if (left && isFrontStyle(left.runningStyle)) tacticalPct -= 0.004;
+                if (neighFront === 0) tacticalPct += 0.006; // lone speed edge
+            } else if (horse.runningStyle === 'Senko') {
+                tacticalPct -= neighFront * 0.004;
+                if (neighFront >= 2) tacticalPct -= 0.003;
+            } else {
+                // Sashi/Oikomi: traffic risk when back-runners cluster in adjacent gates.
+                tacticalPct -= neighBack * 0.003;
+                if (lanePos < -0.3 && neighBack > 0) tacticalPct -= 0.002; // inner congestion risk
+            }
+
+            const modifier = clamp(1 + lanePct + styleBiasPct + tacticalPct, 0.95, 1.05);
+            return [horse.id, modifier];
+        })
+    );
+}
+
 function getUndervaluedBoostMap(horses: Horse[], courseId: string): Map<string, number> {
     const n = Math.max(horses.length, 1);
     const upsetNorm = Math.max(0, Math.min(1, (getUpsetScore(courseId) - 50) / 50));
@@ -141,6 +216,7 @@ export function runRace(
     // 馬場状態の補正値
     const groundMod = getGroundConditionModifiers(condition.groundCondition, course.surface);
     const paceMap = getPaceAdjustmentByStyle(horses);
+    const drawTacticalMap = getDrawTacticalAdjustmentMap(horses, course, condition);
     const undervaluedMap = getUndervaluedBoostMap(horses, course.id);
 
     // 1. Initialize Simulation State
@@ -158,12 +234,13 @@ export function runRace(
         const stableMod = 1 + (stablePower - 60) * 0.0010;
         const trainingMod = 1 + trainingScore * 0.005;
         const paceMod = paceMap.get(h.id) ?? 1.0;
+        const drawTacticalMod = drawTacticalMap.get(h.id) ?? 1.0;
         const undervaluedMod = undervaluedMap.get(h.id) ?? 1.0;
 
         return {
             id: h.id,
             distanceCovered: 0,
-            currentSpeed: (h.speed * SPEED_ABILITY_FACTOR + BASE_SPEED) * conditionMod * weightMod * jockeyMod * stableMod * trainingMod * paceMod * undervaluedMod,
+            currentSpeed: (h.speed * SPEED_ABILITY_FACTOR + BASE_SPEED) * conditionMod * weightMod * jockeyMod * stableMod * trainingMod * paceMod * drawTacticalMod * undervaluedMod,
             stamina: h.stamina,
             fatigue: 0,
             finished: false,
