@@ -6,7 +6,9 @@ import { applyTrainingInsight } from "./trainingInsights";
 
 export function getDefaultHorses(courseId: string): Horse[] {
   const generated = GENERATED_WEEKLY_HORSES_MAP[courseId];
-  if (generated && generated.length > 0) {
+  // Safety guard: only trust generated weekly data when enough horses are present.
+  // This prevents accidental fallback to placeholder/sampled entries.
+  if (generated && generated.length >= 8) {
     return generated.map((h, i) =>
       applyTrainingInsight(
         courseId,
@@ -33,4 +35,3 @@ export function getDefaultHorses(courseId: string): Horse[] {
 
   return getLegacyDefaultHorses(courseId);
 }
-
