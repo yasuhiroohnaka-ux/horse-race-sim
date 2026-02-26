@@ -54,6 +54,37 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
         window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
     };
 
+    const handlePostUndervaluedToX = () => {
+        const undervalued = data
+            .filter((row) => {
+                const realOdds = row.horse?.realOdds || 0;
+                if (row.wins <= 0 || realOdds <= 0) return false;
+                const physImpliedOdds = 100 / row.wins;
+                const ratio = realOdds / physImpliedOdds;
+                return ratio > 1.5;
+            })
+            .sort((a, b) => {
+                const aRealOdds = a.horse?.realOdds || 0;
+                const bRealOdds = b.horse?.realOdds || 0;
+                const aRatio = a.wins > 0 ? aRealOdds / (100 / a.wins) : 0;
+                const bRatio = b.wins > 0 ? bRealOdds / (100 / b.wins) : 0;
+                return bRatio - aRatio;
+            });
+
+        let text = "【過小評価馬リスト】\n";
+        if (undervalued.length === 0) {
+            text += "該当馬なし\n";
+        } else {
+            undervalued.forEach((row, i) => {
+                const realOdds = row.horse?.realOdds || 0;
+                const ratio = row.wins > 0 ? realOdds / (100 / row.wins) : 0;
+                text += `#${i + 1} ${row.name} 市場${realOdds.toFixed(1)}倍 / 勝率${row.wins}% / 乖離${ratio.toFixed(2)}x\n`;
+            });
+        }
+        text += `\n#競馬 ${hashtag} #過小評価`;
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
+    };
+
     return (
         <div className="bg-white p-4 rounded-lg shadow-md border border-slate-200 mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="text-sm font-bold mb-1 text-slate-800">3. シミュレーション結果 (100回実行)</h2>
@@ -218,6 +249,13 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                 >
                     <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
                     結果をXに投稿
+                </button>
+                <button
+                    onClick={handlePostUndervaluedToX}
+                    className="flex items-center gap-2 px-6 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition shadow-lg hover:shadow-xl"
+                >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    過小評価馬をXに投稿
                 </button>
             </div>
         </div>
