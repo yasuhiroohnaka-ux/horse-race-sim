@@ -77,7 +77,8 @@ export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: Hors
     };
 
     const updateHorses = (newList: Horse[]) => {
-        const withOdds = calculateOdds(newList);
+        const sorted = [...newList].sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
+        const withOdds = calculateOdds(sorted);
         onHorsesChange(withOdds);
     };
 

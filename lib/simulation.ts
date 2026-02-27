@@ -180,7 +180,6 @@ function getUndervaluedBoostMap(horses: Horse[], courseId: string): Map<string, 
             h.stamina * 0.28 +
             h.power * 0.18 +
             h.guts * 0.18 +
-            (h.trainingScore ?? 0) * 0.8 +
             ((h.jockeyPower ?? 60) - 60) * 0.2 +
             ((h.stablePower ?? 60) - 60) * 0.15
         ])
@@ -233,10 +232,8 @@ export function runRace(
         const weightMod = 1 - (weightVal - 57) * 0.003;        // 55kg→+0.6%, 59kg→-0.6%
         const jockeyPower = h.jockeyPower ?? 60;
         const stablePower = h.stablePower ?? 60;
-        const trainingScore = h.trainingScore ?? 0;
         const jockeyMod = 1 + (jockeyPower - 60) * 0.0015;
         const stableMod = 1 + (stablePower - 60) * 0.0010;
-        const trainingMod = 1 + trainingScore * 0.005;
         const paceMod = paceMap.get(h.id) ?? 1.0;
         const drawTacticalMod = drawTacticalMap.get(h.id) ?? 1.0;
         const undervaluedMod = undervaluedMap.get(h.id) ?? 1.0;
@@ -244,7 +241,7 @@ export function runRace(
         return {
             id: h.id,
             distanceCovered: 0,
-            currentSpeed: (h.speed * SPEED_ABILITY_FACTOR + BASE_SPEED) * conditionMod * weightMod * jockeyMod * stableMod * trainingMod * paceMod * drawTacticalMod * undervaluedMod,
+            currentSpeed: (h.speed * SPEED_ABILITY_FACTOR + BASE_SPEED) * conditionMod * weightMod * jockeyMod * stableMod * paceMod * drawTacticalMod * undervaluedMod,
             stamina: h.stamina,
             fatigue: 0,
             finished: false,

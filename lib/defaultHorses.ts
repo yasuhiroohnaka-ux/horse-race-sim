@@ -3,10 +3,9 @@ import { getDefaultHorses as getLegacyDefaultHorses } from "./raceData";
 import { GENERATED_WEEKLY_HORSES_MAP } from "./generatedRaceSchedule";
 import { GENERATED_DRAW_OVERRIDES } from "./generatedDrawOverrides";
 import { applyNetkeibaRatings } from "./netkeibaRatings";
-import { applyTrainingInsight } from "./trainingInsights";
 
-function enrichHorse(courseId: string, horse: Horse): Horse {
-  return applyTrainingInsight(courseId, applyNetkeibaRatings(horse));
+function enrichHorse(_courseId: string, horse: Horse): Horse {
+  return applyNetkeibaRatings(horse);
 }
 
 function normalizeName(name: string): string {
@@ -18,7 +17,8 @@ export function getDefaultHorses(courseId: string): Horse[] {
 
   // Prefer generated weekly data only when the field size is sufficiently complete.
   if (generated && generated.length >= 8) {
-    return generated.map((h, i) =>
+    return generated
+      .map((h, i) =>
       enrichHorse(courseId, {
         id: h.id,
         gateNumber: h.gateNumber > 0 ? h.gateNumber : i + 1,
@@ -36,7 +36,8 @@ export function getDefaultHorses(courseId: string): Horse[] {
         weight: Number.isFinite(h.weight) ? h.weight : 57,
         condition: 5,
       })
-    );
+      )
+      .sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
   }
 
   // Fallback path: keep legacy full-field entries, but overlay generated gate/weight
@@ -66,5 +67,5 @@ export function getDefaultHorses(courseId: string): Horse[] {
       condition: h.condition ?? 5,
       jockey: h.jockey ?? "未定",
     });
-  });
+  }).sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
 }

@@ -25,6 +25,19 @@
             "trainingNote": "Strong final split and explicit positive tone."
           },
           {
+            "id": "3",
+            "name": "Chelvinia",
+            "runningStyle": "Sashi",
+            "predictionCount": 100,
+            "realOdds": 7,
+            "speed": 88,
+            "stamina": 90,
+            "power": 87,
+            "guts": 87,
+            "gateNumber": 6,
+            "weight": 55
+          },
+          {
             "id": "2",
             "name": "Ecorovaltz",
             "runningStyle": "Senko",
@@ -38,19 +51,6 @@
             "weight": 57,
             "trainingScore": 1,
             "trainingNote": "Commented as improved movement after prior stiffness."
-          },
-          {
-            "id": "3",
-            "name": "Chelvinia",
-            "runningStyle": "Sashi",
-            "predictionCount": 100,
-            "realOdds": 7,
-            "speed": 88,
-            "stamina": 90,
-            "power": 87,
-            "guts": 87,
-            "gateNumber": 6,
-            "weight": 55
           }
         ]
       },
@@ -77,19 +77,6 @@
             "trainingNote": "Headlined as very sharp work and high readiness."
           },
           {
-            "id": "1",
-            "name": "Mama Cocha",
-            "runningStyle": "Senko",
-            "predictionCount": 120,
-            "realOdds": 3,
-            "speed": 89,
-            "stamina": 84,
-            "power": 86,
-            "guts": 86,
-            "gateNumber": 14,
-            "weight": 56
-          },
-          {
             "id": "4",
             "name": "Invincible Papa",
             "runningStyle": "Nige",
@@ -101,6 +88,19 @@
             "guts": 84,
             "gateNumber": 9,
             "weight": 57
+          },
+          {
+            "id": "1",
+            "name": "Mama Cocha",
+            "runningStyle": "Senko",
+            "predictionCount": 120,
+            "realOdds": 3,
+            "speed": 89,
+            "stamina": 84,
+            "power": 86,
+            "guts": 86,
+            "gateNumber": 14,
+            "weight": 56
           }
         ]
       },
@@ -111,6 +111,19 @@
         "day": "Sat",
         "hasRace": true,
         "horses": [
+          {
+            "id": "3",
+            "name": "Connie Island",
+            "runningStyle": "Sashi",
+            "predictionCount": 50,
+            "realOdds": 6.5,
+            "speed": 87,
+            "stamina": 89,
+            "power": 86,
+            "guts": 86,
+            "gateNumber": 10,
+            "weight": 55
+          },
           {
             "id": "1",
             "name": "Alencar",
@@ -137,19 +150,6 @@
             "power": 86,
             "guts": 87,
             "gateNumber": 13,
-            "weight": 55
-          },
-          {
-            "id": "3",
-            "name": "Connie Island",
-            "runningStyle": "Sashi",
-            "predictionCount": 50,
-            "realOdds": 6.5,
-            "speed": 87,
-            "stamina": 89,
-            "power": 86,
-            "guts": 86,
-            "gateNumber": 10,
             "weight": 55
           }
         ]

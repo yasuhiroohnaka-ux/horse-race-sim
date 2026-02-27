@@ -38,7 +38,7 @@ function SimulatorContent() {
     const [bias, setBias] = useState<TrackBias>(
         initialCourse.defaultBias ?? { innerOuter: 0, frontBack: 0 }
     );
-    const [groundCondition, setGroundCondition] = useState<'Firm' | 'Good' | 'Yielding' | 'Soft'>('Good');
+    const [groundCondition, setGroundCondition] = useState<'Firm' | 'Good' | 'Yielding' | 'Soft'>('Firm');
     const [horses, setHorses] = useState<Horse[]>(calculateOdds(getDefaultHorses(initialCourseId)));
     const [results, setResults] = useState<{ horseId: string; winCount: number; bestTime: number }[] | null>(null);
     const [isRunning, setIsRunning] = useState(false);
@@ -53,6 +53,7 @@ function SimulatorContent() {
         setHorses(calculateOdds(getDefaultHorses(courseId)));
         setResults(null);
         setBias(course?.defaultBias ?? { innerOuter: 0, frontBack: 0 });
+        setGroundCondition('Firm');
     };
 
     const handleRunSimulation = () => {
