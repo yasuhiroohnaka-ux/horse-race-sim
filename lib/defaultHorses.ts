@@ -1,11 +1,16 @@
 import { Horse } from "./types";
 import { getDefaultHorses as getLegacyDefaultHorses } from "./raceData";
 import { GENERATED_WEEKLY_HORSES_MAP } from "./generatedRaceSchedule";
+import { GENERATED_DRAW_OVERRIDES } from "./generatedDrawOverrides";
 import { applyNetkeibaRatings } from "./netkeibaRatings";
 import { applyTrainingInsight } from "./trainingInsights";
 
 function enrichHorse(courseId: string, horse: Horse): Horse {
   return applyTrainingInsight(courseId, applyNetkeibaRatings(horse));
+}
+
+function normalizeName(name: string): string {
+  return String(name ?? "").toLowerCase().replace(/[\s　・\-_.]/g, "");
 }
 
 export function getDefaultHorses(courseId: string): Horse[] {
@@ -37,10 +42,20 @@ export function getDefaultHorses(courseId: string): Horse[] {
   // Fallback path: keep legacy full-field entries, but overlay generated gate/weight
   // values when available so draw updates are visible even with partial generated data.
   const generatedById = new Map((generated ?? []).map((g) => [String(g.id), g]));
+  const drawOverrides = GENERATED_DRAW_OVERRIDES[courseId] ?? {};
+  const drawByName = new Map(
+    Object.entries(drawOverrides).map(([name, gate]) => [normalizeName(name), Number(gate)])
+  );
 
   return getLegacyDefaultHorses(courseId).map((h, i) => {
     const g = generatedById.get(String(h.id));
-    const gateNumber = g && Number.isFinite(g.gateNumber) && g.gateNumber > 0 ? g.gateNumber : h.gateNumber ?? i + 1;
+    const byName = drawByName.get(normalizeName(h.name));
+    const gateNumber =
+      Number.isFinite(byName) && (byName ?? 0) > 0
+        ? Number(byName)
+        : g && Number.isFinite(g.gateNumber) && g.gateNumber > 0
+          ? g.gateNumber
+          : h.gateNumber ?? i + 1;
     const weight = g && Number.isFinite(g.weight) && g.weight > 0 ? g.weight : h.weight ?? 57;
 
     return enrichHorse(courseId, {
