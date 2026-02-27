@@ -19,7 +19,7 @@
             "stamina": 90,
             "power": 88,
             "guts": 88,
-            "gateNumber": 1,
+            "gateNumber": 5,
             "weight": 57,
             "trainingScore": 2,
             "trainingNote": "Strong final split and explicit positive tone."
@@ -34,7 +34,7 @@
             "stamina": 87,
             "power": 87,
             "guts": 86,
-            "gateNumber": 2,
+            "gateNumber": 10,
             "weight": 57,
             "trainingScore": 1,
             "trainingNote": "Commented as improved movement after prior stiffness."
@@ -49,7 +49,7 @@
             "stamina": 90,
             "power": 87,
             "guts": 87,
-            "gateNumber": 3,
+            "gateNumber": 6,
             "weight": 55
           }
         ]
@@ -71,7 +71,7 @@
             "stamina": 86,
             "power": 88,
             "guts": 87,
-            "gateNumber": 1,
+            "gateNumber": 5,
             "weight": 58,
             "trainingScore": 2,
             "trainingNote": "Headlined as very sharp work and high readiness."
@@ -86,7 +86,7 @@
             "stamina": 84,
             "power": 86,
             "guts": 86,
-            "gateNumber": 2,
+            "gateNumber": 14,
             "weight": 56
           },
           {
@@ -99,7 +99,7 @@
             "stamina": 82,
             "power": 85,
             "guts": 84,
-            "gateNumber": 3,
+            "gateNumber": 9,
             "weight": 57
           }
         ]
@@ -121,7 +121,7 @@
             "stamina": 88,
             "power": 89,
             "guts": 90,
-            "gateNumber": 1,
+            "gateNumber": 12,
             "weight": 55,
             "trainingScore": 2,
             "trainingNote": "Workout article highlights very good finishing response."
@@ -136,7 +136,7 @@
             "stamina": 87,
             "power": 86,
             "guts": 87,
-            "gateNumber": 2,
+            "gateNumber": 13,
             "weight": 55
           },
           {
@@ -149,7 +149,7 @@
             "stamina": 89,
             "power": 86,
             "guts": 86,
-            "gateNumber": 3,
+            "gateNumber": 10,
             "weight": 55
           }
         ]
