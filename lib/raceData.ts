@@ -103,7 +103,7 @@ const NAKAYAMA_KINEN_HORSES: Horse[] = assignAbilities([
     { id: '11', gateNumber: 11, name: 'ショウナンマグマ',     jockey: '吉田豊',     runningStyle: 'Nige',   predictionCount: 3,   simulatedOdds: 0, realOdds: 50.0, sex: 'M', weight: 57, condition: 5 },
     { id: '12', gateNumber: 12, name: 'オニャンコポン',       jockey: '菅原明良',   runningStyle: 'Senko',  predictionCount: 8,   simulatedOdds: 0, realOdds: 50.0, sex: 'M', weight: 57, condition: 4 },
     { id: '13', gateNumber: 13, name: 'サンストックトン',     jockey: '松岡正海',   runningStyle: 'Sashi',  predictionCount: 2,   simulatedOdds: 0, realOdds: 60.0, sex: 'M', weight: 57, condition: 4 },
-    { id: '14', gateNumber: 14, name: 'サトノエピック',       jockey: '未定',       runningStyle: 'Sashi',  predictionCount: 1,   simulatedOdds: 0, realOdds: 80.0, sex: 'M', weight: 57, condition: 3 },
+    { id: '14', gateNumber: 14, name: 'スパークリシャール',   jockey: '未定',       runningStyle: 'Senko',  predictionCount: 12,  simulatedOdds: 0, realOdds: 63.5, sex: 'M', weight: 57, condition: 4 },
 ], 1800);
 
 /** オーシャンS 2026 特別登録馬（2/24時点・集合知スコアはネット話題度暫定値）
