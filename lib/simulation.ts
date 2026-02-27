@@ -115,6 +115,8 @@ function getDrawTacticalAdjustmentMap(
 ): Map<string, number> {
     const sorted = [...horses].sort((a, b) => a.gateNumber - b.gateNumber);
     const n = Math.max(sorted.length, 1);
+    const smallField = n < 8;
+    const damp = smallField ? 0.10 : 1.0; // Almost disable draw effects for small fields.
     const frontBackBias = clamp(condition.trackBias.frontBack / 5, -1, 1); // +front favored
     const outerFavBias = clamp(condition.trackBias.innerOuter / 5, -1, 1); // +outer favored
     const courseInnerTilt = getCourseInnerTilt(course); // +inner favored
@@ -132,31 +134,33 @@ function getDrawTacticalAdjustmentMap(
             const neighBack = [left, right].filter(x => x && isBackStyle(x.runningStyle as RunningStyle)).length;
 
             // Lane value from course shape + daily inner/outer bias.
-            const lanePct = (-lanePos * courseInnerTilt + lanePos * outerFavBias) * 0.015; // about +/-1.5%
+            const lanePct = (-lanePos * courseInnerTilt + lanePos * outerFavBias) * 0.007 * damp; // about +/-0.7%
 
             // Daily front/back bias by running style.
             const styleBiasPct = isFrontStyle(horse.runningStyle)
-                ? frontBackBias * 0.010
+                ? frontBackBias * 0.005 * damp
                 : isBackStyle(horse.runningStyle)
-                    ? -frontBackBias * 0.010
+                    ? -frontBackBias * 0.005 * damp
                     : 0;
 
             // Post-position tactical crowding / pressure.
             let tacticalPct = 0;
             if (horse.runningStyle === 'Nige') {
-                if (right && isFrontStyle(right.runningStyle)) tacticalPct -= 0.010; // likely covered from outside
-                if (left && isFrontStyle(left.runningStyle)) tacticalPct -= 0.004;
-                if (neighFront === 0) tacticalPct += 0.006; // lone speed edge
+                if (right && isFrontStyle(right.runningStyle)) tacticalPct -= 0.005 * damp; // likely covered from outside
+                if (left && isFrontStyle(left.runningStyle)) tacticalPct -= 0.002 * damp;
+                if (neighFront === 0) tacticalPct += 0.003 * damp; // lone speed edge
             } else if (horse.runningStyle === 'Senko') {
-                tacticalPct -= neighFront * 0.004;
-                if (neighFront >= 2) tacticalPct -= 0.003;
+                tacticalPct -= neighFront * 0.002 * damp;
+                if (neighFront >= 2) tacticalPct -= 0.0015 * damp;
             } else {
                 // Sashi/Oikomi: traffic risk when back-runners cluster in adjacent gates.
-                tacticalPct -= neighBack * 0.003;
-                if (lanePos < -0.3 && neighBack > 0) tacticalPct -= 0.002; // inner congestion risk
+                tacticalPct -= neighBack * 0.0015 * damp;
+                if (lanePos < -0.3 && neighBack > 0) tacticalPct -= 0.001 * damp; // inner congestion risk
             }
 
-            const modifier = clamp(1 + lanePct + styleBiasPct + tacticalPct, 0.95, 1.05);
+            const modifier = smallField
+                ? clamp(1 + lanePct + styleBiasPct + tacticalPct, 0.995, 1.005)
+                : clamp(1 + lanePct + styleBiasPct + tacticalPct, 0.975, 1.025);
             return [horse.id, modifier];
         })
     );

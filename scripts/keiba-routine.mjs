@@ -118,10 +118,15 @@ function getCourseInnerTiltFromId(courseId = "") {
   return 0;
 }
 
-function buildDrawTacticalMap(race) {
+function buildDrawTacticalMap(race, applyDraw = true) {
   const horses = race.horses || [];
+  if (!applyDraw) {
+    return new Map(horses.map((h) => [h.id, 1.0]));
+  }
   const sorted = [...horses].sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999) || String(a.id).localeCompare(String(b.id)));
   const n = Math.max(sorted.length, 1);
+  const smallField = n < 8;
+  const damp = smallField ? 0.10 : 1.0; // Almost disable for small fields.
   const innerTilt = getCourseInnerTiltFromId(race.courseId);
   const bias = race.trackBias ?? { innerOuter: 0, frontBack: 0 };
   const outerFav = clamp((bias.innerOuter ?? 0) / 5, -1, 1);
@@ -135,22 +140,24 @@ function buildDrawTacticalMap(race) {
       const neighFront = [left, right].filter((x) => x && isFrontStyle(x.runningStyle)).length;
       const neighBack = [left, right].filter((x) => x && isBackStyle(x.runningStyle)).length;
 
-      const lanePct = (-lanePos * innerTilt + lanePos * outerFav) * 0.015;
-      const styleBiasPct = isFrontStyle(horse.runningStyle) ? frontFav * 0.01 : isBackStyle(horse.runningStyle) ? -frontFav * 0.01 : 0;
+      const lanePct = (-lanePos * innerTilt + lanePos * outerFav) * 0.007 * damp;
+      const styleBiasPct = isFrontStyle(horse.runningStyle) ? frontFav * 0.005 * damp : isBackStyle(horse.runningStyle) ? -frontFav * 0.005 * damp : 0;
       let tacticalPct = 0;
       if (horse.runningStyle === "Nige") {
-        if (right && isFrontStyle(right.runningStyle)) tacticalPct -= 0.01;
-        if (left && isFrontStyle(left.runningStyle)) tacticalPct -= 0.004;
-        if (neighFront === 0) tacticalPct += 0.006;
+        if (right && isFrontStyle(right.runningStyle)) tacticalPct -= 0.005 * damp;
+        if (left && isFrontStyle(left.runningStyle)) tacticalPct -= 0.002 * damp;
+        if (neighFront === 0) tacticalPct += 0.003 * damp;
       } else if (horse.runningStyle === "Senko") {
-        tacticalPct -= neighFront * 0.004;
-        if (neighFront >= 2) tacticalPct -= 0.003;
+        tacticalPct -= neighFront * 0.002 * damp;
+        if (neighFront >= 2) tacticalPct -= 0.0015 * damp;
       } else {
-        tacticalPct -= neighBack * 0.003;
-        if (lanePos < -0.3 && neighBack > 0) tacticalPct -= 0.002;
+        tacticalPct -= neighBack * 0.0015 * damp;
+        if (lanePos < -0.3 && neighBack > 0) tacticalPct -= 0.001 * damp;
       }
 
-      const modifier = clamp(1 + lanePct + styleBiasPct + tacticalPct, 0.95, 1.05);
+      const modifier = smallField
+        ? clamp(1 + lanePct + styleBiasPct + tacticalPct, 0.995, 1.005)
+        : clamp(1 + lanePct + styleBiasPct + tacticalPct, 0.975, 1.025);
       return [horse.id, modifier];
     })
   );
@@ -168,13 +175,13 @@ function scoreHorse(horse, race, includeBodyWeight = false, drawMap = null) {
   return ability * drawMod + popularity * 0.15 + simWinProxy * 0.35 + paceAdvantage + bodyWeightBonus;
 }
 
-function pickBestHorse(races, day, includeBodyWeight = false) {
+function pickBestHorse(races, day, includeBodyWeight = false, applyDraw = true) {
   const candidates = races.filter((race) => race.day === day && race.hasRace);
   if (candidates.length === 0) return null;
 
   let best = null;
   for (const race of candidates) {
-    const drawMap = buildDrawTacticalMap(race);
+    const drawMap = buildDrawTacticalMap(race, applyDraw);
     for (const horse of race.horses) {
       const score = scoreHorse(horse, race, includeBodyWeight, drawMap);
       if (!best || score > best.score) {
@@ -185,8 +192,8 @@ function pickBestHorse(races, day, includeBodyWeight = false) {
   return best;
 }
 
-function listUndervaluedHorsesInRace(race, includeBodyWeight = false) {
-  const drawMap = buildDrawTacticalMap(race);
+function listUndervaluedHorsesInRace(race, includeBodyWeight = false, applyDraw = true) {
+  const drawMap = buildDrawTacticalMap(race, applyDraw);
   const scored = race.horses.map((horse) => ({ horse, score: scoreHorse(horse, race, includeBodyWeight, drawMap) }));
   const scoreRank = new Map([...scored].sort((a, b) => b.score - a.score).map((x, idx) => [x.horse.id, idx + 1]));
   const popRank = new Map([...race.horses].sort((a, b) => (b.predictionCount ?? 0) - (a.predictionCount ?? 0)).map((x, idx) => [x.id, idx + 1]));
@@ -203,8 +210,8 @@ function listUndervaluedHorsesInRace(race, includeBodyWeight = false) {
     .sort((a, b) => b.gap - a.gap);
 }
 
-function listOvervaluedHorsesInRace(race, includeBodyWeight = false) {
-  const drawMap = buildDrawTacticalMap(race);
+function listOvervaluedHorsesInRace(race, includeBodyWeight = false, applyDraw = true) {
+  const drawMap = buildDrawTacticalMap(race, applyDraw);
   const scored = race.horses.map((horse) => ({ horse, score: scoreHorse(horse, race, includeBodyWeight, drawMap) }));
   const scoreRank = new Map([...scored].sort((a, b) => b.score - a.score).map((x, idx) => [x.horse.id, idx + 1]));
   const popRank = new Map([...race.horses].sort((a, b) => (b.predictionCount ?? 0) - (a.predictionCount ?? 0)).map((x, idx) => [x.id, idx + 1]));
@@ -221,8 +228,8 @@ function listOvervaluedHorsesInRace(race, includeBodyWeight = false) {
     .sort((a, b) => b.gap - a.gap);
 }
 
-function pickTanpukuPair(race, includeBodyWeight = false) {
-  const drawMap = buildDrawTacticalMap(race);
+function pickTanpukuPair(race, includeBodyWeight = false, applyDraw = true) {
+  const drawMap = buildDrawTacticalMap(race, applyDraw);
   const scored = race.horses
     .map((horse) => {
       const score = scoreHorse(horse, race, includeBodyWeight, drawMap);
@@ -299,6 +306,7 @@ async function handleMonday10(now) {
   await runNodeScript("scripts/update-race-volatility.mjs");
 
   state.lastMondayRollover = new Date().toISOString();
+  state.drawConfirmedAt = null;
   await writeJson(STATE_PATH, state);
 
   await publishOrQueuePost("mon_10", "今週の重賞登録馬データへ切替。先週重賞はアーカイブ化し、初期指標と荒れやすさスコアを更新しました。");
@@ -330,7 +338,8 @@ async function handleRecommendation(day, stage) {
   const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { races: [] } });
   const state = await readJson(STATE_PATH, {});
   const includeBodyWeight = day === "Sat";
-  const best = pickBestHorse(weekly.currentWeek?.races || [], day, includeBodyWeight);
+  const applyDraw = Boolean(state.drawConfirmedAt); // Before Fri 10:00, draw impact is off.
+  const best = pickBestHorse(weekly.currentWeek?.races || [], day, includeBodyWeight, applyDraw);
 
   if (!best) {
     console.log(`No graded race for ${day}, skip posting.`);
@@ -339,9 +348,9 @@ async function handleRecommendation(day, stage) {
 
   const race = best.race;
   const horse = best.horse;
-  const undervalued = listUndervaluedHorsesInRace(race, includeBodyWeight);
-  const overvalued = listOvervaluedHorsesInRace(race, includeBodyWeight);
-  const tanpuku = pickTanpukuPair(race, includeBodyWeight);
+  const undervalued = listUndervaluedHorsesInRace(race, includeBodyWeight, applyDraw);
+  const overvalued = listOvervaluedHorsesInRace(race, includeBodyWeight, applyDraw);
+  const tanpuku = pickTanpukuPair(race, includeBodyWeight, applyDraw);
 
   const undervaluedText =
     undervalued.length > 0
