@@ -28,6 +28,7 @@ type ParsedEntry = {
   gateNumber: number;
   odds: number | null;
   popularityRank: number | null;
+  jockey: string | null;
 };
 
 type CandidateResult = {
@@ -35,6 +36,17 @@ type CandidateResult = {
   overlap: number;
   oddsCount: number;
   entries: ParsedEntry[];
+};
+
+type ParsedPerformanceEntry = {
+  horseName: string;
+  gateNumber: number;
+  recentFormScore: number | null;
+  recentAverageFinish: number | null;
+  recentTimeIndex: number | null;
+  lastRaceGradeScore: number | null;
+  lastRaceGradeLabel: string | null;
+  averageRunSpeed: number | null;
 };
 
 export const dynamic = "force-dynamic";
@@ -53,6 +65,16 @@ function decodeHtmlText(s: string): string {
     .replace(/&#39;/g, "'")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">");
+}
+
+function normalizeJockeyName(raw: string): string | null {
+  const cleaned = decodeHtmlText(raw)
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!cleaned) return null;
+  if (cleaned === "-" || cleaned === "--" || cleaned === "未定") return null;
+  return cleaned;
 }
 
 function parseOdds(oddsRaw: string): number | null {
@@ -177,16 +199,190 @@ function parseShutubaEntries(shutubaHtml: string): ParsedEntry[] {
       row.match(/id="ninki-[^"]+"[^>]*>\s*([^<]+)\s*<\/span>/i)?.[1] ??
       row.match(/class="Popular_Ninki[^"]*"[^>]*>\s*([^<]+)\s*<\/td>/i)?.[1] ??
       "";
+    const jockeyTitleRaw = row.match(/<td class="Jockey"[\s\S]*?title="([^"]+)"/i)?.[1] ?? "";
+    const jockeyCellRaw = row.match(/<td class="Jockey"[\s\S]*?>([\s\S]*?)<\/td>/i)?.[1] ?? "";
+    const jockey = normalizeJockeyName(jockeyTitleRaw) ?? normalizeJockeyName(jockeyCellRaw);
 
     entries.push({
       horseName,
       gateNumber,
       odds: parseOdds(oddsRaw),
       popularityRank: parsePopularityRank(rankRaw),
+      jockey,
     });
   }
 
   return entries;
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
+
+function stripTags(value: string): string {
+  return String(value ?? "").replace(/<[^>]*>/g, " ");
+}
+
+function normalizeSpace(value: string): string {
+  return String(value ?? "").replace(/\s+/g, " ").trim();
+}
+
+function parseDistanceMeters(raw: string): number | null {
+  const distance = Number.parseInt(raw.match(/(\d{3,4})/)?.[1] ?? "", 10);
+  return Number.isFinite(distance) && distance > 0 ? distance : null;
+}
+
+function parseRaceTimeSeconds(raw: string): number | null {
+  const m = raw.match(/(\d+):(\d{1,2}\.\d)/);
+  if (!m) return null;
+  const minutes = Number.parseInt(m[1], 10);
+  const seconds = Number.parseFloat(m[2]);
+  if (!Number.isFinite(minutes) || !Number.isFinite(seconds)) return null;
+  return minutes * 60 + seconds;
+}
+
+function detectGradeLabel(iconRaw: string, raceNameRaw: string): string | null {
+  const icon = iconRaw.toUpperCase();
+  if (icon.includes("GIII")) return "G3";
+  if (icon.includes("GII")) return "G2";
+  if (icon.includes("GI")) return "G1";
+
+  const raceName = raceNameRaw;
+  if (/(^|\s|\()(L)(\s|\)|$)|リステッド/i.test(raceName)) return "L";
+  if (/オープン|OP/i.test(raceName)) return "OP";
+  if (/3勝|1600万/i.test(raceName)) return "3Win";
+  if (/2勝|1000万/i.test(raceName)) return "2Win";
+  if (/1勝|500万/i.test(raceName)) return "1Win";
+  if (/未勝利|新馬/i.test(raceName)) return "Maiden";
+  return null;
+}
+
+function gradeLabelToScore(label: string | null): number | null {
+  if (!label) return null;
+  switch (label) {
+    case "G1":
+      return 5;
+    case "G2":
+      return 4;
+    case "G3":
+      return 3;
+    case "L":
+      return 2.5;
+    case "OP":
+      return 2;
+    case "3Win":
+      return 1.5;
+    case "2Win":
+      return 1;
+    case "1Win":
+      return 0.5;
+    case "Maiden":
+      return 0;
+    default:
+      return null;
+  }
+}
+
+function parseShutubaPastEntries(shutubaPastHtml: string): ParsedPerformanceEntry[] {
+  const rows = [...shutubaPastHtml.matchAll(/<tr[^>]*class="HorseList"[^>]*>([\s\S]*?)<\/tr>/g)].map((m) => m[1]);
+  const provisional: ParsedPerformanceEntry[] = [];
+
+  for (const row of rows) {
+    const gateNumber = Number.parseInt(
+      row.match(/<td class="Waku">\s*(\d{1,2})\s*<\/td>/i)?.[1] ??
+        row.match(/class="Umaban\d+[^"]*"[^>]*>\s*(\d{1,2})\s*<\/td>/i)?.[1] ??
+        "",
+      10
+    );
+    if (!(gateNumber > 0)) continue;
+
+    const horseNameRaw =
+      row.match(/<div class="Horse02">[\s\S]*?<a[^>]*>\s*([^<]+?)\s*<\/a>/i)?.[1] ??
+      row.match(/\/horse\/\d+\/?[^>]*>([^<]+)</i)?.[1] ??
+      "";
+    const horseName = normalizeSpace(decodeHtmlText(stripTags(horseNameRaw)));
+    if (!horseName) continue;
+
+    const pastCells = [...row.matchAll(/<td class="Past[^"]*"[^>]*>([\s\S]*?)<\/td>/g)].map((m) => m[1]).slice(0, 5);
+    const runs = pastCells.map((cell) => {
+      const finish = Number.parseInt(cell.match(/<span class="Num">(\d{1,2})<\/span>/i)?.[1] ?? "", 10);
+      const data02Raw = cell.match(/<div class="Data02">([\s\S]*?)<\/div>/i)?.[1] ?? "";
+      const raceName = normalizeSpace(decodeHtmlText(stripTags(data02Raw)));
+      const iconRaw = normalizeSpace(
+        decodeHtmlText(stripTags(cell.match(/<span class="Icon_GradeType[^"]*">([^<]+)<\/span>/i)?.[1] ?? ""))
+      );
+      const gradeLabel = detectGradeLabel(iconRaw, raceName);
+      const data05Raw = normalizeSpace(decodeHtmlText(stripTags(cell.match(/<div class="Data05">([\s\S]*?)<\/div>/i)?.[1] ?? "")));
+      const distance = parseDistanceMeters(data05Raw);
+      const timeSeconds = parseRaceTimeSeconds(data05Raw);
+      const runSpeed = distance && timeSeconds ? distance / timeSeconds : null;
+
+      return {
+        finish: Number.isFinite(finish) && finish > 0 ? finish : null,
+        gradeLabel,
+        runSpeed,
+      };
+    });
+
+    const finishList = runs
+      .map((run) => run.finish)
+      .filter((finish): finish is number => Number.isFinite(finish as number) && (finish as number) > 0);
+    const speedList = runs
+      .map((run) => run.runSpeed)
+      .filter((speed): speed is number => Number.isFinite(speed as number) && (speed as number) > 0);
+    const avgFinish = finishList.length > 0 ? finishList.reduce((sum, v) => sum + v, 0) / finishList.length : null;
+    const avgSpeed = speedList.length > 0 ? speedList.reduce((sum, v) => sum + v, 0) / speedList.length : null;
+    const lastFinish = runs[0]?.finish ?? null;
+    const lastRaceGradeLabel = runs[0]?.gradeLabel ?? null;
+    const lastRaceGradeScore = gradeLabelToScore(lastRaceGradeLabel);
+
+    let recentFormScore: number | null = null;
+    if (avgFinish !== null || lastFinish !== null) {
+      const avgScore = avgFinish !== null ? clamp((8 - avgFinish) * 0.9, -3.5, 3.5) : 0;
+      const lastScore = lastFinish !== null ? clamp((7 - lastFinish) * 0.8, -2.5, 2.5) : 0;
+      recentFormScore = Math.round(clamp(avgScore + lastScore, -5, 5) * 10) / 10;
+    }
+
+    provisional.push({
+      horseName,
+      gateNumber,
+      recentFormScore,
+      recentAverageFinish: avgFinish !== null ? Math.round(avgFinish * 10) / 10 : null,
+      recentTimeIndex: null,
+      lastRaceGradeScore: lastRaceGradeScore !== null ? Math.round(lastRaceGradeScore * 10) / 10 : null,
+      lastRaceGradeLabel,
+      averageRunSpeed: avgSpeed !== null ? Math.round(avgSpeed * 1000) / 1000 : null,
+    });
+  }
+
+  const speedValues = provisional
+    .map((entry) => entry.averageRunSpeed)
+    .filter((v): v is number => Number.isFinite(v as number) && (v as number) > 0);
+  if (speedValues.length === 0) {
+    return provisional;
+  }
+
+  const meanSpeed = speedValues.reduce((sum, v) => sum + v, 0) / speedValues.length;
+  const variance =
+    speedValues.reduce((sum, v) => {
+      const diff = v - meanSpeed;
+      return sum + diff * diff;
+    }, 0) / speedValues.length;
+  const stdSpeed = Math.sqrt(Math.max(variance, 0));
+  const safeStd = Math.max(stdSpeed, 0.08);
+
+  return provisional.map((entry) => {
+    const speed = entry.averageRunSpeed;
+    if (!Number.isFinite(speed as number) || (speed as number) <= 0) {
+      return entry;
+    }
+    const z = ((speed as number) - meanSpeed) / safeStd;
+    const recentTimeIndex = Math.round(clamp(z * 2.2, -5, 5) * 10) / 10;
+    return {
+      ...entry,
+      recentTimeIndex,
+    };
+  });
 }
 
 function buildCandidateNameSet(courseId: string, race: WeeklyRace): Set<string> {
@@ -273,6 +469,17 @@ export async function GET(request: NextRequest) {
     const oddsByGate: Record<string, number> = {};
     const popularityRankByGate: Record<string, number> = {};
     const xPopularityByGate: Record<string, number> = {};
+    const jockeyByGate: Record<string, string> = {};
+    const performanceByGate: Record<
+      string,
+      {
+        recentFormScore?: number;
+        recentAverageFinish?: number;
+        recentTimeIndex?: number;
+        lastRaceGradeScore?: number;
+        lastRaceGradeLabel?: string;
+      }
+    > = {};
     const fieldSize = Math.max(1, best.entries.length);
     for (const entry of best.entries) {
       if (Number.isFinite(entry.odds) && (entry.odds ?? 0) > 0) {
@@ -283,6 +490,26 @@ export async function GET(request: NextRequest) {
         popularityRankByGate[String(entry.gateNumber)] = rank;
         xPopularityByGate[String(entry.gateNumber)] = rankToXPopularityScore(rank, fieldSize);
       }
+      if (entry.jockey) {
+        jockeyByGate[String(entry.gateNumber)] = entry.jockey;
+      }
+    }
+
+    try {
+      const pastHtml = await fetchText(`https://race.netkeiba.com/race/shutuba_past.html?race_id=${best.raceId}`);
+      const pastEntries = parseShutubaPastEntries(pastHtml);
+      for (const entry of pastEntries) {
+        const gateKey = String(entry.gateNumber);
+        performanceByGate[gateKey] = {
+          ...(entry.recentFormScore !== null ? { recentFormScore: entry.recentFormScore } : {}),
+          ...(entry.recentAverageFinish !== null ? { recentAverageFinish: entry.recentAverageFinish } : {}),
+          ...(entry.recentTimeIndex !== null ? { recentTimeIndex: entry.recentTimeIndex } : {}),
+          ...(entry.lastRaceGradeScore !== null ? { lastRaceGradeScore: entry.lastRaceGradeScore } : {}),
+          ...(entry.lastRaceGradeLabel ? { lastRaceGradeLabel: entry.lastRaceGradeLabel } : {}),
+        };
+      }
+    } catch {
+      // Keep odds/popularity/jockey refresh working even if past-performance parsing fails.
     }
 
     return NextResponse.json(
@@ -294,6 +521,8 @@ export async function GET(request: NextRequest) {
         oddsByGate,
         popularityRankByGate,
         xPopularityByGate,
+        jockeyByGate,
+        performanceByGate,
       },
       {
         headers: {

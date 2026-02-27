@@ -16,6 +16,8 @@ interface SimulationResultsProps {
 }
 
 export function SimulationResults({ results, horses, onReset, onPostToX, onRunAgain, isRunning, hashtag = '#競馬' }: SimulationResultsProps) {
+    const round1 = (value: number): number => Math.round(value * 10) / 10;
+
     // 集合知勝率（predictionCount の割合）を物理シミュとは独立して計算
     const crowdWinMap = calculateCrowdWinRate(horses);
 
@@ -24,7 +26,7 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
         const horse = horses.find(h => h.id === r.horseId);
         const physWin = r.winCount;
         const crowdWin = crowdWinMap.get(r.horseId) ?? 0;
-        const diff = physWin - crowdWin; // 正=物理優位 / 負=世論優位
+        const diff = round1(physWin - crowdWin); // 正=物理優位 / 負=世論優位
         return {
             name: horse ? horse.name : "Unknown",
             wins: physWin,
@@ -311,7 +313,7 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                                     <td className="px-2 py-1.5 text-right font-bold text-blue-600">{row.wins}%</td>
                                     <td className="px-2 py-1.5 text-right font-bold text-purple-600">{row.crowdWin}%</td>
                                     <td className={`px-2 py-1.5 text-center font-bold ${physVsCrowdColor}`}>
-                                        {physVsCrowd > 0 ? `+${physVsCrowd}` : physVsCrowd}
+                                        {physVsCrowd > 0 ? `+${physVsCrowd.toFixed(1)}` : physVsCrowd.toFixed(1)}
                                     </td>
                                     <td className="px-2 py-1.5 text-right text-slate-500 font-mono">
                                         {row.horse?.realOdds?.toFixed(1)}

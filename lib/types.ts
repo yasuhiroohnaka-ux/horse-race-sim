@@ -18,6 +18,11 @@ export interface Horse {
   stablePower?: number; // 0-100 (netkeiba trainer/stable metrics)
   trainingScore?: number; // -5 to +5 (Wed/Thu workout signal)
   trainingNote?: string;  // Short memo for why trainingScore was set
+  recentFormScore?: number; // -5 to +5 (recent 5-race form)
+  recentAverageFinish?: number; // average finish position in recent races
+  recentTimeIndex?: number; // -5 to +5 (relative speed from recent times)
+  lastRaceGradeScore?: number; // 0 to 5 (class/grade strength)
+  lastRaceGradeLabel?: string; // G1/G2/G3/L/OP/3Win/2Win/1Win/Maiden
 
   // Condition & Weight
   condition?: number;    // 状態値 0-10 (5=普通, 高い=好調)

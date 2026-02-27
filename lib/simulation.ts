@@ -3,8 +3,11 @@ export type { Horse, RunningStyle };
 
 // Constants
 const BASE_SPEED = 16.0; // m/s base
-const SPEED_ABILITY_FACTOR = 0.018;
+const SPEED_ABILITY_FACTOR = 0.015;
 const STAMINA_DRAIN_RATE = 1.0;
+const JOCKEY_MOD_FACTOR = 0.00045;
+const STABLE_MOD_FACTOR = 0.0003;
+const MONTE_CARLO_MEAN_REVERSION = 0.2;
 
 // Helper to calculate odds from crowd score
 export function calculateOdds(horses: Horse[]): Horse[] {
@@ -74,6 +77,20 @@ function isBackStyle(style: RunningStyle): boolean {
 
 function getHorseAbilityScore(horse: Horse): number {
     return horse.speed * 0.46 + horse.stamina * 0.26 + horse.power * 0.17 + horse.guts * 0.11;
+}
+
+function getRecentPerformanceModifier(horse: Horse): number {
+    const formScore = clamp(horse.recentFormScore ?? 0, -5, 5);
+    const timeIndex = clamp(horse.recentTimeIndex ?? 0, -5, 5);
+    const gradeScore = clamp(horse.lastRaceGradeScore ?? 2, 0, 5);
+    const avgFinish = horse.recentAverageFinish;
+    const finishBonus = Number.isFinite(avgFinish)
+        ? clamp((7 - Number(avgFinish)) * 0.003, -0.015, 0.015)
+        : 0;
+    const formBonus = formScore * 0.003;
+    const timeBonus = timeIndex * 0.0035;
+    const gradeBonus = (gradeScore - 2) * 0.0025;
+    return clamp(1 + finishBonus + formBonus + timeBonus + gradeBonus, 0.94, 1.07);
 }
 
 function getPaceAdjustmentByStyle(horses: Horse[]): Map<string, number> {
@@ -171,9 +188,10 @@ export function runRace(
         const weightMod = 1 - (weightVal - 57) * 0.002;
         const jockeyPower = h.jockeyPower ?? 60;
         const stablePower = h.stablePower ?? 60;
-        const jockeyMod = 1 + (jockeyPower - 60) * 0.0008;
-        const stableMod = 1 + (stablePower - 60) * 0.0006;
+        const jockeyMod = 1 + (jockeyPower - 60) * JOCKEY_MOD_FACTOR;
+        const stableMod = 1 + (stablePower - 60) * STABLE_MOD_FACTOR;
         const ability = getHorseAbilityScore(h);
+        const recentPerfMod = getRecentPerformanceModifier(h);
         const baseAbilitySpeed = ability * (SPEED_ABILITY_FACTOR * 0.95) + BASE_SPEED;
         const staminaBuffer = clamp(
             h.stamina * (1 + (h.guts - 80) * 0.0015 + (h.power - 80) * 0.001),
@@ -187,7 +205,7 @@ export function runRace(
         return {
             id: h.id,
             distanceCovered: 0,
-            currentSpeed: baseAbilitySpeed * conditionMod * weightMod * jockeyMod * stableMod * paceMod * drawTacticalMod * launchMod,
+            currentSpeed: baseAbilitySpeed * conditionMod * weightMod * jockeyMod * stableMod * recentPerfMod * paceMod * drawTacticalMod * launchMod,
             stamina: staminaBuffer,
             fatigue: 0,
             finished: false,
@@ -252,7 +270,7 @@ export function runMonteCarlo(
     for (let i = 0; i < iterations; i++) {
         const horseConditions = horses.map((h) => ({
             id: h.id,
-            modifier: 0.97 + Math.random() * 0.06,
+            modifier: 0.96 + Math.random() * 0.08,
         }));
 
         const result = runRace(horses, course, condition, horseConditions);
@@ -274,14 +292,19 @@ export function runMonteCarlo(
     const abilityTotal = Math.max(1, horses.reduce((sum, h) => sum + (abilityById.get(h.id) ?? 0), 0));
     const priorStrength = Math.max(8, Math.round(iterations * 0.2));
 
+    const fieldMeanPct = 100 / Math.max(1, horses.length);
+
     return Array.from(stats.entries())
         .map(([id, data]) => {
             const abilityShare = (abilityById.get(id) ?? 0) / abilityTotal;
             const prior = priorStrength * abilityShare;
             const smoothedWinPct = ((data.wins + prior) / (iterations + priorStrength)) * 100;
+            const calibratedWinPct =
+                smoothedWinPct * (1 - MONTE_CARLO_MEAN_REVERSION) +
+                fieldMeanPct * MONTE_CARLO_MEAN_REVERSION;
             return {
                 horseId: id,
-                winCount: Math.round(smoothedWinPct * 10) / 10,
+                winCount: Math.round(calibratedWinPct * 10) / 10,
                 bestTime: data.bestTime,
             };
         })

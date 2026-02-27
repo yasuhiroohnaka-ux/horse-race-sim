@@ -35,6 +35,11 @@ export function getDefaultHorses(courseId: string): Horse[] {
         sex: h.sex ?? "M",
         weight: Number.isFinite(h.weight) ? h.weight : 57,
         condition: 5,
+        recentFormScore: 0,
+        recentAverageFinish: 0,
+        recentTimeIndex: 0,
+        lastRaceGradeScore: 2,
+        lastRaceGradeLabel: "OP",
       })
       )
       .sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
@@ -65,6 +70,11 @@ export function getDefaultHorses(courseId: string): Horse[] {
       sex: h.sex ?? "M",
       weight,
       condition: h.condition ?? 5,
+      recentFormScore: h.recentFormScore ?? 0,
+      recentAverageFinish: h.recentAverageFinish ?? 0,
+      recentTimeIndex: h.recentTimeIndex ?? 0,
+      lastRaceGradeScore: h.lastRaceGradeScore ?? 2,
+      lastRaceGradeLabel: h.lastRaceGradeLabel ?? "OP",
       jockey: h.jockey ?? "未定",
     });
   }).sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));

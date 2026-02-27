@@ -35,12 +35,12 @@ function hashStr(s: string): number {
  */
 function oddsToBase(odds: number): number {
     if (!odds || odds <= 0) return 75;
-    const winProb = Math.min(0.8 / odds, 0.6);
+    const winProb = Math.min(0.72 / odds, 0.55);
     const normalized = Math.max(0,
         (Math.log(0.6) - Math.log(Math.max(winProb, 0.005))) /
         (Math.log(0.6) - Math.log(0.005))
     );
-    return Math.round(95 - normalized * 25);
+    return Math.round(92 - normalized * 18);
 }
 
 /** 脚質ごとのSP/ST配分（SPシフト値、STは逆方向） */

@@ -1,10 +1,9 @@
 "use client";
 
 import { Horse } from "@/lib/types";
-import { RunningStyle, calculateOdds } from "@/lib/simulation";
+import { calculateOdds } from "@/lib/simulation";
 import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
 import { getFrameColor, getFrameNumber } from "@/lib/frameColor";
-import { useState, useEffect } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
 interface HorseInputProps {
@@ -12,6 +11,18 @@ interface HorseInputProps {
     onHorsesChange: (horses: Horse[]) => void;
     hashtag?: string;
 }
+
+const LAST_GRADE_OPTIONS: Array<{ label: string; score: number }> = [
+    { label: "G1", score: 5 },
+    { label: "G2", score: 4 },
+    { label: "G3", score: 3 },
+    { label: "L", score: 2.5 },
+    { label: "OP", score: 2 },
+    { label: "3Win", score: 1.5 },
+    { label: "2Win", score: 1 },
+    { label: "1Win", score: 0.5 },
+    { label: "Maiden", score: 0 },
+];
 
 export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: HorseInputProps) {
 
@@ -32,6 +43,11 @@ export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: Hors
             weight: 57,
             condition: 5,
             trainingScore: 0,
+            recentFormScore: 0,
+            recentAverageFinish: 0,
+            recentTimeIndex: 0,
+            lastRaceGradeScore: 2,
+            lastRaceGradeLabel: "OP",
         };
         updateHorses([...horses, applyNetkeibaRatings(newHorse)]);
     };
@@ -56,6 +72,16 @@ export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: Hors
             return h;
         });
         updateHorses(enriched);
+    };
+
+    const updateLastRaceGrade = (id: string, label: string) => {
+        const selected = LAST_GRADE_OPTIONS.find((g) => g.label === label) ?? { label: "OP", score: 2 };
+        const newHorses = horses.map((h) =>
+            h.id === id
+                ? { ...h, lastRaceGradeLabel: selected.label, lastRaceGradeScore: selected.score }
+                : h
+        );
+        updateHorses(newHorses);
     };
 
     const handlePostPopularity = () => {
@@ -113,7 +139,7 @@ export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: Hors
             </div>
 
             <div className="overflow-x-auto -mx-4">
-                <table className="w-full text-xs border-collapse" style={{ minWidth: '920px' }}>
+                <table className="w-full text-xs border-collapse" style={{ minWidth: '1120px' }}>
                     <thead>
                         <tr className="bg-slate-50 text-slate-500 border-y border-slate-200">
                             <th className="px-2 py-2 text-center w-10">枠</th>
@@ -126,6 +152,18 @@ export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: Hors
                             <th className="px-1 py-2 text-center w-10">ST</th>
                             <th className="px-1 py-2 text-center w-10" title="Workout">
                                 追切
+                            </th>
+                            <th className="px-1 py-2 text-center w-10" title="近5走の着順ベース評価 (-5 ~ +5)">
+                                近5
+                            </th>
+                            <th className="px-1 py-2 text-center w-10" title="近5走の平均着順 (小さいほど良い)">
+                                着順
+                            </th>
+                            <th className="px-1 py-2 text-center w-10" title="近5走の走破時計指数 (-5 ~ +5)">
+                                時計
+                            </th>
+                            <th className="px-1 py-2 text-center w-12" title="前走レース格">
+                                前格
                             </th>
                             <th className="px-1 py-2 text-center w-10"
                                 title="状態値 0-10 (好調→能力UP, 不調→能力DOWN)">
@@ -241,6 +279,44 @@ export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: Hors
                                             onChange={(e) => updateHorse(horse.id, 'trainingScore', Math.max(-5, Math.min(5, parseFloat(e.target.value) || 0)))}
                                             className="w-10 p-0.5 border rounded text-center text-xs text-emerald-700 font-semibold"
                                         />
+                                    </td>
+                                    <td className="px-0.5 py-1.5 text-center">
+                                        <input
+                                            type="number"
+                                            min="-5" max="5" step="0.1"
+                                            value={horse.recentFormScore ?? 0}
+                                            onChange={(e) => updateHorse(horse.id, 'recentFormScore', Math.max(-5, Math.min(5, parseFloat(e.target.value) || 0)))}
+                                            className="w-10 p-0.5 border rounded text-center text-xs text-indigo-700 font-semibold"
+                                        />
+                                    </td>
+                                    <td className="px-0.5 py-1.5 text-center">
+                                        <input
+                                            type="number"
+                                            min="0" max="18" step="0.1"
+                                            value={horse.recentAverageFinish ?? 0}
+                                            onChange={(e) => updateHorse(horse.id, 'recentAverageFinish', Math.max(0, Math.min(18, parseFloat(e.target.value) || 0)))}
+                                            className="w-10 p-0.5 border rounded text-center text-xs"
+                                        />
+                                    </td>
+                                    <td className="px-0.5 py-1.5 text-center">
+                                        <input
+                                            type="number"
+                                            min="-5" max="5" step="0.1"
+                                            value={horse.recentTimeIndex ?? 0}
+                                            onChange={(e) => updateHorse(horse.id, 'recentTimeIndex', Math.max(-5, Math.min(5, parseFloat(e.target.value) || 0)))}
+                                            className="w-10 p-0.5 border rounded text-center text-xs text-cyan-700 font-semibold"
+                                        />
+                                    </td>
+                                    <td className="px-0.5 py-1.5 text-center">
+                                        <select
+                                            value={horse.lastRaceGradeLabel ?? "OP"}
+                                            onChange={(e) => updateLastRaceGrade(horse.id, e.target.value)}
+                                            className="w-12 p-0.5 border rounded text-center text-xs"
+                                        >
+                                            {LAST_GRADE_OPTIONS.map((opt) => (
+                                                <option key={opt.label} value={opt.label}>{opt.label}</option>
+                                            ))}
+                                        </select>
                                     </td>
                                     {/* 状態値 */}
                                     <td className="px-0.5 py-1.5 text-center">

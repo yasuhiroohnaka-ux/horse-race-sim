@@ -68,34 +68,64 @@ function SimulatorContent() {
                 const payload = await res.json() as {
                     oddsByGate?: Record<string, number>;
                     xPopularityByGate?: Record<string, number>;
+                    jockeyByGate?: Record<string, string>;
+                    performanceByGate?: Record<string, {
+                        recentFormScore?: number;
+                        recentAverageFinish?: number;
+                        recentTimeIndex?: number;
+                        lastRaceGradeScore?: number;
+                        lastRaceGradeLabel?: string;
+                    }>;
                 };
                 const oddsByGate = payload.oddsByGate ?? {};
                 const xPopularityByGate = payload.xPopularityByGate ?? {};
-                if ((Object.keys(oddsByGate).length === 0 && Object.keys(xPopularityByGate).length === 0) || cancelled) return;
+                const jockeyByGate = payload.jockeyByGate ?? {};
+                const performanceByGate = payload.performanceByGate ?? {};
+                if (
+                    (
+                        Object.keys(oddsByGate).length === 0 &&
+                        Object.keys(xPopularityByGate).length === 0 &&
+                        Object.keys(jockeyByGate).length === 0 &&
+                        Object.keys(performanceByGate).length === 0
+                    ) ||
+                    cancelled
+                ) return;
 
                 setHorses((prev) => {
                     let changed = false;
                     const updated = prev.map((horse) => {
                         let nextHorse = horse;
+                        let touched = false;
+                        let needsRatingsRecalc = false;
+
                         const latestOdds = Number(oddsByGate[String(horse.gateNumber)]);
                         if (Number.isFinite(latestOdds) && latestOdds > 0) {
                             const roundedLatestOdds = Math.round(latestOdds * 10) / 10;
                             const currentOdds = Number(horse.realOdds ?? 0);
                             if (Math.abs(currentOdds - roundedLatestOdds) >= 0.05) {
-                                changed = true;
-                                nextHorse = applyNetkeibaRatings({
+                                touched = true;
+                                needsRatingsRecalc = true;
+                                nextHorse = {
                                     ...nextHorse,
                                     realOdds: roundedLatestOdds,
-                                    jockeyPower: undefined,
-                                    stablePower: undefined,
-                                });
+                                };
                             }
+                        }
+
+                        const latestJockey = String(jockeyByGate[String(horse.gateNumber)] ?? "").trim();
+                        if (latestJockey && latestJockey !== "未定" && nextHorse.jockey !== latestJockey) {
+                            touched = true;
+                            needsRatingsRecalc = true;
+                            nextHorse = {
+                                ...nextHorse,
+                                jockey: latestJockey,
+                            };
                         }
 
                         const latestPopularity = Math.round(Number(xPopularityByGate[String(horse.gateNumber)]));
                         if (Number.isFinite(latestPopularity) && latestPopularity > 0) {
                             if (nextHorse.predictionCount !== latestPopularity) {
-                                changed = true;
+                                touched = true;
                                 nextHorse = {
                                     ...nextHorse,
                                     predictionCount: latestPopularity,
@@ -103,7 +133,74 @@ function SimulatorContent() {
                             }
                         }
 
-                        return nextHorse;
+                        const latestPerformance = performanceByGate[String(horse.gateNumber)];
+                        if (latestPerformance) {
+                            const latestFormScore = Number(latestPerformance.recentFormScore);
+                            if (Number.isFinite(latestFormScore)) {
+                                const rounded = Math.round(latestFormScore * 10) / 10;
+                                if ((nextHorse.recentFormScore ?? 0) !== rounded) {
+                                    touched = true;
+                                    nextHorse = {
+                                        ...nextHorse,
+                                        recentFormScore: rounded,
+                                    };
+                                }
+                            }
+
+                            const latestAvgFinish = Number(latestPerformance.recentAverageFinish);
+                            if (Number.isFinite(latestAvgFinish) && latestAvgFinish > 0) {
+                                const rounded = Math.round(latestAvgFinish * 10) / 10;
+                                if ((nextHorse.recentAverageFinish ?? 0) !== rounded) {
+                                    touched = true;
+                                    nextHorse = {
+                                        ...nextHorse,
+                                        recentAverageFinish: rounded,
+                                    };
+                                }
+                            }
+
+                            const latestTimeIndex = Number(latestPerformance.recentTimeIndex);
+                            if (Number.isFinite(latestTimeIndex)) {
+                                const rounded = Math.round(latestTimeIndex * 10) / 10;
+                                if ((nextHorse.recentTimeIndex ?? 0) !== rounded) {
+                                    touched = true;
+                                    nextHorse = {
+                                        ...nextHorse,
+                                        recentTimeIndex: rounded,
+                                    };
+                                }
+                            }
+
+                            const latestGradeScore = Number(latestPerformance.lastRaceGradeScore);
+                            const latestGradeLabel = String(latestPerformance.lastRaceGradeLabel ?? "").trim();
+                            if (Number.isFinite(latestGradeScore) || latestGradeLabel) {
+                                const roundedGrade = Number.isFinite(latestGradeScore)
+                                    ? Math.round(latestGradeScore * 10) / 10
+                                    : (nextHorse.lastRaceGradeScore ?? 2);
+                                if (
+                                    (nextHorse.lastRaceGradeScore ?? 2) !== roundedGrade ||
+                                    (latestGradeLabel && nextHorse.lastRaceGradeLabel !== latestGradeLabel)
+                                ) {
+                                    touched = true;
+                                    nextHorse = {
+                                        ...nextHorse,
+                                        lastRaceGradeScore: roundedGrade,
+                                        ...(latestGradeLabel ? { lastRaceGradeLabel: latestGradeLabel } : {}),
+                                    };
+                                }
+                            }
+                        }
+
+                        if (needsRatingsRecalc) {
+                            nextHorse = applyNetkeibaRatings({
+                                ...nextHorse,
+                                jockeyPower: undefined,
+                                stablePower: undefined,
+                            });
+                        }
+
+                        if (touched) changed = true;
+                        return touched ? nextHorse : horse;
                     });
 
                     return changed ? calculateOdds(updated) : prev;
