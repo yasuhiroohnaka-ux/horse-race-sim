@@ -44,6 +44,12 @@ function detectStageFromJst(now) {
   return null;
 }
 
+function isAfterFri10Jst(now) {
+  const day = now.getDay();
+  const hour = now.getHours();
+  return day === 0 || day === 6 || (day === 5 && hour >= 10);
+}
+
 async function runNodeScript(relativePath, args = []) {
   await new Promise((resolve, reject) => {
     const child = spawn(process.execPath, [path.join(ROOT, relativePath), ...args], {
@@ -348,6 +354,11 @@ async function handleFieldConfirmed() {
 }
 
 async function handleDrawConfirmed() {
+  // Refresh sources at draw-confirm stage so latest gate/entry corrections can be applied.
+  await runNodeScript("scripts/weekly-keiba-update.mjs", ["--force"]);
+  await runNodeScript("scripts/daily-entry-check.mjs");
+  await runNodeScript("scripts/sync-race-schedule.mjs");
+
   const state = await readJson(STATE_PATH, {});
   state.drawConfirmedAt = new Date().toISOString();
   await writeJson(STATE_PATH, state);
@@ -355,10 +366,16 @@ async function handleDrawConfirmed() {
 }
 
 async function handleRecommendation(day, stage) {
+  const now = jstNow();
   const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { races: [] } });
   const state = await readJson(STATE_PATH, {});
   const includeBodyWeight = day === "Sat";
-  const applyDraw = Boolean(state.drawConfirmedAt); // Before Fri 10:00, draw impact is off.
+  // Fail-safe: even if fri_10 job is missed once, enable draw impact after Friday 10:00 JST.
+  const applyDraw = Boolean(state.drawConfirmedAt) || isAfterFri10Jst(now);
+  if (applyDraw && !state.drawConfirmedAt) {
+    state.drawConfirmedAt = now.toISOString();
+    await writeJson(STATE_PATH, state);
+  }
   const best = pickBestHorse(weekly.currentWeek?.races || [], day, includeBodyWeight, applyDraw);
 
   if (!best) {
