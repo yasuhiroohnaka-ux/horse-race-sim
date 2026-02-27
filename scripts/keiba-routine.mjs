@@ -221,7 +221,7 @@ function listOvervaluedHorsesInRace(race, includeBodyWeight = false) {
     .sort((a, b) => b.gap - a.gap);
 }
 
-function pickTanpukuHorse(race, includeBodyWeight = false) {
+function pickTanpukuPair(race, includeBodyWeight = false) {
   const drawMap = buildDrawTacticalMap(race);
   const scored = race.horses
     .map((horse) => {
@@ -239,7 +239,14 @@ function pickTanpukuHorse(race, includeBodyWeight = false) {
     .filter((x) => x !== null)
     .sort((a, b) => b.value - a.value);
 
-  return scored[0] ?? null;
+  if (scored.length === 0) return null;
+  const winPick = [...scored].sort((a, b) => b.winProb - a.winProb)[0];
+  const valueCandidates = scored.filter((x) => x.winProb >= 0.18);
+  const valuePick =
+    [...(valueCandidates.length > 0 ? valueCandidates : scored)]
+      .sort((a, b) => b.value - a.value)
+      .find((x) => x.horse.id !== winPick.horse.id) ?? scored[0];
+  return { winPick, valuePick };
 }
 
 function ensurePerf(state, weekOf) {
@@ -334,7 +341,7 @@ async function handleRecommendation(day, stage) {
   const horse = best.horse;
   const undervalued = listUndervaluedHorsesInRace(race, includeBodyWeight);
   const overvalued = listOvervaluedHorsesInRace(race, includeBodyWeight);
-  const tanpuku = pickTanpukuHorse(race, includeBodyWeight);
+  const tanpuku = pickTanpukuPair(race, includeBodyWeight);
 
   const undervaluedText =
     undervalued.length > 0
@@ -354,11 +361,11 @@ async function handleRecommendation(day, stage) {
   await publishOrQueuePost(`${stage}_overvalued`, `${day}重賞 過大評価馬リスト: ${overvaluedText}`);
 
   if (tanpuku) {
+    const winPick = tanpuku.winPick;
+    const valuePick = tanpuku.valuePick;
     await publishOrQueuePost(
       `${stage}_tanpuku`,
-      `${day}重賞 単複おすすめ: ${tanpuku.horse.name} (${race.label}) / 単 的中率${(tanpuku.winProb * 100).toFixed(1)}% 回収率${tanpuku.tanRoi.toFixed(
-        1
-      )}% / 複 的中率${(tanpuku.placeProb * 100).toFixed(1)}% 回収率${tanpuku.fukuRoi.toFixed(1)}%`
+      `${day}重賞 単複おすすめ: 勝率重視=${winPick.horse.name}(勝率${(winPick.winProb * 100).toFixed(1)}%) / 回収率重視=${valuePick.horse.name}(単回収${valuePick.tanRoi.toFixed(1)}% 複回収${valuePick.fukuRoi.toFixed(1)}% 勝率${(valuePick.winProb * 100).toFixed(1)}%)`
     );
 
     const weekOf = weekly.currentWeek?.weekOf || isoDate(startOfWeekMonday(jstNow()));
@@ -370,12 +377,29 @@ async function handleRecommendation(day, stage) {
       postedAt: new Date().toISOString(),
       courseId: race.courseId,
       raceLabel: race.label,
-      horseId: tanpuku.horse.id,
-      horseName: tanpuku.horse.name,
-      realOdds: Number(tanpuku.horse.realOdds ?? 0),
-      placeOdds: Number(tanpuku.placeOdds),
-      winProb: Number(tanpuku.winProb),
-      placeProb: Number(tanpuku.placeProb),
+      pickType: "win",
+      horseId: winPick.horse.id,
+      horseName: winPick.horse.name,
+      realOdds: Number(winPick.horse.realOdds ?? 0),
+      placeOdds: Number(winPick.placeOdds),
+      winProb: Number(winPick.winProb),
+      placeProb: Number(winPick.placeProb),
+      resolved: false,
+    });
+    state.tanpukuRecommendations.push({
+      weekOf,
+      day,
+      stage,
+      postedAt: new Date().toISOString(),
+      courseId: race.courseId,
+      raceLabel: race.label,
+      pickType: "value",
+      horseId: valuePick.horse.id,
+      horseName: valuePick.horse.name,
+      realOdds: Number(valuePick.horse.realOdds ?? 0),
+      placeOdds: Number(valuePick.placeOdds),
+      winProb: Number(valuePick.winProb),
+      placeProb: Number(valuePick.placeProb),
       resolved: false,
     });
     await writeJson(STATE_PATH, state);

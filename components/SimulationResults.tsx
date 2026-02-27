@@ -133,14 +133,18 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
             .sort((a, b) => b.score - a.score);
 
         if (ranked.length === 0) return;
-        const top = ranked[0];
-        const horse = top.row.horse;
-        const realOdds = horse?.realOdds || 0;
+        const highestWin = [...ranked].sort((a, b) => b.winProb - a.winProb)[0];
+        const valueCandidates = ranked.filter((x) => x.winProb >= 0.18);
+        const highestValue = [...(valueCandidates.length > 0 ? valueCandidates : ranked)]
+            .sort((a, b) => b.score - a.score)
+            .find((x) => x.row.horse?.id !== highestWin.row.horse?.id) ?? ranked[0];
+
+        const winRealOdds = highestWin.row.horse?.realOdds || 0;
+        const valueRealOdds = highestValue.row.horse?.realOdds || 0;
         const text = [
             "【単複的中率&回収率おすすめ】",
-            `推奨馬: ${top.row.name}`,
-            `単勝: 的中率${(top.winProb * 100).toFixed(1)}% / 期待回収率${top.tanRoi.toFixed(1)}% (想定${realOdds.toFixed(1)}倍)`,
-            `複勝: 的中率${(top.placeProb * 100).toFixed(1)}% / 期待回収率${top.fukuRoi.toFixed(1)}% (想定${top.placeOdds.toFixed(1)}倍)`,
+            `勝率重視: ${highestWin.row.name} / 勝率${(highestWin.winProb * 100).toFixed(1)}% (想定${winRealOdds.toFixed(1)}倍)`,
+            `回収率重視: ${highestValue.row.name} / 単回収率${highestValue.tanRoi.toFixed(1)}% 複回収率${highestValue.fukuRoi.toFixed(1)}% / 勝率${(highestValue.winProb * 100).toFixed(1)}% (想定${valueRealOdds.toFixed(1)}倍)`,
             "",
             `#競馬 ${hashtag} #単複おすすめ`,
         ].join("\n");
