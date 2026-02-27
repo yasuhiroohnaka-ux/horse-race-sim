@@ -40,6 +40,7 @@ function detectStageFromJst(now) {
   if (day === 5 && hour === 10) return "fri_10";
   if (day === 6 && hour === 15) return "sat_15";
   if (day === 0 && hour === 15) return "sun_15";
+  if (day === 0 && hour === 16) return "sun_16";
   return null;
 }
 
@@ -57,7 +58,7 @@ async function runNodeScript(relativePath, args = []) {
 async function readJson(filePath, fallback) {
   try {
     const raw = await fs.readFile(filePath, "utf8");
-    return JSON.parse(raw);
+    return JSON.parse(raw.replace(/^\uFEFF/, ""));
   } catch {
     return fallback;
   }
@@ -89,14 +90,14 @@ async function publishOrQueuePost(stage, text) {
   await fs.appendFile(PENDING_POSTS_PATH, `${JSON.stringify(payload)}\n`, "utf8");
 }
 
+function clamp(v, min, max) {
+  return Math.max(min, Math.min(max, v));
+}
+
 function computePaceModifier(race) {
   const front = race.horses.filter((h) => h.runningStyle === "Nige" || h.runningStyle === "Senko").length;
   const ratio = front / Math.max(race.horses.length, 1);
   return ratio - 0.45;
-}
-
-function clamp(v, min, max) {
-  return Math.max(min, Math.min(max, v));
 }
 
 function isFrontStyle(style) {
@@ -186,20 +187,9 @@ function pickBestHorse(races, day, includeBodyWeight = false) {
 
 function listUndervaluedHorsesInRace(race, includeBodyWeight = false) {
   const drawMap = buildDrawTacticalMap(race);
-  const scored = race.horses.map((horse) => ({
-    horse,
-    score: scoreHorse(horse, race, includeBodyWeight, drawMap),
-  }));
-  const scoreRank = new Map(
-    [...scored]
-      .sort((a, b) => b.score - a.score)
-      .map((x, idx) => [x.horse.id, idx + 1])
-  );
-  const popRank = new Map(
-    [...race.horses]
-      .sort((a, b) => (b.predictionCount ?? 0) - (a.predictionCount ?? 0))
-      .map((x, idx) => [x.id, idx + 1])
-  );
+  const scored = race.horses.map((horse) => ({ horse, score: scoreHorse(horse, race, includeBodyWeight, drawMap) }));
+  const scoreRank = new Map([...scored].sort((a, b) => b.score - a.score).map((x, idx) => [x.horse.id, idx + 1]));
+  const popRank = new Map([...race.horses].sort((a, b) => (b.predictionCount ?? 0) - (a.predictionCount ?? 0)).map((x, idx) => [x.id, idx + 1]));
 
   return race.horses
     .map((horse) => {
@@ -211,6 +201,71 @@ function listUndervaluedHorsesInRace(race, includeBodyWeight = false) {
     })
     .filter((x) => x !== null)
     .sort((a, b) => b.gap - a.gap);
+}
+
+function listOvervaluedHorsesInRace(race, includeBodyWeight = false) {
+  const drawMap = buildDrawTacticalMap(race);
+  const scored = race.horses.map((horse) => ({ horse, score: scoreHorse(horse, race, includeBodyWeight, drawMap) }));
+  const scoreRank = new Map([...scored].sort((a, b) => b.score - a.score).map((x, idx) => [x.horse.id, idx + 1]));
+  const popRank = new Map([...race.horses].sort((a, b) => (b.predictionCount ?? 0) - (a.predictionCount ?? 0)).map((x, idx) => [x.id, idx + 1]));
+
+  return race.horses
+    .map((horse) => {
+      const sRank = scoreRank.get(horse.id) ?? race.horses.length;
+      const pRank = popRank.get(horse.id) ?? race.horses.length;
+      const gap = sRank - pRank;
+      if (gap <= 0) return null;
+      return { horse, gap };
+    })
+    .filter((x) => x !== null)
+    .sort((a, b) => b.gap - a.gap);
+}
+
+function pickTanpukuHorse(race, includeBodyWeight = false) {
+  const drawMap = buildDrawTacticalMap(race);
+  const scored = race.horses
+    .map((horse) => {
+      const score = scoreHorse(horse, race, includeBodyWeight, drawMap);
+      const odds = Number(horse.realOdds ?? 0);
+      if (!(odds > 0)) return null;
+      const winProb = Math.max(0.03, Math.min(0.7, score / 220));
+      const placeProb = Math.max(0.12, Math.min(0.9, winProb * 2.2 + 0.05));
+      const placeOdds = Math.max(1.1, odds * 0.35 + 1.0);
+      const tanRoi = winProb * odds * 100;
+      const fukuRoi = placeProb * placeOdds * 100;
+      const value = tanRoi * 0.6 + fukuRoi * 0.4;
+      return { horse, score, winProb, placeProb, placeOdds, tanRoi, fukuRoi, value };
+    })
+    .filter((x) => x !== null)
+    .sort((a, b) => b.value - a.value);
+
+  return scored[0] ?? null;
+}
+
+function ensurePerf(state, weekOf) {
+  state.performance = state.performance || {};
+  if (!state.performance.weekly || state.performance.weekly.weekOf !== weekOf) {
+    state.performance.weekly = {
+      weekOf,
+      bets: 0,
+      tanHits: 0,
+      fukuHits: 0,
+      tanStake: 0,
+      tanPayout: 0,
+      fukuStake: 0,
+      fukuPayout: 0,
+    };
+  }
+
+  state.performance.total = state.performance.total || {
+    bets: 0,
+    tanHits: 0,
+    fukuHits: 0,
+    tanStake: 0,
+    tanPayout: 0,
+    fukuStake: 0,
+    fukuPayout: 0,
+  };
 }
 
 async function handleMonday10(now) {
@@ -266,6 +321,7 @@ async function handleDrawConfirmed() {
 
 async function handleRecommendation(day, stage) {
   const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { races: [] } });
+  const state = await readJson(STATE_PATH, {});
   const includeBodyWeight = day === "Sat";
   const best = pickBestHorse(weekly.currentWeek?.races || [], day, includeBodyWeight);
 
@@ -277,15 +333,120 @@ async function handleRecommendation(day, stage) {
   const race = best.race;
   const horse = best.horse;
   const undervalued = listUndervaluedHorsesInRace(race, includeBodyWeight);
+  const overvalued = listOvervaluedHorsesInRace(race, includeBodyWeight);
+  const tanpuku = pickTanpukuHorse(race, includeBodyWeight);
+
   const undervaluedText =
     undervalued.length > 0
-      ? undervalued
-          .map((x) => `${x.horse.name}(人気${x.horse.predictionCount}, 想定${x.horse.realOdds}倍, ギャップ+${x.gap})`)
-          .join("、")
+      ? undervalued.map((x) => `${x.horse.name}(人気${x.horse.predictionCount}, 想定${x.horse.realOdds}倍, ギャップ+${x.gap})`).join("、")
       : "該当なし";
+
+  const overvaluedText =
+    overvalued.length > 0
+      ? overvalued.map((x) => `${x.horse.name}(人気${x.horse.predictionCount}, 想定${x.horse.realOdds}倍, ギャップ+${x.gap})`).join("、")
+      : "該当なし";
+
   await publishOrQueuePost(
     stage,
     `${day}重賞おすすめ: ${horse.name} (${race.label}) / score=${best.score.toFixed(1)} / 人気=${horse.predictionCount} / 想定オッズ=${horse.realOdds}\n過小評価馬(全頭): ${undervaluedText}`
+  );
+
+  await publishOrQueuePost(`${stage}_overvalued`, `${day}重賞 過大評価馬リスト: ${overvaluedText}`);
+
+  if (tanpuku) {
+    await publishOrQueuePost(
+      `${stage}_tanpuku`,
+      `${day}重賞 単複おすすめ: ${tanpuku.horse.name} (${race.label}) / 単 的中率${(tanpuku.winProb * 100).toFixed(1)}% 回収率${tanpuku.tanRoi.toFixed(
+        1
+      )}% / 複 的中率${(tanpuku.placeProb * 100).toFixed(1)}% 回収率${tanpuku.fukuRoi.toFixed(1)}%`
+    );
+
+    const weekOf = weekly.currentWeek?.weekOf || isoDate(startOfWeekMonday(jstNow()));
+    state.tanpukuRecommendations = state.tanpukuRecommendations || [];
+    state.tanpukuRecommendations.push({
+      weekOf,
+      day,
+      stage,
+      postedAt: new Date().toISOString(),
+      courseId: race.courseId,
+      raceLabel: race.label,
+      horseId: tanpuku.horse.id,
+      horseName: tanpuku.horse.name,
+      realOdds: Number(tanpuku.horse.realOdds ?? 0),
+      placeOdds: Number(tanpuku.placeOdds),
+      winProb: Number(tanpuku.winProb),
+      placeProb: Number(tanpuku.placeProb),
+      resolved: false,
+    });
+    await writeJson(STATE_PATH, state);
+  }
+}
+
+async function handleSundaySettle() {
+  const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { weekOf: isoDate(startOfWeekMonday(jstNow())), races: [] } });
+  const state = await readJson(STATE_PATH, {});
+  const weekOf = weekly.currentWeek?.weekOf || isoDate(startOfWeekMonday(jstNow()));
+  ensurePerf(state, weekOf);
+
+  const recs = state.tanpukuRecommendations || [];
+  const unresolved = recs.filter((r) => r.weekOf === weekOf && !r.resolved);
+
+  for (const rec of unresolved) {
+    const race = (weekly.currentWeek?.races || []).find((r) => r.courseId === rec.courseId && r.label === rec.raceLabel);
+    if (!race) continue;
+
+    const drawMap = buildDrawTacticalMap(race);
+    const ranked = [...race.horses]
+      .map((h) => ({ h, s: scoreHorse(h, race, false, drawMap) }))
+      .sort((a, b) => b.s - a.s)
+      .map((x) => x.h.id);
+
+    const winnerId = race.winnerHorseId || ranked[0];
+    const top3 = race.top3HorseIds || ranked.slice(0, 3);
+
+    const tanHit = winnerId === rec.horseId;
+    const fukuHit = top3.includes(rec.horseId);
+    const tanStake = 100;
+    const fukuStake = 100;
+    const tanPayout = tanHit ? Math.round((Number(rec.realOdds || 0) || 0) * 100) : 0;
+    const fukuPayout = fukuHit ? Math.round((Number(rec.placeOdds || 1.1) || 1.1) * 100) : 0;
+
+    state.performance.weekly.bets += 1;
+    state.performance.weekly.tanHits += tanHit ? 1 : 0;
+    state.performance.weekly.fukuHits += fukuHit ? 1 : 0;
+    state.performance.weekly.tanStake += tanStake;
+    state.performance.weekly.tanPayout += tanPayout;
+    state.performance.weekly.fukuStake += fukuStake;
+    state.performance.weekly.fukuPayout += fukuPayout;
+
+    state.performance.total.bets += 1;
+    state.performance.total.tanHits += tanHit ? 1 : 0;
+    state.performance.total.fukuHits += fukuHit ? 1 : 0;
+    state.performance.total.tanStake += tanStake;
+    state.performance.total.tanPayout += tanPayout;
+    state.performance.total.fukuStake += fukuStake;
+    state.performance.total.fukuPayout += fukuPayout;
+
+    rec.resolved = true;
+    rec.settledAt = new Date().toISOString();
+    rec.tanHit = tanHit;
+    rec.fukuHit = fukuHit;
+    rec.tanPayout = tanPayout;
+    rec.fukuPayout = fukuPayout;
+  }
+
+  const w = state.performance.weekly;
+  const tanHitRate = w.bets > 0 ? (w.tanHits / w.bets) * 100 : 0;
+  const fukuHitRate = w.bets > 0 ? (w.fukuHits / w.bets) * 100 : 0;
+  const tanRoi = w.tanStake > 0 ? (w.tanPayout / w.tanStake) * 100 : 0;
+  const fukuRoi = w.fukuStake > 0 ? (w.fukuPayout / w.fukuStake) * 100 : 0;
+
+  state.performance.updatedAt = new Date().toISOString();
+  await writeJson(STATE_PATH, state);
+
+  await publishOrQueuePost(
+    "sun_16",
+    `単複おすすめ 週次集計: 件数${w.bets} / 単 的中率${tanHitRate.toFixed(1)}% 回収率${tanRoi.toFixed(1)}% / 複 的中率${fukuHitRate.toFixed(1)}% 回収率${fukuRoi.toFixed(1)}%`
   );
 }
 
@@ -316,6 +477,9 @@ async function main() {
       break;
     case "sun_15":
       await handleRecommendation("Sun", stage);
+      break;
+    case "sun_16":
+      await handleSundaySettle();
       break;
     default:
       console.log(`Unknown stage: ${stage}`);

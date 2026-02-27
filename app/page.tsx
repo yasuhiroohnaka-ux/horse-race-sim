@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PerformancePanel } from "@/components/PerformancePanel";
 
 export default function Home() {
     return (
@@ -30,6 +31,8 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
+
+                <PerformancePanel />
 
                 <div className="bg-white rounded-lg shadow-md border border-slate-200 p-8">
                     <p className="text-slate-700 leading-relaxed mb-2">

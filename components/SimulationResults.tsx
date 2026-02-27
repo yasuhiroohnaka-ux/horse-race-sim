@@ -85,6 +85,68 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
         window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
     };
 
+    const handlePostOvervaluedToX = () => {
+        const overvalued = data
+            .filter((row) => {
+                const realOdds = row.horse?.realOdds || 0;
+                if (row.wins <= 0 || realOdds <= 0) return false;
+                const physImpliedOdds = 100 / row.wins;
+                const ratio = realOdds / physImpliedOdds;
+                return ratio < 0.67;
+            })
+            .sort((a, b) => {
+                const aRealOdds = a.horse?.realOdds || 0;
+                const bRealOdds = b.horse?.realOdds || 0;
+                const aRatio = a.wins > 0 ? aRealOdds / (100 / a.wins) : 999;
+                const bRatio = b.wins > 0 ? bRealOdds / (100 / b.wins) : 999;
+                return aRatio - bRatio;
+            });
+
+        let text = "【過大評価馬リスト】\n";
+        if (overvalued.length === 0) {
+            text += "該当馬なし\n";
+        } else {
+            overvalued.forEach((row, i) => {
+                const realOdds = row.horse?.realOdds || 0;
+                const ratio = row.wins > 0 ? realOdds / (100 / row.wins) : 0;
+                text += `#${i + 1} ${row.name} 市場${realOdds.toFixed(1)}倍 / 勝率${row.wins}% / 乖離${ratio.toFixed(2)}x\n`;
+            });
+        }
+        text += `\n#競馬 ${hashtag} #過大評価`;
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
+    };
+
+    const handlePostTanpukuRecommendationToX = () => {
+        const ranked = data
+            .map((row) => {
+                const realOdds = row.horse?.realOdds || 0;
+                if (realOdds <= 0) return null;
+                const winProb = Math.max(0, Math.min(0.95, row.wins / 100));
+                const placeProb = Math.max(0.05, Math.min(0.98, winProb * 2.2 + 0.05));
+                const placeOdds = Math.max(1.1, realOdds * 0.35 + 1.0);
+                const tanRoi = winProb * realOdds * 100;
+                const fukuRoi = placeProb * placeOdds * 100;
+                const score = tanRoi * 0.6 + fukuRoi * 0.4;
+                return { row, winProb, placeProb, placeOdds, tanRoi, fukuRoi, score };
+            })
+            .filter((x): x is { row: typeof data[number]; winProb: number; placeProb: number; placeOdds: number; tanRoi: number; fukuRoi: number; score: number } => x !== null)
+            .sort((a, b) => b.score - a.score);
+
+        if (ranked.length === 0) return;
+        const top = ranked[0];
+        const horse = top.row.horse;
+        const realOdds = horse?.realOdds || 0;
+        const text = [
+            "【単複的中率&回収率おすすめ】",
+            `推奨馬: ${top.row.name}`,
+            `単勝: 的中率${(top.winProb * 100).toFixed(1)}% / 期待回収率${top.tanRoi.toFixed(1)}% (想定${realOdds.toFixed(1)}倍)`,
+            `複勝: 的中率${(top.placeProb * 100).toFixed(1)}% / 期待回収率${top.fukuRoi.toFixed(1)}% (想定${top.placeOdds.toFixed(1)}倍)`,
+            "",
+            `#競馬 ${hashtag} #単複おすすめ`,
+        ].join("\n");
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
+    };
+
     return (
         <div className="bg-white p-4 rounded-lg shadow-md border border-slate-200 mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="text-sm font-bold mb-1 text-slate-800">3. シミュレーション結果 (100回実行)</h2>
@@ -256,6 +318,20 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                 >
                     <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
                     過小評価馬をXに投稿
+                </button>
+                <button
+                    onClick={handlePostOvervaluedToX}
+                    className="flex items-center gap-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition shadow-lg hover:shadow-xl"
+                >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    過大評価馬をXに投稿
+                </button>
+                <button
+                    onClick={handlePostTanpukuRecommendationToX}
+                    className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition shadow-lg hover:shadow-xl"
+                >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    単複おすすめをXに投稿
                 </button>
             </div>
         </div>
