@@ -18,8 +18,53 @@ const WEIGHT_CORRECTIONS_BY_KEY = {
 };
 
 const WEIGHT_CORRECTIONS_BY_NAME = {
-  "Karamatianos": 58,
+  "Karamatianos": 56,
 };
+
+const NETKEIBA_WEIGHT_SOURCES = [
+  {
+    horseName: "Karamatianos",
+    // netkeiba DB page that includes the horse row with weight.
+    url: "https://db.netkeiba.com/horse/select.html?id=2014106201&mode=wn&type=sire&year=2024",
+    rowKeyword: "カラマティアノス",
+  },
+];
+
+async function fetchText(url) {
+  const res = await fetch(url, {
+    headers: {
+      "user-agent": "horse-race-sim-bot/1.0",
+      accept: "text/html,*/*",
+    },
+  });
+  if (!res.ok) {
+    throw new Error(`fetch failed ${res.status}: ${url}`);
+  }
+  return res.text();
+}
+
+async function fetchNetkeibaWeightOverrides() {
+  const out = {};
+  for (const src of NETKEIBA_WEIGHT_SOURCES) {
+    try {
+      const html = await fetchText(src.url);
+      const plain = html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
+      const rowStart = plain.indexOf(src.rowKeyword);
+      if (rowStart < 0) continue;
+      const rowChunk = plain.slice(rowStart, rowStart + 220);
+      // Pattern: ... horseName ... <weight> 芝1600 / ダ1800 ...
+      const m = rowChunk.match(/(\d{2})\s*(?:芝|ダ)\d{3,4}/);
+      if (!m) continue;
+      const w = Number(m[1]);
+      if (Number.isFinite(w) && w >= 48 && w <= 62) {
+        out[src.horseName] = w;
+      }
+    } catch (error) {
+      console.warn(`[daily-entry-check] netkeiba weight fetch failed: ${src.horseName}: ${error.message}`);
+    }
+  }
+  return out;
+}
 
 function parseTrainingInsights(tsSource) {
   const m = tsSource.match(
@@ -59,6 +104,8 @@ async function main() {
   const trainingTs = await fs.readFile(TRAINING_DATA_PATH, "utf8").catch(() => "");
   const insights = parseTrainingInsights(trainingTs);
   const insightMap = new Map(insights.map((x) => [`${x.courseId}:${x.horseId}`, x]));
+  const netkeibaByName = await fetchNetkeibaWeightOverrides();
+  const mergedNameCorrections = { ...WEIGHT_CORRECTIONS_BY_NAME, ...netkeibaByName };
   const totalRaces = (weekly.currentWeek?.races ?? []).length;
   if (totalRaces === 0) {
     throw new Error("currentWeek.races is empty; skip write to avoid wiping race data.");
@@ -76,7 +123,12 @@ async function main() {
         changed++;
       }
 
-      const targetWeight = normalizeWeight(race.courseId, horse);
+      const targetWeight = (() => {
+        const key = `${race.courseId}:${horse.id}`;
+        if (WEIGHT_CORRECTIONS_BY_KEY[key]) return WEIGHT_CORRECTIONS_BY_KEY[key];
+        if (horse?.name && mergedNameCorrections[horse.name]) return mergedNameCorrections[horse.name];
+        return normalizeWeight(race.courseId, horse);
+      })();
       if (horse.weight !== targetWeight) {
         horse.weight = targetWeight;
         changed++;
