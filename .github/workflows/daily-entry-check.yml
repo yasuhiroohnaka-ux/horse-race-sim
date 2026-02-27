@@ -1,0 +1,47 @@
+name: Daily Entry Check
+
+on:
+  schedule:
+    # 07:00 JST = 22:00 UTC (previous day)
+    - cron: "0 22 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  daily-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Refresh keiba data
+        run: node scripts/weekly-keiba-update.mjs --force
+
+      - name: Apply entry/training corrections
+        run: node scripts/daily-entry-check.mjs
+
+      - name: Sync generated schedule
+        run: node scripts/sync-race-schedule.mjs
+
+      - name: Commit and push if changed
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add data/weekly-races.json lib/generatedTrainingData.ts lib/generatedNetkeibaData.ts lib/generatedRaceSchedule.ts
+            git commit -m "chore: daily 7am entry/training sync"
+            git push
+          else
+            echo "No changes."
+          fi

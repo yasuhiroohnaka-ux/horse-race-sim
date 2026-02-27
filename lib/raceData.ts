@@ -94,7 +94,7 @@ const NAKAYAMA_KINEN_HORSES: Horse[] = assignAbilities([
     { id: '2',  gateNumber: 2,  name: 'エコロヴァルツ',       jockey: '横山武史',   runningStyle: 'Senko',  predictionCount: 80,  simulatedOdds: 0, realOdds: 4.5, sex: 'M', weight: 57, condition: 8 },
     { id: '3',  gateNumber: 3,  name: 'チェルヴィニア',       jockey: 'C.ルメール', runningStyle: 'Sashi',  predictionCount: 100, simulatedOdds: 0, realOdds: 7.0, sex: 'F', weight: 55, condition: 5 },
     { id: '4',  gateNumber: 4,  name: 'セイウンハーデス',     jockey: '幸英明',     runningStyle: 'Senko',  predictionCount: 30,  simulatedOdds: 0, realOdds: 7.5, sex: 'M', weight: 57, condition: 7 },
-    { id: '5',  gateNumber: 5,  name: 'カラマティアノス',     jockey: '津村明秀',   runningStyle: 'Senko',  predictionCount: 50,  simulatedOdds: 0, realOdds: 8.0, sex: 'M', weight: 57, condition: 6 },
+    { id: '5',  gateNumber: 5,  name: 'カラマティアノス',     jockey: '津村明秀',   runningStyle: 'Senko',  predictionCount: 50,  simulatedOdds: 0, realOdds: 8.0, sex: 'M', weight: 58, condition: 6 },
     { id: '6',  gateNumber: 6,  name: 'シャンパンカラー',     jockey: '岩田康誠',   runningStyle: 'Senko',  predictionCount: 25,  simulatedOdds: 0, realOdds: 13.5, sex: 'M', weight: 57, condition: 5 },
     { id: '7',  gateNumber: 7,  name: 'マジックサンズ',       jockey: '横山和生',   runningStyle: 'Sashi',  predictionCount: 15,  simulatedOdds: 0, realOdds: 19.5, sex: 'M', weight: 57, condition: 5 },
     { id: '8',  gateNumber: 8,  name: 'サイルーン',           jockey: '佐々木大輔', runningStyle: 'Senko',  predictionCount: 10,  simulatedOdds: 0, realOdds: 28.5, sex: 'M', weight: 57, condition: 5 },

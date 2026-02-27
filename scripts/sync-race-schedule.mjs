@@ -5,7 +5,8 @@ const ROOT = process.cwd();
 
 async function main() {
   const srcPath = path.join(ROOT, "data", "weekly-races.json");
-  const src = JSON.parse(await fs.readFile(srcPath, "utf8"));
+  const srcRaw = await fs.readFile(srcPath, "utf8");
+  const src = JSON.parse(srcRaw.replace(/^\uFEFF/, ""));
 
   const map = {};
   for (const race of src.currentWeek?.races ?? []) {
@@ -14,6 +15,9 @@ async function main() {
       id: String(h.id),
       name: String(h.name),
       runningStyle: h.runningStyle,
+      gateNumber: Number(h.gateNumber ?? 0),
+      sex: h.sex ?? "M",
+      weight: Number(h.weight ?? 57),
       predictionCount: Number(h.predictionCount ?? 0),
       realOdds: Number(h.realOdds ?? 0),
       speed: Number(h.speed ?? 80),
@@ -32,6 +36,9 @@ export interface GeneratedHorseSeed {
   id: string;
   name: string;
   runningStyle: RunningStyle;
+  gateNumber: number;
+  sex: "M" | "F";
+  weight: number;
   predictionCount: number;
   realOdds: number;
   speed: number;
@@ -52,4 +59,3 @@ main().catch((error) => {
   console.error(error);
   process.exit(1);
 });
-
