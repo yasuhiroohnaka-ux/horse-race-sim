@@ -256,6 +256,26 @@ function pickTanpukuPair(race, includeBodyWeight = false, applyDraw = true) {
   return { winPick, valuePick };
 }
 
+function buildPackedOvervaluedText(day, overvalued, maxChars = 280) {
+  const prefix = `${day}重賞 過大評価馬リスト: `;
+  if (!overvalued || overvalued.length === 0) return `${prefix}該当なし`;
+
+  const parts = [];
+  for (const x of overvalued) {
+    const part = `${x.horse.name}(人気${x.horse.predictionCount}, 想定${x.horse.realOdds}倍, ギャップ+${x.gap})`;
+    const candidate = `${prefix}${[...parts, part].join("、")}`;
+    if (candidate.length > maxChars) break;
+    parts.push(part);
+  }
+
+  if (parts.length === 0) {
+    const x = overvalued[0];
+    return `${prefix}${x.horse.name}(人気${x.horse.predictionCount}, 想定${x.horse.realOdds}倍, ギャップ+${x.gap})`;
+  }
+
+  return `${prefix}${parts.join("、")}`;
+}
+
 function ensurePerf(state, weekOf) {
   state.performance = state.performance || {};
   if (!state.performance.weekly || state.performance.weekly.weekOf !== weekOf) {
@@ -357,17 +377,14 @@ async function handleRecommendation(day, stage) {
       ? undervalued.map((x) => `${x.horse.name}(人気${x.horse.predictionCount}, 想定${x.horse.realOdds}倍, ギャップ+${x.gap})`).join("、")
       : "該当なし";
 
-  const overvaluedText =
-    overvalued.length > 0
-      ? overvalued.map((x) => `${x.horse.name}(人気${x.horse.predictionCount}, 想定${x.horse.realOdds}倍, ギャップ+${x.gap})`).join("、")
-      : "該当なし";
+  const overvaluedText = buildPackedOvervaluedText(day, overvalued);
 
   await publishOrQueuePost(
     stage,
     `${day}重賞おすすめ: ${horse.name} (${race.label}) / score=${best.score.toFixed(1)} / 人気=${horse.predictionCount} / 想定オッズ=${horse.realOdds}\n過小評価馬(全頭): ${undervaluedText}`
   );
 
-  await publishOrQueuePost(`${stage}_overvalued`, `${day}重賞 過大評価馬リスト: ${overvaluedText}`);
+  await publishOrQueuePost(`${stage}_overvalued`, overvaluedText);
 
   if (tanpuku) {
     const winPick = tanpuku.winPick;

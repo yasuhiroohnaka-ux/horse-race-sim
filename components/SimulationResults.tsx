@@ -40,6 +40,32 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
         .sort((a, b) => b.predictionCount - a.predictionCount)
         .filter(h => h.predictionCount > 0);
     const maxCount = popularityRanking[0]?.predictionCount ?? 1;
+    const X_CHAR_LIMIT = 280;
+
+    const buildOvervaluedPostText = (overvalued: Array<{ name: string; wins: number; horse?: Horse }>) => {
+        const header = "【過大評価馬リスト】\n";
+        const footer = `\n#競馬 ${hashtag} #過大評価`;
+        if (overvalued.length === 0) return `${header}該当馬なし${footer}`;
+
+        let body = "";
+        for (let i = 0; i < overvalued.length; i++) {
+            const row = overvalued[i];
+            const realOdds = row.horse?.realOdds || 0;
+            const ratio = row.wins > 0 ? realOdds / (100 / row.wins) : 0;
+            const line = `#${i + 1} ${row.name} 市場${realOdds.toFixed(1)}倍/ 勝率${row.wins}% / 乖離${ratio.toFixed(2)}x\n`;
+            if (`${header}${body}${line}${footer}`.length > X_CHAR_LIMIT) break;
+            body += line;
+        }
+
+        if (!body) {
+            const row = overvalued[0];
+            const realOdds = row.horse?.realOdds || 0;
+            const ratio = row.wins > 0 ? realOdds / (100 / row.wins) : 0;
+            body = `#1 ${row.name} 市場${realOdds.toFixed(1)}倍/ 勝率${row.wins}% / 乖離${ratio.toFixed(2)}x\n`;
+        }
+
+        return `${header}${body}${footer}`;
+    };
 
     // X 人気ランキング 投稿ハンドラ
     const handlePostRankingToX = () => {
@@ -102,17 +128,7 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                 return aRatio - bRatio;
             });
 
-        let text = "【過大評価馬リスト】\n";
-        if (overvalued.length === 0) {
-            text += "該当馬なし\n";
-        } else {
-            overvalued.forEach((row, i) => {
-                const realOdds = row.horse?.realOdds || 0;
-                const ratio = row.wins > 0 ? realOdds / (100 / row.wins) : 0;
-                text += `#${i + 1} ${row.name} 市場${realOdds.toFixed(1)}倍 / 勝率${row.wins}% / 乖離${ratio.toFixed(2)}x\n`;
-            });
-        }
-        text += `\n#競馬 ${hashtag} #過大評価`;
+        const text = buildOvervaluedPostText(overvalued);
         window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
     };
 
