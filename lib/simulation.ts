@@ -3,7 +3,7 @@ export type { Horse, RunningStyle };
 
 // Constants
 const BASE_SPEED = 16.0; // m/s base
-const SPEED_ABILITY_FACTOR = 0.057;
+const SPEED_ABILITY_FACTOR = 0.018;
 const STAMINA_DRAIN_RATE = 1.0;
 
 // Helper to calculate odds from crowd score
@@ -166,13 +166,13 @@ export function runRace(
 
     const currentPositions = horses.map((h) => {
         const conditionVal = h.condition ?? 5;
-        const conditionMod = 1 + (conditionVal - 5) * 0.006;
+        const conditionMod = 1 + (conditionVal - 5) * 0.003;
         const weightVal = h.weight ?? 57;
-        const weightMod = 1 - (weightVal - 57) * 0.003;
+        const weightMod = 1 - (weightVal - 57) * 0.002;
         const jockeyPower = h.jockeyPower ?? 60;
         const stablePower = h.stablePower ?? 60;
-        const jockeyMod = 1 + (jockeyPower - 60) * 0.0015;
-        const stableMod = 1 + (stablePower - 60) * 0.001;
+        const jockeyMod = 1 + (jockeyPower - 60) * 0.0008;
+        const stableMod = 1 + (stablePower - 60) * 0.0006;
         const ability = getHorseAbilityScore(h);
         const baseAbilitySpeed = ability * (SPEED_ABILITY_FACTOR * 0.95) + BASE_SPEED;
         const staminaBuffer = clamp(
@@ -182,7 +182,7 @@ export function runRace(
         );
         const paceMod = paceMap.get(h.id) ?? 1.0;
         const drawTacticalMod = drawTacticalMap.get(h.id) ?? 1.0;
-        const launchMod = 0.99 + Math.random() * 0.02;
+        const launchMod = 0.995 + Math.random() * 0.01;
 
         return {
             id: h.id,
@@ -209,7 +209,7 @@ export function runRace(
             if (!horse) return;
             const raceConditionModifier = horseConditions?.find((c) => c.id === horse.id)?.modifier || 1.0;
 
-            const randomFlux = (Math.random() - 0.5) * 2.4; // ±1.2 m/s
+            const randomFlux = (Math.random() - 0.5) * 3.0; // ±1.5 m/s
             const styleBonus = getRunningStyleBonus(horse.runningStyle, condition.trackBias);
 
             let speed = (pos.currentSpeed + randomFlux + styleBonus) * raceConditionModifier * groundMod.speedMod;
@@ -272,7 +272,7 @@ export function runMonteCarlo(
     // Light Bayesian smoothing to avoid overconfident 0% / 100% artifacts.
     const abilityById = new Map(horses.map((h) => [h.id, getHorseAbilityScore(h)]));
     const abilityTotal = Math.max(1, horses.reduce((sum, h) => sum + (abilityById.get(h.id) ?? 0), 0));
-    const priorStrength = Math.max(2, Math.round(iterations * 0.03));
+    const priorStrength = Math.max(8, Math.round(iterations * 0.2));
 
     return Array.from(stats.entries())
         .map(([id, data]) => {
