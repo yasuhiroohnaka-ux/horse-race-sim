@@ -7,6 +7,7 @@ import { Horse, RaceCondition, TrackBias } from "@/lib/types";
 import { runMonteCarlo, calculateOdds } from "@/lib/simulation";
 import { isArchivedCourse } from "@/lib/raceData";
 import { getDefaultHorses } from "@/lib/defaultHorses";
+import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
 import { CourseConfig } from "@/components/CourseConfig";
 import { HorseInput } from "@/components/HorseInput";
 import { SimulationResults } from "@/components/SimulationResults";
@@ -55,6 +56,68 @@ function SimulatorContent() {
         setBias(course?.defaultBias ?? { innerOuter: 0, frontBack: 0 });
         setGroundCondition('Firm');
     };
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const refreshNetkeibaOdds = async () => {
+            try {
+                const res = await fetch(`/api/netkeiba-odds?courseId=${encodeURIComponent(selectedCourseId)}`, { cache: "no-store" });
+                if (!res.ok || cancelled) return;
+
+                const payload = await res.json() as {
+                    oddsByGate?: Record<string, number>;
+                    xPopularityByGate?: Record<string, number>;
+                };
+                const oddsByGate = payload.oddsByGate ?? {};
+                const xPopularityByGate = payload.xPopularityByGate ?? {};
+                if ((Object.keys(oddsByGate).length === 0 && Object.keys(xPopularityByGate).length === 0) || cancelled) return;
+
+                setHorses((prev) => {
+                    let changed = false;
+                    const updated = prev.map((horse) => {
+                        let nextHorse = horse;
+                        const latestOdds = Number(oddsByGate[String(horse.gateNumber)]);
+                        if (Number.isFinite(latestOdds) && latestOdds > 0) {
+                            const roundedLatestOdds = Math.round(latestOdds * 10) / 10;
+                            const currentOdds = Number(horse.realOdds ?? 0);
+                            if (Math.abs(currentOdds - roundedLatestOdds) >= 0.05) {
+                                changed = true;
+                                nextHorse = applyNetkeibaRatings({
+                                    ...nextHorse,
+                                    realOdds: roundedLatestOdds,
+                                    jockeyPower: undefined,
+                                    stablePower: undefined,
+                                });
+                            }
+                        }
+
+                        const latestPopularity = Math.round(Number(xPopularityByGate[String(horse.gateNumber)]));
+                        if (Number.isFinite(latestPopularity) && latestPopularity > 0) {
+                            if (nextHorse.predictionCount !== latestPopularity) {
+                                changed = true;
+                                nextHorse = {
+                                    ...nextHorse,
+                                    predictionCount: latestPopularity,
+                                };
+                            }
+                        }
+
+                        return nextHorse;
+                    });
+
+                    return changed ? calculateOdds(updated) : prev;
+                });
+            } catch {
+                // Keep local odds when live fetch fails.
+            }
+        };
+
+        void refreshNetkeibaOdds();
+        return () => {
+            cancelled = true;
+        };
+    }, [selectedCourseId]);
 
     const handleRunSimulation = () => {
         setIsRunning(true);

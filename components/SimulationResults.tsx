@@ -2,6 +2,7 @@
 
 import { Horse, RaceResult } from "@/lib/types";
 import { calculateCrowdWinRate } from "@/lib/simulation";
+import { getFrameColor, getFrameNumber } from "@/lib/frameColor";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface SimulationResultsProps {
@@ -273,6 +274,8 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                             const physVsCrowdColor =
                                 physVsCrowd > 10 ? "text-orange-600" :
                                 physVsCrowd < -10 ? "text-purple-600" : "text-slate-400";
+                            const frameNo = getFrameNumber(row.horse?.gateNumber, horses.length);
+                            const frameColor = getFrameColor(frameNo);
 
                             // 市場の評価（物理勝率 vs 市場オッズ）
                             const realOdds = row.horse?.realOdds || 0;
@@ -290,7 +293,19 @@ export function SimulationResults({ results, horses, onReset, onPostToX, onRunAg
                             return (
                                 <tr key={index} className="border-b border-slate-100 hover:bg-slate-50/50">
                                     <td className="px-2 py-1.5 text-center font-bold text-slate-500">#{index + 1}</td>
-                                    <td className="px-2 py-1.5 text-center text-slate-400 font-mono">{row.horse?.gateNumber}</td>
+                                    <td className="px-2 py-1.5 text-center font-mono">
+                                        <span
+                                            className="inline-flex min-w-8 items-center justify-center rounded border px-1 py-0.5 font-bold"
+                                            style={{
+                                                backgroundColor: frameColor.bg,
+                                                color: frameColor.text,
+                                                borderColor: frameColor.border,
+                                            }}
+                                            title={`枠${frameNo}`}
+                                        >
+                                            {row.horse?.gateNumber}
+                                        </span>
+                                    </td>
                                     <td className="px-2 py-1.5 font-bold text-slate-800 whitespace-nowrap">{row.name}</td>
                                     <td className="px-2 py-1.5 text-slate-400 truncate">{row.horse?.jockey}</td>
                                     <td className="px-2 py-1.5 text-right font-bold text-blue-600">{row.wins}%</td>

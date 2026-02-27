@@ -3,6 +3,7 @@
 import { Horse } from "@/lib/types";
 import { RunningStyle, calculateOdds } from "@/lib/simulation";
 import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
+import { getFrameColor, getFrameNumber } from "@/lib/frameColor";
 import { useState, useEffect } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
@@ -147,6 +148,8 @@ export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: Hors
                             const diffLabel = diff < 0 ? "強" : "弱";
                             const diffColor = diff < 0 ? "text-red-600" : "text-blue-500";
                             const cond = conditionLabel(horse.condition ?? 5);
+                            const frameNo = getFrameNumber(horse.gateNumber, horses.length);
+                            const frameColor = getFrameColor(frameNo);
 
                             return (
                                 <tr key={horse.id} className="border-b border-slate-100 hover:bg-slate-50/50">
@@ -155,7 +158,13 @@ export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: Hors
                                             type="number"
                                             value={horse.gateNumber}
                                             onChange={(e) => updateHorse(horse.id, 'gateNumber', parseInt(e.target.value))}
-                                            className="w-9 p-0.5 border rounded text-center text-xs font-bold bg-slate-50"
+                                            className="w-9 p-0.5 border rounded text-center text-xs font-bold"
+                                            style={{
+                                                backgroundColor: frameColor.bg,
+                                                color: frameColor.text,
+                                                borderColor: frameColor.border,
+                                            }}
+                                            title={`枠${frameNo}`}
                                         />
                                     </td>
                                     <td className="px-2 py-1.5">
