@@ -1,5 +1,27 @@
 {
   "lastMondayRollover": null,
   "fieldConfirmedAt": null,
-  "drawConfirmedAt": null
+  "drawConfirmedAt": null,
+  "performance": {
+    "weekly": {
+      "weekOf": "2026-02-23",
+      "bets": 0,
+      "tanHits": 0,
+      "fukuHits": 0,
+      "tanStake": 0,
+      "tanPayout": 0,
+      "fukuStake": 0,
+      "fukuPayout": 0
+    },
+    "total": {
+      "bets": 0,
+      "tanHits": 0,
+      "fukuHits": 0,
+      "tanStake": 0,
+      "tanPayout": 0,
+      "fukuStake": 0,
+      "fukuPayout": 0
+    },
+    "updatedAt": "2026-03-01T07:48:29.268Z"
+  }
 }
