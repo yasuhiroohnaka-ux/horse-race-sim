@@ -41,6 +41,7 @@ type CandidateResult = {
 type ParsedPerformanceEntry = {
   horseName: string;
   gateNumber: number;
+  jockey: string | null;
   recentFormScore: number | null;
   recentAverageFinish: number | null;
   recentTimeIndex: number | null;
@@ -302,6 +303,8 @@ function parseShutubaPastEntries(shutubaPastHtml: string): ParsedPerformanceEntr
       "";
     const horseName = normalizeSpace(decodeHtmlText(stripTags(horseNameRaw)));
     if (!horseName) continue;
+    const jockeyRaw = row.match(/<td class="Jockey"[\s\S]*?<a[^>]*>\s*([^<]+?)\s*<\/a>/i)?.[1] ?? "";
+    const jockey = normalizeJockeyName(jockeyRaw);
 
     const pastCells = [...row.matchAll(/<td class="Past[^"]*"[^>]*>([\s\S]*?)<\/td>/g)].map((m) => m[1]).slice(0, 5);
     const runs = pastCells.map((cell) => {
@@ -346,6 +349,7 @@ function parseShutubaPastEntries(shutubaPastHtml: string): ParsedPerformanceEntr
     provisional.push({
       horseName,
       gateNumber,
+      jockey,
       recentFormScore,
       recentAverageFinish: avgFinish !== null ? Math.round(avgFinish * 10) / 10 : null,
       recentTimeIndex: null,
@@ -500,6 +504,9 @@ export async function GET(request: NextRequest) {
       const pastEntries = parseShutubaPastEntries(pastHtml);
       for (const entry of pastEntries) {
         const gateKey = String(entry.gateNumber);
+        if (entry.jockey) {
+          jockeyByGate[gateKey] = entry.jockey;
+        }
         performanceByGate[gateKey] = {
           ...(entry.recentFormScore !== null ? { recentFormScore: entry.recentFormScore } : {}),
           ...(entry.recentAverageFinish !== null ? { recentAverageFinish: entry.recentAverageFinish } : {}),

@@ -113,7 +113,7 @@ function SimulatorContent() {
                         }
 
                         const latestJockey = String(jockeyByGate[String(horse.gateNumber)] ?? "").trim();
-                        if (latestJockey && latestJockey !== "未定" && nextHorse.jockey !== latestJockey) {
+                        if (latestJockey && nextHorse.jockey !== latestJockey) {
                             touched = true;
                             needsRatingsRecalc = true;
                             nextHorse = {
