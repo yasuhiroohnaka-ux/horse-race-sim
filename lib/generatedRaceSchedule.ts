@@ -35,20 +35,6 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "guts": 88
     },
     {
-      "id": "2",
-      "name": "Ecorovaltz",
-      "runningStyle": "Senko",
-      "gateNumber": 10,
-      "sex": "M",
-      "weight": 57,
-      "predictionCount": 80,
-      "realOdds": 4.5,
-      "speed": 89,
-      "stamina": 87,
-      "power": 87,
-      "guts": 86
-    },
-    {
       "id": "3",
       "name": "Chelvinia",
       "runningStyle": "Sashi",
@@ -61,6 +47,20 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "stamina": 90,
       "power": 87,
       "guts": 87
+    },
+    {
+      "id": "2",
+      "name": "Ecorovaltz",
+      "runningStyle": "Senko",
+      "gateNumber": 10,
+      "sex": "M",
+      "weight": 57,
+      "predictionCount": 80,
+      "realOdds": 4.5,
+      "speed": 89,
+      "stamina": 87,
+      "power": 87,
+      "guts": 86
     }
   ],
   "nakayama-turf-1200": [
@@ -79,20 +79,6 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "guts": 87
     },
     {
-      "id": "1",
-      "name": "Mama Cocha",
-      "runningStyle": "Senko",
-      "gateNumber": 14,
-      "sex": "M",
-      "weight": 56,
-      "predictionCount": 120,
-      "realOdds": 3,
-      "speed": 89,
-      "stamina": 84,
-      "power": 86,
-      "guts": 86
-    },
-    {
       "id": "4",
       "name": "Invincible Papa",
       "runningStyle": "Nige",
@@ -105,9 +91,37 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "stamina": 82,
       "power": 85,
       "guts": 84
+    },
+    {
+      "id": "1",
+      "name": "Mama Cocha",
+      "runningStyle": "Senko",
+      "gateNumber": 14,
+      "sex": "M",
+      "weight": 56,
+      "predictionCount": 120,
+      "realOdds": 3,
+      "speed": 89,
+      "stamina": 84,
+      "power": 86,
+      "guts": 86
     }
   ],
   "hanshin-turf-1600": [
+    {
+      "id": "3",
+      "name": "Connie Island",
+      "runningStyle": "Sashi",
+      "gateNumber": 10,
+      "sex": "M",
+      "weight": 55,
+      "predictionCount": 50,
+      "realOdds": 6.5,
+      "speed": 87,
+      "stamina": 89,
+      "power": 86,
+      "guts": 86
+    },
     {
       "id": "1",
       "name": "Alencar",
@@ -135,20 +149,6 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "stamina": 87,
       "power": 86,
       "guts": 87
-    },
-    {
-      "id": "3",
-      "name": "Connie Island",
-      "runningStyle": "Sashi",
-      "gateNumber": 10,
-      "sex": "M",
-      "weight": 55,
-      "predictionCount": 50,
-      "realOdds": 6.5,
-      "speed": 87,
-      "stamina": 89,
-      "power": 86,
-      "guts": 86
     }
   ]
 };
