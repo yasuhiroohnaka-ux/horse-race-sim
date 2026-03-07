@@ -178,8 +178,9 @@ function parseRaceMeta(raceId, shutubaHtml, dayLabel) {
 }
 
 function parseOdds(raw) {
-  const cleaned = String(raw ?? "").replace(/,/g, "").trim();
-  if (!cleaned || cleaned.includes("-")) return null;
+  const cleaned = String(raw ?? "").replace(/,/g, "").replace(/\s+/g, "").trim();
+  if (!cleaned || cleaned.includes("-") || /人気|\*/.test(cleaned)) return null;
+  if (!/^\d+(?:\.\d+)?$/.test(cleaned)) return null;
   const parsed = Number.parseFloat(cleaned);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 }
@@ -246,7 +247,7 @@ function parseOreproEntries(oreproHtml) {
 
     const popularCell = row.match(/<td class="Popular">([\s\S]*?)<\/td>/i)?.[1] ?? "";
     const voteBarCell = row.match(/<td class="Vote_Bar">([\s\S]*?)<\/td>/i)?.[1] ?? "";
-    const odds = parseOdds(popularCell.match(/<span>\s*([^<]+)\s*<\/span>/i)?.[1] ?? "");
+    const odds = parseOdds(popularCell.match(/<span>\s*(\d+(?:\.\d+)?)\s*<\/span>/i)?.[1] ?? "");
     const favoriteCount = Number.parseInt(voteBarCell.match(/<span>\s*(\d{1,5})\s*人<\/span>/i)?.[1] ?? "0", 10);
     byName.set(normalizeName(horseName), {
       odds,
@@ -488,3 +489,5 @@ main().catch((error) => {
   console.error(error);
   process.exit(1);
 });
+
+

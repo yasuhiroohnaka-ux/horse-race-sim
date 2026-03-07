@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 
@@ -41,7 +41,7 @@ export function PerformancePanel() {
         if (!cancelled) setData(null);
       }
     };
-    load();
+    void load();
     const id = setInterval(load, 60_000);
     return () => {
       cancelled = true;
@@ -54,36 +54,36 @@ export function PerformancePanel() {
   const updatedAt = data?.performance?.updatedAt || data?.updatedAt || null;
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-slate-200 p-6 mb-4">
-      <h2 className="text-lg font-bold text-slate-800 mb-2">単複おすすめ 成績</h2>
-      <p className="text-xs text-slate-500 mb-4">
-        日曜16時に週次集計。毎週積算で更新。
-        {updatedAt ? ` 最終更新: ${new Date(updatedAt).toLocaleString("ja-JP")}` : ""}
-      </p>
-      {!weekly && !total && <p className="text-sm text-slate-500">まだ集計データがありません。</p>}
-      {weekly && (
-        <div className="mb-4">
-          <p className="text-sm font-bold text-slate-700">週次 ({weekly.weekOf ?? "-"})</p>
-          <p className="text-sm text-slate-600">
-            単: 的中率 {pct(weekly.tanHits, weekly.bets)}% / 回収率 {pct(weekly.tanPayout, weekly.tanStake)}%
-          </p>
-          <p className="text-sm text-slate-600">
-            複: 的中率 {pct(weekly.fukuHits, weekly.bets)}% / 回収率 {pct(weekly.fukuPayout, weekly.fukuStake)}%
-          </p>
-        </div>
-      )}
-      {total && (
+    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="mb-4 flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-bold text-slate-700">累計</p>
-          <p className="text-sm text-slate-600">
-            単: 的中率 {pct(total.tanHits, total.bets)}% / 回収率 {pct(total.tanPayout, total.tanStake)}%
-          </p>
-          <p className="text-sm text-slate-600">
-            複: 的中率 {pct(total.fukuHits, total.bets)}% / 回収率 {pct(total.fukuPayout, total.fukuStake)}%
-          </p>
+          <p className="text-xs font-semibold tracking-[0.2em] text-slate-400">TRACK RECORD</p>
+          <h2 className="mt-1 text-2xl font-bold text-slate-900">単複おすすめ成績</h2>
         </div>
-      )}
-    </div>
+        <p className="text-xs text-slate-500">
+          {updatedAt ? `最終更新: ${new Date(updatedAt).toLocaleString("ja-JP")}` : "毎週更新"}
+        </p>
+      </div>
+
+      {!weekly && !total && <p className="text-sm text-slate-500">まだ集計データがありません。</p>}
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="rounded-2xl bg-slate-50 p-4">
+          <p className="text-sm font-bold text-slate-900">週次 {weekly?.weekOf ? `(${weekly.weekOf})` : ""}</p>
+          <div className="mt-3 space-y-2 text-sm text-slate-600">
+            <p>単: 的中率 {pct(weekly?.tanHits ?? 0, weekly?.bets ?? 0)}% / 回収率 {pct(weekly?.tanPayout ?? 0, weekly?.tanStake ?? 0)}%</p>
+            <p>複: 的中率 {pct(weekly?.fukuHits ?? 0, weekly?.bets ?? 0)}% / 回収率 {pct(weekly?.fukuPayout ?? 0, weekly?.fukuStake ?? 0)}%</p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-slate-50 p-4">
+          <p className="text-sm font-bold text-slate-900">累計</p>
+          <div className="mt-3 space-y-2 text-sm text-slate-600">
+            <p>単: 的中率 {pct(total?.tanHits ?? 0, total?.bets ?? 0)}% / 回収率 {pct(total?.tanPayout ?? 0, total?.tanStake ?? 0)}%</p>
+            <p>複: 的中率 {pct(total?.fukuHits ?? 0, total?.bets ?? 0)}% / 回収率 {pct(total?.fukuPayout ?? 0, total?.fukuStake ?? 0)}%</p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
-

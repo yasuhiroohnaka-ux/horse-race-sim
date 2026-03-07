@@ -82,8 +82,9 @@ function normalizeJockeyName(raw: string): string | null {
 }
 
 function parseOdds(oddsRaw: string): number | null {
-  const cleaned = String(oddsRaw ?? "").replace(/,/g, "").trim();
-  if (!cleaned || cleaned.includes("-")) return null;
+  const cleaned = String(oddsRaw ?? "").replace(/,/g, "").replace(/\s+/g, "").trim();
+  if (!cleaned || cleaned.includes("-") || /人気|\*/.test(cleaned)) return null;
+  if (!/^\d+(?:\.\d+)?$/.test(cleaned)) return null;
   const parsed = Number.parseFloat(cleaned);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 }
@@ -559,6 +560,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }
+
 
 
 
