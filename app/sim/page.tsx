@@ -245,9 +245,9 @@ function SimulatorContent() {
     <div className="min-h-screen bg-slate-100 p-4 md:p-8">
       <div className="mx-auto max-w-7xl">
         <header className="mb-6 rounded-[28px] bg-slate-900 px-6 py-7 text-white shadow-xl">
-          <p className="text-xs font-semibold tracking-[0.3em] text-slate-300">KEIBA GAP LAB</p>
-          <h1 className="mt-2 text-2xl font-black tracking-tight md:text-3xl">能力と人気の乖離を見抜く</h1>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
+          <h1 className="text-4xl font-black tracking-[0.12em] text-white md:text-6xl">KEIBA GAP LAB</h1>
+          <p className="mt-3 text-sm font-semibold tracking-[0.2em] text-slate-300 md:text-base">能力と人気の乖離を見抜く</p>
+          <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-300">
             今週の重賞だけを対象に、能力、血統適性、コース形状、馬場、天候、風、展開を織り込んで100回試走します。
             その上で、公式オッズ、俺プロ由来のガチ勢オッズ、評判指数を並べて、人気先行と妙味を切り分けます。
           </p>
@@ -324,4 +324,5 @@ function SimulatorContent() {
     </div>
   );
 }
+
 
