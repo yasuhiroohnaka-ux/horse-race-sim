@@ -8,6 +8,7 @@ interface CourseConfigProps {
   condition: RaceCondition;
   onCourseChange: (courseId: string) => void;
   onConditionChange: (condition: RaceCondition) => void;
+  liveConditionSummary?: string;
 }
 
 const groundLabels: Record<GroundCondition, string> = {
@@ -36,7 +37,7 @@ const paceLabels: Record<PaceScenario, string> = {
   Fast: "ハイ",
 };
 
-export function CourseConfig({ selectedCourse, condition, onCourseChange, onConditionChange }: CourseConfigProps) {
+export function CourseConfig({ selectedCourse, condition, onCourseChange, onConditionChange, liveConditionSummary }: CourseConfigProps) {
   const updateBias = (key: "innerOuter" | "frontBack", value: number) => {
     onConditionChange({
       ...condition,
@@ -56,6 +57,9 @@ export function CourseConfig({ selectedCourse, condition, onCourseChange, onCond
           <p className="mt-1 text-xs text-slate-500">
             公式オッズとガチ勢オッズの乖離を見るため、試走シナリオを先に固定します。
           </p>
+          {liveConditionSummary ? (
+            <p className="mt-2 text-xs font-medium text-sky-600">{liveConditionSummary}</p>
+          ) : null}
         </div>
         <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
           {selectedCourse.distance}m / 直線 {selectedCourse.straightLength}m

@@ -79,6 +79,7 @@ function SimulatorContent() {
   const [horses, setHorses] = useState<Horse[]>(initialCourseId ? calculateOdds(getDefaultHorses(initialCourseId)) : []);
   const [results, setResults] = useState<{ horseId: string; winCount: number; bestTime: number }[] | null>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [liveConditionSummary, setLiveConditionSummary] = useState("");
 
   const selectedCourse = COURSES.find((course) => course.id === condition.courseId) ?? initialCourse;
   const isArchive = selectedCourse?.archived === true;
@@ -87,12 +88,14 @@ function SimulatorContent() {
     setCondition(createDefaultCondition(courseId));
     setHorses(calculateOdds(getDefaultHorses(courseId)));
     setResults(null);
+    setLiveConditionSummary("");
   };
 
   useEffect(() => {
     if (!condition.courseId) return;
 
     let cancelled = false;
+    const currentCourseId = condition.courseId;
 
     const refreshNetkeibaOdds = async () => {
       try {
@@ -192,11 +195,54 @@ function SimulatorContent() {
       }
     };
 
-    void refreshNetkeibaOdds();
+    const refreshLiveRaceConditions = async () => {
+      try {
+        const response = await fetch(`/api/live-race-conditions?courseId=${encodeURIComponent(currentCourseId)}`, { cache: "no-store" });
+        if (!response.ok || cancelled) return;
+
+        const payload = (await response.json()) as {
+          weather?: RaceCondition["weather"];
+          groundCondition?: RaceCondition["groundCondition"];
+          windDirection?: RaceCondition["windDirection"];
+          windSpeed?: number;
+          windLabel?: string;
+          observedAt?: string;
+        };
+
+        const nextFields: Partial<RaceCondition> = {};
+        if (payload.weather) nextFields.weather = payload.weather;
+        if (payload.groundCondition) nextFields.groundCondition = payload.groundCondition;
+        if (payload.windDirection) nextFields.windDirection = payload.windDirection;
+        const liveWindSpeed = Number(payload.windSpeed);
+        if (Number.isFinite(liveWindSpeed) && liveWindSpeed >= 0) {
+          nextFields.windSpeed = Math.max(0, Math.min(12, Math.round(liveWindSpeed)));
+        }
+
+        if (Object.keys(nextFields).length > 0) {
+          setCondition((previous) => (previous.courseId === currentCourseId ? { ...previous, ...nextFields } : previous));
+        }
+
+        const summaryParts: string[] = [];
+        if (payload.weather) summaryParts.push(`天気 ${weatherLabels[payload.weather]}`);
+        if (payload.groundCondition) summaryParts.push(`馬場 ${groundLabels[payload.groundCondition]}`);
+        if (payload.windDirection && Number.isFinite(liveWindSpeed)) {
+          const windSuffix = payload.windLabel ? ` (${payload.windLabel}風)` : "";
+          summaryParts.push(`風 ${windLabels[payload.windDirection]} ${Math.round(liveWindSpeed)}m/s${windSuffix}`);
+        }
+        if (payload.observedAt) {
+          summaryParts.push(`取得 ${payload.observedAt.replace("T", " ").slice(5, 16)}`);
+        }
+        setLiveConditionSummary(summaryParts.length > 0 ? `実況反映: ${summaryParts.join(" / ")}` : "");
+      } catch {
+        // Ignore live-condition refresh errors and keep local scenario state.
+      }
+    };
+
+    void Promise.allSettled([refreshNetkeibaOdds(), refreshLiveRaceConditions()]);
     const dayOfWeek = new Date().getDay();
     const pollMs = dayOfWeek === 0 || dayOfWeek === 6 ? 10 * 60 * 1000 : 0;
     const intervalId = pollMs > 0 ? window.setInterval(() => {
-      void refreshNetkeibaOdds();
+      void Promise.allSettled([refreshNetkeibaOdds(), refreshLiveRaceConditions()]);
     }, pollMs) : null;
 
     return () => {
@@ -279,6 +325,7 @@ function SimulatorContent() {
               setCondition(nextCondition);
               setResults(null);
             }}
+            liveConditionSummary={liveConditionSummary}
           />
 
           <HorseInput
