@@ -116,8 +116,7 @@ export function calculateExpertSignal(horse: Horse): number {
   const favorite = Math.max(0, horse.favoriteCount ?? 0);
   const buzz = Math.max(0, horse.xBuzzScore ?? 0);
   const publicSupport = Math.max(0, horse.predictionCount ?? 0);
-  const form = Math.max(0, horse.recentFormScore ?? 0);
-  return Math.max(1, favorite + publicSupport * 0.08 + buzz * 1.4 + form * 1.2);
+  return Math.max(1, favorite + publicSupport * 0.08 + buzz * 1.4);
 }
 
 export function calculateOdds(horses: Horse[]): Horse[] {

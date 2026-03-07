@@ -448,14 +448,22 @@ function marketOddsToPopularity(odds, xBuzzScore) {
   return Math.round(clamp(oddsScore + xBuzzScore * 1.8, 1, 160));
 }
 
-function oreproToAbilityBase(favoriteCount, totals, odds, xBuzzScore) {
-  const totalFavorite = Math.max(totals.totalFavorite, 1);
-  const maxFavorite = Math.max(totals.maxFavorite, 1);
-  const share = favoriteCount / totalFavorite;
-  const topRatio = favoriteCount / maxFavorite;
-  const logFactor = Math.log1p(Math.max(favoriteCount, 0)) / Math.log1p(maxFavorite);
-  const base = 57 + share * 10 + topRatio * 4 + logFactor * 5 + xBuzzScore * 0.1;
-  return Math.round(clamp(base, 52, 78));
+function performanceToAbilityBase(pastEntry) {
+  const averageFinish = Number(pastEntry?.recentAverageFinish);
+  const averageFinishEdge =
+    Number.isFinite(averageFinish) && averageFinish > 0 ? clamp(6.5 - averageFinish, -3, 3) : 0;
+
+  return Math.round(
+    clamp(
+      70 +
+        Number(pastEntry?.recentTimeIndex ?? 0) * 2.4 +
+        Number(pastEntry?.recentFormScore ?? 0) * 1.8 +
+        (Number(pastEntry?.lastRaceGradeScore ?? 2) - 2) * 2.2 +
+        averageFinishEdge * 1.2,
+      52,
+      88
+    )
+  );
 }
 
 function buildAbilityStats(base, runningStyle, seed) {
@@ -533,17 +541,6 @@ async function buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate) {
     })
   );
 
-  const totals = seeds.reduce(
-    (acc, seed) => {
-      const oreproEntry = oreproEntries.get(normalizeName(seed.name));
-      const favoriteCount = Number(oreproEntry?.favoriteCount ?? 0);
-      acc.totalFavorite += favoriteCount;
-      acc.maxFavorite = Math.max(acc.maxFavorite, favoriteCount);
-      return acc;
-    },
-    { totalFavorite: 0, maxFavorite: 0 }
-  );
-
   const oddsSource = jstNow() >= getRaceFriday1930(raceDate) ? "official" : "forecast";
 
   return seeds.map((seed, index) => {
@@ -554,7 +551,8 @@ async function buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate) {
     const currentOdds = oreproEntry?.odds ?? seed.marketOdds ?? 0;
     const popularityScore = marketOddsToPopularity(currentOdds, xBuzzScore);
     const runningStyle = guessRunningStyle(`${meta.raceId}:${seed.id}:${seed.name}`);
-    const abilityBase = oreproToAbilityBase(favoriteCount, totals, currentOdds, xBuzzScore);
+    // Ability seed comes from past performance only; market data is kept for the market layer.
+    const abilityBase = performanceToAbilityBase(pastEntry);
     const ability = buildAbilityStats(abilityBase, runningStyle, `${meta.raceId}:${seed.id}:${seed.name}`);
 
     return {

@@ -58,8 +58,8 @@ export function SimulationResults({
     name: row.name.length > 8 ? `${row.name.slice(0, 8)}…` : row.name,
     fullName: row.name,
     試走: row.simWinRate,
-    公式: row.officialImplied,
-    ガチ勢: row.expertImplied,
+    一般市場: row.officialImplied,
+    ガチ勢市場: row.expertImplied,
   }));
 
   const strongest = rows[0];
@@ -81,7 +81,7 @@ export function SimulationResults({
           <p className="text-xs font-semibold tracking-[0.2em] text-slate-400">SIMULATION RESULT</p>
           <h2 className="text-lg font-bold text-slate-900">100回試走の結果</h2>
           <p className="mt-1 text-xs text-slate-500">
-            青は試走勝率、濃紺は公式オッズの期待値、金はガチ勢換算オッズの期待値です。
+            青は試走勝率、濃紺は一般市場の期待値、金はガチ勢市場の期待値です。
           </p>
         </div>
         <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
@@ -106,7 +106,7 @@ export function SimulationResults({
           <p className="mt-1 text-xs text-slate-600">試走 {valueHorse?.simWinRate?.toFixed(1) ?? "-"}% / 公式 {valueHorse?.officialOdds?.toFixed(1) ?? "-"}倍</p>
         </div>
         <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
-          <p className="text-[11px] font-semibold tracking-wide text-amber-600">公式 vs ガチ勢</p>
+          <p className="text-[11px] font-semibold tracking-wide text-amber-600">一般市場 vs ガチ勢市場</p>
           <p className="mt-1 text-base font-bold text-slate-900">{disagreement?.name ?? "-"}</p>
           <p className="mt-1 text-xs text-slate-600">期待値差 {disagreement?.marketExpertGap?.toFixed(1) ?? "-"}pt</p>
         </div>
@@ -133,8 +133,8 @@ export function SimulationResults({
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />
               <Bar dataKey="試走" fill="#2563eb" radius={[0, 4, 4, 0]} />
-              <Bar dataKey="公式" fill="#0f172a" radius={[0, 4, 4, 0]} />
-              <Bar dataKey="ガチ勢" fill="#d97706" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="一般市場" fill="#0f172a" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="ガチ勢市場" fill="#d97706" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -150,12 +150,12 @@ export function SimulationResults({
               <th className="px-2 py-2 text-right">能力</th>
               <th className="px-2 py-2 text-right">試走勝率</th>
               <th className="px-2 py-2 text-right">フェア</th>
-              <th className="px-2 py-2 text-right">公式</th>
-              <th className="px-2 py-2 text-right">ガチ勢</th>
-              <th className="px-2 py-2 text-right">公式差</th>
-              <th className="px-2 py-2 text-right">ガチ勢差</th>
+              <th className="px-2 py-2 text-right">一般市場</th>
+              <th className="px-2 py-2 text-right">ガチ勢市場</th>
+              <th className="px-2 py-2 text-right">一般市場差</th>
+              <th className="px-2 py-2 text-right">ガチ勢市場差</th>
               <th className="px-2 py-2 text-right">市場vsガチ勢</th>
-              <th className="px-2 py-2 text-right">評判</th>
+              <th className="px-2 py-2 text-right">一般支持</th>
               <th className="px-2 py-2 text-center">判定</th>
             </tr>
           </thead>

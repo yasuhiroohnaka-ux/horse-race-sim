@@ -129,7 +129,7 @@ export function HorseInput({ horses, course, condition, onHorsesChange, hashtag 
           <p className="text-xs font-semibold tracking-[0.2em] text-slate-400">HORSE INPUT</p>
           <h2 className="text-lg font-bold text-slate-900">馬データ</h2>
           <p className="mt-1 text-xs text-slate-500">
-            能力4値と適性5値を並べて、公式人気とガチ勢人気のズレをその場で確認します。
+            能力4値と適性5値を並べて、能力評価と市場評価のズレをその場で確認します。
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -155,17 +155,17 @@ export function HorseInput({ horses, course, condition, onHorsesChange, hashtag 
           <p className="mt-1 text-xs text-slate-500">能力指数 {abilityLeader?.profile.abilityScore?.toFixed(1) ?? "-"}</p>
         </div>
         <div className="rounded-2xl bg-slate-50 p-3">
-          <p className="text-[11px] font-semibold tracking-wide text-slate-400">一般人気先頭</p>
+          <p className="text-[11px] font-semibold tracking-wide text-slate-400">一般市場先頭</p>
           <p className="mt-1 text-sm font-bold text-slate-900">{marketFavorite?.name ?? "-"}</p>
           <p className="mt-1 text-xs text-slate-500">公式オッズ {marketFavorite?.realOdds?.toFixed(1) ?? "-"}倍</p>
         </div>
         <div className="rounded-2xl bg-slate-50 p-3">
-          <p className="text-[11px] font-semibold tracking-wide text-slate-400">ガチ勢先頭</p>
+          <p className="text-[11px] font-semibold tracking-wide text-slate-400">ガチ勢市場先頭</p>
           <p className="mt-1 text-sm font-bold text-slate-900">{sharpFavorite?.name ?? "-"}</p>
           <p className="mt-1 text-xs text-slate-500">俺プロ {sharpFavorite?.favoriteCount ?? 0}人 / {sharpFavorite?.expertOdds?.toFixed(1) ?? "-"}倍</p>
         </div>
         <div className="rounded-2xl bg-slate-50 p-3">
-          <p className="text-[11px] font-semibold tracking-wide text-slate-400">乖離最大</p>
+          <p className="text-[11px] font-semibold tracking-wide text-slate-400">市場乖離最大</p>
           <p className="mt-1 text-sm font-bold text-slate-900">{divergenceLeader?.name ?? "-"}</p>
           <p className="mt-1 text-xs text-slate-500">
             公式 {divergenceLeader?.realOdds?.toFixed(1) ?? "-"}倍 / ガチ勢 {divergenceLeader?.expertOdds?.toFixed(1) ?? "-"}倍
@@ -193,10 +193,10 @@ export function HorseInput({ horses, course, condition, onHorsesChange, hashtag 
               {showTrainingColumn ? <th className="px-2 py-2 text-center">追切</th> : null}
               <th className="px-2 py-2 text-center">近走</th>
               <th className="px-2 py-2 text-right">能力指数</th>
-              <th className="px-2 py-2 text-right">俺プロ本命</th>
-              <th className="px-2 py-2 text-right">評判指数</th>
-              <th className="px-2 py-2 text-right">公式</th>
-              <th className="px-2 py-2 text-right">ガチ勢</th>
+              <th className="px-2 py-2 text-right">ガチ勢支持</th>
+              <th className="px-2 py-2 text-right">一般支持</th>
+              <th className="px-2 py-2 text-right">一般市場</th>
+              <th className="px-2 py-2 text-right">ガチ勢市場</th>
               <th className="px-2 py-2 text-center">削除</th>
             </tr>
           </thead>
