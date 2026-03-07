@@ -20,6 +20,7 @@ interface SimulationResultsProps {
   course: Course;
   condition: RaceCondition;
   onReset: () => void;
+  onPostToRecommendedPairToX: () => void;
   onPostToX: () => void;
   onRunAgain: () => void;
   isRunning: boolean;
@@ -47,6 +48,7 @@ export function SimulationResults({
   course,
   condition,
   onReset,
+  onPostToRecommendedPairToX,
   onPostToX,
   onRunAgain,
   isRunning,
@@ -229,10 +231,16 @@ export function SimulationResults({
           {isRunning ? "再試走中..." : "もう一度100回試走"}
         </button>
         <button
-          onClick={onPostToX}
+          onClick={onPostToRecommendedPairToX}
           className="rounded-full bg-black px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
         >
-          分析をXに投稿
+          ??2??X??
+        </button>
+        <button
+          onClick={onPostToX}
+          className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          ???X???
         </button>
       </div>
     </div>

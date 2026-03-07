@@ -292,6 +292,33 @@ function SimulatorContent() {
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const handlePostRecommendedPairToX = () => {
+    if (!results || !selectedCourse) return;
+
+    const rows = buildRaceAnalysisRows(results, horses, selectedCourse, condition);
+    const strongest = rows[0];
+    const valueHorse = [...rows]
+      .sort(
+        (a, b) =>
+          (b.simWinRate - b.officialImplied + Math.max(0, b.marketExpertGap) * 0.6) -
+          (a.simWinRate - a.officialImplied + Math.max(0, a.marketExpertGap) * 0.6)
+      )[0];
+
+    if (!strongest || !valueHorse) return;
+
+    const hasSamePick = strongest.horseId === valueHorse.horseId;
+    const text = [
+      `${selectedCourse.name} ??2?`,
+      `????? ${strongest.name} ??${strongest.simWinRate.toFixed(1)}% / ???${strongest.fairOdds?.toFixed(1) ?? "-"}?`,
+      hasSamePick
+        ? `?????? ${valueHorse.name} ??${valueHorse.officialOdds?.toFixed(1) ?? "-"}? / ???${valueHorse.expertOdds?.toFixed(1) ?? "-"}?`
+        : `????? ${valueHorse.name} ??${valueHorse.officialOdds?.toFixed(1) ?? "-"}? / ???${valueHorse.expertOdds?.toFixed(1) ?? "-"}?`,
+      `??: ${groundLabels[condition.groundCondition]} / ${weatherLabels[condition.weather]} / ${windLabels[condition.windDirection]}${condition.windSpeed}m / ${paceLabels[condition.paceScenario]}`,
+      selectedCourse.hashtag,
+    ].join("\n");
+
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
+  };
   if (!selectedCourse) {
     return <div className="flex min-h-screen items-center justify-center bg-slate-100 text-slate-500">今週のレースデータがありません。</div>;
   }
@@ -358,6 +385,7 @@ function SimulatorContent() {
               course={selectedCourse}
               condition={condition}
               onReset={() => setResults(null)}
+              onPostToRecommendedPairToX={handlePostRecommendedPairToX}
               onPostToX={handlePostToX}
               onRunAgain={handleRunSimulation}
               isRunning={isRunning}
