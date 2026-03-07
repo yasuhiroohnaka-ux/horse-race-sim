@@ -251,7 +251,7 @@ export function getResolvedTraitScores(
 
 export function getBaseAbilityScore(horse: Horse): number {
   const averageFinish = Number.isFinite(horse.recentAverageFinish) && (horse.recentAverageFinish ?? 0) > 0
-    ? clamp((8 - Number(horse.recentAverageFinish)) * 1.4, -9, 7)
+    ? clamp((8 - Number(horse.recentAverageFinish)) * 0.9, -6, 4.5)
     : 0;
 
   const rawScore =
@@ -261,10 +261,10 @@ export function getBaseAbilityScore(horse: Horse): number {
     horse.guts * 0.12 +
     (horse.jockeyPower ?? 60) * 0.09 +
     (horse.stablePower ?? 60) * 0.05 +
-    (horse.trainingScore ?? 0) * 1.3 +
-    (horse.recentFormScore ?? 0) * 1.4 +
-    (horse.recentTimeIndex ?? 0) * 1.1 +
-    ((horse.lastRaceGradeScore ?? 2) - 2) * 1.9 +
+    (horse.trainingScore ?? 0) * 0.7 +
+    (horse.recentFormScore ?? 0) * 0.8 +
+    (horse.recentTimeIndex ?? 0) * 0.6 +
+    ((horse.lastRaceGradeScore ?? 2) - 2) * 0.9 +
     averageFinish;
 
   return round1(clamp(rawScore, 35, 99));

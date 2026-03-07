@@ -11,11 +11,11 @@ export type { Horse, RunningStyle };
 export { calculateCrowdWinRate, calculateOdds };
 
 const BASE_SPEED = 16.05;
-const SPEED_ABILITY_FACTOR = 0.0155;
+const SPEED_ABILITY_FACTOR = 0.0088;
 const STAMINA_DRAIN_RATE = 1.02;
 const JOCKEY_MOD_FACTOR = 0.00045;
 const STABLE_MOD_FACTOR = 0.0003;
-const MONTE_CARLO_MEAN_REVERSION = 0.18;
+const MONTE_CARLO_MEAN_REVERSION = 0.34;
 
 function getGroundConditionModifiers(
   groundCondition: RaceCondition["groundCondition"],
@@ -76,9 +76,9 @@ function getRecentPerformanceModifier(horse: Horse): number {
   const gradeScore = clamp(horse.lastRaceGradeScore ?? 2, 0, 5);
   const averageFinish = horse.recentAverageFinish;
   const finishBonus = Number.isFinite(averageFinish)
-    ? clamp((7 - Number(averageFinish)) * 0.0032, -0.018, 0.018)
+    ? clamp((7 - Number(averageFinish)) * 0.002, -0.012, 0.012)
     : 0;
-  return clamp(1 + finishBonus + formScore * 0.0032 + timeIndex * 0.0034 + (gradeScore - 2) * 0.0027, 0.93, 1.08);
+  return clamp(1 + finishBonus + formScore * 0.0018 + timeIndex * 0.0018 + (gradeScore - 2) * 0.0015, 0.96, 1.04);
 }
 
 function getPaceAdjustmentByStyle(horses: Horse[], condition: RaceCondition): Map<string, number> {
@@ -184,7 +184,7 @@ export function runRace(
     );
     const paceMod = paceMap.get(horse.id) ?? 1;
     const drawTacticalMod = drawTacticalMap.get(horse.id) ?? 1;
-    const launchMod = 0.995 + Math.random() * 0.01;
+    const launchMod = 0.982 + Math.random() * 0.036;
 
     return {
       id: horse.id,
@@ -225,7 +225,7 @@ export function runRace(
       if (!horse) return;
 
       const progressRatio = clamp(position.distanceCovered / Math.max(course.distance, 1), 0, 1);
-      const randomFlux = (Math.random() - 0.5) * 2.8 * position.volatility;
+      const randomFlux = (Math.random() - 0.5) * 5.2 * position.volatility;
       const styleBonus = getRunningStyleBonus(horse.runningStyle, condition.trackBias);
       const finishKick = progressRatio > 0.7 ? position.closingKick : 1;
 
@@ -278,7 +278,7 @@ export function runMonteCarlo(
   for (let index = 0; index < iterations; index += 1) {
     const horseConditions = horses.map((horse) => {
       const profile = getScenarioProfile(horse, course, condition);
-      const swing = 0.03 * profile.volatility;
+      const swing = 0.08 * profile.volatility;
       return {
         id: horse.id,
         modifier: 1 - swing + Math.random() * swing * 2,
@@ -301,7 +301,7 @@ export function runMonteCarlo(
 
   const abilityById = new Map(horses.map((horse) => [horse.id, getScenarioProfile(horse, course, condition).abilityScore]));
   const abilityTotal = Math.max(1, horses.reduce((sum, horse) => sum + (abilityById.get(horse.id) ?? 0), 0));
-  const priorStrength = Math.max(8, Math.round(iterations * 0.2));
+  const priorStrength = Math.max(3, Math.round(iterations * 0.04));
   const fieldMeanPct = 100 / Math.max(1, horses.length);
 
   return Array.from(stats.entries())

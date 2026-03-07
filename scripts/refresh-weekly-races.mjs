@@ -453,9 +453,9 @@ function oreproToAbilityBase(favoriteCount, totals, odds, xBuzzScore) {
   const maxFavorite = Math.max(totals.maxFavorite, 1);
   const share = favoriteCount / totalFavorite;
   const topRatio = favoriteCount / maxFavorite;
-  const marketFactor = odds && odds > 0 ? clamp(1 / odds / 0.35, 0, 1) : 0.2;
-  const base = 58 + share * 24 + topRatio * 10 + marketFactor * 7 + xBuzzScore * 0.35;
-  return Math.round(clamp(base, 50, 94));
+  const logFactor = Math.log1p(Math.max(favoriteCount, 0)) / Math.log1p(maxFavorite);
+  const base = 57 + share * 10 + topRatio * 4 + logFactor * 5 + xBuzzScore * 0.1;
+  return Math.round(clamp(base, 52, 78));
 }
 
 function buildAbilityStats(base, runningStyle, seed) {
