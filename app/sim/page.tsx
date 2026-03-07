@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
@@ -193,8 +193,17 @@ function SimulatorContent() {
     };
 
     void refreshNetkeibaOdds();
+    const dayOfWeek = new Date().getDay();
+    const pollMs = dayOfWeek === 0 || dayOfWeek === 6 ? 10 * 60 * 1000 : 0;
+    const intervalId = pollMs > 0 ? window.setInterval(() => {
+      void refreshNetkeibaOdds();
+    }, pollMs) : null;
+
     return () => {
       cancelled = true;
+      if (intervalId !== null) {
+        window.clearInterval(intervalId);
+      }
     };
   }, [condition.courseId]);
 
@@ -324,5 +333,6 @@ function SimulatorContent() {
     </div>
   );
 }
+
 
 

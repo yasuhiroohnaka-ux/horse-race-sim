@@ -1,4 +1,4 @@
-﻿import fs from "node:fs/promises";
+import fs from "node:fs/promises";
 import path from "node:path";
 import { NextRequest, NextResponse } from "next/server";
 import { GENERATED_DRAW_OVERRIDES } from "@/lib/generatedDrawOverrides";
@@ -59,7 +59,9 @@ export const revalidate = 0;
 function normalizeName(name: string): string {
   return String(name ?? "")
     .toLowerCase()
-    .replace(/[\s縲繝ｻ・･\-_.]/g, "");
+    .replace(/\u3000/g, "")
+    .replace(/\s+/g, "")
+    .replace(/[\u30fb\uff65\-_.]/g, "");
 }
 
 function decodeHtmlText(s: string): string {
@@ -220,6 +222,36 @@ function parseShutubaEntries(shutubaHtml: string): ParsedEntry[] {
   return entries;
 }
 
+function parseOreproEntries(oreproHtml: string): ParsedEntry[] {
+  const rows = [...oreproHtml.matchAll(/<tr[^>]*class="[^"]*HorseList[^"]*"[^>]*>([\s\S]*?)<\/tr>/g)].map(
+    (m) => m[1]
+  );
+
+  const entries: ParsedEntry[] = [];
+  for (const row of rows) {
+    const gateNumber = Number(row.match(/class="Waku\d+[^"]*"[^>]*>\s*(\d{1,2})\s*<\/td>/i)?.[1] ?? 0);
+    if (!(gateNumber > 0)) continue;
+
+    const horseNameRaw = row.match(/<dt class="Horse">[\s\S]*?<a[^>]*>([\s\S]*?)<\/a>/i)?.[1] ?? "";
+    const horseName = normalizeSpace(horseNameRaw);
+    if (!horseName) continue;
+
+    const popularCell = row.match(/<td class="Popular">([\s\S]*?)<\/td>/i)?.[1] ?? "";
+    const jockeyRaw = row.match(/<dd class="Jockey">([\s\S]*?)<\/dd>/i)?.[1] ?? "";
+    const jockey = normalizeJockeyName(jockeyRaw.replace(/\d{2}(?:\.\d)?/g, " "));
+
+    entries.push({
+      horseName,
+      gateNumber,
+      odds: parseOdds(popularCell.match(/<span[^>]*>\s*(\d+(?:\.\d+)?)\s*<\/span>/i)?.[1] ?? ""),
+      popularityRank: parsePopularityRank(popularCell.match(/<span[^>]*>\s*(\d+)人気\s*<\/span>/i)?.[1] ?? ""),
+      jockey,
+    });
+  }
+
+  return entries;
+}
+
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
@@ -255,10 +287,10 @@ function detectGradeLabel(iconRaw: string, raceNameRaw: string): string | null {
   const raceName = raceNameRaw;
   if (/(^|\s|\()(L)(\s|\)|$)/i.test(raceName)) return "L";
   if (/OP/i.test(raceName)) return "OP";
-  if (/3勝|3Win/i.test(raceName)) return "3Win";
-  if (/2勝|2Win/i.test(raceName)) return "2Win";
-  if (/1勝|1Win/i.test(raceName)) return "1Win";
-  if (/未勝利|新馬|Maiden/i.test(raceName)) return "Maiden";
+  if (/3\u52dd|3Win/i.test(raceName)) return "3Win";
+  if (/2\u52dd|2Win/i.test(raceName)) return "2Win";
+  if (/1\u52dd|1Win/i.test(raceName)) return "1Win";
+  if (/\u672a\u52dd\u5229|\u65b0\u99ac|Maiden/i.test(raceName)) return "Maiden";
   return null;
 }
 
@@ -474,6 +506,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "unable to match race by horse names" }, { status: 404 });
     }
 
+    let oreproByGate = new Map<string, ParsedEntry>();
+    let oreproByName = new Map<string, ParsedEntry>();
+    try {
+      const oreproHtml = await fetchText(`https://orepro.netkeiba.com/bet/shutuba.html?race_id=${best.raceId}`);
+      const oreproEntries = parseOreproEntries(oreproHtml);
+      oreproByGate = new Map(oreproEntries.map((entry) => [String(entry.gateNumber), entry]));
+      oreproByName = new Map(oreproEntries.map((entry) => [normalizeName(entry.horseName), entry]));
+    } catch {
+      oreproByGate = new Map<string, ParsedEntry>();
+      oreproByName = new Map<string, ParsedEntry>();
+    }
+
     const oddsByGate: Record<string, number> = {};
     const popularityRankByGate: Record<string, number> = {};
     const popularityByGate: Record<string, number> = {};
@@ -500,20 +544,25 @@ export async function GET(request: NextRequest) {
     );
     for (const entry of best.entries) {
       const gateKey = String(entry.gateNumber);
-      if (Number.isFinite(entry.odds) && (entry.odds ?? 0) > 0) {
-        oddsByGate[gateKey] = Number(entry.odds);
+      const oreproEntry = oreproByGate.get(gateKey) ?? oreproByName.get(normalizeName(entry.horseName));
+      const resolvedOdds = entry.odds ?? oreproEntry?.odds ?? null;
+      const resolvedPopularityRank = entry.popularityRank ?? oreproEntry?.popularityRank ?? null;
+      const resolvedJockey = entry.jockey ?? oreproEntry?.jockey ?? null;
+
+      if (Number.isFinite(resolvedOdds) && (resolvedOdds ?? 0) > 0) {
+        oddsByGate[gateKey] = Number(resolvedOdds);
       }
-      if (Number.isFinite(entry.popularityRank) && (entry.popularityRank ?? 0) > 0) {
-        popularityRankByGate[gateKey] = Number(entry.popularityRank);
+      if (Number.isFinite(resolvedPopularityRank) && (resolvedPopularityRank ?? 0) > 0) {
+        popularityRankByGate[gateKey] = Number(resolvedPopularityRank);
       }
       const weeklyHorse = weeklyHorseByGate.get(gateKey) ?? weeklyHorseByName.get(normalizeName(entry.horseName));
       const xBuzzScore = Number(weeklyHorse?.xBuzzScore ?? 0);
-      const popularityScore = oddsToPopularityScore(entry.odds, xBuzzScore);
+      const popularityScore = oddsToPopularityScore(resolvedOdds, xBuzzScore);
       if (popularityScore > 0) {
         popularityByGate[gateKey] = popularityScore;
       }
-      if (entry.jockey) {
-        jockeyByGate[gateKey] = entry.jockey;
+      if (resolvedJockey) {
+        jockeyByGate[gateKey] = resolvedJockey;
       }
     }
 
@@ -560,6 +609,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }
+
+
+
+
+
+
+
 
 
 
