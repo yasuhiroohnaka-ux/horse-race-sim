@@ -1,107 +1,108 @@
-# 引き継ぎ録
+﻿# HANDOVER
 
-更新日: 2026-03-03
+更新日: 2026-03-08
 
-## 概要
+## 1. プロダクトの現在地
 
-直近は `AI競馬シミュレーター` の出馬表更新、netkeiba連携、能力値計算、結果表示の調整を進めた。
-直近の基準コミットは `27726e9 feat: add past-performance factors and stabilize simulation output`。
+- アプリ名は `KEIBA GAP LAB`。
+- 目的は「能力と人気の乖離を見抜く」こと。
+- いまの軸は次の4つ。
+  - 試走勝率
+  - フェアオッズ
+  - 公式オッズ
+  - 俺プロ由来のガチ勢オッズ
+- 対象レースは「今週の重賞のみ」。週次生成データから表示している。
 
-## コミット済みの変更
+## 2. いま本番で動いているもの
 
-### 6311ab6 `chore: sort entries by gate and remove training adjustment`
+### レースデータ生成
 
-- 出馬表の並びを馬番順に調整
-- 追切補正を撤廃
-- デフォルトの馬場設定を `良` に調整
+- `scripts/refresh-weekly-races.mjs` が今週重賞の出馬表、俺プロ本命人数、近走情報、公式オッズ系の初期データを生成する。
+- 生成結果は `data/weekly-races.json` に入り、最終的に `lib/generatedRaceSchedule.ts` に同期される。
 
-主な対象:
+### /sim のライブ更新
 
-- [app/sim/page.tsx](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/app/sim/page.tsx)
-- [components/HorseInput.tsx](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/components/HorseInput.tsx)
-- [lib/defaultHorses.ts](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/lib/defaultHorses.ts)
-- [lib/simulation.ts](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/lib/simulation.ts)
-- [data/weekly-races.json](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/data/weekly-races.json)
+- `app/sim/page.tsx` で初回表示時にライブ更新をかける。
+- 土日だけは10分ごとに再取得する。
+- 取得先は2本。
+  - `/api/netkeiba-odds`: 公式オッズ、俺プロ本命人数、騎手、近走情報
+  - `/api/live-race-conditions`: 天気、馬場、風向、風速
 
-### 9ce1f17 `tune simulation balance to reduce extreme bias`
+### 条件データ
 
-- 能力値差が勝率に直結しすぎる問題を緩和
-- シミュレーションの偏りを抑える方向で係数を調整
+- 馬場は netkeiba の出馬表ページから取得。
+- 風と天気は Open-Meteo を使って開催場の現在値を取得。
+- 風向は開催場ごとの直線方位に対して `Headwind / Tailwind / Crosswind` に変換している。
 
-主な対象:
+### X 投稿
 
-- [lib/simulation.ts](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/lib/simulation.ts)
+- `components/SimulationResults.tsx` に X 投稿ボタンが2つある。
+  - 分析全体を投稿
+  - 的中率おすすめ1頭 + 回収率おすすめ1頭を同時投稿
+- 投稿文生成は `app/sim/page.tsx` 側で行う。
+- これは X の composer を開く方式で、自動投稿ではない。
 
-### 27726e9 `feat: add past-performance factors and stabilize simulation output`
+## 3. 直近で入った重要な変更
 
-- netkeiba から `shutuba_past` を取得し、近5走ベースの情報を追加
-- `近5走 / 走破タイム / 着順 / 前走レース格` を能力値補正に利用
-- オッズ更新時に世論値 (`xPopularityByGate`) も更新
-- 結果表示の数値を小数第1位中心に整理
-- 結果テーブルの枠色表示を追加
+- `c94d4c9 Fix mojibake in X post labels`
+  - X投稿ボタン文言と投稿文の文字化けを修正。
+- `163acae Add X post button for recommended pair`
+  - 的中率向け1頭と回収率向け1頭を同時に投稿するボタンを追加。
+- `0203575 Sync live weather and wind conditions`
+  - 天気、馬場、風向、風速のライブ反映を追加。
+- `eee8169 Flatten simulation win-rate bias`
+  - 試走勝率が1頭に寄りすぎる問題を緩和。
+- `e287809 Fill recent form data and hide empty training`
+  - 近走を自動投入し、追切が全頭空のときは列を非表示化。
+- `0067794 Fix live odds refresh and weekend polling`
+  - ライブオッズ更新と土日ポーリングを安定化。
+- `uncommitted Separate ability from market signals`
+  - 能力初期値を市場データ依存から切り離し、近走ベースで生成するよう変更。
+  - ガチ勢シグナルから近走スコアを外し、能力評価と市場評価の表示文言を分離。
 
-主な対象:
+## 4. 重要ファイル
 
-- [app/api/netkeiba-odds/route.ts](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/app/api/netkeiba-odds/route.ts)
-- [app/sim/page.tsx](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/app/sim/page.tsx)
-- [components/HorseInput.tsx](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/components/HorseInput.tsx)
-- [components/SimulationResults.tsx](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/components/SimulationResults.tsx)
-- [lib/defaultHorses.ts](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/lib/defaultHorses.ts)
-- [lib/raceData.ts](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/lib/raceData.ts)
-- [lib/simulation.ts](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/lib/simulation.ts)
-- [lib/types.ts](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/lib/types.ts)
+- `app/sim/page.tsx`
+  - /sim 画面本体、ライブ更新、X投稿文生成。
+- `components/SimulationResults.tsx`
+  - 試走結果テーブル、推奨カード、X投稿ボタン。
+- `components/CourseConfig.tsx`
+  - 条件設定UI。ライブ反映の要約表示あり。
+- `components/HorseInput.tsx`
+  - 馬データ入力。近走は表示、追切は全空なら隠す。
+- `app/api/netkeiba-odds/route.ts`
+  - 公式オッズ、俺プロ人数、騎手、近走データの取得。
+- `app/api/live-race-conditions/route.ts`
+  - 天候、馬場、風向、風速の取得。
+- `scripts/refresh-weekly-races.mjs`
+  - 週次データ再生成の中心。
+- `lib/raceAnalysis.ts`
+  - 試走勝率、フェア、公式差、ガチ勢差の算出。
+- `lib/simulation.ts`
+  - Monte Carlo 試走本体。
 
-## 現在の未コミット変更
+## 5. 現在の運用メモ
 
-### 目的
+- GitHub の `main` へ push すると Vercel が再デプロイする想定。
+- 2026-03-07 時点で作業ツリーは clean。
+- 文字列の修正後は、古い Vercel deployment URL を見続けると古い表示が残ることがある。必ず Current / Production を確認すること。
 
-中山記念の `ニシノエージェント` と `スパークリシャール` の騎手が `未定` のままになる問題の修正。
+## 6. 確認コマンド
 
-### 状況
+- `cmd /c npx tsc --noEmit --incremental false`
+- `cmd /c npm run build`
+- 週次データを更新したいときは `node scripts/refresh-weekly-races.mjs`
 
-netkeiba の `shutuba.html` 側では騎手が古いか欠けるケースがあり、`shutuba_past.html` 側には正しい騎手が載っている。
-そのため、`shutuba_past` の `Jockey` 列を取得して `jockeyByGate` を上書きする修正を入れている。
+## 7. 未解決・注意点
 
-対象ファイル:
+- PowerShell 上では一部の日本語が文字化けして見えることがある。ブラウザ表示と build 成功を優先して確認すること。
+- X 投稿は composer 起動のみ。完全自動投稿は別系統の workflow / webhook 管理。
+- 公式オッズとガチ勢オッズの差が肝なので、土日の更新頻度をさらに上げる余地はある。
+- 追切は現在「安定取得できない週は隠す」方針。再導入するなら取得精度の担保が先。
 
-- [app/api/netkeiba-odds/route.ts](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/app/api/netkeiba-odds/route.ts)
-- [app/sim/page.tsx](/c:/Users/kouyu/.gemini/antigravity/scratch/horse-race-sim/app/sim/page.tsx)
+## 8. 次に触るなら候補
 
-差分概要:
-
-- `parseShutubaPastEntries(...)` で騎手名を抽出
-- `GET` 内の `pastEntries` ループで `jockeyByGate[gate] = entry.jockey`
-- 画面側で、取得した非空文字列の騎手名をそのまま反映
-
-## 現在のワーキングツリー
-
-`git status --short`
-
-```text
- M app/api/netkeiba-odds/route.ts
- M app/sim/page.tsx
-```
-
-## 検証状況
-
-- `cmd /c npx tsc --noEmit --incremental false` は通過済み
-- ただし未コミットの騎手修正はブラウザ実画面で再確認が必要
-
-確認対象:
-
-- 中山記念
-- `4` スパークリシャール
-- `13` ニシノエージェント
-
-## 次にやること
-
-1. `/sim` を再読み込み
-2. オッズ更新を実行
-3. 上記2頭の騎手が埋まるか確認
-4. 問題なければこの2ファイルをコミットしてプッシュ
-
-## 注意点
-
-- 日本語ファイルを PowerShell の `Set-Content` で直接書き換えると文字化けしやすい
-- 以後の編集は `apply_patch` 優先
-- ブラウザ表示が古い場合は API の取得結果ではなくクライアント状態保持が原因の可能性もあるため、完全リロードで再確認する
+- 土日のライブ更新間隔を 10分 -> 5分 にするか検討。
+- X投稿文にレース名の略称ではなく正式名を揃える。
+- 自動投稿 workflow と画面の X 投稿文を共通化する。
+- 血統の算出を推定値ベースではなく実データ連携へ寄せる。
