@@ -1,376 +1,241 @@
-"use client";
+﻿"use client";
 
-import { Horse, RaceResult } from "@/lib/types";
-import { calculateCrowdWinRate } from "@/lib/simulation";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { Course, Horse, RaceCondition } from "@/lib/types";
+import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
 import { getFrameColor, getFrameNumber } from "@/lib/frameColor";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface SimulationResultsProps {
-    results: { horseId: string; winCount: number; bestTime: number }[];
-    horses: Horse[];
-    onReset: () => void;
-    onPostToX: () => void;
-    onRunAgain: () => void;
-    isRunning: boolean;
-    hashtag?: string;
+  results: { horseId: string; winCount: number; bestTime: number }[];
+  horses: Horse[];
+  course: Course;
+  condition: RaceCondition;
+  onReset: () => void;
+  onPostToX: () => void;
+  onRunAgain: () => void;
+  isRunning: boolean;
 }
 
-export function SimulationResults({ results, horses, onReset, onPostToX, onRunAgain, isRunning, hashtag = '#競馬' }: SimulationResultsProps) {
-    const round1 = (value: number): number => Math.round(value * 10) / 10;
+function getSignalTone(label: string): string {
+  switch (label) {
+    case "危険人気":
+      return "text-red-600 bg-red-50";
+    case "市場盲点":
+    case "プロ先行妙味":
+      return "text-emerald-700 bg-emerald-50";
+    case "ガチ勢先行":
+      return "text-amber-700 bg-amber-50";
+    case "一般人気先行":
+      return "text-blue-700 bg-blue-50";
+    default:
+      return "text-slate-600 bg-slate-100";
+  }
+}
 
-    // 集合知勝率（predictionCount の割合）を物理シミュとは独立して計算
-    const crowdWinMap = calculateCrowdWinRate(horses);
+export function SimulationResults({
+  results,
+  horses,
+  course,
+  condition,
+  onReset,
+  onPostToX,
+  onRunAgain,
+  isRunning,
+}: SimulationResultsProps) {
+  const rows = buildRaceAnalysisRows(results, horses, course, condition);
+  const chartRows = rows.slice(0, Math.min(rows.length, 10)).map((row) => ({
+    name: row.name.length > 8 ? `${row.name.slice(0, 8)}…` : row.name,
+    fullName: row.name,
+    試走: row.simWinRate,
+    公式: row.officialImplied,
+    ガチ勢: row.expertImplied,
+  }));
 
-    // Merge results with horse names
-    const data = results.map(r => {
-        const horse = horses.find(h => h.id === r.horseId);
-        const physWin = r.winCount;
-        const crowdWin = crowdWinMap.get(r.horseId) ?? 0;
-        const diff = round1(physWin - crowdWin); // 正=物理優位 / 負=世論優位
-        return {
-            name: horse ? horse.name : "Unknown",
-            wins: physWin,
-            crowdWin,
-            diff,
-            bestTime: r.bestTime.toFixed(1) + "s",
-            odds: horse?.simulatedOdds?.toFixed(1) || "-",
-            horse: horse
-        };
-    });
+  const strongest = rows[0];
+  const riskyFavorite = [...rows]
+    .filter((row) => row.officialRank <= Math.min(4, rows.length))
+    .sort((a, b) => (b.officialImplied - b.simWinRate) - (a.officialImplied - a.simWinRate))[0];
+  const valueHorse = [...rows]
+    .sort(
+      (a, b) =>
+        (b.simWinRate - b.officialImplied + Math.max(0, b.marketExpertGap) * 0.6) -
+        (a.simWinRate - a.officialImplied + Math.max(0, a.marketExpertGap) * 0.6)
+    )[0];
+  const disagreement = [...rows].sort((a, b) => Math.abs(b.marketExpertGap) - Math.abs(a.marketExpertGap))[0];
 
-    // X 人気ランキング（predictionCount 降順、0票は除外）
-    const popularityRanking = [...horses]
-        .sort((a, b) => b.predictionCount - a.predictionCount)
-        .filter(h => h.predictionCount > 0);
-    const maxCount = popularityRanking[0]?.predictionCount ?? 1;
-    const X_CHAR_LIMIT = 280;
-
-    const buildOvervaluedPostText = (overvalued: Array<{ name: string; wins: number; horse?: Horse }>) => {
-        const header = "【過大評価馬リスト】\n";
-        const footer = `\n#競馬 ${hashtag} #過大評価`;
-        if (overvalued.length === 0) return `${header}該当馬なし${footer}`;
-
-        let body = "";
-        for (let i = 0; i < overvalued.length; i++) {
-            const row = overvalued[i];
-            const realOdds = row.horse?.realOdds || 0;
-            const ratio = row.wins > 0 ? realOdds / (100 / row.wins) : 0;
-            const line = `#${i + 1} ${row.name} 市場${realOdds.toFixed(1)}倍/ 勝率${row.wins}% / 乖離${ratio.toFixed(2)}x\n`;
-            if (`${header}${body}${line}${footer}`.length > X_CHAR_LIMIT) break;
-            body += line;
-        }
-
-        if (!body) {
-            const row = overvalued[0];
-            const realOdds = row.horse?.realOdds || 0;
-            const ratio = row.wins > 0 ? realOdds / (100 / row.wins) : 0;
-            body = `#1 ${row.name} 市場${realOdds.toFixed(1)}倍/ 勝率${row.wins}% / 乖離${ratio.toFixed(2)}x\n`;
-        }
-
-        return `${header}${body}${footer}`;
-    };
-
-    // X 人気ランキング 投稿ハンドラ
-    const handlePostRankingToX = () => {
-        const top5 = popularityRanking.slice(0, 5);
-        let text = "【X競馬予想 人気ランキング】\n";
-        top5.forEach((h, i) => {
-            const physResult = results.find(r => r.horseId === h.id);
-            const irrational = (physResult?.winCount ?? 0) === 0 && h.predictionCount >= 10;
-            text += `#${i + 1} ${h.name} ${h.predictionCount}pt${irrational ? " ⚠️" : ""}\n`;
-        });
-        text += `\n#競馬 ${hashtag} #集合知`;
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
-    };
-
-    const handlePostUndervaluedToX = () => {
-        const undervalued = data
-            .filter((row) => {
-                const realOdds = row.horse?.realOdds || 0;
-                if (row.wins <= 0 || realOdds <= 0) return false;
-                const physImpliedOdds = 100 / row.wins;
-                const ratio = realOdds / physImpliedOdds;
-                return ratio > 1.5;
-            })
-            .sort((a, b) => {
-                const aRealOdds = a.horse?.realOdds || 0;
-                const bRealOdds = b.horse?.realOdds || 0;
-                const aRatio = a.wins > 0 ? aRealOdds / (100 / a.wins) : 0;
-                const bRatio = b.wins > 0 ? bRealOdds / (100 / b.wins) : 0;
-                return bRatio - aRatio;
-            });
-
-        let text = "【過小評価馬リスト】\n";
-        if (undervalued.length === 0) {
-            text += "該当馬なし\n";
-        } else {
-            undervalued.forEach((row, i) => {
-                const realOdds = row.horse?.realOdds || 0;
-                const ratio = row.wins > 0 ? realOdds / (100 / row.wins) : 0;
-                text += `#${i + 1} ${row.name} 市場${realOdds.toFixed(1)}倍 / 勝率${row.wins}% / 乖離${ratio.toFixed(2)}x\n`;
-            });
-        }
-        text += `\n#競馬 ${hashtag} #過小評価`;
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
-    };
-
-    const handlePostOvervaluedToX = () => {
-        const overvalued = data
-            .filter((row) => {
-                const realOdds = row.horse?.realOdds || 0;
-                if (row.wins <= 0 || realOdds <= 0) return false;
-                const physImpliedOdds = 100 / row.wins;
-                const ratio = realOdds / physImpliedOdds;
-                return ratio < 0.67;
-            })
-            .sort((a, b) => {
-                const aRealOdds = a.horse?.realOdds || 0;
-                const bRealOdds = b.horse?.realOdds || 0;
-                const aRatio = a.wins > 0 ? aRealOdds / (100 / a.wins) : 999;
-                const bRatio = b.wins > 0 ? bRealOdds / (100 / b.wins) : 999;
-                return aRatio - bRatio;
-            });
-
-        const text = buildOvervaluedPostText(overvalued);
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
-    };
-
-    const handlePostTanpukuRecommendationToX = () => {
-        const ranked = data
-            .map((row) => {
-                const realOdds = row.horse?.realOdds || 0;
-                if (realOdds <= 0) return null;
-                const winProb = Math.max(0, Math.min(0.95, row.wins / 100));
-                const placeProb = Math.max(0.05, Math.min(0.98, winProb * 2.2 + 0.05));
-                const placeOdds = Math.max(1.1, realOdds * 0.35 + 1.0);
-                const tanRoi = winProb * realOdds * 100;
-                const fukuRoi = placeProb * placeOdds * 100;
-                const score = tanRoi * 0.6 + fukuRoi * 0.4;
-                return { row, winProb, placeProb, placeOdds, tanRoi, fukuRoi, score };
-            })
-            .filter((x): x is { row: typeof data[number]; winProb: number; placeProb: number; placeOdds: number; tanRoi: number; fukuRoi: number; score: number } => x !== null)
-            .sort((a, b) => b.score - a.score);
-
-        if (ranked.length === 0) return;
-        const highestWin = [...ranked].sort((a, b) => b.winProb - a.winProb)[0];
-        const valueCandidates = ranked.filter((x) => x.winProb >= 0.18);
-        const highestValue = [...(valueCandidates.length > 0 ? valueCandidates : ranked)]
-            .sort((a, b) => b.score - a.score)
-            .find((x) => x.row.horse?.id !== highestWin.row.horse?.id) ?? ranked[0];
-
-        const winRealOdds = highestWin.row.horse?.realOdds || 0;
-        const valueRealOdds = highestValue.row.horse?.realOdds || 0;
-        const text = [
-            "【単複的中率&回収率おすすめ】",
-            `勝率重視: ${highestWin.row.name} / 勝率${(highestWin.winProb * 100).toFixed(1)}% (想定${winRealOdds.toFixed(1)}倍)`,
-            `回収率重視: ${highestValue.row.name} / 単回収率${highestValue.tanRoi.toFixed(1)}% 複回収率${highestValue.fukuRoi.toFixed(1)}% / 勝率${(highestValue.winProb * 100).toFixed(1)}% (想定${valueRealOdds.toFixed(1)}倍)`,
-            "",
-            `#競馬 ${hashtag} #単複おすすめ`,
-        ].join("\n");
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
-    };
-
-    return (
-        <div className="bg-white p-4 rounded-lg shadow-md border border-slate-200 mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="text-sm font-bold mb-1 text-slate-800">3. シミュレーション結果 (100回実行)</h2>
-            <p className="text-xs text-slate-400 mb-4">
-                <span className="inline-block w-3 h-3 rounded-sm bg-blue-500 mr-1 align-middle"></span>物理エンジン（能力値のみ）
-                <span className="inline-block w-3 h-3 rounded-sm bg-purple-400 mr-1 align-middle"></span>集合知（予想票の割合）
-            </p>
-
-            <div className="flex gap-4 mb-6" style={{ height: Math.max(320, data.length * 40) }}>
-                {/* バーチャート */}
-                <div className="flex-1 min-w-0">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                            <XAxis type="number" domain={[0, 100]} unit="%" tick={{ fontSize: 11 }} />
-                            <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 11 }} />
-                            <Tooltip
-                                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: 12 }}
-                                cursor={{ fill: '#f1f5f9' }}
-                            />
-                            <Legend wrapperStyle={{ fontSize: 11 }} />
-                            <Bar dataKey="wins" fill="#3b82f6" radius={[0, 4, 4, 0]} name="物理%" />
-                            <Bar dataKey="crowdWin" fill="#a855f7" radius={[0, 4, 4, 0]} name="集合知%" />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-
-                {/* X 人気ランキング サイドパネル */}
-                <div className="w-52 shrink-0 bg-slate-50 rounded-lg p-3 flex flex-col">
-                    <h3 className="text-xs font-bold text-slate-500 mb-2 flex items-center gap-1 shrink-0">
-                        <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current shrink-0"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
-                        人気ランキング
-                    </h3>
-                    <div className="flex-1 overflow-y-auto">
-                        {popularityRanking.length === 0 && (
-                            <p className="text-xs text-slate-400">予想票なし</p>
-                        )}
-                        {popularityRanking.map((h, i) => {
-                            // 物理シミュ結果と突合して非合理人気を検出
-                            const physResult = results.find(r => r.horseId === h.id);
-                            const isIrrational = (physResult?.winCount ?? 0) === 0 && h.predictionCount >= 10;
-                            return (
-                                <div key={h.id} className="mb-2.5">
-                                    <div className="flex justify-between items-baseline mb-0.5">
-                                        <span className="text-[10px] text-slate-400">#{i + 1}</span>
-                                        <span className="text-[10px] font-bold text-purple-600">{h.predictionCount}pt</span>
-                                    </div>
-                                    <div className="flex items-center gap-1 mb-0.5">
-                                        <span className="text-xs font-medium text-slate-800 truncate leading-tight">{h.name}</span>
-                                        {isIrrational && (
-                                            <span
-                                                className="text-[9px] font-bold text-orange-500 shrink-0 cursor-help"
-                                                title="物理エンジン勝率0%。集合知スコアに対して能力値が伴っていない可能性。"
-                                            >⚠️</span>
-                                        )}
-                                    </div>
-                                    <div className="h-1.5 bg-purple-100 rounded-full">
-                                        <div
-                                            className="h-1.5 bg-purple-400 rounded-full transition-all"
-                                            style={{ width: `${(h.predictionCount / maxCount) * 100}%` }}
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                    <button
-                        onClick={handlePostRankingToX}
-                        className="mt-2 shrink-0 w-full flex items-center justify-center gap-1 px-2 py-1.5 bg-black text-white text-[10px] font-bold rounded-md hover:bg-slate-800 transition"
-                    >
-                        <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current shrink-0"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
-                        投稿
-                    </button>
-                </div>
-            </div>
-
-            <div className="overflow-x-auto -mx-6 px-6 mb-6">
-                <table className="w-full text-xs text-left border-collapse" style={{ minWidth: '700px' }}>
-                    <thead className="bg-slate-50 text-slate-500">
-                        <tr className="border-y border-slate-200">
-                            <th className="px-2 py-1.5 text-center w-10">順位</th>
-                            <th className="px-2 py-1.5 text-center w-10">馬番</th>
-                            <th className="px-2 py-1.5 text-left" style={{ minWidth: '100px' }}>馬名</th>
-                            <th className="px-2 py-1.5 text-left w-16">騎手</th>
-                            <th className="px-2 py-1.5 text-right text-blue-600 w-12">物理%</th>
-                            <th className="px-2 py-1.5 text-right text-purple-600 w-12">集合知%</th>
-                            <th className="px-2 py-1.5 text-center w-14">
-                                <div className="leading-tight">
-                                    <span className="text-blue-600">物理</span>
-                                    <span className="text-slate-300">−</span>
-                                    <span className="text-purple-600">世論</span>
-                                </div>
-                            </th>
-                            <th className="px-2 py-1.5 text-right w-14">市場</th>
-                            <th className="px-2 py-1.5 text-center w-16">
-                                <div className="leading-tight">市場の<br/>評価</div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((row, index) => {
-                            // 物理 vs 集合知 の差分
-                            const physVsCrowd = row.diff; // 正=物理優位 / 負=世論優位
-                            const physVsCrowdColor =
-                                physVsCrowd > 10 ? "text-orange-600" :
-                                physVsCrowd < -10 ? "text-purple-600" : "text-slate-400";
-                            const frameNo = getFrameNumber(row.horse?.gateNumber, horses.length);
-                            const frameColor = getFrameColor(frameNo);
-
-                            // 市場の評価（物理勝率 vs 市場オッズ）
-                            const realOdds = row.horse?.realOdds || 0;
-                            let marketLabel = "妥当";
-                            let marketColor = "text-slate-400";
-                            if (row.wins > 0 && realOdds > 0) {
-                                const physImpliedOdds = 100 / row.wins;
-                                const ratio = realOdds / physImpliedOdds;
-                                if (ratio > 1.5) { marketLabel = "過小"; marketColor = "text-red-600"; }
-                                else if (ratio < 0.5) { marketLabel = "過大"; marketColor = "text-blue-500"; }
-                            } else if (row.wins === 0 && realOdds > 0 && realOdds < 30) {
-                                marketLabel = "過大"; marketColor = "text-blue-500";
-                            }
-
-                            return (
-                                <tr key={index} className="border-b border-slate-100 hover:bg-slate-50/50">
-                                    <td className="px-2 py-1.5 text-center font-bold text-slate-500">#{index + 1}</td>
-                                    <td className="px-2 py-1.5 text-center font-mono">
-                                        <span
-                                            className="inline-flex min-w-8 items-center justify-center rounded border px-1 py-0.5 font-bold"
-                                            style={{
-                                                backgroundColor: frameColor.bg,
-                                                color: frameColor.text,
-                                                borderColor: frameColor.border,
-                                            }}
-                                            title={`枠${frameNo}`}
-                                        >
-                                            {row.horse?.gateNumber}
-                                        </span>
-                                    </td>
-                                    <td className="px-2 py-1.5 font-bold text-slate-800 whitespace-nowrap">{row.name}</td>
-                                    <td className="px-2 py-1.5 text-slate-400 truncate">{row.horse?.jockey}</td>
-                                    <td className="px-2 py-1.5 text-right font-bold text-blue-600">{row.wins}%</td>
-                                    <td className="px-2 py-1.5 text-right font-bold text-purple-600">{row.crowdWin}%</td>
-                                    <td className={`px-2 py-1.5 text-center font-bold ${physVsCrowdColor}`}>
-                                        {physVsCrowd > 0 ? `+${physVsCrowd.toFixed(1)}` : physVsCrowd.toFixed(1)}
-                                    </td>
-                                    <td className="px-2 py-1.5 text-right text-slate-500 font-mono">
-                                        {row.horse?.realOdds?.toFixed(1)}
-                                    </td>
-                                    <td className={`px-2 py-1.5 text-center font-bold whitespace-nowrap ${marketColor}`}>
-                                        {marketLabel}
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
-
-            <div className="flex gap-3 justify-end flex-wrap">
-                <button
-                    onClick={onReset}
-                    className="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-50 transition"
-                >
-                    リセット
-                </button>
-                <button
-                    onClick={onRunAgain}
-                    disabled={isRunning}
-                    className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition disabled:opacity-50"
-                >
-                    {isRunning ? "シミュレーション中..." : "もう一度試走 🔄"}
-                </button>
-                <button
-                    onClick={onPostToX}
-                    className="flex items-center gap-2 px-6 py-2 bg-black text-white rounded-lg hover:bg-slate-800 transition shadow-lg hover:shadow-xl"
-                >
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                    結果をXに投稿
-                </button>
-                <button
-                    onClick={handlePostUndervaluedToX}
-                    className="flex items-center gap-2 px-6 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition shadow-lg hover:shadow-xl"
-                >
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                    過小評価馬をXに投稿
-                </button>
-                <button
-                    onClick={handlePostOvervaluedToX}
-                    className="flex items-center gap-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition shadow-lg hover:shadow-xl"
-                >
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                    過大評価馬をXに投稿
-                </button>
-                <button
-                    onClick={handlePostTanpukuRecommendationToX}
-                    className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition shadow-lg hover:shadow-xl"
-                >
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                    単複おすすめをXに投稿
-                </button>
-            </div>
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold tracking-[0.2em] text-slate-400">SIMULATION RESULT</p>
+          <h2 className="text-lg font-bold text-slate-900">100回試走の結果</h2>
+          <p className="mt-1 text-xs text-slate-500">
+            青は試走勝率、濃紺は公式オッズの期待値、金はガチ勢換算オッズの期待値です。
+          </p>
         </div>
-    );
+        <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+          {course.name}
+        </div>
+      </div>
+
+      <div className="mb-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+          <p className="text-[11px] font-semibold tracking-wide text-blue-500">勝ちやすい馬</p>
+          <p className="mt-1 text-base font-bold text-slate-900">{strongest?.name ?? "-"}</p>
+          <p className="mt-1 text-xs text-slate-600">試走 {strongest?.simWinRate?.toFixed(1) ?? "-"}% / フェア {strongest?.fairOdds?.toFixed(1) ?? "-"}倍</p>
+        </div>
+        <div className="rounded-2xl border border-red-100 bg-red-50 p-4">
+          <p className="text-[11px] font-semibold tracking-wide text-red-500">危険な人気馬</p>
+          <p className="mt-1 text-base font-bold text-slate-900">{riskyFavorite?.name ?? "-"}</p>
+          <p className="mt-1 text-xs text-slate-600">公式 {riskyFavorite?.officialImplied?.toFixed(1) ?? "-"}% に対し試走 {riskyFavorite?.simWinRate?.toFixed(1) ?? "-"}%</p>
+        </div>
+        <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+          <p className="text-[11px] font-semibold tracking-wide text-emerald-600">妙味候補</p>
+          <p className="mt-1 text-base font-bold text-slate-900">{valueHorse?.name ?? "-"}</p>
+          <p className="mt-1 text-xs text-slate-600">試走 {valueHorse?.simWinRate?.toFixed(1) ?? "-"}% / 公式 {valueHorse?.officialOdds?.toFixed(1) ?? "-"}倍</p>
+        </div>
+        <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
+          <p className="text-[11px] font-semibold tracking-wide text-amber-600">公式 vs ガチ勢</p>
+          <p className="mt-1 text-base font-bold text-slate-900">{disagreement?.name ?? "-"}</p>
+          <p className="mt-1 text-xs text-slate-600">期待値差 {disagreement?.marketExpertGap?.toFixed(1) ?? "-"}pt</p>
+        </div>
+      </div>
+
+      <div className="mb-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <div className="mb-2 flex flex-wrap gap-2 text-[11px] text-slate-500">
+          <span className="rounded-full bg-white px-3 py-1">馬場 {condition.groundCondition}</span>
+          <span className="rounded-full bg-white px-3 py-1">天気 {condition.weather}</span>
+          <span className="rounded-full bg-white px-3 py-1">風 {condition.windDirection} {condition.windSpeed}m/s</span>
+          <span className="rounded-full bg-white px-3 py-1">展開 {condition.paceScenario}</span>
+        </div>
+        <div style={{ height: Math.max(320, chartRows.length * 42) }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartRows} layout="vertical" margin={{ top: 8, right: 24, left: 8, bottom: 8 }}>
+              <CartesianGrid strokeDasharray="3 3" horizontal vertical={false} />
+              <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11 }} unit="%" />
+              <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 11 }} />
+              <Tooltip
+                cursor={{ fill: "#e2e8f0" }}
+                formatter={(value: number | string | undefined) => typeof value === "number" ? `${value.toFixed(1)}%` : value ?? "-"}
+                labelFormatter={(label, payload) => payload?.[0]?.payload?.fullName ?? label}
+                contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", boxShadow: "0 10px 15px -3px rgb(15 23 42 / 0.08)" }}
+              />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="試走" fill="#2563eb" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="公式" fill="#0f172a" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="ガチ勢" fill="#d97706" radius={[0, 4, 4, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-[1180px] w-full border-collapse text-xs">
+          <thead>
+            <tr className="border-y border-slate-200 bg-slate-50 text-slate-500">
+              <th className="px-2 py-2 text-center">順位</th>
+              <th className="px-2 py-2 text-center">馬番</th>
+              <th className="px-2 py-2 text-left">馬名</th>
+              <th className="px-2 py-2 text-right">能力</th>
+              <th className="px-2 py-2 text-right">試走勝率</th>
+              <th className="px-2 py-2 text-right">フェア</th>
+              <th className="px-2 py-2 text-right">公式</th>
+              <th className="px-2 py-2 text-right">ガチ勢</th>
+              <th className="px-2 py-2 text-right">公式差</th>
+              <th className="px-2 py-2 text-right">ガチ勢差</th>
+              <th className="px-2 py-2 text-right">市場vsガチ勢</th>
+              <th className="px-2 py-2 text-right">評判</th>
+              <th className="px-2 py-2 text-center">判定</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, index) => {
+              const frameNo = getFrameNumber(row.gateNumber, horses.length);
+              const frameColor = getFrameColor(frameNo);
+
+              return (
+                <tr key={row.horseId} className="border-b border-slate-100 hover:bg-slate-50/70">
+                  <td className="px-2 py-2 text-center font-semibold text-slate-500">#{index + 1}</td>
+                  <td className="px-2 py-2 text-center">
+                    <span
+                      className="inline-flex min-w-8 items-center justify-center rounded border px-2 py-1 font-bold"
+                      style={{
+                        backgroundColor: frameColor.bg,
+                        color: frameColor.text,
+                        borderColor: frameColor.border,
+                      }}
+                    >
+                      {row.gateNumber}
+                    </span>
+                  </td>
+                  <td className="px-2 py-2">
+                    <div className="font-semibold text-slate-900">{row.name}</div>
+                    <div className="text-[10px] text-slate-400">{row.jockey}</div>
+                  </td>
+                  <td className="px-2 py-2 text-right font-semibold text-slate-900">{row.abilityScore.toFixed(1)}</td>
+                  <td className="px-2 py-2 text-right font-semibold text-blue-600">{row.simWinRate.toFixed(1)}%</td>
+                  <td className="px-2 py-2 text-right text-slate-600">{row.fairOdds ? `${row.fairOdds.toFixed(1)}倍` : "-"}</td>
+                  <td className="px-2 py-2 text-right">
+                    <div className="font-medium text-slate-900">{row.officialOdds ? `${row.officialOdds.toFixed(1)}倍` : "-"}</div>
+                    <div className="text-[10px] text-slate-400">{row.officialImplied.toFixed(1)}%</div>
+                  </td>
+                  <td className="px-2 py-2 text-right">
+                    <div className="font-medium text-amber-700">{row.expertOdds ? `${row.expertOdds.toFixed(1)}倍` : "-"}</div>
+                    <div className="text-[10px] text-amber-500">{row.expertImplied.toFixed(1)}%</div>
+                  </td>
+                  <td className={`px-2 py-2 text-right font-semibold ${row.officialGap >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                    {row.officialGap >= 0 ? `+${row.officialGap.toFixed(1)}` : row.officialGap.toFixed(1)}pt
+                  </td>
+                  <td className={`px-2 py-2 text-right font-semibold ${row.expertGap >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                    {row.expertGap >= 0 ? `+${row.expertGap.toFixed(1)}` : row.expertGap.toFixed(1)}pt
+                  </td>
+                  <td className={`px-2 py-2 text-right font-semibold ${row.marketExpertGap >= 0 ? "text-amber-600" : "text-blue-600"}`}>
+                    {row.marketExpertGap >= 0 ? `+${row.marketExpertGap.toFixed(1)}` : row.marketExpertGap.toFixed(1)}pt
+                  </td>
+                  <td className="px-2 py-2 text-right text-slate-600">{row.buzzShare.toFixed(1)}%</td>
+                  <td className="px-2 py-2 text-center">
+                    <span className={`inline-flex rounded-full px-3 py-1 font-semibold ${getSignalTone(row.signalLabel)}`}>
+                      {row.signalLabel}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-5 flex flex-wrap justify-end gap-3">
+        <button
+          onClick={onReset}
+          className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+        >
+          条件を見直す
+        </button>
+        <button
+          onClick={onRunAgain}
+          disabled={isRunning}
+          className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+        >
+          {isRunning ? "再試走中..." : "もう一度100回試走"}
+        </button>
+        <button
+          onClick={onPostToX}
+          className="rounded-full bg-black px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+        >
+          分析をXに投稿
+        </button>
+      </div>
+    </div>
+  );
 }
+

@@ -1,22 +1,62 @@
 ﻿"use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { COURSES, ACTIVE_COURSES } from "@/lib/courses";
-import { Horse, RaceCondition, TrackBias } from "@/lib/types";
+import { ACTIVE_COURSES, COURSES } from "@/lib/courses";
+import { Horse, RaceCondition } from "@/lib/types";
 import { runMonteCarlo, calculateOdds } from "@/lib/simulation";
+import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
 import { getDefaultHorses } from "@/lib/defaultHorses";
 import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
 import { CourseConfig } from "@/components/CourseConfig";
 import { HorseInput } from "@/components/HorseInput";
 import { SimulationResults } from "@/components/SimulationResults";
 
+const groundLabels: Record<RaceCondition["groundCondition"], string> = {
+  Firm: "良",
+  Good: "稍重",
+  Yielding: "重",
+  Soft: "不良",
+};
+
+const weatherLabels: Record<RaceCondition["weather"], string> = {
+  Sunny: "晴れ",
+  Cloudy: "曇り",
+  Rain: "雨",
+  Snow: "雪",
+};
+
+const windLabels: Record<RaceCondition["windDirection"], string> = {
+  Headwind: "向かい風",
+  Tailwind: "追い風",
+  Crosswind: "横風",
+};
+
+const paceLabels: Record<RaceCondition["paceScenario"], string> = {
+  Slow: "スロー",
+  Average: "平均",
+  Fast: "ハイ",
+};
+
+function createDefaultCondition(courseId: string): RaceCondition {
+  const course = COURSES.find((entry) => entry.id === courseId);
+  return {
+    courseId,
+    trackBias: course?.defaultBias ?? { innerOuter: 0, frontBack: 0 },
+    groundCondition: "Firm",
+    weather: "Sunny",
+    windDirection: "Crosswind",
+    windSpeed: 3,
+    paceScenario: "Average",
+  };
+}
+
 export default function SimulatorPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+        <div className="flex min-h-screen items-center justify-center bg-slate-100">
           <p className="text-slate-500 text-lg">読み込み中...</p>
         </div>
       }
@@ -30,39 +70,36 @@ function SimulatorContent() {
   const searchParams = useSearchParams();
   const archiveParam = searchParams.get("archive");
   const fallbackCourse = COURSES[0];
-  const initialCourseId = archiveParam ? COURSES.find((c) => c.id === archiveParam)?.id ?? fallbackCourse?.id : ACTIVE_COURSES[0]?.id ?? fallbackCourse?.id;
-  const initialCourse = COURSES.find((c) => c.id === initialCourseId) ?? fallbackCourse;
+  const initialCourseId = archiveParam
+    ? COURSES.find((course) => course.id === archiveParam)?.id ?? fallbackCourse?.id
+    : ACTIVE_COURSES[0]?.id ?? fallbackCourse?.id;
+  const initialCourse = COURSES.find((course) => course.id === initialCourseId) ?? fallbackCourse;
 
-  const [selectedCourseId, setSelectedCourseId] = useState(initialCourseId ?? "");
-  const [bias, setBias] = useState<TrackBias>(initialCourse?.defaultBias ?? { innerOuter: 0, frontBack: 0 });
-  const [groundCondition, setGroundCondition] = useState<"Firm" | "Good" | "Yielding" | "Soft">("Firm");
+  const [condition, setCondition] = useState<RaceCondition>(createDefaultCondition(initialCourseId ?? ""));
   const [horses, setHorses] = useState<Horse[]>(initialCourseId ? calculateOdds(getDefaultHorses(initialCourseId)) : []);
   const [results, setResults] = useState<{ horseId: string; winCount: number; bestTime: number }[] | null>(null);
   const [isRunning, setIsRunning] = useState(false);
 
-  const selectedCourse = COURSES.find((c) => c.id === selectedCourseId) ?? fallbackCourse;
+  const selectedCourse = COURSES.find((course) => course.id === condition.courseId) ?? initialCourse;
   const isArchive = selectedCourse?.archived === true;
 
   const handleCourseChange = (courseId: string) => {
-    const course = COURSES.find((c) => c.id === courseId);
-    setSelectedCourseId(courseId);
+    setCondition(createDefaultCondition(courseId));
     setHorses(calculateOdds(getDefaultHorses(courseId)));
     setResults(null);
-    setBias(course?.defaultBias ?? { innerOuter: 0, frontBack: 0 });
-    setGroundCondition("Firm");
   };
 
   useEffect(() => {
-    if (!selectedCourseId) return;
+    if (!condition.courseId) return;
 
     let cancelled = false;
 
     const refreshNetkeibaOdds = async () => {
       try {
-        const res = await fetch(`/api/netkeiba-odds?courseId=${encodeURIComponent(selectedCourseId)}`, { cache: "no-store" });
-        if (!res.ok || cancelled) return;
+        const response = await fetch(`/api/netkeiba-odds?courseId=${encodeURIComponent(condition.courseId)}`, { cache: "no-store" });
+        if (!response.ok || cancelled) return;
 
-        const payload = (await res.json()) as {
+        const payload = (await response.json()) as {
           oddsByGate?: Record<string, number>;
           popularityByGate?: Record<string, number>;
           jockeyByGate?: Record<string, string>;
@@ -79,13 +116,18 @@ function SimulatorContent() {
         const popularityByGate = payload.popularityByGate ?? {};
         const jockeyByGate = payload.jockeyByGate ?? {};
         const performanceByGate = payload.performanceByGate ?? {};
-        if (Object.keys(oddsByGate).length === 0 && Object.keys(popularityByGate).length === 0 && Object.keys(jockeyByGate).length === 0 && Object.keys(performanceByGate).length === 0) {
+        if (
+          Object.keys(oddsByGate).length === 0 &&
+          Object.keys(popularityByGate).length === 0 &&
+          Object.keys(jockeyByGate).length === 0 &&
+          Object.keys(performanceByGate).length === 0
+        ) {
           return;
         }
 
-        setHorses((prev) => {
+        setHorses((previous) => {
           let changed = false;
-          const updated = prev.map((horse) => {
+          const updated = previous.map((horse) => {
             let nextHorse = horse;
             let touched = false;
             let needsRatingsRecalc = false;
@@ -118,13 +160,13 @@ function SimulatorContent() {
             if (latestPerformance) {
               const nextFields: Partial<Horse> = {};
               const form = Number(latestPerformance.recentFormScore);
-              const avgFinish = Number(latestPerformance.recentAverageFinish);
+              const averageFinish = Number(latestPerformance.recentAverageFinish);
               const timeIndex = Number(latestPerformance.recentTimeIndex);
               const gradeScore = Number(latestPerformance.lastRaceGradeScore);
               const gradeLabel = String(latestPerformance.lastRaceGradeLabel ?? "").trim();
 
               if (Number.isFinite(form)) nextFields.recentFormScore = Math.round(form * 10) / 10;
-              if (Number.isFinite(avgFinish) && avgFinish > 0) nextFields.recentAverageFinish = Math.round(avgFinish * 10) / 10;
+              if (Number.isFinite(averageFinish) && averageFinish > 0) nextFields.recentAverageFinish = Math.round(averageFinish * 10) / 10;
               if (Number.isFinite(timeIndex)) nextFields.recentTimeIndex = Math.round(timeIndex * 10) / 10;
               if (Number.isFinite(gradeScore)) nextFields.lastRaceGradeScore = Math.round(gradeScore * 10) / 10;
               if (gradeLabel) nextFields.lastRaceGradeLabel = gradeLabel;
@@ -143,10 +185,10 @@ function SimulatorContent() {
             return touched ? nextHorse : horse;
           });
 
-          return changed ? calculateOdds(updated) : prev;
+          return changed ? calculateOdds(updated) : previous;
         });
       } catch {
-        // keep local values when refresh fails
+        // Ignore refresh errors and keep local state.
       }
     };
 
@@ -154,87 +196,101 @@ function SimulatorContent() {
     return () => {
       cancelled = true;
     };
-  }, [selectedCourseId]);
+  }, [condition.courseId]);
 
   const handleRunSimulation = () => {
     if (!selectedCourse) return;
     setIsRunning(true);
-    setTimeout(() => {
-      const condition: RaceCondition = {
-        courseId: selectedCourseId,
-        trackBias: bias,
-        groundCondition,
-      };
-      const simResults = runMonteCarlo(horses, selectedCourse, condition, 100);
-      setResults(simResults);
+    window.setTimeout(() => {
+      const simulationResults = runMonteCarlo(horses, selectedCourse, condition, 100);
+      setResults(simulationResults);
       setIsRunning(false);
-    }, 500);
+    }, 250);
   };
 
   const handlePostToX = () => {
     if (!results || !selectedCourse) return;
 
-    const winnerId = results[0].horseId;
-    const winner = horses.find((horse) => horse.id === winnerId);
-    const favorite = [...horses].sort((a, b) => b.predictionCount - a.predictionCount)[0];
-    const darkHorse = [...horses]
-      .filter((horse) => (horse.simulatedOdds ?? 0) > 0 && (horse.realOdds ?? 0) > 0)
-      .sort((a, b) => ((b.realOdds ?? 0) / (b.simulatedOdds ?? 1)) - ((a.realOdds ?? 0) / (a.simulatedOdds ?? 1)))[0];
+    const rows = buildRaceAnalysisRows(results, horses, selectedCourse, condition);
+    const strongest = rows[0];
+    const riskyFavorite = [...rows]
+      .filter((row) => row.officialRank <= Math.min(4, rows.length))
+      .sort((a, b) => (b.officialImplied - b.simWinRate) - (a.officialImplied - a.simWinRate))[0];
+    const valueHorse = [...rows]
+      .sort(
+        (a, b) =>
+          (b.simWinRate - b.officialImplied + Math.max(0, b.marketExpertGap) * 0.6) -
+          (a.simWinRate - a.officialImplied + Math.max(0, a.marketExpertGap) * 0.6)
+      )[0];
+    const disagreement = [...rows].sort((a, b) => Math.abs(b.marketExpertGap) - Math.abs(a.marketExpertGap))[0];
 
-    const groundLabel: Record<string, string> = { Firm: "良", Good: "稍重", Yielding: "重", Soft: "不良" };
     const text = [
-      "AI競馬シミュレーション",
-      `本命人気: ${favorite?.name ?? "-"} (${favorite?.predictionCount ?? 0})`,
-      `シミュ勝ち馬: ${winner?.name ?? "-"} (勝率 ${results[0].winCount}%)`,
-      `穴候補: ${darkHorse?.name ?? "-"} (市場 ${darkHorse?.realOdds?.toFixed(1) ?? "-"}倍 / シミュ ${darkHorse?.simulatedOdds?.toFixed(1) ?? "-"}倍)`,
-      "",
-      `コース: ${selectedCourse.name} / 馬場: ${groundLabel[groundCondition] ?? "良"}`,
-      `#競馬 #シミュレーション ${selectedCourse.hashtag}`,
+      `${selectedCourse.name} 100回試走`,
+      `勝ちやすい: ${strongest?.name ?? "-"} 試走${strongest?.simWinRate?.toFixed(1) ?? "-"}% / フェア${strongest?.fairOdds?.toFixed(1) ?? "-"}倍`,
+      `危険人気: ${riskyFavorite?.name ?? "-"} 公式${riskyFavorite?.officialImplied?.toFixed(1) ?? "-"}% > 試走${riskyFavorite?.simWinRate?.toFixed(1) ?? "-"}%`,
+      `妙味候補: ${valueHorse?.name ?? "-"} 公式${valueHorse?.officialOdds?.toFixed(1) ?? "-"}倍 / ガチ勢${valueHorse?.expertOdds?.toFixed(1) ?? "-"}倍`,
+      `公式vsガチ勢: ${disagreement?.name ?? "-"} 差${disagreement?.marketExpertGap?.toFixed(1) ?? "-"}pt`,
+      `条件: ${groundLabels[condition.groundCondition]} / ${weatherLabels[condition.weather]} / ${windLabels[condition.windDirection]}${condition.windSpeed}m / ${paceLabels[condition.paceScenario]}`,
+      selectedCourse.hashtag,
     ].join("\n");
 
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   if (!selectedCourse) {
-    return <div className="min-h-screen bg-slate-100 flex items-center justify-center text-slate-500">今週のレースデータがありません。</div>;
+    return <div className="flex min-h-screen items-center justify-center bg-slate-100 text-slate-500">今週のレースデータがありません。</div>;
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-4 text-center">
-          <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">AI競馬シミュレーター</h1>
-          <p className="text-slate-400 text-xs mt-1">今週の重賞だけを対象に、能力値・人気値・近走補正を合わせて100回試走します。</p>
+    <div className="min-h-screen bg-slate-100 p-4 md:p-8">
+      <div className="mx-auto max-w-7xl">
+        <header className="mb-6 rounded-[28px] bg-slate-900 px-6 py-7 text-white shadow-xl">
+          <p className="text-xs font-semibold tracking-[0.3em] text-slate-300">KEIBA GAP LAB</p>
+          <h1 className="mt-2 text-2xl font-black tracking-tight md:text-3xl">能力と人気の乖離を見抜く</h1>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
+            今週の重賞だけを対象に、能力、血統適性、コース形状、馬場、天候、風、展開を織り込んで100回試走します。
+            その上で、公式オッズ、俺プロ由来のガチ勢オッズ、評判指数を並べて、人気先行と妙味を切り分けます。
+          </p>
           {isArchive && (
-            <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-amber-50 border border-amber-200 rounded-full text-amber-700 text-xs">
-              <span>アーカイブ: {selectedCourse.name}</span>
-              <Link href="/sim" className="text-blue-600 hover:underline ml-1">
-                最新へ
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-amber-300/40 bg-amber-400/10 px-3 py-1 text-xs text-amber-200">
+              <span>アーカイブ表示: {selectedCourse.name}</span>
+              <Link href="/sim" className="font-semibold text-white underline-offset-2 hover:underline">
+                最新へ戻る
               </Link>
             </div>
           )}
         </header>
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           <CourseConfig
             selectedCourse={selectedCourse}
-            bias={bias}
-            groundCondition={groundCondition}
+            condition={condition}
             onCourseChange={handleCourseChange}
-            onBiasChange={setBias}
-            onGroundConditionChange={(c) => setGroundCondition(c as "Firm" | "Good" | "Yielding" | "Soft")}
+            onConditionChange={(nextCondition) => {
+              setCondition(nextCondition);
+              setResults(null);
+            }}
           />
 
-          <HorseInput horses={horses} onHorsesChange={setHorses} hashtag={selectedCourse.hashtag} />
+          <HorseInput
+            horses={horses}
+            course={selectedCourse}
+            condition={condition}
+            onHorsesChange={(nextHorses) => {
+              setHorses(nextHorses);
+              setResults(null);
+            }}
+            hashtag={selectedCourse.hashtag}
+          />
 
           {!results && (
-            <div className="text-center py-8">
+            <div className="flex justify-center py-6">
               <button
                 onClick={handleRunSimulation}
                 disabled={isRunning}
-                className="px-8 py-4 bg-blue-600 text-white text-xl font-bold rounded-full shadow-lg hover:bg-blue-700 hover:shadow-xl transition transform active:scale-95 disabled:opacity-50"
+                className="rounded-full bg-blue-600 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {isRunning ? "シミュレーション中..." : "100回シミュレーション"}
+                {isRunning ? "試走中..." : "100回試走して乖離を見る"}
               </button>
             </div>
           )}
@@ -243,25 +299,26 @@ function SimulatorContent() {
             <SimulationResults
               results={results}
               horses={horses}
+              course={selectedCourse}
+              condition={condition}
               onReset={() => setResults(null)}
               onPostToX={handlePostToX}
               onRunAgain={handleRunSimulation}
               isRunning={isRunning}
-              hashtag={selectedCourse.hashtag}
             />
           )}
         </div>
 
-        <footer className="mt-12 text-center text-xs text-slate-400">
-          <Link href="/" className="hover:text-slate-600 transition">
+        <footer className="mt-10 text-center text-xs text-slate-400">
+          <Link href="/" className="transition hover:text-slate-600">
             トップへ
           </Link>
           <span className="mx-2">|</span>
-          <Link href="/archive" className="hover:text-slate-600 transition">
+          <Link href="/archive" className="transition hover:text-slate-600">
             過去レース
           </Link>
           <span className="mx-2">|</span>
-          Powered by Next.js & Tailwind CSS
+          Powered by Next.js
         </footer>
       </div>
     </div>

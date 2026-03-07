@@ -1,375 +1,363 @@
-"use client";
+﻿"use client";
 
-import { Horse } from "@/lib/types";
+import { Plus, Trash2 } from "lucide-react";
+import { Course, Horse, RaceCondition } from "@/lib/types";
 import { calculateOdds } from "@/lib/simulation";
 import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
 import { getFrameColor, getFrameNumber } from "@/lib/frameColor";
-import { Plus, Trash2 } from "lucide-react";
+import { calculateOfficialImpliedProbability, getScenarioProfile, round1 } from "@/lib/raceAnalysis";
 
 interface HorseInputProps {
-    horses: Horse[];
-    onHorsesChange: (horses: Horse[]) => void;
-    hashtag?: string;
+  horses: Horse[];
+  course: Course;
+  condition: RaceCondition;
+  onHorsesChange: (horses: Horse[]) => void;
+  hashtag?: string;
 }
 
-const LAST_GRADE_OPTIONS: Array<{ label: string; score: number }> = [
-    { label: "G1", score: 5 },
-    { label: "G2", score: 4 },
-    { label: "G3", score: 3 },
-    { label: "L", score: 2.5 },
-    { label: "OP", score: 2 },
-    { label: "3Win", score: 1.5 },
-    { label: "2Win", score: 1 },
-    { label: "1Win", score: 0.5 },
-    { label: "Maiden", score: 0 },
+type TraitFieldKey = "pedigreeScore" | "courseFitScore" | "distanceFitScore" | "groundFitScore" | "paceFitScore";
+
+const TRAIT_FIELDS: Array<{ key: TraitFieldKey; label: string; title: string; tone: string }> = [
+  { key: "pedigreeScore", label: "血統", title: "血統適性", tone: "text-rose-600" },
+  { key: "courseFitScore", label: "コース", title: "競馬場・コース形状適性", tone: "text-sky-600" },
+  { key: "distanceFitScore", label: "距離", title: "距離適性", tone: "text-violet-600" },
+  { key: "groundFitScore", label: "馬場", title: "馬場適性", tone: "text-amber-600" },
+  { key: "paceFitScore", label: "展開", title: "展開適性", tone: "text-emerald-600" },
 ];
 
-export function HorseInput({ horses, onHorsesChange, hashtag = '#競馬' }: HorseInputProps) {
+export function HorseInput({ horses, course, condition, onHorsesChange, hashtag = "#競馬" }: HorseInputProps) {
+  const updateHorses = (nextHorses: Horse[]) => {
+    const sorted = [...nextHorses].sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
+    onHorsesChange(calculateOdds(sorted));
+  };
 
-    const addHorse = () => {
-        const newHorse: Horse = {
-            id: Math.random().toString(36).substr(2, 9),
-            name: `Horse ${horses.length + 1}`,
-            gateNumber: horses.length + 1,
-            jockey: "未定",
-            speed: 70,
-            stamina: 70,
-            power: 70,
-            guts: 70,
-            runningStyle: "Senko",
-            predictionCount: 0,
-            simulatedOdds: 0,
-            sex: 'M',
-            weight: 57,
-            condition: 5,
-            trainingScore: 0,
-            recentFormScore: 0,
-            recentAverageFinish: 0,
-            recentTimeIndex: 0,
-            lastRaceGradeScore: 2,
-            lastRaceGradeLabel: "OP",
-        };
-        updateHorses([...horses, applyNetkeibaRatings(newHorse)]);
+  const addHorse = () => {
+    const baseHorse: Horse = {
+      id: Math.random().toString(36).slice(2, 11),
+      name: `Horse ${horses.length + 1}`,
+      gateNumber: horses.length + 1,
+      jockey: "未定",
+      trainer: "",
+      speed: 72,
+      stamina: 72,
+      power: 72,
+      guts: 72,
+      runningStyle: "Senko",
+      favoriteCount: 0,
+      xBuzzScore: 0,
+      predictionCount: 0,
+      realOdds: 0,
+      sex: "M",
+      weight: 57,
+      condition: 5,
+      trainingScore: 0,
+      recentFormScore: 0,
+      recentAverageFinish: 0,
+      recentTimeIndex: 0,
+      lastRaceGradeScore: 2,
+      lastRaceGradeLabel: "OP",
     };
 
-    const removeHorse = (id: string) => {
-        updateHorses(horses.filter(h => h.id !== id));
-    };
+    updateHorses([...horses, applyNetkeibaRatings(baseHorse)]);
+  };
 
-    const updateHorse = (id: string, field: keyof Horse, value: any) => {
-        const newHorses = horses.map(h =>
-            h.id === id ? { ...h, [field]: value } : h
-        );
-        const enriched = newHorses.map(h => {
-            if (h.id !== id) return h;
-            if (field === 'jockey' || field === 'trainer' || field === 'realOdds') {
-                return applyNetkeibaRatings({
-                    ...h,
-                    jockeyPower: undefined,
-                    stablePower: undefined,
-                });
-            }
-            return h;
-        });
-        updateHorses(enriched);
-    };
+  const removeHorse = (id: string) => {
+    updateHorses(horses.filter((horse) => horse.id !== id));
+  };
 
-    const updateLastRaceGrade = (id: string, label: string) => {
-        const selected = LAST_GRADE_OPTIONS.find((g) => g.label === label) ?? { label: "OP", score: 2 };
-        const newHorses = horses.map((h) =>
-            h.id === id
-                ? { ...h, lastRaceGradeLabel: selected.label, lastRaceGradeScore: selected.score }
-                : h
-        );
-        updateHorses(newHorses);
-    };
+  const updateHorse = <K extends keyof Horse>(id: string, field: K, value: Horse[K]) => {
+    const updated = horses.map((horse) => {
+      if (horse.id !== id) return horse;
+      const nextHorse = { ...horse, [field]: value } as Horse;
+      if (field === "jockey" || field === "trainer" || field === "realOdds") {
+        return applyNetkeibaRatings({ ...nextHorse, jockeyPower: undefined, stablePower: undefined });
+      }
+      return nextHorse;
+    });
+    updateHorses(updated);
+  };
 
-    const handlePostPopularity = () => {
-        const sorted = [...horses].sort((a, b) => b.predictionCount - a.predictionCount);
-        const top5 = sorted.slice(0, 5).filter(h => h.predictionCount > 0);
+  const handlePostSharpRanking = () => {
+    const ranking = [...horses]
+      .sort((a, b) => (b.favoriteCount ?? 0) - (a.favoriteCount ?? 0) || (a.expertOdds ?? 999) - (b.expertOdds ?? 999))
+      .slice(0, 5)
+      .filter((horse) => (horse.favoriteCount ?? 0) > 0 || (horse.expertOdds ?? 999) < 999);
 
-        if (top5.length === 0) {
-            alert("集計データがありません（予想票が入っていません）");
-            return;
-        }
+    if (ranking.length === 0) {
+      window.alert("投稿できるガチ勢データがありません。");
+      return;
+    }
 
-        let text = "【X(旧Twitter) 競馬予想集計状況】\n";
-        top5.forEach((h, i) => {
-            text += `${i + 1}位: ${h.name} (${h.predictionCount}pt / 推定${h.simulatedOdds?.toFixed(1)}倍)\n`;
-        });
-        text += `\n#競馬 #シミュレーション ${hashtag} #集計中`;
+    const body = ranking
+      .map((horse, index) => {
+        const official = horse.realOdds && horse.realOdds > 0 ? `${horse.realOdds.toFixed(1)}倍` : "-";
+        const expert = horse.expertOdds && horse.expertOdds > 0 ? `${horse.expertOdds.toFixed(1)}倍` : "-";
+        return `#${index + 1} ${horse.name} 俺プロ${horse.favoriteCount ?? 0}人 / 公式${official} / ガチ勢${expert}`;
+      })
+      .join("\n");
 
-        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-        window.open(url, '_blank');
-    };
+    const text = [`${course.name} ガチ勢ランキング`, body, hashtag].join("\n\n");
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
+  };
 
-    const updateHorses = (newList: Horse[]) => {
-        const sorted = [...newList].sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
-        const withOdds = calculateOdds(sorted);
-        onHorsesChange(withOdds);
-    };
+  const profiles = horses.map((horse) => ({
+    horse,
+    profile: getScenarioProfile(horse, course, condition),
+  }));
 
-    /** 状態値のラベル＋色 */
-    const conditionLabel = (v: number) => {
-        if (v >= 8) return { text: '絶好', color: 'text-red-600' };
-        if (v >= 6) return { text: '好調', color: 'text-orange-500' };
-        if (v >= 4) return { text: '普通', color: 'text-slate-500' };
-        return { text: '不調', color: 'text-blue-500' };
-    };
+  const abilityLeader = [...profiles].sort((a, b) => b.profile.abilityScore - a.profile.abilityScore)[0];
+  const marketFavorite = [...horses].filter((horse) => (horse.realOdds ?? 0) > 0).sort((a, b) => (a.realOdds ?? 999) - (b.realOdds ?? 999))[0];
+  const sharpFavorite = [...horses]
+    .filter((horse) => (horse.favoriteCount ?? 0) > 0 || (horse.expertOdds ?? 999) < 999)
+    .sort((a, b) => (a.expertOdds ?? 999) - (b.expertOdds ?? 999))[0];
+  const divergenceLeader = [...horses]
+    .filter((horse) => (horse.realOdds ?? 0) > 0 && (horse.expertOdds ?? 0) > 0)
+    .sort(
+      (a, b) =>
+        Math.abs(calculateOfficialImpliedProbability(b.realOdds) - calculateOfficialImpliedProbability(b.expertOdds)) -
+        Math.abs(calculateOfficialImpliedProbability(a.realOdds) - calculateOfficialImpliedProbability(a.expertOdds))
+    )[0];
 
-    return (
-        <div className="bg-white p-4 rounded-lg shadow-md border border-slate-200 mt-4">
-            <div className="flex justify-between items-center mb-3">
-                <h2 className="text-sm font-bold text-slate-500">出走馬データ ({horses.length}頭)</h2>
-                <div className="flex gap-2">
-                    <button
-                        onClick={handlePostPopularity}
-                        className="flex items-center gap-1.5 px-2.5 py-1 text-xs border border-slate-300 text-slate-600 rounded-md hover:bg-slate-50 transition"
-                    >
-                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                        Xに投稿
-                    </button>
-                    <button
-                        onClick={addHorse}
-                        className="flex items-center gap-1.5 px-2.5 py-1 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-                    >
-                        <Plus size={14} /> 追加
-                    </button>
-                </div>
-            </div>
-
-            <div className="overflow-x-auto -mx-4">
-                <table className="w-full text-xs border-collapse" style={{ minWidth: '1120px' }}>
-                    <thead>
-                        <tr className="bg-slate-50 text-slate-500 border-y border-slate-200">
-                            <th className="px-2 py-2 text-center w-10">枠</th>
-                            <th className="px-2 py-2 text-left" style={{ minWidth: '110px' }}>馬名</th>
-                            <th className="px-2 py-2 text-left w-14">騎手</th>
-                            <th className="px-1 py-2 text-center w-8">性</th>
-                            <th className="px-1 py-2 text-center w-10">斤量</th>
-                            <th className="px-1 py-2 text-center w-10">脚質</th>
-                            <th className="px-1 py-2 text-center w-10">SP</th>
-                            <th className="px-1 py-2 text-center w-10">ST</th>
-                            <th className="px-1 py-2 text-center w-10" title="Workout">
-                                追切
-                            </th>
-                            <th className="px-1 py-2 text-center w-10" title="近5走の着順ベース評価 (-5 ~ +5)">
-                                近5
-                            </th>
-                            <th className="px-1 py-2 text-center w-10" title="近5走の平均着順 (小さいほど良い)">
-                                着順
-                            </th>
-                            <th className="px-1 py-2 text-center w-10" title="近5走の走破時計指数 (-5 ~ +5)">
-                                時計
-                            </th>
-                            <th className="px-1 py-2 text-center w-12" title="前走レース格">
-                                前格
-                            </th>
-                            <th className="px-1 py-2 text-center w-10"
-                                title="状態値 0-10 (好調→能力UP, 不調→能力DOWN)">
-                                <span className="cursor-help border-b border-dotted border-slate-400">調子</span>
-                            </th>
-                            <th className="px-1 py-2 text-center w-12"
-                                title="◎×6 + 〇×4 + ▲×3 + △×2 + ☆×1 の合計を入力">
-                                <span className="cursor-help border-b border-dotted border-slate-400">集合知</span>
-                            </th>
-                            <th className="px-1 py-2 text-center w-14">実オッズ</th>
-                            <th className="px-1 py-2 text-center w-12 text-purple-600 border-l border-slate-200"
-                                title="集合知スコアから算出した推定オッズ（自動計算）">世論</th>
-                            <th className="px-1 py-2 text-center w-8">差</th>
-                            <th className="px-1 py-2 w-6"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {horses.map((horse) => {
-                            const diff = (horse.simulatedOdds || 0) - (horse.realOdds || 0);
-                            const diffLabel = diff < 0 ? "強" : "弱";
-                            const diffColor = diff < 0 ? "text-red-600" : "text-blue-500";
-                            const cond = conditionLabel(horse.condition ?? 5);
-                            const frameNo = getFrameNumber(horse.gateNumber, horses.length);
-                            const frameColor = getFrameColor(frameNo);
-
-                            return (
-                                <tr key={horse.id} className="border-b border-slate-100 hover:bg-slate-50/50">
-                                    <td className="px-2 py-1.5 text-center">
-                                        <input
-                                            type="number"
-                                            value={horse.gateNumber}
-                                            onChange={(e) => updateHorse(horse.id, 'gateNumber', parseInt(e.target.value))}
-                                            className="w-9 p-0.5 border rounded text-center text-xs font-bold"
-                                            style={{
-                                                backgroundColor: frameColor.bg,
-                                                color: frameColor.text,
-                                                borderColor: frameColor.border,
-                                            }}
-                                            title={`枠${frameNo}`}
-                                        />
-                                    </td>
-                                    <td className="px-2 py-1.5">
-                                        <input
-                                            type="text"
-                                            value={horse.name}
-                                            onChange={(e) => updateHorse(horse.id, 'name', e.target.value)}
-                                            className="w-full min-w-[90px] bg-transparent border-b border-transparent focus:border-blue-500 outline-none font-bold text-slate-800 text-xs"
-                                        />
-                                    </td>
-                                    <td className="px-1 py-1.5">
-                                        <input
-                                            type="text"
-                                            value={horse.jockey}
-                                            onChange={(e) => updateHorse(horse.id, 'jockey', e.target.value)}
-                                            className="w-full max-w-[56px] bg-transparent border-b border-transparent focus:border-blue-500 outline-none text-slate-400 text-xs truncate"
-                                        />
-                                    </td>
-                                    {/* 性別 */}
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <select
-                                            value={horse.sex ?? 'M'}
-                                            onChange={(e) => updateHorse(horse.id, 'sex', e.target.value)}
-                                            className={`bg-transparent outline-none cursor-pointer text-xs w-full font-bold ${horse.sex === 'F' ? 'text-pink-500' : 'text-blue-500'}`}
-                                        >
-                                            <option value="M">牡</option>
-                                            <option value="F">牝</option>
-                                        </select>
-                                    </td>
-                                    {/* 斤量 */}
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <input
-                                            type="number"
-                                            step="0.5"
-                                            value={horse.weight ?? 57}
-                                            onChange={(e) => updateHorse(horse.id, 'weight', parseFloat(e.target.value))}
-                                            className="w-10 p-0.5 border rounded text-center text-xs"
-                                        />
-                                    </td>
-                                    {/* 脚質 */}
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <select
-                                            value={horse.runningStyle}
-                                            onChange={(e) => updateHorse(horse.id, 'runningStyle', e.target.value)}
-                                            className="bg-transparent outline-none cursor-pointer text-xs w-full"
-                                        >
-                                            <option value="Nige">逃</option>
-                                            <option value="Senko">先</option>
-                                            <option value="Sashi">差</option>
-                                            <option value="Oikomi">追</option>
-                                        </select>
-                                    </td>
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <input
-                                            type="number"
-                                            value={horse.speed}
-                                            onChange={(e) => updateHorse(horse.id, 'speed', parseInt(e.target.value))}
-                                            className="w-10 p-0.5 border rounded text-center text-xs"
-                                        />
-                                    </td>
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <input
-                                            type="number"
-                                            value={horse.stamina}
-                                            onChange={(e) => updateHorse(horse.id, 'stamina', parseInt(e.target.value))}
-                                            className="w-10 p-0.5 border rounded text-center text-xs"
-                                        />
-                                    </td>
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <input
-                                            type="number"
-                                            min="-5" max="5" step="0.5"
-                                            value={horse.trainingScore ?? 0}
-                                            onChange={(e) => updateHorse(horse.id, 'trainingScore', Math.max(-5, Math.min(5, parseFloat(e.target.value) || 0)))}
-                                            className="w-10 p-0.5 border rounded text-center text-xs text-emerald-700 font-semibold"
-                                        />
-                                    </td>
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <input
-                                            type="number"
-                                            min="-5" max="5" step="0.1"
-                                            value={horse.recentFormScore ?? 0}
-                                            onChange={(e) => updateHorse(horse.id, 'recentFormScore', Math.max(-5, Math.min(5, parseFloat(e.target.value) || 0)))}
-                                            className="w-10 p-0.5 border rounded text-center text-xs text-indigo-700 font-semibold"
-                                        />
-                                    </td>
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <input
-                                            type="number"
-                                            min="0" max="18" step="0.1"
-                                            value={horse.recentAverageFinish ?? 0}
-                                            onChange={(e) => updateHorse(horse.id, 'recentAverageFinish', Math.max(0, Math.min(18, parseFloat(e.target.value) || 0)))}
-                                            className="w-10 p-0.5 border rounded text-center text-xs"
-                                        />
-                                    </td>
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <input
-                                            type="number"
-                                            min="-5" max="5" step="0.1"
-                                            value={horse.recentTimeIndex ?? 0}
-                                            onChange={(e) => updateHorse(horse.id, 'recentTimeIndex', Math.max(-5, Math.min(5, parseFloat(e.target.value) || 0)))}
-                                            className="w-10 p-0.5 border rounded text-center text-xs text-cyan-700 font-semibold"
-                                        />
-                                    </td>
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <select
-                                            value={horse.lastRaceGradeLabel ?? "OP"}
-                                            onChange={(e) => updateLastRaceGrade(horse.id, e.target.value)}
-                                            className="w-12 p-0.5 border rounded text-center text-xs"
-                                        >
-                                            {LAST_GRADE_OPTIONS.map((opt) => (
-                                                <option key={opt.label} value={opt.label}>{opt.label}</option>
-                                            ))}
-                                        </select>
-                                    </td>
-                                    {/* 状態値 */}
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <input
-                                            type="number"
-                                            min="0" max="10"
-                                            value={horse.condition ?? 5}
-                                            onChange={(e) => updateHorse(horse.id, 'condition', Math.min(10, Math.max(0, parseInt(e.target.value) || 0)))}
-                                            className={`w-9 p-0.5 border rounded text-center text-xs font-bold ${cond.color}`}
-                                            title={cond.text}
-                                        />
-                                    </td>
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <input
-                                            type="number"
-                                            value={horse.predictionCount}
-                                            onChange={(e) => updateHorse(horse.id, 'predictionCount', Math.max(0, parseInt(e.target.value) || 0))}
-                                            className="w-11 p-0.5 border border-blue-200 bg-blue-50 rounded text-center font-bold text-blue-700 text-xs"
-                                        />
-                                    </td>
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <input
-                                            type="number"
-                                            step="0.1"
-                                            value={horse.realOdds}
-                                            onChange={(e) => updateHorse(horse.id, 'realOdds', parseFloat(e.target.value))}
-                                            className="w-13 p-0.5 border rounded text-center font-mono text-xs"
-                                        />
-                                    </td>
-                                    <td className="px-0.5 py-1.5 text-center border-l border-slate-100">
-                                        <span className="font-mono font-bold text-purple-600 text-xs">
-                                            {horse.simulatedOdds?.toFixed(1)}
-                                        </span>
-                                    </td>
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <span className={`text-[10px] font-bold ${diffColor}`}>
-                                            {diffLabel}
-                                        </span>
-                                    </td>
-                                    <td className="px-0.5 py-1.5 text-center">
-                                        <button
-                                            onClick={() => removeHorse(horse.id)}
-                                            className="text-slate-300 hover:text-red-500 transition"
-                                        >
-                                            <Trash2 size={13} />
-                                        </button>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold tracking-[0.2em] text-slate-400">HORSE INPUT</p>
+          <h2 className="text-lg font-bold text-slate-900">馬データ</h2>
+          <p className="mt-1 text-xs text-slate-500">
+            能力4値と適性5値を並べて、公式人気とガチ勢人気のズレをその場で確認します。
+          </p>
         </div>
-    );
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={handlePostSharpRanking}
+            className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50"
+          >
+            Xにガチ勢ランキング投稿
+          </button>
+          <button
+            onClick={addHorse}
+            className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-700"
+          >
+            <Plus size={14} /> 馬を追加
+          </button>
+        </div>
+      </div>
+
+      <div className="mb-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-2xl bg-slate-50 p-3">
+          <p className="text-[11px] font-semibold tracking-wide text-slate-400">能力トップ</p>
+          <p className="mt-1 text-sm font-bold text-slate-900">{abilityLeader?.horse.name ?? "-"}</p>
+          <p className="mt-1 text-xs text-slate-500">能力指数 {abilityLeader?.profile.abilityScore?.toFixed(1) ?? "-"}</p>
+        </div>
+        <div className="rounded-2xl bg-slate-50 p-3">
+          <p className="text-[11px] font-semibold tracking-wide text-slate-400">一般人気先頭</p>
+          <p className="mt-1 text-sm font-bold text-slate-900">{marketFavorite?.name ?? "-"}</p>
+          <p className="mt-1 text-xs text-slate-500">公式オッズ {marketFavorite?.realOdds?.toFixed(1) ?? "-"}倍</p>
+        </div>
+        <div className="rounded-2xl bg-slate-50 p-3">
+          <p className="text-[11px] font-semibold tracking-wide text-slate-400">ガチ勢先頭</p>
+          <p className="mt-1 text-sm font-bold text-slate-900">{sharpFavorite?.name ?? "-"}</p>
+          <p className="mt-1 text-xs text-slate-500">俺プロ {sharpFavorite?.favoriteCount ?? 0}人 / {sharpFavorite?.expertOdds?.toFixed(1) ?? "-"}倍</p>
+        </div>
+        <div className="rounded-2xl bg-slate-50 p-3">
+          <p className="text-[11px] font-semibold tracking-wide text-slate-400">乖離最大</p>
+          <p className="mt-1 text-sm font-bold text-slate-900">{divergenceLeader?.name ?? "-"}</p>
+          <p className="mt-1 text-xs text-slate-500">
+            公式 {divergenceLeader?.realOdds?.toFixed(1) ?? "-"}倍 / ガチ勢 {divergenceLeader?.expertOdds?.toFixed(1) ?? "-"}倍
+          </p>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-[1480px] w-full border-collapse text-xs">
+          <thead>
+            <tr className="border-y border-slate-200 bg-slate-50 text-slate-500">
+              <th className="px-2 py-2 text-center">馬番</th>
+              <th className="px-2 py-2 text-left">馬名</th>
+              <th className="px-2 py-2 text-left">騎手</th>
+              <th className="px-2 py-2 text-center">脚質</th>
+              <th className="px-2 py-2 text-center">SP</th>
+              <th className="px-2 py-2 text-center">ST</th>
+              <th className="px-2 py-2 text-center">PW</th>
+              <th className="px-2 py-2 text-center">GU</th>
+              {TRAIT_FIELDS.map((field) => (
+                <th key={field.key} className="px-2 py-2 text-center" title={field.title}>
+                  {field.label}
+                </th>
+              ))}
+              <th className="px-2 py-2 text-center">追切</th>
+              <th className="px-2 py-2 text-center">近走</th>
+              <th className="px-2 py-2 text-right">能力指数</th>
+              <th className="px-2 py-2 text-right">俺プロ本命</th>
+              <th className="px-2 py-2 text-right">評判指数</th>
+              <th className="px-2 py-2 text-right">公式</th>
+              <th className="px-2 py-2 text-right">ガチ勢</th>
+              <th className="px-2 py-2 text-center">削除</th>
+            </tr>
+          </thead>
+          <tbody>
+            {horses.map((horse) => {
+              const profile = getScenarioProfile(horse, course, condition);
+              const frameNo = getFrameNumber(horse.gateNumber, horses.length);
+              const frameColor = getFrameColor(frameNo);
+              const officialImplied = calculateOfficialImpliedProbability(horse.realOdds);
+
+              return (
+                <tr key={horse.id} className="border-b border-slate-100 align-top hover:bg-slate-50/70">
+                  <td className="px-2 py-2 text-center">
+                    <input
+                      type="number"
+                      min="1"
+                      value={horse.gateNumber}
+                      onChange={(event) => updateHorse(horse.id, "gateNumber", Number(event.target.value) || 1)}
+                      className="w-10 rounded border px-1 py-1 text-center text-xs font-bold"
+                      style={{
+                        backgroundColor: frameColor.bg,
+                        color: frameColor.text,
+                        borderColor: frameColor.border,
+                      }}
+                    />
+                  </td>
+                  <td className="px-2 py-2">
+                    <input
+                      type="text"
+                      value={horse.name}
+                      onChange={(event) => updateHorse(horse.id, "name", event.target.value)}
+                      className="w-full min-w-[120px] border-b border-transparent bg-transparent px-1 py-1 font-semibold text-slate-900 outline-none focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="px-2 py-2">
+                    <input
+                      type="text"
+                      value={horse.jockey}
+                      onChange={(event) => updateHorse(horse.id, "jockey", event.target.value)}
+                      className="w-full min-w-[72px] border-b border-transparent bg-transparent px-1 py-1 text-slate-600 outline-none focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="px-2 py-2 text-center">
+                    <select
+                      value={horse.runningStyle}
+                      onChange={(event) => updateHorse(horse.id, "runningStyle", event.target.value as Horse["runningStyle"])}
+                      className="rounded border border-slate-200 bg-white px-2 py-1"
+                    >
+                      <option value="Nige">逃げ</option>
+                      <option value="Senko">先行</option>
+                      <option value="Sashi">差し</option>
+                      <option value="Oikomi">追込</option>
+                    </select>
+                  </td>
+                  {(["speed", "stamina", "power", "guts"] as const).map((field) => (
+                    <td key={field} className="px-2 py-2 text-center">
+                      <input
+                        type="number"
+                        value={horse[field]}
+                        onChange={(event) => updateHorse(horse.id, field, Number(event.target.value) || 0)}
+                        className="w-12 rounded border border-slate-200 px-1 py-1 text-center font-medium"
+                      />
+                    </td>
+                  ))}
+                  {TRAIT_FIELDS.map((field) => {
+                    const value = profile.traitScores[
+                      field.key === "pedigreeScore"
+                        ? "pedigree"
+                        : field.key === "courseFitScore"
+                          ? "courseFit"
+                          : field.key === "distanceFitScore"
+                            ? "distanceFit"
+                            : field.key === "groundFitScore"
+                              ? "groundFit"
+                              : "paceFit"
+                    ];
+
+                    return (
+                      <td key={field.key} className="px-2 py-2 text-center">
+                        <input
+                          type="number"
+                          min="40"
+                          max="99"
+                          value={value}
+                          onChange={(event) => updateHorse(horse.id, field.key, Number(event.target.value) || 0)}
+                          className={`w-12 rounded border border-slate-200 px-1 py-1 text-center font-semibold ${field.tone}`}
+                          title={`${field.title}。未入力時は能力とコースから自動推定します。`}
+                        />
+                      </td>
+                    );
+                  })}
+                  <td className="px-2 py-2 text-center">
+                    <input
+                      type="number"
+                      min="-5"
+                      max="5"
+                      step="0.5"
+                      value={horse.trainingScore ?? 0}
+                      onChange={(event) => updateHorse(horse.id, "trainingScore", Number(event.target.value) || 0)}
+                      className="w-12 rounded border border-slate-200 px-1 py-1 text-center font-medium text-emerald-700"
+                    />
+                  </td>
+                  <td className="px-2 py-2 text-center">
+                    <input
+                      type="number"
+                      min="-5"
+                      max="5"
+                      step="0.5"
+                      value={horse.recentFormScore ?? 0}
+                      onChange={(event) => updateHorse(horse.id, "recentFormScore", Number(event.target.value) || 0)}
+                      className="w-12 rounded border border-slate-200 px-1 py-1 text-center font-medium text-indigo-700"
+                    />
+                  </td>
+                  <td className="px-2 py-2 text-right font-semibold text-slate-900">{profile.abilityScore.toFixed(1)}</td>
+                  <td className="px-2 py-2 text-right">
+                    <input
+                      type="number"
+                      min="0"
+                      value={horse.favoriteCount ?? 0}
+                      onChange={(event) => updateHorse(horse.id, "favoriteCount", Number(event.target.value) || 0)}
+                      className="w-16 rounded border border-slate-200 px-1 py-1 text-right font-semibold text-slate-900"
+                    />
+                  </td>
+                  <td className="px-2 py-2 text-right">
+                    <input
+                      type="number"
+                      min="0"
+                      value={horse.predictionCount}
+                      onChange={(event) => updateHorse(horse.id, "predictionCount", Number(event.target.value) || 0)}
+                      className="w-16 rounded border border-slate-200 bg-blue-50 px-1 py-1 text-right font-semibold text-blue-700"
+                    />
+                  </td>
+                  <td className="px-2 py-2 text-right">
+                    <div className="space-y-1">
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        value={horse.realOdds ?? 0}
+                        onChange={(event) => updateHorse(horse.id, "realOdds", Number(event.target.value) || 0)}
+                        className="w-16 rounded border border-slate-200 px-1 py-1 text-right font-medium"
+                      />
+                      <p className="text-[10px] text-slate-400">{officialImplied > 0 ? `${round1(officialImplied)}%` : "-"}</p>
+                    </div>
+                  </td>
+                  <td className="px-2 py-2 text-right">
+                    <div className="rounded-xl bg-amber-50 px-2 py-1 text-right text-amber-700">
+                      <p className="font-semibold">{horse.expertOdds?.toFixed(1) ?? "-"}</p>
+                      <p className="text-[10px] text-amber-500">俺プロ {(horse.favoriteCount ?? 0)}人</p>
+                    </div>
+                  </td>
+                  <td className="px-2 py-2 text-center">
+                    <button
+                      onClick={() => removeHorse(horse.id)}
+                      className="rounded-full p-2 text-slate-300 transition hover:bg-red-50 hover:text-red-500"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 }

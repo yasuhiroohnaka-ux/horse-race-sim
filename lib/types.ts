@@ -1,4 +1,9 @@
-﻿export type RunningStyle = 'Nige' | 'Senko' | 'Sashi' | 'Oikomi';
+﻿export type RunningStyle = "Nige" | "Senko" | "Sashi" | "Oikomi";
+export type HorseSex = "M" | "F";
+export type GroundCondition = "Firm" | "Good" | "Yielding" | "Soft";
+export type Weather = "Sunny" | "Cloudy" | "Rain" | "Snow";
+export type WindDirection = "Headwind" | "Tailwind" | "Crosswind";
+export type PaceScenario = "Slow" | "Average" | "Fast";
 
 export interface Horse {
   id: string;
@@ -22,26 +27,32 @@ export interface Horse {
   lastRaceGradeLabel?: string;
   condition?: number;
   weight?: number;
-  sex?: 'M' | 'F';
+  sex?: HorseSex;
   favoriteCount?: number;
   xBuzzScore?: number;
   oddsSource?: string;
   predictionCount: number;
   simulatedOdds?: number;
+  expertOdds?: number;
   realOdds?: number;
+  pedigreeScore?: number;
+  courseFitScore?: number;
+  distanceFitScore?: number;
+  groundFitScore?: number;
+  paceFitScore?: number;
 }
 
 export interface CourseSegment {
   distance: number;
   slope: number;
-  type: 'straight' | 'corner';
+  type: "straight" | "corner";
 }
 
 export interface Course {
   id: string;
   name: string;
   distance: number;
-  surface: 'Turf' | 'Dirt';
+  surface: "Turf" | "Dirt";
   segments: CourseSegment[];
   straightLength: number;
   hashtag: string;
@@ -57,7 +68,11 @@ export interface TrackBias {
 export interface RaceCondition {
   courseId: string;
   trackBias: TrackBias;
-  groundCondition: 'Firm' | 'Good' | 'Yielding' | 'Soft';
+  groundCondition: GroundCondition;
+  weather: Weather;
+  windDirection: WindDirection;
+  windSpeed: number;
+  paceScenario: PaceScenario;
 }
 
 export interface RaceResult {
