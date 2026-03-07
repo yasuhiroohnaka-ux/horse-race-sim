@@ -26,6 +26,10 @@ const TRAIT_FIELDS: Array<{ key: TraitFieldKey; label: string; title: string; to
 ];
 
 export function HorseInput({ horses, course, condition, onHorsesChange, hashtag = "#競馬" }: HorseInputProps) {
+  const showTrainingColumn = horses.some(
+    (horse) => Math.abs(horse.trainingScore ?? 0) > 0.01 || Boolean((horse.trainingNote ?? "").trim())
+  );
+
   const updateHorses = (nextHorses: Horse[]) => {
     const sorted = [...nextHorses].sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
     onHorsesChange(calculateOdds(sorted));
@@ -186,7 +190,7 @@ export function HorseInput({ horses, course, condition, onHorsesChange, hashtag 
                   {field.label}
                 </th>
               ))}
-              <th className="px-2 py-2 text-center">追切</th>
+              {showTrainingColumn ? <th className="px-2 py-2 text-center">追切</th> : null}
               <th className="px-2 py-2 text-center">近走</th>
               <th className="px-2 py-2 text-right">能力指数</th>
               <th className="px-2 py-2 text-right">俺プロ本命</th>
@@ -284,17 +288,19 @@ export function HorseInput({ horses, course, condition, onHorsesChange, hashtag 
                       </td>
                     );
                   })}
-                  <td className="px-2 py-2 text-center">
-                    <input
-                      type="number"
-                      min="-5"
-                      max="5"
-                      step="0.5"
-                      value={horse.trainingScore ?? 0}
-                      onChange={(event) => updateHorse(horse.id, "trainingScore", Number(event.target.value) || 0)}
-                      className="w-12 rounded border border-slate-200 px-1 py-1 text-center font-medium text-emerald-700"
-                    />
-                  </td>
+                  {showTrainingColumn ? (
+                    <td className="px-2 py-2 text-center">
+                      <input
+                        type="number"
+                        min="-5"
+                        max="5"
+                        step="0.5"
+                        value={horse.trainingScore ?? 0}
+                        onChange={(event) => updateHorse(horse.id, "trainingScore", Number(event.target.value) || 0)}
+                        className="w-12 rounded border border-slate-200 px-1 py-1 text-center font-medium text-emerald-700"
+                      />
+                    </td>
+                  ) : null}
                   <td className="px-2 py-2 text-center">
                     <input
                       type="number"

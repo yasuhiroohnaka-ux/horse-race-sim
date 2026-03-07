@@ -258,6 +258,160 @@ function parseOreproEntries(oreproHtml) {
   return byName;
 }
 
+function parseDistanceMeters(raw) {
+  const distance = Number.parseInt(String(raw ?? "").match(/(\d{3,4})/)?.[1] ?? "", 10);
+  return Number.isFinite(distance) && distance > 0 ? distance : null;
+}
+
+function parseRaceTimeSeconds(raw) {
+  const match = String(raw ?? "").match(/(\d+):(\d{1,2}\.\d)/);
+  if (!match) return null;
+  const minutes = Number.parseInt(match[1], 10);
+  const seconds = Number.parseFloat(match[2]);
+  if (!Number.isFinite(minutes) || !Number.isFinite(seconds)) return null;
+  return minutes * 60 + seconds;
+}
+
+function detectGradeLabel(iconRaw, raceNameRaw) {
+  const icon = String(iconRaw ?? "").toUpperCase();
+  if (icon.includes("GIII")) return "G3";
+  if (icon.includes("GII")) return "G2";
+  if (icon.includes("GI")) return "G1";
+
+  const raceName = String(raceNameRaw ?? "");
+  if (/(^|\s|\()(L)(\s|\)|$)/i.test(raceName)) return "L";
+  if (/OP/i.test(raceName)) return "OP";
+  if (/3\u52dd|3Win/i.test(raceName)) return "3Win";
+  if (/2\u52dd|2Win/i.test(raceName)) return "2Win";
+  if (/1\u52dd|1Win/i.test(raceName)) return "1Win";
+  if (/\u672a\u52dd\u5229|\u65b0\u99ac|Maiden/i.test(raceName)) return "Maiden";
+  return null;
+}
+
+function gradeLabelToScore(label) {
+  if (!label) return null;
+  switch (label) {
+    case "G1":
+      return 5;
+    case "G2":
+      return 4;
+    case "G3":
+      return 3;
+    case "L":
+      return 2.5;
+    case "OP":
+      return 2;
+    case "3Win":
+      return 1.5;
+    case "2Win":
+      return 1;
+    case "1Win":
+      return 0.5;
+    case "Maiden":
+      return 0;
+    default:
+      return null;
+  }
+}
+
+function parseShutubaPastEntries(shutubaPastHtml) {
+  const rows = [...String(shutubaPastHtml ?? "").matchAll(/<tr[^>]*class="[^"]*HorseList[^"]*"[^>]*>([\s\S]*?)<\/tr>/g)].map(
+    (m) => m[1]
+  );
+  const provisional = [];
+
+  for (const row of rows) {
+    const gateNumber = Number.parseInt(
+      row.match(/<td class="Waku">\s*(\d{1,2})\s*<\/td>/i)?.[1] ??
+        row.match(/class="Umaban\d+[^"]*"[^>]*>\s*(\d{1,2})\s*<\/td>/i)?.[1] ??
+        "",
+      10
+    );
+    if (!(gateNumber > 0)) continue;
+
+    const horseNameRaw =
+      row.match(/<div class="Horse02">[\s\S]*?<a[^>]*>\s*([^<]+?)\s*<\/a>/i)?.[1] ??
+      row.match(/\/horse\/\d+\/?[^>]*>([^<]+)</i)?.[1] ??
+      "";
+    const horseName = normalizeSpace(horseNameRaw);
+    if (!horseName) continue;
+
+    const pastCells = [...row.matchAll(/<td class="Past[^"]*"[^>]*>([\s\S]*?)<\/td>/g)].map((m) => m[1]).slice(0, 5);
+    const runs = pastCells.map((cell) => {
+      const finish = Number.parseInt(cell.match(/<span class="Num">(\d{1,2})<\/span>/i)?.[1] ?? "", 10);
+      const raceName = normalizeSpace(cell.match(/<div class="Data02">([\s\S]*?)<\/div>/i)?.[1] ?? "");
+      const iconRaw = normalizeSpace(cell.match(/<span class="Icon_GradeType[^"]*">([^<]+)<\/span>/i)?.[1] ?? "");
+      const gradeLabel = detectGradeLabel(iconRaw, raceName);
+      const data05Raw = normalizeSpace(cell.match(/<div class="Data05">([\s\S]*?)<\/div>/i)?.[1] ?? "");
+      const distance = parseDistanceMeters(data05Raw);
+      const timeSeconds = parseRaceTimeSeconds(data05Raw);
+      const runSpeed = distance && timeSeconds ? distance / timeSeconds : null;
+
+      return {
+        finish: Number.isFinite(finish) && finish > 0 ? finish : null,
+        gradeLabel,
+        runSpeed
+      };
+    });
+
+    const finishList = runs
+      .map((run) => run.finish)
+      .filter((finish) => Number.isFinite(finish) && finish > 0);
+    const speedList = runs
+      .map((run) => run.runSpeed)
+      .filter((speed) => Number.isFinite(speed) && speed > 0);
+    const avgFinish = finishList.length > 0 ? finishList.reduce((sum, value) => sum + value, 0) / finishList.length : null;
+    const avgSpeed = speedList.length > 0 ? speedList.reduce((sum, value) => sum + value, 0) / speedList.length : null;
+    const lastFinish = runs[0]?.finish ?? null;
+    const lastRaceGradeLabel = runs[0]?.gradeLabel ?? null;
+    const lastRaceGradeScore = gradeLabelToScore(lastRaceGradeLabel);
+
+    let recentFormScore = null;
+    if (avgFinish !== null || lastFinish !== null) {
+      const avgScore = avgFinish !== null ? clamp((8 - avgFinish) * 0.9, -3.5, 3.5) : 0;
+      const lastScore = lastFinish !== null ? clamp((7 - lastFinish) * 0.8, -2.5, 2.5) : 0;
+      recentFormScore = Math.round(clamp(avgScore + lastScore, -5, 5) * 10) / 10;
+    }
+
+    provisional.push({
+      gateNumber,
+      horseName,
+      recentFormScore,
+      recentAverageFinish: avgFinish !== null ? Math.round(avgFinish * 10) / 10 : null,
+      recentTimeIndex: null,
+      lastRaceGradeScore: lastRaceGradeScore !== null ? Math.round(lastRaceGradeScore * 10) / 10 : null,
+      lastRaceGradeLabel,
+      averageRunSpeed: avgSpeed !== null ? Math.round(avgSpeed * 1000) / 1000 : null
+    });
+  }
+
+  const speedValues = provisional
+    .map((entry) => entry.averageRunSpeed)
+    .filter((value) => Number.isFinite(value) && value > 0);
+  if (speedValues.length === 0) {
+    return provisional;
+  }
+
+  const meanSpeed = speedValues.reduce((sum, value) => sum + value, 0) / speedValues.length;
+  const variance =
+    speedValues.reduce((sum, value) => {
+      const diff = value - meanSpeed;
+      return sum + diff * diff;
+    }, 0) / speedValues.length;
+  const safeStd = Math.max(Math.sqrt(Math.max(variance, 0)), 0.08);
+
+  return provisional.map((entry) => {
+    if (!Number.isFinite(entry.averageRunSpeed) || entry.averageRunSpeed <= 0) {
+      return entry;
+    }
+    const z = (entry.averageRunSpeed - meanSpeed) / safeStd;
+    return {
+      ...entry,
+      recentTimeIndex: Math.round(clamp(z * 2.2, -5, 5) * 10) / 10
+    };
+  });
+}
+
 function parseRssItems(xml) {
   const itemBlocks = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map((m) => m[1]);
   return itemBlocks.map((block) => ({
@@ -355,7 +509,7 @@ async function fetchCurrentWeekRaceSeeds() {
   return [...unique.values()].sort((a, b) => a.raceId.localeCompare(b.raceId));
 }
 
-async function buildRaceEntries(meta, shutubaHtml, raceDate) {
+async function buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate) {
   const seeds = parseHorseSeedEntries(shutubaHtml);
   if (seeds.length === 0) return [];
 
@@ -366,6 +520,10 @@ async function buildRaceEntries(meta, shutubaHtml, raceDate) {
   } catch {
     oreproEntries = new Map();
   }
+
+  const pastEntries = parseShutubaPastEntries(shutubaPastHtml);
+  const pastByGate = new Map(pastEntries.map((entry) => [entry.gateNumber, entry]));
+  const pastByName = new Map(pastEntries.map((entry) => [normalizeName(entry.horseName), entry]));
 
   const xBuzzScores = new Map();
   await Promise.all(
@@ -390,6 +548,7 @@ async function buildRaceEntries(meta, shutubaHtml, raceDate) {
 
   return seeds.map((seed, index) => {
     const oreproEntry = oreproEntries.get(normalizeName(seed.name));
+    const pastEntry = pastByGate.get(seed.gateNumber) ?? pastByName.get(normalizeName(seed.name));
     const favoriteCount = Number(oreproEntry?.favoriteCount ?? 0);
     const xBuzzScore = xBuzzScores.get(normalizeName(seed.name)) ?? 0;
     const currentOdds = oreproEntry?.odds ?? seed.marketOdds ?? 0;
@@ -419,21 +578,22 @@ async function buildRaceEntries(meta, shutubaHtml, raceDate) {
       guts: ability.guts,
       condition: 5,
       trainingScore: 0,
-      recentFormScore: 0,
-      recentAverageFinish: 0,
-      recentTimeIndex: 0,
-      lastRaceGradeScore: 2,
-      lastRaceGradeLabel: "OP"
+      recentFormScore: pastEntry?.recentFormScore ?? 0,
+      recentAverageFinish: pastEntry?.recentAverageFinish ?? 0,
+      recentTimeIndex: pastEntry?.recentTimeIndex ?? 0,
+      lastRaceGradeScore: pastEntry?.lastRaceGradeScore ?? 2,
+      lastRaceGradeLabel: pastEntry?.lastRaceGradeLabel ?? "OP"
     };
   });
 }
 
 async function buildRace(seed) {
   const shutubaHtml = await fetchText(`https://race.netkeiba.com/race/shutuba.html?race_id=${seed.raceId}`);
+  const shutubaPastHtml = await fetchText(`https://race.netkeiba.com/race/shutuba_past.html?race_id=${seed.raceId}`);
   const meta = parseRaceMeta(seed.raceId, shutubaHtml, seed.dayLabel);
   if (!meta) return null;
   const raceDate = raceDateFromSeed(seed);
-  const horses = await buildRaceEntries(meta, shutubaHtml, raceDate);
+  const horses = await buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate);
   if (horses.length === 0) return null;
   return {
     ...meta,
