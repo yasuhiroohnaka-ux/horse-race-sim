@@ -1,4 +1,4 @@
-import fs from "node:fs/promises";
+﻿import fs from "node:fs/promises";
 import path from "node:path";
 import { NextRequest, NextResponse } from "next/server";
 import { GENERATED_DRAW_OVERRIDES } from "@/lib/generatedDrawOverrides";
@@ -8,6 +8,9 @@ const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
 
 type WeeklyHorse = {
   name?: string;
+  gateNumber?: number;
+  predictionCount?: number;
+  xBuzzScore?: number;
 };
 
 type WeeklyRace = {
@@ -56,7 +59,7 @@ export const revalidate = 0;
 function normalizeName(name: string): string {
   return String(name ?? "")
     .toLowerCase()
-    .replace(/[\s　・･\-_.]/g, "");
+    .replace(/[\s縲繝ｻ・･\-_.]/g, "");
 }
 
 function decodeHtmlText(s: string): string {
@@ -92,13 +95,13 @@ function parsePopularityRank(rankRaw: string): number | null {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 }
 
-function rankToXPopularityScore(rank: number, fieldSize: number): number {
-  // Proxy score shaped like existing "X人気pt" scale (top-heavy).
-  const safeRank = Math.max(1, rank);
-  const safeField = Math.max(1, fieldSize);
-  const topBoost = 140 * Math.exp(-0.35 * (safeRank - 1));
-  const floor = Math.max(1, Math.round((safeField - safeRank + 1) * (20 / safeField)));
-  return Math.max(floor, Math.round(topBoost));
+function oddsToPopularityScore(odds: number | null, xBuzzScore: number): number {
+  if (!(Number.isFinite(odds as number) && (odds as number) > 0)) {
+    return Math.max(1, Math.round(10 + xBuzzScore * 2));
+  }
+  const safeOdds = Math.max(Number(odds), 1.1);
+  const oddsScore = Math.max(12, Math.min(120, 120 - Math.log10(safeOdds) * 54));
+  return Math.round(Math.max(1, Math.min(160, oddsScore + xBuzzScore * 1.8)));
 }
 
 function yyyymmddFromDate(date: Date): string {
@@ -249,12 +252,12 @@ function detectGradeLabel(iconRaw: string, raceNameRaw: string): string | null {
   if (icon.includes("GI")) return "G1";
 
   const raceName = raceNameRaw;
-  if (/(^|\s|\()(L)(\s|\)|$)|リステッド/i.test(raceName)) return "L";
-  if (/オープン|OP/i.test(raceName)) return "OP";
-  if (/3勝|1600万/i.test(raceName)) return "3Win";
-  if (/2勝|1000万/i.test(raceName)) return "2Win";
-  if (/1勝|500万/i.test(raceName)) return "1Win";
-  if (/未勝利|新馬/i.test(raceName)) return "Maiden";
+  if (/(^|\s|\()(L)(\s|\)|$)/i.test(raceName)) return "L";
+  if (/OP/i.test(raceName)) return "OP";
+  if (/3勝|3Win/i.test(raceName)) return "3Win";
+  if (/2勝|2Win/i.test(raceName)) return "2Win";
+  if (/1勝|1Win/i.test(raceName)) return "1Win";
+  if (/未勝利|新馬|Maiden/i.test(raceName)) return "Maiden";
   return null;
 }
 
@@ -472,7 +475,7 @@ export async function GET(request: NextRequest) {
 
     const oddsByGate: Record<string, number> = {};
     const popularityRankByGate: Record<string, number> = {};
-    const xPopularityByGate: Record<string, number> = {};
+    const popularityByGate: Record<string, number> = {};
     const jockeyByGate: Record<string, string> = {};
     const performanceByGate: Record<
       string,
@@ -484,18 +487,32 @@ export async function GET(request: NextRequest) {
         lastRaceGradeLabel?: string;
       }
     > = {};
-    const fieldSize = Math.max(1, best.entries.length);
+    const weeklyHorseByGate = new Map(
+      (race.horses ?? [])
+        .filter((horse) => Number.isFinite(horse.gateNumber) && Number(horse.gateNumber) > 0)
+        .map((horse) => [String(horse.gateNumber), horse] as const)
+    );
+    const weeklyHorseByName = new Map(
+      (race.horses ?? [])
+        .filter((horse) => horse.name)
+        .map((horse) => [normalizeName(horse.name ?? ""), horse] as const)
+    );
     for (const entry of best.entries) {
+      const gateKey = String(entry.gateNumber);
       if (Number.isFinite(entry.odds) && (entry.odds ?? 0) > 0) {
-        oddsByGate[String(entry.gateNumber)] = Number(entry.odds);
+        oddsByGate[gateKey] = Number(entry.odds);
       }
       if (Number.isFinite(entry.popularityRank) && (entry.popularityRank ?? 0) > 0) {
-        const rank = Number(entry.popularityRank);
-        popularityRankByGate[String(entry.gateNumber)] = rank;
-        xPopularityByGate[String(entry.gateNumber)] = rankToXPopularityScore(rank, fieldSize);
+        popularityRankByGate[gateKey] = Number(entry.popularityRank);
+      }
+      const weeklyHorse = weeklyHorseByGate.get(gateKey) ?? weeklyHorseByName.get(normalizeName(entry.horseName));
+      const xBuzzScore = Number(weeklyHorse?.xBuzzScore ?? 0);
+      const popularityScore = oddsToPopularityScore(entry.odds, xBuzzScore);
+      if (popularityScore > 0) {
+        popularityByGate[gateKey] = popularityScore;
       }
       if (entry.jockey) {
-        jockeyByGate[String(entry.gateNumber)] = entry.jockey;
+        jockeyByGate[gateKey] = entry.jockey;
       }
     }
 
@@ -527,7 +544,7 @@ export async function GET(request: NextRequest) {
         overlap: best.overlap,
         oddsByGate,
         popularityRankByGate,
-        xPopularityByGate,
+        popularityByGate,
         jockeyByGate,
         performanceByGate,
       },
@@ -542,3 +559,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }
+
+
+
+
+

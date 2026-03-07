@@ -1,51 +1,24 @@
-import fs from "node:fs/promises";
+﻿import fs from "node:fs/promises";
 import path from "node:path";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
 const DRAW_OVERRIDES_TS_PATH = path.join(ROOT, "lib", "generatedDrawOverrides.ts");
 
-const WEIGHT_CORRECTIONS_BY_KEY = {
-  "nakayama-turf-1800:1": 57,
-  "nakayama-turf-1800:2": 57,
-  "nakayama-turf-1800:3": 55,
-  "nakayama-turf-1200:1": 56,
-  "nakayama-turf-1200:3": 58,
-  "nakayama-turf-1200:4": 57,
-  "hanshin-turf-1600:1": 55,
-  "hanshin-turf-1600:2": 55,
-  "hanshin-turf-1600:3": 55,
-};
+const WEIGHT_CORRECTIONS_BY_KEY = {};
 
-const WEIGHT_CORRECTIONS_BY_NAME = {
-  "Karamatianos": 56,
-};
+const WEIGHT_CORRECTIONS_BY_NAME = {};
 
-const RACE_LABEL_ALIASES = {
-  "Nakayama Kinen": ["中山記念", "Nakayama Kinen"],
-  "Ocean Stakes": ["オーシャンS", "オーシャンステークス", "Ocean Stakes"],
-  "Tulip Sho": ["チューリップ賞", "Tulip Sho"],
-};
+const RACE_LABEL_ALIASES = {};
 
-const HORSE_NAME_ALIASES = {
-  Rebensutiru: ["レーベンスティール"],
-  Ecorovaltz: ["エコロヴァルツ"],
-  Chelvinia: ["チェルヴィニア"],
-  Lugal: ["ルガル"],
-  "Invincible Papa": ["インビンシブルパパ"],
-  "Mama Cocha": ["ママコチャ"],
-  Alencar: ["アランカール"],
-  "Taisei Vogue": ["タイセイボーグ"],
-  "Connie Island": ["コニーアイランド"],
-  Karamatianos: ["カラマティアノス"],
-};
+const HORSE_NAME_ALIASES = {};
 
 const NETKEIBA_WEIGHT_SOURCES = [
   {
     horseName: "Karamatianos",
     // netkeiba DB page that includes the horse row with weight.
     url: "https://db.netkeiba.com/horse/select.html?id=2014106201&mode=wn&type=sire&year=2024",
-    rowKeyword: "カラマティアノス",
+    rowKeyword: "繧ｫ繝ｩ繝槭ユ繧｣繧｢繝弱せ",
   },
 ];
 
@@ -83,8 +56,8 @@ async function fetchNetkeibaWeightOverrides() {
       const rowStart = plain.indexOf(src.rowKeyword);
       if (rowStart < 0) continue;
       const rowChunk = plain.slice(rowStart, rowStart + 220);
-      // Pattern: ... horseName ... <weight> 芝1600 / ダ1800 ...
-      const m = rowChunk.match(/(\d{2})\s*(?:芝|ダ)\d{3,4}/);
+      // Pattern: ... horseName ... <weight> 闃・600 / 繝1800 ...
+      const m = rowChunk.match(/(\d{2})\s*(?:闃掟繝)\d{3,4}/);
       if (!m) continue;
       const w = Number(m[1]);
       if (Number.isFinite(w) && w >= 48 && w <= 62) {
@@ -100,7 +73,7 @@ async function fetchNetkeibaWeightOverrides() {
 function normalizeName(name) {
   return String(name ?? "")
     .toLowerCase()
-    .replace(/[\\s　・\\-_.]/g, "");
+    .replace(/[\\s縲繝ｻ\\-_.]/g, "");
 }
 
 function yyyymmddFromDate(date) {
@@ -152,7 +125,7 @@ function parseShutubaEntries(shutubaHtml) {
     entries.push({
       horseName,
       frameNumber,
-      gateNumber, // 馬番
+      gateNumber, // 鬥ｬ逡ｪ
     });
   }
   return entries;
@@ -174,6 +147,16 @@ function getTrackCodeFromCourseId(courseId) {
 }
 
 async function fetchDrawEntriesByRace(weekOfIso, race) {
+  if (race?.raceId) {
+    try {
+      const html = await fetchText(`https://race.netkeiba.com/race/shutuba.html?race_id=${race.raceId}`);
+      const entries = parseShutubaEntries(html);
+      if (entries.length > 0) return entries;
+    } catch {
+      // fall through to title-based lookup
+    }
+  }
+
   const raceDate = dateForRaceDay(weekOfIso, race.day);
   if (!raceDate) return null;
   const trackCode = getTrackCodeFromCourseId(race.courseId);
@@ -340,3 +323,5 @@ main().catch((error) => {
   console.error(error);
   process.exit(1);
 });
+
+

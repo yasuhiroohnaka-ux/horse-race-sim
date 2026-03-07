@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "horse-race-sim",
   "version": "0.1.0",
   "private": true,
@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "refresh:weekly-races": "node scripts/refresh-weekly-races.mjs",
     "update:keiba-data": "node scripts/weekly-keiba-update.mjs",
     "update:race-volatility": "node scripts/update-race-volatility.mjs",
     "sync:race-schedule": "node scripts/sync-race-schedule.mjs",
@@ -35,3 +36,5 @@
     "typescript": "5.9.3"
   }
 }
+
+

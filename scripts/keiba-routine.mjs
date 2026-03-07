@@ -1,4 +1,4 @@
-import fs from "node:fs/promises";
+﻿import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
 
@@ -263,7 +263,7 @@ function pickTanpukuPair(race, includeBodyWeight = false, applyDraw = true) {
 }
 
 function buildPackedOvervaluedText(day, overvalued, maxChars = 280) {
-  const prefix = `${day}重賞 過大評価馬リスト: `;
+  const prefix = `${day}重賞 過大評価馬: `;
   if (!overvalued || overvalued.length === 0) return `${prefix}該当なし`;
 
   const parts = [];
@@ -281,7 +281,6 @@ function buildPackedOvervaluedText(day, overvalued, maxChars = 280) {
 
   return `${prefix}${parts.join("、")}`;
 }
-
 function ensurePerf(state, weekOf) {
   state.performance = state.performance || {};
   if (!state.performance.weekly || state.performance.weekly.weekOf !== weekOf) {
@@ -309,24 +308,9 @@ function ensurePerf(state, weekOf) {
 }
 
 async function handleMonday10(now) {
-  const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { weekOf: isoDate(startOfWeekMonday(now)), races: [] }, archives: [] });
   const state = await readJson(STATE_PATH, {});
 
-  if (weekly.currentWeek?.races?.length) {
-    weekly.archives = weekly.archives || [];
-    weekly.archives.unshift({
-      archivedAt: new Date().toISOString(),
-      ...weekly.currentWeek,
-    });
-    weekly.archives = weekly.archives.slice(0, 24);
-  }
-
-  weekly.currentWeek = {
-    weekOf: isoDate(startOfWeekMonday(now)),
-    races: weekly.currentWeek?.races || [],
-  };
-
-  await writeJson(WEEKLY_RACES_PATH, weekly);
+  await runNodeScript("scripts/refresh-weekly-races.mjs");
   await runNodeScript("scripts/sync-race-schedule.mjs");
   await runNodeScript("scripts/weekly-keiba-update.mjs", ["--force"]);
   await runNodeScript("scripts/update-race-volatility.mjs");
@@ -335,7 +319,7 @@ async function handleMonday10(now) {
   state.drawConfirmedAt = null;
   await writeJson(STATE_PATH, state);
 
-  await publishOrQueuePost("mon_10", "今週の重賞登録馬データへ切替。先週重賞はアーカイブ化し、初期指標と荒れやすさスコアを更新しました。");
+  await publishOrQueuePost("mon_10", "今週の重賞レースへ切替し、出馬表の基礎データを自動更新しました。");
 }
 
 async function handleTraining(stage) {
@@ -343,18 +327,18 @@ async function handleTraining(stage) {
   const trainingRaw = await fs.readFile(path.join(ROOT, "lib", "generatedTrainingData.ts"), "utf8");
   const updatedAt = trainingRaw.match(/TRAINING_DATA_GENERATED_AT = "(.*?)"/)?.[1] || "";
   const label = stage === "wed_12" ? "水曜" : "木曜";
-  await publishOrQueuePost(stage, `${label}12時の調教評価を更新しました。generatedAt=${updatedAt}`);
+  await publishOrQueuePost(stage, `${label}12時点の調教データ更新を実行しました。(generatedAt=${updatedAt})`);
 }
 
 async function handleFieldConfirmed() {
   const state = await readJson(STATE_PATH, {});
   state.fieldConfirmedAt = new Date().toISOString();
   await writeJson(STATE_PATH, state);
-  await publishOrQueuePost("thu_15", "木曜15時: 出走馬確定フェーズを反映しました。");
+  await publishOrQueuePost("thu_15", "木曜時点の出馬表更新を記録しました。");
 }
 
 async function handleDrawConfirmed() {
-  // Refresh sources at draw-confirm stage so latest gate/entry corrections can be applied.
+  await runNodeScript("scripts/refresh-weekly-races.mjs");
   await runNodeScript("scripts/weekly-keiba-update.mjs", ["--force"]);
   await runNodeScript("scripts/daily-entry-check.mjs");
   await runNodeScript("scripts/sync-race-schedule.mjs");
@@ -362,7 +346,7 @@ async function handleDrawConfirmed() {
   const state = await readJson(STATE_PATH, {});
   state.drawConfirmedAt = new Date().toISOString();
   await writeJson(STATE_PATH, state);
-  await publishOrQueuePost("fri_10", "金曜10時: 枠順確定フェーズを反映しました。");
+  await publishOrQueuePost("fri_10", "金曜の出馬表更新を実行し、枠順と人気値を最新化しました。");
 }
 
 async function handleRecommendation(day, stage) {
@@ -513,7 +497,7 @@ async function handleSundaySettle() {
 
   await publishOrQueuePost(
     "sun_16",
-    `単複おすすめ 週次集計: 件数${w.bets} / 単 的中率${tanHitRate.toFixed(1)}% 回収率${tanRoi.toFixed(1)}% / 複 的中率${fukuHitRate.toFixed(1)}% 回収率${fukuRoi.toFixed(1)}%`
+    `単複おすすめ成績: 件数${w.bets} / 単勝的中率${tanHitRate.toFixed(1)}% 単回収${tanRoi.toFixed(1)}% / 複勝的中率${fukuHitRate.toFixed(1)}% 複回収${fukuRoi.toFixed(1)}%`
   );
 }
 
@@ -557,3 +541,7 @@ main().catch((error) => {
   console.error(error);
   process.exit(1);
 });
+
+
+
+

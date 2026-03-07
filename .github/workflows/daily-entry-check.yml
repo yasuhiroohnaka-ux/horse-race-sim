@@ -1,4 +1,4 @@
-name: Daily Entry Check
+﻿name: Daily Entry Check
 
 on:
   schedule:
@@ -24,6 +24,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Refresh weekly race list
+        run: npm run refresh:weekly-races
 
       - name: Refresh keiba data
         run: node scripts/weekly-keiba-update.mjs --force

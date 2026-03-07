@@ -1,43 +1,39 @@
-export type RunningStyle = 'Nige' | 'Senko' | 'Sashi' | 'Oikomi';
+﻿export type RunningStyle = 'Nige' | 'Senko' | 'Sashi' | 'Oikomi';
 
 export interface Horse {
   id: string;
   name: string;
-  // Core Ability Stats (0-100 or similar scale)
   speed: number;
   stamina: number;
   power: number;
   guts: number;
-
-  // Characteristics
   runningStyle: RunningStyle;
   gateNumber: number;
   jockey: string;
   trainer?: string;
-  jockeyPower?: number; // 0-100 (netkeiba jockey metrics)
-  stablePower?: number; // 0-100 (netkeiba trainer/stable metrics)
-  trainingScore?: number; // -5 to +5 (Wed/Thu workout signal)
-  trainingNote?: string;  // Short memo for why trainingScore was set
-  recentFormScore?: number; // -5 to +5 (recent 5-race form)
-  recentAverageFinish?: number; // average finish position in recent races
-  recentTimeIndex?: number; // -5 to +5 (relative speed from recent times)
-  lastRaceGradeScore?: number; // 0 to 5 (class/grade strength)
-  lastRaceGradeLabel?: string; // G1/G2/G3/L/OP/3Win/2Win/1Win/Maiden
-
-  // Condition & Weight
-  condition?: number;    // 状態値 0-10 (5=普通, 高い=好調)
-  weight?: number;       // 斤量 (kg) — 混合戦牝馬は-2kg
-  sex?: 'M' | 'F';      // 性別 (牡=M, 牝=F)
-
-  // External Factors
-  predictionCount: number; // Number of votes/mentions
-  simulatedOdds?: number;  // Calculated based on predictionCount
-  realOdds?: number;       // Official/Actual odds from market
+  jockeyPower?: number;
+  stablePower?: number;
+  trainingScore?: number;
+  trainingNote?: string;
+  recentFormScore?: number;
+  recentAverageFinish?: number;
+  recentTimeIndex?: number;
+  lastRaceGradeScore?: number;
+  lastRaceGradeLabel?: string;
+  condition?: number;
+  weight?: number;
+  sex?: 'M' | 'F';
+  favoriteCount?: number;
+  xBuzzScore?: number;
+  oddsSource?: string;
+  predictionCount: number;
+  simulatedOdds?: number;
+  realOdds?: number;
 }
 
 export interface CourseSegment {
-  distance: number; // Length of this segment in meters
-  slope: number;    // Gradient percentage (positive = uphill)
+  distance: number;
+  slope: number;
   type: 'straight' | 'corner';
 }
 
@@ -47,15 +43,15 @@ export interface Course {
   distance: number;
   surface: 'Turf' | 'Dirt';
   segments: CourseSegment[];
-  straightLength: number; // Last straight length
-  hashtag: string;        // X投稿用ハッシュタグ
-  archived?: boolean;     // アーカイブ済みフラグ
-  defaultBias?: TrackBias; // コース特性に基づくデフォルトバイアス
+  straightLength: number;
+  hashtag: string;
+  archived?: boolean;
+  defaultBias?: TrackBias;
 }
 
 export interface TrackBias {
-  innerOuter: number; // -5 (Inner) to +5 (Outer)
-  frontBack: number;  // -5 (Front) to +5 (Back)
+  innerOuter: number;
+  frontBack: number;
 }
 
 export interface RaceCondition {
