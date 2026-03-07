@@ -308,12 +308,12 @@ function SimulatorContent() {
 
     const hasSamePick = strongest.horseId === valueHorse.horseId;
     const text = [
-      `${selectedCourse.name} ??2?`,
-      `????? ${strongest.name} ??${strongest.simWinRate.toFixed(1)}% / ???${strongest.fairOdds?.toFixed(1) ?? "-"}?`,
+      `${selectedCourse.name} \u63a8\u59682\u982d`,
+      `\u7684\u4e2d\u7387\u306a\u3089 ${strongest.name} \u8a66\u8d70${strongest.simWinRate.toFixed(1)}% / \u30d5\u30a7\u30a2${strongest.fairOdds?.toFixed(1) ?? "-"}\u500d`,
       hasSamePick
-        ? `?????? ${valueHorse.name} ??${valueHorse.officialOdds?.toFixed(1) ?? "-"}? / ???${valueHorse.expertOdds?.toFixed(1) ?? "-"}?`
-        : `????? ${valueHorse.name} ??${valueHorse.officialOdds?.toFixed(1) ?? "-"}? / ???${valueHorse.expertOdds?.toFixed(1) ?? "-"}?`,
-      `??: ${groundLabels[condition.groundCondition]} / ${weatherLabels[condition.weather]} / ${windLabels[condition.windDirection]}${condition.windSpeed}m / ${paceLabels[condition.paceScenario]}`,
+        ? `\u56de\u53ce\u7387\u3082\u540c\u99ac ${valueHorse.name} \u516c\u5f0f${valueHorse.officialOdds?.toFixed(1) ?? "-"}\u500d / \u30ac\u30c1\u52e2${valueHorse.expertOdds?.toFixed(1) ?? "-"}\u500d`
+        : `\u56de\u53ce\u7387\u306a\u3089 ${valueHorse.name} \u516c\u5f0f${valueHorse.officialOdds?.toFixed(1) ?? "-"}\u500d / \u30ac\u30c1\u52e2${valueHorse.expertOdds?.toFixed(1) ?? "-"}\u500d`,
+      `\u6761\u4ef6: ${groundLabels[condition.groundCondition]} / ${weatherLabels[condition.weather]} / ${windLabels[condition.windDirection]}${condition.windSpeed}m / ${paceLabels[condition.paceScenario]}`,
       selectedCourse.hashtag,
     ].join("\n");
 

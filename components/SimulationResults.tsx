@@ -234,13 +234,13 @@ export function SimulationResults({
           onClick={onPostToRecommendedPairToX}
           className="rounded-full bg-black px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
         >
-          ??2??X??
+          {"\u63a8\u59682\u982d\u3092X\u6295\u7a3f"}
         </button>
         <button
           onClick={onPostToX}
           className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
         >
-          ???X???
+          {"\u5206\u6790\u3092X\u306b\u6295\u7a3f"}
         </button>
       </div>
     </div>
