@@ -10,6 +10,12 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { InfoHint } from "@/components/InfoHint";
+import {
+  SUMMARY_CARD_DESCRIPTIONS,
+  TABLE_HEADER_DESCRIPTIONS,
+  getSignalDescription,
+} from "@/lib/analysisGlossary";
 import { Course, Horse, RaceCondition } from "@/lib/types";
 import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
 import { getFrameColor, getFrameNumber } from "@/lib/frameColor";
@@ -40,6 +46,23 @@ function getSignalTone(label: string): string {
     default:
       return "text-slate-600 bg-slate-100";
   }
+}
+
+function MetricLabel({
+  label,
+  help,
+  toneClassName = "",
+}: {
+  label: string;
+  help: string;
+  toneClassName?: string;
+}) {
+  return (
+    <span className={`inline-flex items-center gap-1 ${toneClassName}`}>
+      <span>{label}</span>
+      <InfoHint content={help} label={`${label}の説明`} />
+    </span>
+  );
 }
 
 export function SimulationResults({
@@ -83,6 +106,7 @@ export function SimulationResults({
           <p className="mt-1 text-xs text-slate-500">
             青は試走勝率、濃紺は一般市場の期待値、金はガチ勢市場の期待値です。
           </p>
+          <p className="mt-1 text-[11px] text-slate-400">各指標名の ? にカーソルを合わせると説明が出ます。</p>
         </div>
         <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
           {course.name}
@@ -91,22 +115,46 @@ export function SimulationResults({
 
       <div className="mb-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
-          <p className="text-[11px] font-semibold tracking-wide text-blue-500">勝ちやすい馬</p>
+          <p className="text-[11px] font-semibold tracking-wide text-blue-500">
+            <MetricLabel
+              label="勝ちやすい馬"
+              help={SUMMARY_CARD_DESCRIPTIONS.strongest}
+              toneClassName="text-blue-500"
+            />
+          </p>
           <p className="mt-1 text-base font-bold text-slate-900">{strongest?.name ?? "-"}</p>
           <p className="mt-1 text-xs text-slate-600">試走 {strongest?.simWinRate?.toFixed(1) ?? "-"}% / フェア {strongest?.fairOdds?.toFixed(1) ?? "-"}倍</p>
         </div>
         <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
-          <p className="text-[11px] font-semibold tracking-wide text-amber-600">見極め人気馬</p>
+          <p className="text-[11px] font-semibold tracking-wide text-amber-600">
+            <MetricLabel
+              label="見極め人気馬"
+              help={SUMMARY_CARD_DESCRIPTIONS.marketWatch}
+              toneClassName="text-amber-600"
+            />
+          </p>
           <p className="mt-1 text-base font-bold text-slate-900">{riskyFavorite?.name ?? "-"}</p>
           <p className="mt-1 text-xs text-slate-600">公式 {riskyFavorite?.officialImplied?.toFixed(1) ?? "-"}% に対し試走 {riskyFavorite?.simWinRate?.toFixed(1) ?? "-"}%</p>
         </div>
         <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-          <p className="text-[11px] font-semibold tracking-wide text-emerald-600">妙味候補</p>
+          <p className="text-[11px] font-semibold tracking-wide text-emerald-600">
+            <MetricLabel
+              label="妙味候補"
+              help={SUMMARY_CARD_DESCRIPTIONS.valueHorse}
+              toneClassName="text-emerald-600"
+            />
+          </p>
           <p className="mt-1 text-base font-bold text-slate-900">{valueHorse?.name ?? "-"}</p>
           <p className="mt-1 text-xs text-slate-600">試走 {valueHorse?.simWinRate?.toFixed(1) ?? "-"}% / 公式 {valueHorse?.officialOdds?.toFixed(1) ?? "-"}倍</p>
         </div>
         <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
-          <p className="text-[11px] font-semibold tracking-wide text-amber-600">一般市場 vs ガチ勢市場</p>
+          <p className="text-[11px] font-semibold tracking-wide text-amber-600">
+            <MetricLabel
+              label="一般市場 vs ガチ勢市場"
+              help={SUMMARY_CARD_DESCRIPTIONS.disagreement}
+              toneClassName="text-amber-600"
+            />
+          </p>
           <p className="mt-1 text-base font-bold text-slate-900">{disagreement?.name ?? "-"}</p>
           <p className="mt-1 text-xs text-slate-600">期待値差 {disagreement?.marketExpertGap?.toFixed(1) ?? "-"}pt</p>
         </div>
@@ -147,16 +195,36 @@ export function SimulationResults({
               <th className="px-2 py-2 text-center">順位</th>
               <th className="px-2 py-2 text-center">馬番</th>
               <th className="px-2 py-2 text-left">馬名</th>
-              <th className="px-2 py-2 text-right">能力</th>
-              <th className="px-2 py-2 text-right">試走勝率</th>
-              <th className="px-2 py-2 text-right">フェア</th>
-              <th className="px-2 py-2 text-right">一般市場</th>
-              <th className="px-2 py-2 text-right">ガチ勢市場</th>
-              <th className="px-2 py-2 text-right">一般市場差</th>
-              <th className="px-2 py-2 text-right">ガチ勢市場差</th>
-              <th className="px-2 py-2 text-right">市場vsガチ勢</th>
-              <th className="px-2 py-2 text-right">一般支持</th>
-              <th className="px-2 py-2 text-center">判定</th>
+              <th className="px-2 py-2 text-right">
+                <MetricLabel label="能力" help={TABLE_HEADER_DESCRIPTIONS.abilityScore} />
+              </th>
+              <th className="px-2 py-2 text-right">
+                <MetricLabel label="試走勝率" help={TABLE_HEADER_DESCRIPTIONS.simWinRate} />
+              </th>
+              <th className="px-2 py-2 text-right">
+                <MetricLabel label="フェア" help={TABLE_HEADER_DESCRIPTIONS.fairOdds} />
+              </th>
+              <th className="px-2 py-2 text-right">
+                <MetricLabel label="一般市場" help={TABLE_HEADER_DESCRIPTIONS.officialMarket} />
+              </th>
+              <th className="px-2 py-2 text-right">
+                <MetricLabel label="ガチ勢市場" help={TABLE_HEADER_DESCRIPTIONS.expertMarket} />
+              </th>
+              <th className="px-2 py-2 text-right">
+                <MetricLabel label="一般市場差" help={TABLE_HEADER_DESCRIPTIONS.officialGap} />
+              </th>
+              <th className="px-2 py-2 text-right">
+                <MetricLabel label="ガチ勢市場差" help={TABLE_HEADER_DESCRIPTIONS.expertGap} />
+              </th>
+              <th className="px-2 py-2 text-right">
+                <MetricLabel label="市場vsガチ勢" help={TABLE_HEADER_DESCRIPTIONS.marketExpertGap} />
+              </th>
+              <th className="px-2 py-2 text-right">
+                <MetricLabel label="一般支持" help={TABLE_HEADER_DESCRIPTIONS.buzzShare} />
+              </th>
+              <th className="px-2 py-2 text-center">
+                <MetricLabel label="判定" help={TABLE_HEADER_DESCRIPTIONS.signal} />
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -205,7 +273,10 @@ export function SimulationResults({
                   </td>
                   <td className="px-2 py-2 text-right text-slate-600">{row.buzzShare.toFixed(1)}%</td>
                   <td className="px-2 py-2 text-center">
-                    <span className={`inline-flex rounded-full px-3 py-1 font-semibold ${getSignalTone(row.signalLabel)}`}>
+                    <span
+                      title={getSignalDescription(row.signalLabel)}
+                      className={`inline-flex rounded-full px-3 py-1 font-semibold ${getSignalTone(row.signalLabel)}`}
+                    >
                       {row.signalLabel}
                     </span>
                   </td>
