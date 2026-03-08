@@ -409,7 +409,7 @@ function SimulatorContent() {
           </Link>
           <span className="mx-2">|</span>
           <Link href="/archive" className="transition hover:text-slate-600">
-            過去レース
+            レース回顧
           </Link>
           <span className="mx-2">|</span>
           Powered by Next.js

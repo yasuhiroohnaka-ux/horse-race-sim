@@ -40,7 +40,7 @@ export default function Home() {
                   href="/archive"
                   className="rounded-full border border-slate-600 px-6 py-3 text-sm font-bold text-slate-100 transition hover:bg-slate-800"
                 >
-                  過去レースを見る
+                  レース回顧を見る
                 </Link>
               </div>
             </div>

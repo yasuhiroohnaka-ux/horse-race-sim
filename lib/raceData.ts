@@ -164,6 +164,27 @@ const DEFAULT_HORSES_MAP: Record<string, Horse[]> = {
 // ============================================================
 export const ARCHIVED_RACES: ArchivedRace[] = [
     {
+        courseId: 'nakayama-turf-1800',
+        label: '中山記念 2026',
+        date: '2026-03-01',
+        hashtag: '#中山記念',
+        horses: NAKAYAMA_KINEN_HORSES,
+    },
+    {
+        courseId: 'nakayama-turf-1200',
+        label: 'オーシャンS 2026',
+        date: '2026-02-28',
+        hashtag: '#オーシャンS',
+        horses: OCEAN_STAKES_HORSES,
+    },
+    {
+        courseId: 'hanshin-turf-1600',
+        label: 'チューリップ賞 2026',
+        date: '2026-02-28',
+        hashtag: '#チューリップ賞',
+        horses: TULIP_SHO_HORSES,
+    },
+    {
         courseId: 'tokyo-dirt-1600',
         label: 'フェブラリーS 2026',
         date: '2026-02-22',

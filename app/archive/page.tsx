@@ -193,7 +193,7 @@ export default function ArchivePage() {
       <div className="max-w-4xl mx-auto">
         <header className="mb-8 text-center">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">レース回顧アーカイブ</h1>
-          <p className="text-slate-500 mt-2">翌日更新の回顧と、過去レースのシミュレーション入口をまとめています。</p>
+          <p className="text-slate-500 mt-2">翌日更新の回顧と、レース回顧のシミュレーション入口をまとめています。</p>
         </header>
 
         <div className="space-y-10">
@@ -209,8 +209,8 @@ export default function ArchivePage() {
 
           <section className="space-y-4">
             <div>
-              <h2 className="text-lg font-bold text-slate-900">過去レース</h2>
-              <p className="text-sm text-slate-500 mt-1">週替わり後にアーカイブ化された重賞と既存の固定アーカイブです。</p>
+              <h2 className="text-lg font-bold text-slate-900">レース回顧</h2>
+              <p className="text-sm text-slate-500 mt-1">週替わり後にアーカイブ化された重賞と、固定のレース回顧を並べています。</p>
             </div>
             {[...archivedReviewRaces, ...legacyCards].length > 0 ? (
               <>
