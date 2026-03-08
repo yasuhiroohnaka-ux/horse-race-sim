@@ -26,6 +26,11 @@ function formatSurface(surface: "Turf" | "Dirt") {
   return surface === "Dirt" ? "ダート" : "芝";
 }
 
+function openReviewPost(text: string) {
+  if (!text) return;
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
+}
+
 function buildLegacyCards(): LegacyArchiveCard[] {
   return LEGACY_ARCHIVED_RACES.map((race) => {
     const course = ARCHIVED_COURSES.find((entry) => entry.id === race.courseId);
@@ -64,6 +69,7 @@ function renderReviewCard(race: ReviewCard, badge: string, showReplayLink: boole
   const topHorses = [...race.horses]
     .sort((a, b) => (b.predictionCount ?? 0) - (a.predictionCount ?? 0))
     .slice(0, 3);
+  const reviewPostText = race.review?.xPostText ?? "";
 
   return (
     <div key={`${badge}-${race.courseId}`} className="bg-white rounded-lg shadow-md border border-slate-200 p-6">
@@ -108,16 +114,27 @@ function renderReviewCard(race: ReviewCard, badge: string, showReplayLink: boole
 
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs text-slate-400">{race.horses.length}頭</p>
-        {showReplayLink ? (
-          <Link
-            href={`/sim?archive=${race.courseId}`}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition shadow hover:shadow-md"
-          >
-            この条件でシミュレーション
-          </Link>
-        ) : (
-          <span className="text-xs text-slate-400">翌日反映の回顧カード</span>
-        )}
+        <div className="flex items-center gap-2">
+          {reviewPostText ? (
+            <button
+              type="button"
+              onClick={() => openReviewPost(reviewPostText)}
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
+            >
+              回顧をX送信
+            </button>
+          ) : null}
+          {showReplayLink ? (
+            <Link
+              href={`/sim?archive=${race.courseId}`}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition shadow hover:shadow-md"
+            >
+              この条件でシミュレーション
+            </Link>
+          ) : (
+            <span className="text-xs text-slate-400">翌日反映の回顧カード</span>
+          )}
+        </div>
       </div>
     </div>
   );
