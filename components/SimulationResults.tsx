@@ -26,6 +26,7 @@ interface SimulationResultsProps {
   course: Course;
   condition: RaceCondition;
   onReset: () => void;
+  onPostToMarketFocusToX: () => void;
   onPostToRecommendedPairToX: () => void;
   onPostToX: () => void;
   onRunAgain: () => void;
@@ -34,7 +35,7 @@ interface SimulationResultsProps {
 
 function getSignalTone(label: string): string {
   switch (label) {
-    case "見極め人気":
+    case "市場注目":
       return "text-amber-700 bg-amber-50";
     case "市場盲点":
     case "プロ先行妙味":
@@ -71,6 +72,7 @@ export function SimulationResults({
   course,
   condition,
   onReset,
+  onPostToMarketFocusToX,
   onPostToRecommendedPairToX,
   onPostToX,
   onRunAgain,
@@ -128,7 +130,7 @@ export function SimulationResults({
         <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
           <p className="text-[11px] font-semibold tracking-wide text-amber-600">
             <MetricLabel
-              label="見極め人気馬"
+              label="市場注目馬"
               help={SUMMARY_CARD_DESCRIPTIONS.marketWatch}
               toneClassName="text-amber-600"
             />
@@ -300,6 +302,12 @@ export function SimulationResults({
           className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
         >
           {isRunning ? "再試走中..." : "もう一度100回試走"}
+        </button>
+        <button
+          onClick={onPostToMarketFocusToX}
+          className="rounded-full border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-700 transition hover:bg-amber-50"
+        >
+          市場注目馬をX投稿
         </button>
         <button
           onClick={onPostToRecommendedPairToX}

@@ -59,7 +59,7 @@ export default function Home() {
               <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm">
                 <p className="text-[11px] font-semibold tracking-[0.2em] text-slate-300">STEP 3</p>
                 <p className="mt-2 text-lg font-bold">市場と比較</p>
-                <p className="mt-1 text-sm text-slate-300">公式オッズとガチ勢オッズとの差を見て、見極め人気と妙味候補を切り分け。</p>
+                <p className="mt-1 text-sm text-slate-300">公式オッズとガチ勢オッズとの差を見て、市場注目馬と妙味候補を切り分け。</p>
               </div>
             </div>
           </div>
@@ -124,7 +124,7 @@ export default function Home() {
               <div className="rounded-2xl bg-slate-50 p-4">
                 <p className="text-sm font-bold text-slate-900">X投稿まで一気通貫</p>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  見極め人気、妙味候補、公式とガチ勢の乖離が大きい馬を、そのまま要約して投稿できます。
+                  市場注目馬、妙味候補、公式とガチ勢の乖離が大きい馬を、そのまま要約して投稿できます。
                 </p>
               </div>
             </div>
@@ -144,7 +144,7 @@ export default function Home() {
                 <span className="font-bold text-slate-900">3.</span> 公式オッズとガチ勢オッズのズレを見る
               </li>
               <li>
-                <span className="font-bold text-slate-900">4.</span> 100回試走して見極め人気と妙味候補を確認する
+                <span className="font-bold text-slate-900">4.</span> 100回試走して市場注目馬と妙味候補を確認する
               </li>
             </ol>
           </div>

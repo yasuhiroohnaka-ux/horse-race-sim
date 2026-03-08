@@ -292,9 +292,31 @@ function SimulatorContent() {
     const text = [
       `${selectedCourse.name} 100回試走`,
       `勝ちやすい: ${strongest?.name ?? "-"} 試走${strongest?.simWinRate?.toFixed(1) ?? "-"}% / フェア${strongest?.fairOdds?.toFixed(1) ?? "-"}倍`,
-      `見極め人気: ${riskyFavorite?.name ?? "-"} 公式${riskyFavorite?.officialImplied?.toFixed(1) ?? "-"}% > 試走${riskyFavorite?.simWinRate?.toFixed(1) ?? "-"}%`,
+      `市場注目馬: ${riskyFavorite?.name ?? "-"} 公式${riskyFavorite?.officialImplied?.toFixed(1) ?? "-"}% > 試走${riskyFavorite?.simWinRate?.toFixed(1) ?? "-"}%`,
       `妙味候補: ${valueHorse?.name ?? "-"} 公式${valueHorse?.officialOdds?.toFixed(1) ?? "-"}倍 / ガチ勢${valueHorse?.expertOdds?.toFixed(1) ?? "-"}倍`,
       `公式vsガチ勢: ${disagreement?.name ?? "-"} 差${disagreement?.marketExpertGap?.toFixed(1) ?? "-"}pt`,
+      `条件: ${groundLabels[condition.groundCondition]} / ${weatherLabels[condition.weather]} / ${windLabels[condition.windDirection]}${condition.windSpeed}m / ${paceLabels[condition.paceScenario]}`,
+      selectedCourse.hashtag,
+    ].join("\n");
+
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
+  const handlePostToMarketFocusToX = () => {
+    if (!results || !selectedCourse) return;
+
+    const rows = buildRaceAnalysisRows(results, horses, selectedCourse, condition);
+    const marketFocusHorse = [...rows]
+      .filter((row) => row.officialRank <= Math.min(4, rows.length))
+      .sort((a, b) => (b.officialImplied - b.simWinRate) - (a.officialImplied - a.simWinRate))[0];
+
+    if (!marketFocusHorse) return;
+
+    const text = [
+      `${selectedCourse.name} 市場注目馬`,
+      `${marketFocusHorse.name}`,
+      `公式想定 ${marketFocusHorse.officialImplied.toFixed(1)}% / 試走 ${marketFocusHorse.simWinRate.toFixed(1)}%`,
+      `ガチ勢市場 ${marketFocusHorse.expertImplied.toFixed(1)}% / 一般市場差 ${marketFocusHorse.officialGap.toFixed(1)}pt`,
       `条件: ${groundLabels[condition.groundCondition]} / ${weatherLabels[condition.weather]} / ${windLabels[condition.windDirection]}${condition.windSpeed}m / ${paceLabels[condition.paceScenario]}`,
       selectedCourse.hashtag,
     ].join("\n");
@@ -395,6 +417,7 @@ function SimulatorContent() {
               course={selectedCourse}
               condition={condition}
               onReset={() => setResults(null)}
+              onPostToMarketFocusToX={handlePostToMarketFocusToX}
               onPostToRecommendedPairToX={handlePostRecommendedPairToX}
               onPostToX={handlePostToX}
               onRunAgain={handleRunSimulation}

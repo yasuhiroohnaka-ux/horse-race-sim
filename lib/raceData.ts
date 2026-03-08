@@ -191,11 +191,11 @@ function buildArchivedReview(race: ArchivedRace) {
         const watchName = getHorseName(race.horses, watchHorseId);
         const watchPosition = getHorsePosition(race.result, watchHorseId);
         if (watchName && watchPosition === 1) {
-            sentences.push(ensureSentence(`見極め人気にした${watchName}が勝ってしまったのは痛恨`));
+            sentences.push(ensureSentence(`市場注目馬にした${watchName}が勝ってしまったのは痛恨`));
         } else if (watchName && watchPosition && watchPosition <= 3) {
-            sentences.push(ensureSentence(`見極め人気にした${watchName}が馬券内に来たのは痛恨`));
+            sentences.push(ensureSentence(`市場注目馬にした${watchName}が馬券内に来たのは痛恨`));
         } else if (watchName && watchPosition === 4) {
-            sentences.push(ensureSentence(`見極め人気にした${watchName}はほんとうにぎりぎりの4着だった`));
+            sentences.push(ensureSentence(`市場注目馬にした${watchName}はほんとうにぎりぎりの4着だった`));
         }
     }
 
