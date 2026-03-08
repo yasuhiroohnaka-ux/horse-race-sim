@@ -1,4 +1,19 @@
+import { calculateExpertSignal, calculateOfficialImpliedProbability, getBaseAbilityScore, round1 } from './raceAnalysis';
 import { Horse } from './types';
+
+interface ArchivedRaceResult {
+    winnerHorseId: string;
+    top3HorseIds: string[];
+    positions?: { horseId: string; position: number }[];
+}
+
+interface ArchivedReviewContext {
+    abilityHorseId?: string;
+    watchHorseId?: string;
+    valueHorseId?: string;
+    reviewerTopHorseId?: string;
+    notes?: string[];
+}
 
 export interface ArchivedRace {
     courseId: string;
@@ -6,10 +21,12 @@ export interface ArchivedRace {
     date: string;
     hashtag: string;
     horses: Horse[];
+    result?: ArchivedRaceResult;
     review?: {
         summary: string;
         xPostText: string;
     };
+    reviewContext?: ArchivedReviewContext;
 }
 
 // ============================================================
@@ -59,11 +76,153 @@ function clamp(v: number, min: number, max: number) {
     return Math.max(min, Math.min(max, v));
 }
 
-function buildArchivedReview(label: string, summary: string, hashtag: string) {
+function ensureSentence(text: string): string {
+    const trimmed = String(text ?? '').trim();
+    if (!trimmed) return '';
+    return /[。！？]$/.test(trimmed) ? trimmed : `${trimmed}。`;
+}
+
+function clipXPost(text: string, hashtag: string): string {
     const safeHashtag = hashtag.startsWith('#') ? hashtag : `#${hashtag}`;
+    const body = String(text ?? '').trim();
+    const maxLength = 279 - safeHashtag.length;
+    const clipped = body.length > maxLength ? `${body.slice(0, maxLength - 1)}…` : body;
+    return `${clipped} ${safeHashtag}`.trim();
+}
+
+function getHorseName(horses: Horse[], horseId?: string): string {
+    if (!horseId) return '';
+    return horses.find((horse) => horse.id === horseId)?.name ?? '';
+}
+
+function getHorsePosition(result: ArchivedRaceResult | undefined, horseId?: string): number | null {
+    if (!result || !horseId) return null;
+    if (result.winnerHorseId === horseId) return 1;
+
+    const top3Index = result.top3HorseIds.findIndex((id) => id === horseId);
+    if (top3Index >= 0) return top3Index + 1;
+
+    const explicit = result.positions?.find((entry) => entry.horseId === horseId)?.position;
+    return Number.isFinite(explicit) ? Number(explicit) : null;
+}
+
+function getArchivedAnalysis(horses: Horse[]) {
+    const totalExpertSignal = Math.max(1, horses.reduce((sum, horse) => sum + calculateExpertSignal(horse), 0));
+    const abilityWeights = horses.map((horse) => Math.exp(getBaseAbilityScore(horse) / 14));
+    const totalAbilityWeight = Math.max(
+        1,
+        abilityWeights.reduce((sum, weight) => sum + weight, 0)
+    );
+
+    const officialRankMap = new Map(
+        [...horses]
+            .sort((a, b) => (a.realOdds ?? Number.MAX_SAFE_INTEGER) - (b.realOdds ?? Number.MAX_SAFE_INTEGER))
+            .map((horse, index) => [horse.id, index + 1])
+    );
+
+    return horses.map((horse, index) => {
+        const abilityScore = getBaseAbilityScore(horse);
+        const simWinRate = round1((abilityWeights[index] / totalAbilityWeight) * 100);
+        const officialImplied = calculateOfficialImpliedProbability(horse.realOdds);
+        const expertImplied = round1((calculateExpertSignal(horse) / totalExpertSignal) * 100);
+        return {
+            horseId: horse.id,
+            name: horse.name,
+            abilityScore,
+            simWinRate,
+            officialImplied,
+            officialRank: officialRankMap.get(horse.id) ?? horses.length,
+            marketExpertGap: round1(expertImplied - officialImplied),
+        };
+    });
+}
+
+function buildArchivedReview(race: ArchivedRace) {
+    if (!race.result) return undefined;
+
+    const analysisRows = getArchivedAnalysis(race.horses);
+    const strongest = [...analysisRows].sort((a, b) => b.abilityScore - a.abilityScore)[0];
+    const watch = [...analysisRows]
+        .filter((row) => row.officialRank <= Math.min(4, analysisRows.length))
+        .sort((a, b) => (b.officialImplied - b.simWinRate) - (a.officialImplied - a.simWinRate))[0];
+    const value = [...analysisRows]
+        .sort(
+            (a, b) =>
+                (b.simWinRate - b.officialImplied + Math.max(0, b.marketExpertGap) * 0.6) -
+                (a.simWinRate - a.officialImplied + Math.max(0, a.marketExpertGap) * 0.6)
+        )[0];
+
+    const abilityHorseId = race.reviewContext?.abilityHorseId ?? strongest?.horseId;
+    const watchHorseId = race.reviewContext?.watchHorseId ?? watch?.horseId;
+    const valueHorseId = race.reviewContext?.valueHorseId ?? value?.horseId;
+    const reviewerTopHorseId = race.reviewContext?.reviewerTopHorseId;
+    const notes = (race.reviewContext?.notes ?? []).map(ensureSentence).filter(Boolean);
+
+    const sentences: string[] = [];
+    const winnerName = getHorseName(race.horses, race.result.winnerHorseId);
+    if (!notes.some((note) => note.includes('勝ったのは'))) {
+        sentences.push(ensureSentence(`勝ったのは${winnerName}`));
+    }
+
+    if (abilityHorseId) {
+        const abilityName = getHorseName(race.horses, abilityHorseId);
+        const abilityPosition = getHorsePosition(race.result, abilityHorseId);
+        if (abilityName) {
+            if (abilityPosition === 1) {
+                sentences.push(ensureSentence(`シミュレーション通り能力上位は${abilityName}で間違いなかった`));
+            } else if (abilityPosition && abilityPosition <= 3) {
+                sentences.push(ensureSentence(`能力上位と見た${abilityName}は馬券内に来た`));
+            } else if (abilityPosition) {
+                sentences.push(ensureSentence(`能力上位と見た${abilityName}は${abilityPosition}着までだった`));
+            }
+        }
+    }
+
+    if (valueHorseId) {
+        const valuePosition = getHorsePosition(race.result, valueHorseId);
+        if (valuePosition === 1) {
+            sentences.push('妙味候補として拾えていれば理想だった。');
+        } else if (valuePosition && valuePosition <= 3) {
+            sentences.push('妙味候補として挙げておきたかった。');
+        }
+    }
+
+    if (watchHorseId) {
+        const watchName = getHorseName(race.horses, watchHorseId);
+        const watchPosition = getHorsePosition(race.result, watchHorseId);
+        if (watchName && watchPosition === 1) {
+            sentences.push(ensureSentence(`見極め人気にした${watchName}が勝ってしまったのは痛恨`));
+        } else if (watchName && watchPosition && watchPosition <= 3) {
+            sentences.push(ensureSentence(`見極め人気にした${watchName}が馬券内に来たのは痛恨`));
+        } else if (watchName && watchPosition === 4) {
+            sentences.push(ensureSentence(`見極め人気にした${watchName}はほんとうにぎりぎりの4着だった`));
+        }
+    }
+
+    sentences.push(...notes);
+
+    if (reviewerTopHorseId) {
+        const reviewerTopName = getHorseName(race.horses, reviewerTopHorseId);
+        const reviewerTopPosition = getHorsePosition(race.result, reviewerTopHorseId);
+        if (reviewerTopName && reviewerTopPosition && reviewerTopPosition <= 3) {
+            sentences.push(ensureSentence(`中の人の本命は${reviewerTopName}。最低限`));
+        } else if (reviewerTopName && reviewerTopPosition) {
+            sentences.push(ensureSentence(`中の人の本命は${reviewerTopName}だったが、${reviewerTopPosition}着まで`));
+        }
+    }
+
+    const summary = [...new Set(sentences.filter(Boolean))].join('');
     return {
         summary,
-        xPostText: `【${label} 回顧】${summary} ${safeHashtag}`.trim(),
+        xPostText: clipXPost(`【${race.label} 回顧】${summary}`, race.hashtag),
+    };
+}
+
+function buildArchivedRace(input: Omit<ArchivedRace, 'review'>): ArchivedRace {
+    const review = buildArchivedReview(input as ArchivedRace);
+    return {
+        ...input,
+        review,
     };
 }
 
@@ -175,42 +334,56 @@ const DEFAULT_HORSES_MAP: Record<string, Horse[]> = {
 // フェブラリーS 2026 アーカイブデータ（G1定量: 牡58kg / 牝56kg）
 // ============================================================
 export const ARCHIVED_RACES: ArchivedRace[] = [
-    {
+    buildArchivedRace({
         courseId: 'nakayama-turf-1800',
         label: '中山記念 2026',
         date: '2026-03-01',
         hashtag: '#中山記念',
         horses: NAKAYAMA_KINEN_HORSES,
-        review: buildArchivedReview(
-            '中山記念 2026',
-            'シミュレーション通り能力はレーベンスティールで間違いなかった。セイウンハーデスに逃げはやはり向いていない。エコロヴァルツを見極め人気馬にしてしまったのは痛恨。',
-            '#中山記念'
-        ),
-    },
-    {
+        result: {
+            winnerHorseId: '1',
+            top3HorseIds: ['1', '5', '2'],
+            positions: [{ horseId: '4', position: 12 }],
+        },
+        reviewContext: {
+            abilityHorseId: '1',
+            watchHorseId: '2',
+            notes: ['セイウンハーデスに逃げはやはり向いていない'],
+        },
+    }),
+    buildArchivedRace({
         courseId: 'nakayama-turf-1200',
         label: 'オーシャンS 2026',
         date: '2026-02-28',
         hashtag: '#オーシャンS',
         horses: OCEAN_STAKES_HORSES,
-        review: buildArchivedReview(
-            'オーシャンS 2026',
-            '勝ったのはペアポルックス。妙味ありあたりにはあげておきたかった。実力的に不思議はない。ママコチャが見極め人気馬だったのはほんとうぎりぎり（4着）。',
-            '#オーシャンS'
-        ),
-    },
-    {
+        result: {
+            winnerHorseId: '11',
+            top3HorseIds: ['11', '5', '3'],
+            positions: [{ horseId: '1', position: 4 }],
+        },
+        reviewContext: {
+            valueHorseId: '11',
+            watchHorseId: '1',
+            notes: ['実力的に不思議はない'],
+        },
+    }),
+    buildArchivedRace({
         courseId: 'hanshin-turf-1600',
         label: 'チューリップ賞 2026',
         date: '2026-02-28',
         hashtag: '#チューリップ賞',
         horses: TULIP_SHO_HORSES,
-        review: buildArchivedReview(
-            'チューリップ賞 2026',
-            '勝ったのはタイセイボーグで見極め人気馬にしてしまい痛恨。まだまだこのサイトの推論エンジンを発展させなければならない。中の人の本命はアランカール。最低限か。',
-            '#チューリップ賞'
-        ),
-    },
+        result: {
+            winnerHorseId: '2',
+            top3HorseIds: ['2', '6', '1'],
+        },
+        reviewContext: {
+            watchHorseId: '2',
+            reviewerTopHorseId: '1',
+            notes: ['まだまだこのサイトの推論エンジンを発展させなければならない'],
+        },
+    }),
     {
         courseId: 'tokyo-dirt-1600',
         label: 'フェブラリーS 2026',

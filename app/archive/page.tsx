@@ -14,6 +14,7 @@ type LegacyArchiveCard = {
   label: string;
   date: string;
   hashtag: string;
+  resultText?: string;
   reviewSummary?: string;
   reviewPostText?: string;
   horses: { id: string; name: string; predictionCount: number }[];
@@ -36,11 +37,23 @@ function openReviewPost(text: string) {
 function buildLegacyCards(): LegacyArchiveCard[] {
   return LEGACY_ARCHIVED_RACES.map((race) => {
     const course = ARCHIVED_COURSES.find((entry) => entry.id === race.courseId);
+    const top3Names = (race.result?.top3HorseIds ?? [])
+      .map((horseId) => race.horses.find((horse) => horse.id === horseId)?.name ?? "")
+      .filter(Boolean);
+
     return {
       courseId: race.courseId,
       label: race.label,
       date: race.date,
       hashtag: race.hashtag,
+      resultText:
+        top3Names.length >= 3
+          ? `1着 ${top3Names[0]} / 2着 ${top3Names[1]} / 3着 ${top3Names[2]}`
+          : top3Names.length === 2
+            ? `1着 ${top3Names[0]} / 2着 ${top3Names[1]}`
+            : top3Names.length === 1
+              ? `1着 ${top3Names[0]}`
+              : "",
       reviewSummary: race.review?.summary,
       reviewPostText: race.review?.xPostText,
       horses: race.horses.map((horse) => ({
@@ -160,6 +173,13 @@ function renderLegacyCard(race: LegacyArchiveCard) {
           アーカイブ
         </span>
       </div>
+
+      {race.resultText ? (
+        <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
+          <p className="text-sm font-bold text-emerald-800">結果</p>
+          <p className="mt-1 text-sm text-emerald-900">{race.resultText}</p>
+        </div>
+      ) : null}
 
       {race.reviewSummary ? (
         <div className="mb-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
