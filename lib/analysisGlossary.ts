@@ -2,7 +2,7 @@ export const SUMMARY_CARD_DESCRIPTIONS = {
   strongest:
     "100回試走で最も勝率が高かった馬です。能力、適性、馬場、風、展開の条件をまとめて反映した総合1位です。",
   marketWatch:
-    "一般市場の上位人気の中から、試走が最も弱気だった馬です。人気先行の可能性もある一方で、市場が能力の上積みを先に織り込んでいる市場注目馬でもあります。",
+    "一般市場の上位人気の中から、試走が最も弱気だった馬です。市場先行、能力漏れ、条件替わりのどれで人気しているかを見極める対象です。",
   valueHorse:
     "試走勝率が一般市場の想定より高く、さらにガチ勢市場が先に反応していれば加点する回収妙味候補です。",
   disagreement:
@@ -27,12 +27,18 @@ export const TABLE_HEADER_DESCRIPTIONS = {
   buzzShare:
     "predictionCountベースの一般支持率です。広く買われているかどうかを見る補助指標です。",
   signal:
-    "試走と一般市場、ガチ勢市場のズレを短いラベルで分類したものです。各ラベルに条件があります。",
+    "試走と一般市場、ガチ勢市場のズレを短いラベルで分類したものです。市場注目はさらに内訳を出します。",
 } as const;
 
 export const SIGNAL_LABEL_DESCRIPTIONS = {
   市場注目:
-    "試走勝率が一般市場想定を8pt以上下回り、かつガチ勢市場が一般市場以上に強気ではない馬です。人気先行の可能性もある一方で、市場が能力の上積みを先に織り込んでいる市場注目ゾーンです。",
+    "試走勝率が一般市場想定を8pt以上下回り、かつガチ勢市場が一般市場以上に強気ではないゾーンです。内訳は市場先行、能力漏れ注目、条件替わり注目に分かれます。",
+  市場先行:
+    "一般市場の人気が先に走っている型です。ガチ勢の追随や条件面の裏付けがまだ弱いケースです。",
+  能力漏れ注目:
+    "試走は弱気でも、能力順位やガチ勢市場が下支えしている型です。モデルが拾い切れていない余地を示します。",
+  条件替わり注目:
+    "距離短縮・延長、馬場悪化、展開変化、コース替わりなど当日の条件で浮上余地がある型です。",
   プロ先行妙味:
     "試走勝率が一般市場想定を8pt以上上回り、さらにガチ勢市場が一般市場より2pt以上先行している馬です。",
   市場盲点:
@@ -51,9 +57,9 @@ export const SIGNAL_LABEL_DESCRIPTIONS = {
     "試走と市場評価のズレが小さく、今の人気水準がおおむね妥当な馬です。",
 } as const;
 
-export function getSignalDescription(label: string): string {
-  return (
+export function getSignalDescription(label: string, signalReason?: string | null): string {
+  const base =
     SIGNAL_LABEL_DESCRIPTIONS[label as keyof typeof SIGNAL_LABEL_DESCRIPTIONS] ??
-    "試走と市場評価のズレから見た中間評価です。"
-  );
+    "試走と市場評価のズレから見た中間評価です。";
+  return signalReason ? `${base} ${signalReason}` : base;
 }

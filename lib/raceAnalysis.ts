@@ -16,6 +16,12 @@ export interface ScenarioProfile {
   volatility: number;
 }
 
+interface SignalInsight {
+  signalLabel: string;
+  signalDetailLabel: string | null;
+  signalReason: string | null;
+}
+
 export interface RaceAnalysisRow {
   horseId: string;
   name: string;
@@ -37,6 +43,8 @@ export interface RaceAnalysisRow {
   expertGap: number;
   marketExpertGap: number;
   signalLabel: string;
+  signalDetailLabel: string | null;
+  signalReason: string | null;
   horse: Horse;
 }
 
@@ -414,6 +422,99 @@ export function getScenarioProfile(horse: Horse, course: Course, condition: Race
   };
 }
 
+function getDistanceChangeText(distanceChange?: number): string | null {
+  if (!Number.isFinite(distanceChange)) return null;
+  const normalized = Math.round(Number(distanceChange ?? 0));
+  if (Math.abs(normalized) < 100) return null;
+  return normalized < 0 ? `距離短縮${Math.abs(normalized)}m` : `距離延長${Math.abs(normalized)}m`;
+}
+
+function getMarketFocusDetail(params: {
+  horse: Horse;
+  profile: ScenarioProfile;
+  officialImplied: number;
+  expertImplied: number;
+  simWinRate: number;
+  officialGap: number;
+  expertGap: number;
+  marketExpertGap: number;
+  officialRank: number;
+  expertRank: number;
+  abilityRank: number;
+  fieldSize: number;
+  condition: RaceCondition;
+}): Pick<SignalInsight, "signalDetailLabel" | "signalReason"> {
+  const {
+    horse,
+    profile,
+    officialImplied,
+    expertImplied,
+    simWinRate,
+    officialGap,
+    expertGap,
+    marketExpertGap,
+    officialRank,
+    expertRank,
+    abilityRank,
+    fieldSize,
+    condition,
+  } = params;
+
+  const conditionReasons: string[] = [];
+  const distanceText = getDistanceChangeText(horse.distanceChange);
+  if (distanceText && profile.traitScores.distanceFit >= 78) {
+    conditionReasons.push(`${distanceText}で距離適性${profile.traitScores.distanceFit.toFixed(1)}`);
+  }
+  if (getGroundSeverity(condition) >= 0.65 && profile.traitScores.groundFit >= 78) {
+    conditionReasons.push(`渋馬場で馬場適性${profile.traitScores.groundFit.toFixed(1)}`);
+  }
+  if (condition.paceScenario !== "Average" && profile.traitScores.paceFit >= 78) {
+    conditionReasons.push(
+      `${condition.paceScenario === "Fast" ? "ハイ" : "スロー"}想定で展開適性${profile.traitScores.paceFit.toFixed(1)}`
+    );
+  }
+  if (profile.traitScores.courseFit >= 82) {
+    conditionReasons.push(`コース適性${profile.traitScores.courseFit.toFixed(1)}`);
+  }
+
+  const expertBacking =
+    marketExpertGap >= -1.5 ||
+    expertRank <= officialRank ||
+    expertGap >= officialGap + 2.5;
+  const abilityBacking =
+    abilityRank <= Math.max(3, Math.ceil(fieldSize / 4)) ||
+    profile.abilityScore >= 84 ||
+    ((horse.recentFormScore ?? 0) >= 2 && (horse.recentTimeIndex ?? 0) >= 1);
+
+  if (conditionReasons.length >= 2 || (conditionReasons.length >= 1 && Boolean(distanceText))) {
+    return {
+      signalDetailLabel: "条件替わり注目",
+      signalReason: `${conditionReasons.slice(0, 2).join("、")}が支え。`,
+    };
+  }
+
+  if (expertBacking || abilityBacking) {
+    const reasons: string[] = [];
+    if (abilityRank <= Math.max(3, Math.ceil(fieldSize / 4))) {
+      reasons.push(`能力順位は${abilityRank}位`);
+    } else if (profile.abilityScore >= 84) {
+      reasons.push(`能力指数${profile.abilityScore.toFixed(1)}`);
+    }
+    if (expertBacking) {
+      reasons.push(`ガチ勢市場${expertImplied.toFixed(1)}%が下支え`);
+    }
+    return {
+      signalDetailLabel: "能力漏れ注目",
+      signalReason: `${reasons.slice(0, 2).join("、")}で、モデルが拾い切れていない余地。`,
+    };
+  }
+
+  return {
+    signalDetailLabel: "市場先行",
+    signalReason: `一般市場${officialImplied.toFixed(1)}%に対して試走${simWinRate.toFixed(1)}%。ガチ勢市場${expertImplied.toFixed(1)}%の追随は限定的。`,
+  };
+}
+
 function getSignalLabel(simWinRate: number, officialImplied: number, expertImplied: number): string {
   const officialGap = simWinRate - officialImplied;
   const expertGap = simWinRate - expertImplied;
@@ -428,6 +529,37 @@ function getSignalLabel(simWinRate: number, officialImplied: number, expertImpli
   if (officialGap >= 3) return "やや妙味";
   if (officialGap <= -3) return "やや過熱";
   return "概ね妥当";
+}
+
+function getSignalInsight(params: {
+  horse: Horse;
+  profile: ScenarioProfile;
+  officialImplied: number;
+  expertImplied: number;
+  simWinRate: number;
+  officialGap: number;
+  expertGap: number;
+  marketExpertGap: number;
+  officialRank: number;
+  expertRank: number;
+  abilityRank: number;
+  fieldSize: number;
+  condition: RaceCondition;
+}): SignalInsight {
+  const signalLabel = getSignalLabel(params.simWinRate, params.officialImplied, params.expertImplied);
+
+  if (signalLabel !== "市場注目") {
+    return {
+      signalLabel,
+      signalDetailLabel: null,
+      signalReason: null,
+    };
+  }
+
+  return {
+    signalLabel,
+    ...getMarketFocusDetail(params),
+  };
 }
 
 export function buildRaceAnalysisRows(
@@ -457,9 +589,20 @@ export function buildRaceAnalysisRows(
       .map((horse, index) => [horse.id, index + 1])
   );
 
+  const abilityRankMap = new Map(
+    [...horses]
+      .sort(
+        (a, b) =>
+          (profileById.get(b.id)?.abilityScore ?? getBaseAbilityScore(b)) -
+          (profileById.get(a.id)?.abilityScore ?? getBaseAbilityScore(a))
+      )
+      .map((horse, index) => [horse.id, index + 1])
+  );
+
   return horses
     .map((horse) => {
       const result = resultById.get(horse.id);
+      const profile = profileById.get(horse.id) ?? getScenarioProfile(horse, course, condition);
       const simWinRate = round1(result?.winCount ?? 0);
       const officialImplied = calculateOfficialImpliedProbability(horse.realOdds);
       const expertImplied = round1((calculateExpertSignal(horse) / totalExpertSignal) * 100);
@@ -467,28 +610,48 @@ export function buildRaceAnalysisRows(
       const expertGap = round1(simWinRate - expertImplied);
       const marketExpertGap = round1(expertImplied - officialImplied);
       const fairOdds = calculateFairOdds(simWinRate);
+      const officialRank = officialRankMap.get(horse.id) ?? horses.length;
+      const expertRank = expertRankMap.get(horse.id) ?? horses.length;
+      const abilityRank = abilityRankMap.get(horse.id) ?? horses.length;
+      const signalInsight = getSignalInsight({
+        horse,
+        profile,
+        officialImplied,
+        expertImplied,
+        simWinRate,
+        officialGap,
+        expertGap,
+        marketExpertGap,
+        officialRank,
+        expertRank,
+        abilityRank,
+        fieldSize: horses.length,
+        condition,
+      });
 
       return {
         horseId: horse.id,
         name: horse.name,
         gateNumber: horse.gateNumber,
         jockey: horse.jockey,
-        abilityScore: profileById.get(horse.id)?.abilityScore ?? getBaseAbilityScore(horse),
+        abilityScore: profile.abilityScore,
         simWinRate,
         bestTime: round1(result?.bestTime ?? 0),
         fairOdds,
         officialOdds: horse.realOdds ?? null,
         officialImplied,
-        officialRank: officialRankMap.get(horse.id) ?? horses.length,
+        officialRank,
         expertOdds: horse.expertOdds ?? horse.simulatedOdds ?? calculateFairOdds(expertImplied),
         expertImplied,
-        expertRank: expertRankMap.get(horse.id) ?? horses.length,
+        expertRank,
         buzzShare: crowdWinMap.get(horse.id) ?? 0,
         favoriteCount: horse.favoriteCount ?? 0,
         officialGap,
         expertGap,
         marketExpertGap,
-        signalLabel: getSignalLabel(simWinRate, officialImplied, expertImplied),
+        signalLabel: signalInsight.signalLabel,
+        signalDetailLabel: signalInsight.signalDetailLabel,
+        signalReason: signalInsight.signalReason,
         horse,
       };
     })

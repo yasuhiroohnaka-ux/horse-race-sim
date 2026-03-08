@@ -36,6 +36,9 @@ interface SimulationResultsProps {
 function getSignalTone(label: string): string {
   switch (label) {
     case "市場注目":
+    case "市場先行":
+    case "能力漏れ注目":
+    case "条件替わり注目":
       return "text-amber-700 bg-amber-50";
     case "市場盲点":
     case "プロ先行妙味":
@@ -136,7 +139,9 @@ export function SimulationResults({
             />
           </p>
           <p className="mt-1 text-base font-bold text-slate-900">{riskyFavorite?.name ?? "-"}</p>
+          <p className="mt-1 text-xs font-semibold text-amber-700">{riskyFavorite?.signalDetailLabel ?? "市場注目"}</p>
           <p className="mt-1 text-xs text-slate-600">公式 {riskyFavorite?.officialImplied?.toFixed(1) ?? "-"}% に対し試走 {riskyFavorite?.simWinRate?.toFixed(1) ?? "-"}%</p>
+          <p className="mt-1 text-[11px] leading-5 text-slate-500">{riskyFavorite?.signalReason ?? "市場注目の理由は集計中です。"}</p>
         </div>
         <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
           <p className="text-[11px] font-semibold tracking-wide text-emerald-600">
@@ -276,10 +281,10 @@ export function SimulationResults({
                   <td className="px-2 py-2 text-right text-slate-600">{row.buzzShare.toFixed(1)}%</td>
                   <td className="px-2 py-2 text-center">
                     <span
-                      title={getSignalDescription(row.signalLabel)}
-                      className={`inline-flex rounded-full px-3 py-1 font-semibold ${getSignalTone(row.signalLabel)}`}
+                      title={getSignalDescription(row.signalDetailLabel ?? row.signalLabel, row.signalReason)}
+                      className={`inline-flex rounded-full px-3 py-1 font-semibold ${getSignalTone(row.signalDetailLabel ?? row.signalLabel)}`}
                     >
-                      {row.signalLabel}
+                      {row.signalDetailLabel ?? row.signalLabel}
                     </span>
                   </td>
                 </tr>
