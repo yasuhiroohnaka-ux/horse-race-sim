@@ -1,6 +1,6 @@
-﻿import { Horse } from "./types";
+import { Horse } from "./types";
 import { getDefaultHorses as getLegacyDefaultHorses } from "./raceData";
-import { GENERATED_WEEKLY_HORSES_MAP } from "./generatedRaceSchedule";
+import { GENERATED_ARCHIVED_RACES, GENERATED_WEEKLY_HORSES_MAP, type GeneratedHorseSeed } from "./generatedRaceSchedule";
 import { GENERATED_DRAW_OVERRIDES } from "./generatedDrawOverrides";
 import { applyNetkeibaRatings } from "./netkeibaRatings";
 
@@ -12,42 +12,51 @@ function normalizeName(name: string): string {
   return String(name ?? "").toLowerCase().replace(/[\s　・･\-_.]/g, "");
 }
 
+function mapGeneratedHorse(courseId: string, h: GeneratedHorseSeed, index: number): Horse {
+  return enrichHorse(courseId, {
+    id: h.id,
+    gateNumber: h.gateNumber > 0 ? h.gateNumber : index + 1,
+    name: h.name,
+    jockey: h.jockey || "未定",
+    trainer: h.trainer,
+    speed: h.speed,
+    stamina: h.stamina,
+    power: h.power,
+    guts: h.guts,
+    runningStyle: h.runningStyle,
+    favoriteCount: h.favoriteCount,
+    xBuzzScore: h.xBuzzScore,
+    predictionCount: h.predictionCount,
+    simulatedOdds: 0,
+    realOdds: h.realOdds,
+    oddsSource: h.oddsSource,
+    sex: h.sex ?? "M",
+    weight: Number.isFinite(h.weight) ? h.weight : 57,
+    condition: h.condition ?? 5,
+    trainingScore: h.trainingScore ?? 0,
+    recentFormScore: h.recentFormScore ?? 0,
+    recentAverageFinish: h.recentAverageFinish ?? 0,
+    recentTimeIndex: h.recentTimeIndex ?? 0,
+    lastRaceGradeScore: h.lastRaceGradeScore ?? 2,
+    lastRaceGradeLabel: h.lastRaceGradeLabel ?? "OP",
+    lastRaceDistance: h.lastRaceDistance ?? 0,
+    distanceChange: h.distanceChange ?? 0,
+  });
+}
+
 export function getDefaultHorses(courseId: string): Horse[] {
   const generated = GENERATED_WEEKLY_HORSES_MAP[courseId];
 
   if (generated && generated.length > 0) {
     return generated
-      .map((h, i) =>
-        enrichHorse(courseId, {
-          id: h.id,
-          gateNumber: h.gateNumber > 0 ? h.gateNumber : i + 1,
-          name: h.name,
-          jockey: h.jockey || "未定",
-          trainer: h.trainer,
-          speed: h.speed,
-          stamina: h.stamina,
-          power: h.power,
-          guts: h.guts,
-          runningStyle: h.runningStyle,
-          favoriteCount: h.favoriteCount,
-          xBuzzScore: h.xBuzzScore,
-          predictionCount: h.predictionCount,
-          simulatedOdds: 0,
-          realOdds: h.realOdds,
-          oddsSource: h.oddsSource,
-          sex: h.sex ?? "M",
-          weight: Number.isFinite(h.weight) ? h.weight : 57,
-          condition: h.condition ?? 5,
-          trainingScore: h.trainingScore ?? 0,
-          recentFormScore: h.recentFormScore ?? 0,
-          recentAverageFinish: h.recentAverageFinish ?? 0,
-          recentTimeIndex: h.recentTimeIndex ?? 0,
-          lastRaceGradeScore: h.lastRaceGradeScore ?? 2,
-          lastRaceGradeLabel: h.lastRaceGradeLabel ?? "OP",
-          lastRaceDistance: h.lastRaceDistance ?? 0,
-          distanceChange: h.distanceChange ?? 0
-        })
-      )
+      .map((h, i) => mapGeneratedHorse(courseId, h, i))
+      .sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
+  }
+
+  const generatedArchived = GENERATED_ARCHIVED_RACES.find((race) => race.courseId === courseId);
+  if (generatedArchived?.horses?.length) {
+    return generatedArchived.horses
+      .map((h, i) => mapGeneratedHorse(courseId, h, i))
       .sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
   }
 
@@ -83,7 +92,7 @@ export function getDefaultHorses(courseId: string): Horse[] {
         lastRaceGradeLabel: h.lastRaceGradeLabel ?? "OP",
         lastRaceDistance: h.lastRaceDistance ?? 0,
         distanceChange: h.distanceChange ?? 0,
-        jockey: h.jockey ?? "未定"
+        jockey: h.jockey ?? "未定",
       });
     })
     .sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));

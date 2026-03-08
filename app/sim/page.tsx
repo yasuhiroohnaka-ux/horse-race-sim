@@ -96,6 +96,8 @@ function SimulatorContent() {
 
     let cancelled = false;
     const currentCourseId = condition.courseId;
+    const currentCourse = COURSES.find((course) => course.id === currentCourseId);
+    if (currentCourse?.archived) return;
 
     const refreshNetkeibaOdds = async () => {
       try {
@@ -131,7 +133,6 @@ function SimulatorContent() {
 
         setHorses((previous) => {
           let changed = false;
-          const currentCourse = COURSES.find((entry) => entry.id === currentCourseId);
           const updated = previous.map((horse) => {
             let nextHorse = horse;
             let touched = false;
@@ -417,5 +418,4 @@ function SimulatorContent() {
     </div>
   );
 }
-
 

@@ -2,7 +2,9 @@
 
 on:
   schedule:
-    # JST: Mon 10:00 / Wed 12:00 / Thu 12:00 / Thu 15:00 / Fri 10:00 / Sat 15:00 / Sun 15:00 / Sun 16:00
+    # JST: Sun 09:00 / Mon 09:00 / Mon 10:00 / Wed 12:00 / Thu 12:00 / Thu 15:00 / Fri 10:00 / Sat 15:00 / Sun 15:00 / Sun 16:00
+    - cron: "0 0 * * 0"
+    - cron: "0 0 * * 1"
     - cron: "0 1 * * 1"
     - cron: "0 3 * * 3"
     - cron: "0 3 * * 4"
@@ -14,7 +16,7 @@ on:
   workflow_dispatch:
     inputs:
       stage:
-        description: "Optional manual stage (mon_10, wed_12, thu_12, thu_15, fri_10, sat_15, sun_15, sun_16)"
+        description: "Optional manual stage (sun_09, mon_09, mon_10, wed_12, thu_12, thu_15, fri_10, sat_15, sun_15, sun_16)"
         required: false
         type: string
 

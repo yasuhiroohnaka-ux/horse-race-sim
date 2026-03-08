@@ -1,5 +1,5 @@
 ﻿import { Course } from "./types";
-import { GENERATED_WEEKLY_RACES } from "./generatedRaceSchedule";
+import { GENERATED_ARCHIVED_RACES, GENERATED_WEEKLY_RACES } from "./generatedRaceSchedule";
 export type { Course };
 
 const INNER_OUTER_BY_TRACK: Record<string, number> = {
@@ -81,6 +81,28 @@ function buildActiveCourses(): Course[] {
   }));
 }
 
+function buildGeneratedArchivedCourses(): Course[] {
+  return GENERATED_ARCHIVED_RACES.map((race) => ({
+    id: race.courseId,
+    name: `${race.venue} ${surfaceLabel(race.surface)} ${race.distance}m (${race.label})`,
+    distance: race.distance,
+    surface: race.surface,
+    straightLength: race.straightLength,
+    hashtag: race.hashtag,
+    archived: true,
+    defaultBias: {
+      innerOuter: INNER_OUTER_BY_TRACK[race.venueKey] ?? 0,
+      frontBack: FRONT_BACK_BY_TRACK[race.venueKey] ?? 0,
+    },
+    segments: buildSegments(race.distance, race.straightLength),
+  }));
+}
+
+function uniqueCourses(courses: Course[]): Course[] {
+  const byId = new Map(courses.map((course) => [course.id, course]));
+  return [...byId.values()];
+}
+
 export const ACTIVE_COURSES = buildActiveCourses();
-export const ARCHIVED_COURSES = ARCHIVED_COURSE_LIST;
+export const ARCHIVED_COURSES = uniqueCourses([...buildGeneratedArchivedCourses(), ...ARCHIVED_COURSE_LIST]);
 export const COURSES: Course[] = [...ACTIVE_COURSES, ...ARCHIVED_COURSES];

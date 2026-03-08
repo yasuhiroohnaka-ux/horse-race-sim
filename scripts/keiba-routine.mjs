@@ -33,6 +33,8 @@ function isoDate(d) {
 function detectStageFromJst(now) {
   const day = now.getDay();
   const hour = now.getHours();
+  if (day === 0 && hour === 9) return "sun_09";
+  if (day === 1 && hour === 9) return "mon_09";
   if (day === 1 && hour === 10) return "mon_10";
   if (day === 3 && hour === 12) return "wed_12";
   if (day === 4 && hour === 12) return "thu_12";
@@ -373,6 +375,30 @@ async function handleMonday10(now) {
   await publishOrQueuePost("mon_10", "今週の重賞レースへ切替し、出馬表の基礎データを自動更新しました。");
 }
 
+async function handleNextDayReview(day, stage) {
+  await runNodeScript("scripts/update-race-results.mjs", [`--day=${day}`]);
+  await runNodeScript("scripts/sync-race-schedule.mjs");
+
+  const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { races: [] } });
+  const state = await readJson(STATE_PATH, {});
+  state.reviewPosts = state.reviewPosts || {};
+
+  const reviewedRaces = (weekly.currentWeek?.races || []).filter(
+    (race) => race.day === day && race.result?.winnerHorseName && race.review?.xPostText
+  );
+
+  for (const race of reviewedRaces) {
+    const key = `${stage}:${race.raceId || race.courseId}`;
+    if (state.reviewPosts[key]) continue;
+    await publishOrQueuePost(key, race.review.xPostText);
+    state.reviewPosts[key] = new Date().toISOString();
+  }
+
+  state.lastResultReviewRun = state.lastResultReviewRun || {};
+  state.lastResultReviewRun[stage] = new Date().toISOString();
+  await writeJson(STATE_PATH, state);
+}
+
 async function handleTraining(stage) {
   await runNodeScript("scripts/weekly-keiba-update.mjs", ["--force"]);
   const trainingRaw = await fs.readFile(path.join(ROOT, "lib", "generatedTrainingData.ts"), "utf8");
@@ -563,6 +589,12 @@ async function main() {
   switch (stage) {
     case "mon_10":
       await handleMonday10(now);
+      break;
+    case "sun_09":
+      await handleNextDayReview("Sat", stage);
+      break;
+    case "mon_09":
+      await handleNextDayReview("Sun", stage);
       break;
     case "wed_12":
     case "thu_12":
