@@ -364,7 +364,7 @@ function SimulatorContent() {
           <h1 className="text-4xl font-black tracking-[0.12em] text-white md:text-6xl">KEIBA GAP LAB</h1>
           <p className="mt-3 text-sm font-semibold tracking-[0.2em] text-slate-300 md:text-base">能力と人気の乖離を見抜く</p>
           <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-300">
-            今週の重賞だけを対象に、能力、血統適性、コース形状、馬場、天候、風、展開を織り込んで100回試走します。
+            今週のG1-G3・リステッド・オープンを対象に、能力、血統適性、コース形状、馬場、天候、風、展開を織り込んで100回試走します。
             その上で、公式オッズ、俺プロ由来のガチ勢オッズ、評判指数を並べて、人気先行と妙味を切り分けます。
           </p>
           {isArchive && (

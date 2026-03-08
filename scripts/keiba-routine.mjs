@@ -316,7 +316,7 @@ function pickTanpukuPair(race, includeBodyWeight = false, applyDraw = true) {
 }
 
 function buildPackedOvervaluedText(day, overvalued, maxChars = 280) {
-  const prefix = `${day}重賞 過大評価馬: `;
+  const prefix = `${day}対象レース 過大評価馬: `;
   if (!overvalued || overvalued.length === 0) return `${prefix}該当なし`;
 
   const parts = [];
@@ -372,7 +372,7 @@ async function handleMonday10(now) {
   state.drawConfirmedAt = null;
   await writeJson(STATE_PATH, state);
 
-  await publishOrQueuePost("mon_10", "今週の重賞レースへ切替し、出馬表の基礎データを自動更新しました。");
+  await publishOrQueuePost("mon_10", "今週の対象レースへ切替し、出馬表の基礎データを自動更新しました。");
 }
 
 async function handleNextDayReview(day, stage) {
@@ -440,7 +440,7 @@ async function handleRecommendation(day, stage) {
   const best = pickBestHorse(weekly.currentWeek?.races || [], day, includeBodyWeight, applyDraw);
 
   if (!best) {
-    console.log(`No graded race for ${day}, skip posting.`);
+    console.log(`No target race for ${day}, skip posting.`);
     return;
   }
 
@@ -459,7 +459,7 @@ async function handleRecommendation(day, stage) {
 
   await publishOrQueuePost(
     stage,
-    `${day}重賞おすすめ: ${horse.name} (${race.label}) / score=${best.score.toFixed(1)} / 人気=${horse.predictionCount} / 想定オッズ=${horse.realOdds}\n過小評価馬(全頭): ${undervaluedText}`
+    `${day}対象レースおすすめ: ${horse.name} (${race.label}) / score=${best.score.toFixed(1)} / 人気=${horse.predictionCount} / 想定オッズ=${horse.realOdds}\n過小評価馬(全頭): ${undervaluedText}`
   );
 
   await publishOrQueuePost(`${stage}_overvalued`, overvaluedText);
@@ -469,7 +469,7 @@ async function handleRecommendation(day, stage) {
     const valuePick = tanpuku.valuePick;
     await publishOrQueuePost(
       `${stage}_tanpuku`,
-      `${day}重賞 単複おすすめ: 勝率重視=${winPick.horse.name}(勝率${(winPick.winProb * 100).toFixed(1)}%) / 回収率重視=${valuePick.horse.name}(単回収${valuePick.tanRoi.toFixed(1)}% 複回収${valuePick.fukuRoi.toFixed(1)}% 勝率${(valuePick.winProb * 100).toFixed(1)}%)`
+      `${day}対象レース 単複おすすめ: 勝率重視=${winPick.horse.name}(勝率${(winPick.winProb * 100).toFixed(1)}%) / 回収率重視=${valuePick.horse.name}(単回収${valuePick.tanRoi.toFixed(1)}% 複回収${valuePick.fukuRoi.toFixed(1)}% 勝率${(valuePick.winProb * 100).toFixed(1)}%)`
     );
 
     const weekOf = weekly.currentWeek?.weekOf || isoDate(startOfWeekMonday(jstNow()));

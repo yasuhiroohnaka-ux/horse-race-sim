@@ -39,8 +39,16 @@ const SURFACE_LABEL_TO_KEY = {
 const GRADE_MAP = {
   GI: "G1",
   GII: "G2",
-  GIII: "G3"
+  GIII: "G3",
+  LISTED: "L",
+  OPEN: "OP",
+  OP: "OP",
+  L: "L"
 };
+
+const TARGET_GRADES = new Set(["G1", "G2", "G3", "L", "OP"]);
+const MOBILE_RACE_LIST_UA =
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
 
 function jstNow() {
   return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Tokyo" }));
@@ -56,7 +64,10 @@ function startOfWeekMonday(date) {
 }
 
 function isoDate(date) {
-  return date.toISOString().slice(0, 10);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function clamp(value, min, max) {
@@ -92,11 +103,14 @@ function normalizeName(value) {
   return normalizeSpace(value).toLowerCase().replace(/[\s　・･\-_.]/g, "");
 }
 
-async function fetchText(url) {
+async function fetchText(url, init = {}) {
+  const initHeaders = init.headers && typeof init.headers === "object" ? init.headers : {};
   const res = await fetch(url, {
+    ...init,
     headers: {
       "user-agent": "horse-race-sim-bot/2.0",
-      accept: "text/html,application/xml,text/xml,*/*"
+      accept: "text/html,application/xml,text/xml,*/*",
+      ...initHeaders
     },
     cache: "no-store"
   });
@@ -121,14 +135,39 @@ async function fetchText(url) {
 }
 
 function parseGrade(shutubaHtml) {
-  const title = normalizeSpace(shutubaHtml.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? "").toUpperCase();
+  const titleRaw = normalizeSpace(shutubaHtml.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? "");
+  const title = titleRaw.toUpperCase();
   if (title.includes("(G1)")) return "G1";
   if (title.includes("(G2)")) return "G2";
   if (title.includes("(G3)")) return "G3";
+  if (/(^|\s|\()(L|LISTED)(\s|\)|$)/i.test(title)) return "L";
+  if (/(^|\s|\()(OP|OPEN)(\s|\)|$)/i.test(title) || /オープン/.test(titleRaw)) return "OP";
   const iconRaw = shutubaHtml.match(/Icon_GradeType[^>]*>([^<]+)</i)?.[1] ?? "";
   const icon = normalizeSpace(iconRaw).toUpperCase();
   if (GRADE_MAP[icon]) return GRADE_MAP[icon];
   return null;
+}
+
+function yyyymmddFromDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}${month}${day}`;
+}
+
+function extractRaceIds(raceListHtml) {
+  const unique = new Set();
+  for (const m of String(raceListHtml).matchAll(/race_id=(\d{12})/g)) {
+    unique.add(m[1]);
+  }
+  return [...unique];
+}
+
+function extractActiveRaceListSection(raceListHtml, dateYmd) {
+  const sections = String(raceListHtml).split('<div class="RaceListDayWrap"').slice(1);
+  const matching = sections.filter((section) => section.includes(`data-kaisaidate="${dateYmd}"`));
+  const visible = matching.find((section) => !section.startsWith(" style=display:none"));
+  return visible ?? matching[0] ?? "";
 }
 
 function raceDateFromSeed(seed) {
@@ -145,9 +184,12 @@ function parseRaceMeta(raceId, shutubaHtml, dayLabel) {
   if (!venue) return null;
 
   const label = normalizeSpace(shutubaHtml.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? "").split("|")[0];
-  const cleanedLabel = label.replace(/\(G[123]\)/i, "").trim();
+  const cleanedLabel = label
+    .replace(/\((?:G[123]|L|OP)\)/gi, "")
+    .replace(/\s*出馬表\s*$/i, "")
+    .trim();
   const grade = parseGrade(shutubaHtml);
-  if (!cleanedLabel || !grade) return null;
+  if (!cleanedLabel || !grade || !TARGET_GRADES.has(grade)) return null;
 
   const raceData = normalizeSpace(shutubaHtml.match(/class="RaceData01"[^>]*>([\s\S]*?)<\/div>/i)?.[1] ?? "");
   const raceNo = Number.parseInt(raceId.slice(-2), 10);
@@ -189,9 +231,14 @@ function parseHorseSeedEntries(shutubaHtml) {
   const rows = [...shutubaHtml.matchAll(/<tr[^>]*class="[^"]*HorseList[^"]*"[^>]*>([\s\S]*?)<\/tr>/g)].map((m) => m[1]);
   const entries = [];
 
-  for (const row of rows) {
-    const gateNumber = Number.parseInt(row.match(/class="Umaban\d+[^"]*"[^>]*>\s*(\d{1,2})\s*<\/td>/i)?.[1] ?? "", 10);
-    if (!(gateNumber > 0)) continue;
+  for (const [index, row] of rows.entries()) {
+    const parsedGateNumber = Number.parseInt(
+      row.match(/class="Umaban\d+[^"]*"[^>]*>\s*(\d{1,2})\s*<\/td>/i)?.[1] ??
+        row.match(/class="Umaban[^"]*"[^>]*>\s*(\d{1,2})\s*<\/td>/i)?.[1] ??
+        "",
+      10
+    );
+    const gateNumber = Number.isFinite(parsedGateNumber) && parsedGateNumber > 0 ? parsedGateNumber : index + 1;
 
     const horseUrl = row.match(/\/horse\/(\d+)\/?/i)?.[1] ?? "";
     const horseNameRaw = row.match(/title="([^"]+)"/i)?.[1] ?? row.match(/\/horse\/\d+\/?[^>]*>([^<]+)</i)?.[1] ?? "";
@@ -504,15 +551,34 @@ function parseRaceSeedFromJraCname(cname) {
 }
 
 async function fetchCurrentWeekRaceSeeds() {
-  const html = await fetchText("https://www.jra.go.jp/keiba/thisweek/");
-  const cnames = [...html.matchAll(/accessD\.html\?CNAME=(pw01dde01[^"']+)/g)].map((m) => m[1]);
   const unique = new Map();
+  const weekStart = startOfWeekMonday(jstNow());
+  const raceDates = [5, 6].map((offset) => {
+    const d = new Date(weekStart);
+    d.setDate(d.getDate() + offset);
+    return d;
+  });
 
-  for (const cname of cnames) {
-    const seed = parseRaceSeedFromJraCname(cname);
-    if (!seed) continue;
-    if (!unique.has(seed.raceId)) {
-      unique.set(seed.raceId, seed);
+  for (const raceDate of raceDates) {
+    const dateIso = isoDate(raceDate);
+    const dateYmd = yyyymmddFromDate(raceDate);
+    const raceListUrl = `https://race.sp.netkeiba.com/?pid=race_list&kaisai_date=${dateYmd}`;
+    const raceListHtml = await fetchText(raceListUrl, {
+      headers: {
+        "user-agent": MOBILE_RACE_LIST_UA
+      }
+    });
+    const activeSection = extractActiveRaceListSection(raceListHtml, dateYmd);
+    const raceIds = extractRaceIds(activeSection);
+
+    for (const raceId of raceIds) {
+      if (!unique.has(raceId)) {
+        unique.set(raceId, {
+          raceId,
+          dateIso,
+          dayLabel: dayLabelFromDate(dateIso)
+        });
+      }
     }
   }
 
@@ -594,9 +660,9 @@ async function buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate) {
 
 async function buildRace(seed) {
   const shutubaHtml = await fetchText(`https://race.netkeiba.com/race/shutuba.html?race_id=${seed.raceId}`);
-  const shutubaPastHtml = await fetchText(`https://race.netkeiba.com/race/shutuba_past.html?race_id=${seed.raceId}`);
   const meta = parseRaceMeta(seed.raceId, shutubaHtml, seed.dayLabel);
   if (!meta) return null;
+  const shutubaPastHtml = await fetchText(`https://race.netkeiba.com/race/shutuba_past.html?race_id=${seed.raceId}`);
   const raceDate = raceDateFromSeed(seed);
   const horses = await buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate);
   if (horses.length === 0) return null;
@@ -624,7 +690,7 @@ async function main() {
   const races = built.filter(Boolean).sort((a, b) => a.raceId.localeCompare(b.raceId));
 
   if (races.length === 0) {
-    throw new Error("No graded races found for current week; skip write to avoid wiping data.");
+    throw new Error("No target races found for current week; skip write to avoid wiping data.");
   }
 
   const prev = await readJson(WEEKLY_RACES_PATH, { currentWeek: null, archives: [] });

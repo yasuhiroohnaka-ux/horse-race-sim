@@ -32,6 +32,7 @@ const ARCHIVED_COURSE_LIST: Course[] = [
   {
     id: "nakayama-turf-1800",
     name: "中山 芝 1800m (中山記念)",
+    grade: "G2",
     distance: 1800,
     surface: "Turf",
     straightLength: 310,
@@ -43,6 +44,7 @@ const ARCHIVED_COURSE_LIST: Course[] = [
   {
     id: "nakayama-turf-1200",
     name: "中山 芝 1200m (オーシャンS)",
+    grade: "G3",
     distance: 1200,
     surface: "Turf",
     straightLength: 310,
@@ -54,6 +56,7 @@ const ARCHIVED_COURSE_LIST: Course[] = [
   {
     id: "hanshin-turf-1600",
     name: "阪神 芝 1600m (チューリップ賞)",
+    grade: "G2",
     distance: 1600,
     surface: "Turf",
     straightLength: 473.6,
@@ -65,6 +68,7 @@ const ARCHIVED_COURSE_LIST: Course[] = [
   {
     id: "tokyo-dirt-1600",
     name: "東京 ダート 1600m (フェブラリーS)",
+    grade: "G1",
     distance: 1600,
     surface: "Dirt",
     straightLength: 501.6,
@@ -102,6 +106,7 @@ function buildActiveCourses(): Course[] {
   return GENERATED_WEEKLY_RACES.map((race) => ({
     id: race.courseId,
     name: `${race.venue} ${surfaceLabel(race.surface)} ${race.distance}m (${race.label})`,
+    grade: race.grade,
     distance: race.distance,
     surface: race.surface,
     straightLength: race.straightLength,
@@ -118,6 +123,7 @@ function buildGeneratedArchivedCourses(): Course[] {
   return GENERATED_ARCHIVED_RACES.map((race) => ({
     id: race.courseId,
     name: `${race.venue} ${surfaceLabel(race.surface)} ${race.distance}m (${race.label})`,
+    grade: race.grade,
     distance: race.distance,
     surface: race.surface,
     straightLength: race.straightLength,
