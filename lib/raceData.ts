@@ -6,6 +6,10 @@ export interface ArchivedRace {
     date: string;
     hashtag: string;
     horses: Horse[];
+    review?: {
+        summary: string;
+        xPostText: string;
+    };
 }
 
 // ============================================================
@@ -53,6 +57,14 @@ const STYLE_SPLIT: Record<string, { sp: number; st: number }> = {
 
 function clamp(v: number, min: number, max: number) {
     return Math.max(min, Math.min(max, v));
+}
+
+function buildArchivedReview(label: string, summary: string, hashtag: string) {
+    const safeHashtag = hashtag.startsWith('#') ? hashtag : `#${hashtag}`;
+    return {
+        summary,
+        xPostText: `【${label} 回顧】${summary} ${safeHashtag}`.trim(),
+    };
 }
 
 /** オッズ＋脚質ベースでHorse配列の SP/ST を一括算出 */
@@ -169,6 +181,11 @@ export const ARCHIVED_RACES: ArchivedRace[] = [
         date: '2026-03-01',
         hashtag: '#中山記念',
         horses: NAKAYAMA_KINEN_HORSES,
+        review: buildArchivedReview(
+            '中山記念 2026',
+            'シミュレーション通り能力はレーベンスティールで間違いなかった。セイウンハーデスに逃げはやはり向いていない。エコロヴァルツを見極め人気馬にしてしまったのは痛恨。',
+            '#中山記念'
+        ),
     },
     {
         courseId: 'nakayama-turf-1200',
@@ -176,6 +193,11 @@ export const ARCHIVED_RACES: ArchivedRace[] = [
         date: '2026-02-28',
         hashtag: '#オーシャンS',
         horses: OCEAN_STAKES_HORSES,
+        review: buildArchivedReview(
+            'オーシャンS 2026',
+            '勝ったのはペアポルックス。妙味ありあたりにはあげておきたかった。実力的に不思議はない。ママコチャが見極め人気馬だったのはほんとうぎりぎり（4着）。',
+            '#オーシャンS'
+        ),
     },
     {
         courseId: 'hanshin-turf-1600',
@@ -183,6 +205,11 @@ export const ARCHIVED_RACES: ArchivedRace[] = [
         date: '2026-02-28',
         hashtag: '#チューリップ賞',
         horses: TULIP_SHO_HORSES,
+        review: buildArchivedReview(
+            'チューリップ賞 2026',
+            '勝ったのはタイセイボーグで見極め人気馬にしてしまい痛恨。まだまだこのサイトの推論エンジンを発展させなければならない。中の人の本命はアランカール。最低限か。',
+            '#チューリップ賞'
+        ),
     },
     {
         courseId: 'tokyo-dirt-1600',

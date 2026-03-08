@@ -292,7 +292,7 @@ function SimulatorContent() {
     const text = [
       `${selectedCourse.name} 100回試走`,
       `勝ちやすい: ${strongest?.name ?? "-"} 試走${strongest?.simWinRate?.toFixed(1) ?? "-"}% / フェア${strongest?.fairOdds?.toFixed(1) ?? "-"}倍`,
-      `危険人気: ${riskyFavorite?.name ?? "-"} 公式${riskyFavorite?.officialImplied?.toFixed(1) ?? "-"}% > 試走${riskyFavorite?.simWinRate?.toFixed(1) ?? "-"}%`,
+      `見極め人気: ${riskyFavorite?.name ?? "-"} 公式${riskyFavorite?.officialImplied?.toFixed(1) ?? "-"}% > 試走${riskyFavorite?.simWinRate?.toFixed(1) ?? "-"}%`,
       `妙味候補: ${valueHorse?.name ?? "-"} 公式${valueHorse?.officialOdds?.toFixed(1) ?? "-"}倍 / ガチ勢${valueHorse?.expertOdds?.toFixed(1) ?? "-"}倍`,
       `公式vsガチ勢: ${disagreement?.name ?? "-"} 差${disagreement?.marketExpertGap?.toFixed(1) ?? "-"}pt`,
       `条件: ${groundLabels[condition.groundCondition]} / ${weatherLabels[condition.weather]} / ${windLabels[condition.windDirection]}${condition.windSpeed}m / ${paceLabels[condition.paceScenario]}`,

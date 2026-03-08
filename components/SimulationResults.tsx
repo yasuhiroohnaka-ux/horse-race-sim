@@ -28,8 +28,8 @@ interface SimulationResultsProps {
 
 function getSignalTone(label: string): string {
   switch (label) {
-    case "危険人気":
-      return "text-red-600 bg-red-50";
+    case "見極め人気":
+      return "text-amber-700 bg-amber-50";
     case "市場盲点":
     case "プロ先行妙味":
       return "text-emerald-700 bg-emerald-50";
@@ -95,8 +95,8 @@ export function SimulationResults({
           <p className="mt-1 text-base font-bold text-slate-900">{strongest?.name ?? "-"}</p>
           <p className="mt-1 text-xs text-slate-600">試走 {strongest?.simWinRate?.toFixed(1) ?? "-"}% / フェア {strongest?.fairOdds?.toFixed(1) ?? "-"}倍</p>
         </div>
-        <div className="rounded-2xl border border-red-100 bg-red-50 p-4">
-          <p className="text-[11px] font-semibold tracking-wide text-red-500">危険な人気馬</p>
+        <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
+          <p className="text-[11px] font-semibold tracking-wide text-amber-600">見極め人気馬</p>
           <p className="mt-1 text-base font-bold text-slate-900">{riskyFavorite?.name ?? "-"}</p>
           <p className="mt-1 text-xs text-slate-600">公式 {riskyFavorite?.officialImplied?.toFixed(1) ?? "-"}% に対し試走 {riskyFavorite?.simWinRate?.toFixed(1) ?? "-"}%</p>
         </div>

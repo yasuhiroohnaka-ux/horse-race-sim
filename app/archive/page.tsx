@@ -14,6 +14,8 @@ type LegacyArchiveCard = {
   label: string;
   date: string;
   hashtag: string;
+  reviewSummary?: string;
+  reviewPostText?: string;
   horses: { id: string; name: string; predictionCount: number }[];
   surfaceLabel: string;
   distance: number;
@@ -39,6 +41,8 @@ function buildLegacyCards(): LegacyArchiveCard[] {
       label: race.label,
       date: race.date,
       hashtag: race.hashtag,
+      reviewSummary: race.review?.summary,
+      reviewPostText: race.review?.xPostText,
       horses: race.horses.map((horse) => ({
         id: horse.id,
         name: horse.name,
@@ -157,6 +161,13 @@ function renderLegacyCard(race: LegacyArchiveCard) {
         </span>
       </div>
 
+      {race.reviewSummary ? (
+        <div className="mb-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+          <p className="text-sm font-bold text-slate-700">回顧</p>
+          <p className="mt-1 text-sm leading-6 text-slate-700">{race.reviewSummary}</p>
+        </div>
+      ) : null}
+
       <div className="mb-4">
         <h3 className="text-sm font-medium text-slate-600 mb-2">事前人気上位</h3>
         <div className="flex flex-wrap gap-3">
@@ -170,14 +181,25 @@ function renderLegacyCard(race: LegacyArchiveCard) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <p className="text-xs text-slate-400">{race.horses.length}頭</p>
-        <Link
-          href={`/sim?archive=${race.courseId}`}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition shadow hover:shadow-md"
-        >
-          この条件でシミュレーション
-        </Link>
+        <div className="flex items-center gap-2">
+          {race.reviewPostText ? (
+            <button
+              type="button"
+              onClick={() => openReviewPost(race.reviewPostText ?? "")}
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
+            >
+              回顧をX送信
+            </button>
+          ) : null}
+          <Link
+            href={`/sim?archive=${race.courseId}`}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition shadow hover:shadow-md"
+          >
+            この条件でシミュレーション
+          </Link>
+        </div>
       </div>
     </div>
   );

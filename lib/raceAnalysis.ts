@@ -419,7 +419,7 @@ function getSignalLabel(simWinRate: number, officialImplied: number, expertImpli
   const expertGap = simWinRate - expertImplied;
   const marketExpertGap = expertImplied - officialImplied;
 
-  if (officialGap <= -8 && officialImplied >= expertImplied) return "危険人気";
+  if (officialGap <= -8 && officialImplied >= expertImplied) return "見極め人気";
   if (officialGap >= 8 && marketExpertGap >= 2) return "プロ先行妙味";
   if (officialGap >= 8) return "市場盲点";
   if (expertGap <= -6 && marketExpertGap > 0) return "ガチ勢過熱";
