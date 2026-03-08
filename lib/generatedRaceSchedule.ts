@@ -27,6 +27,8 @@ export interface GeneratedHorseSeed {
   recentTimeIndex: number;
   lastRaceGradeScore: number;
   lastRaceGradeLabel: string;
+  lastRaceDistance: number;
+  distanceChange: number;
   condition: number;
 }
 
@@ -120,6 +122,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -5,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 2000,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -146,6 +150,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -3.3,
       "lastRaceGradeScore": 2,
       "lastRaceGradeLabel": "OP",
+      "lastRaceDistance": 1800,
+      "distanceChange": 0,
       "condition": 5
     },
     {
@@ -172,6 +178,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -0.4,
       "lastRaceGradeScore": 1.5,
       "lastRaceGradeLabel": "3Win",
+      "lastRaceDistance": 2000,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -198,6 +206,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0.8,
       "lastRaceGradeScore": 5,
       "lastRaceGradeLabel": "G1",
+      "lastRaceDistance": 2200,
+      "distanceChange": -400,
       "condition": 5
     },
     {
@@ -224,6 +234,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 2.6,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 2000,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -250,6 +262,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -0.4,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 2000,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -276,6 +290,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 2000,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -302,6 +318,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -0.9,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 2000,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -328,6 +346,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0.5,
       "lastRaceGradeScore": 5,
       "lastRaceGradeLabel": "G1",
+      "lastRaceDistance": 2200,
+      "distanceChange": -400,
       "condition": 5
     },
     {
@@ -354,6 +374,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0.7,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 2000,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -380,6 +402,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 1,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 2000,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -406,6 +430,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 4.4,
       "lastRaceGradeScore": 1.5,
       "lastRaceGradeLabel": "3Win",
+      "lastRaceDistance": 1600,
+      "distanceChange": 200,
       "condition": 5
     },
     {
@@ -432,6 +458,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0.7,
       "lastRaceGradeScore": 5,
       "lastRaceGradeLabel": "G1",
+      "lastRaceDistance": 2200,
+      "distanceChange": -400,
       "condition": 5
     },
     {
@@ -458,6 +486,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0.9,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 2000,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -484,6 +514,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0.7,
       "lastRaceGradeScore": 5,
       "lastRaceGradeLabel": "G1",
+      "lastRaceDistance": 2200,
+      "distanceChange": -400,
       "condition": 5
     },
     {
@@ -510,6 +542,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -1.8,
       "lastRaceGradeScore": 2,
       "lastRaceGradeLabel": "OP",
+      "lastRaceDistance": 2000,
+      "distanceChange": -200,
       "condition": 5
     }
   ],
@@ -523,10 +557,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 1,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 375,
+      "favoriteCount": 395,
       "xBuzzScore": 0,
       "predictionCount": 60,
-      "realOdds": 13,
+      "realOdds": 12.9,
       "oddsSource": "official",
       "speed": 90,
       "stamina": 85,
@@ -538,6 +572,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 1.1,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 2000,
+      "distanceChange": 0,
       "condition": 5
     },
     {
@@ -549,10 +585,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 2,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 72,
+      "favoriteCount": 78,
       "xBuzzScore": 0,
-      "predictionCount": 30,
-      "realOdds": 45.9,
+      "predictionCount": 32,
+      "realOdds": 43.2,
       "oddsSource": "official",
       "speed": 72,
       "stamina": 69,
@@ -564,6 +600,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -0.8,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 2000,
+      "distanceChange": 0,
       "condition": 5
     },
     {
@@ -575,10 +613,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 3,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 59,
+      "favoriteCount": 60,
       "xBuzzScore": 0,
       "predictionCount": 25,
-      "realOdds": 58.2,
+      "realOdds": 57.1,
       "oddsSource": "official",
       "speed": 76,
       "stamina": 79,
@@ -590,6 +628,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -2.9,
       "lastRaceGradeScore": 2.5,
       "lastRaceGradeLabel": "L",
+      "lastRaceDistance": 1600,
+      "distanceChange": 400,
       "condition": 5
     },
     {
@@ -601,7 +641,7 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 4,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 1779,
+      "favoriteCount": 1881,
       "xBuzzScore": 0,
       "predictionCount": 93,
       "realOdds": 3.2,
@@ -616,6 +656,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0.8,
       "lastRaceGradeScore": 4,
       "lastRaceGradeLabel": "G2",
+      "lastRaceDistance": 1800,
+      "distanceChange": 200,
       "condition": 5
     },
     {
@@ -627,10 +669,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 5,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 654,
+      "favoriteCount": 703,
       "xBuzzScore": 0,
       "predictionCount": 73,
-      "realOdds": 7.3,
+      "realOdds": 7.4,
       "oddsSource": "official",
       "speed": 85,
       "stamina": 84,
@@ -642,6 +684,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -0.9,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 2000,
+      "distanceChange": 0,
       "condition": 5
     },
     {
@@ -653,10 +697,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 6,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 3690,
+      "favoriteCount": 3874,
       "xBuzzScore": 0,
-      "predictionCount": 100,
-      "realOdds": 2.3,
+      "predictionCount": 99,
+      "realOdds": 2.4,
       "oddsSource": "official",
       "speed": 86,
       "stamina": 93,
@@ -668,6 +712,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 4.6,
       "lastRaceGradeScore": 5,
       "lastRaceGradeLabel": "G1",
+      "lastRaceDistance": 1600,
+      "distanceChange": 400,
       "condition": 5
     },
     {
@@ -681,8 +727,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 57,
       "favoriteCount": 23,
       "xBuzzScore": 0,
-      "predictionCount": 14,
-      "realOdds": 90.8,
+      "predictionCount": 15,
+      "realOdds": 89.4,
       "oddsSource": "official",
       "speed": 63,
       "stamina": 69,
@@ -694,6 +740,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -3,
       "lastRaceGradeScore": 0,
       "lastRaceGradeLabel": "Maiden",
+      "lastRaceDistance": 1800,
+      "distanceChange": 200,
       "condition": 5
     },
     {
@@ -705,10 +753,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 8,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 892,
+      "favoriteCount": 932,
       "xBuzzScore": 0,
-      "predictionCount": 78,
-      "realOdds": 5.9,
+      "predictionCount": 79,
+      "realOdds": 5.8,
       "oddsSource": "official",
       "speed": 87,
       "stamina": 82,
@@ -720,6 +768,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 1.8,
       "lastRaceGradeScore": 0,
       "lastRaceGradeLabel": "Maiden",
+      "lastRaceDistance": 2000,
+      "distanceChange": 0,
       "condition": 5
     },
     {
@@ -731,10 +781,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 9,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 128,
+      "favoriteCount": 135,
       "xBuzzScore": 0,
       "predictionCount": 44,
-      "realOdds": 26,
+      "realOdds": 25.3,
       "oddsSource": "official",
       "speed": 80,
       "stamina": 85,
@@ -746,6 +796,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0.8,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 2000,
+      "distanceChange": 0,
       "condition": 5
     },
     {
@@ -757,10 +809,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 10,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 193,
+      "favoriteCount": 204,
       "xBuzzScore": 0,
-      "predictionCount": 53,
-      "realOdds": 17.2,
+      "predictionCount": 54,
+      "realOdds": 16.9,
       "oddsSource": "official",
       "speed": 75,
       "stamina": 75,
@@ -772,6 +824,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -1.5,
       "lastRaceGradeScore": 0,
       "lastRaceGradeLabel": "Maiden",
+      "lastRaceDistance": 2000,
+      "distanceChange": 0,
       "condition": 5
     }
   ],
@@ -800,6 +854,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0.9,
       "lastRaceGradeScore": 2.5,
       "lastRaceGradeLabel": "L",
+      "lastRaceDistance": 1400,
+      "distanceChange": 0,
       "condition": 5
     },
     {
@@ -826,6 +882,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -1.7,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 1600,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -852,6 +910,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0.6,
       "lastRaceGradeScore": 2.5,
       "lastRaceGradeLabel": "L",
+      "lastRaceDistance": 1400,
+      "distanceChange": 0,
       "condition": 5
     },
     {
@@ -878,6 +938,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 1,
       "lastRaceGradeScore": 5,
       "lastRaceGradeLabel": "G1",
+      "lastRaceDistance": 1600,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -904,6 +966,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0.9,
       "lastRaceGradeScore": 2.5,
       "lastRaceGradeLabel": "L",
+      "lastRaceDistance": 1400,
+      "distanceChange": 0,
       "condition": 5
     },
     {
@@ -930,6 +994,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -5,
       "lastRaceGradeScore": 0,
       "lastRaceGradeLabel": "Maiden",
+      "lastRaceDistance": 1400,
+      "distanceChange": 0,
       "condition": 5
     },
     {
@@ -956,6 +1022,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 1.3,
       "lastRaceGradeScore": 2.5,
       "lastRaceGradeLabel": "L",
+      "lastRaceDistance": 1600,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -982,6 +1050,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 2.8,
       "lastRaceGradeScore": 0.5,
       "lastRaceGradeLabel": "1Win",
+      "lastRaceDistance": 1200,
+      "distanceChange": 200,
       "condition": 5
     },
     {
@@ -1008,6 +1078,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -0.7,
       "lastRaceGradeScore": 0.5,
       "lastRaceGradeLabel": "1Win",
+      "lastRaceDistance": 1400,
+      "distanceChange": 0,
       "condition": 5
     },
     {
@@ -1034,6 +1106,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -2.5,
       "lastRaceGradeScore": 5,
       "lastRaceGradeLabel": "G1",
+      "lastRaceDistance": 1600,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -1060,6 +1134,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 3.5,
       "lastRaceGradeScore": 0.5,
       "lastRaceGradeLabel": "1Win",
+      "lastRaceDistance": 1200,
+      "distanceChange": 200,
       "condition": 5
     },
     {
@@ -1086,6 +1162,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0,
       "lastRaceGradeScore": 0.5,
       "lastRaceGradeLabel": "1Win",
+      "lastRaceDistance": 1600,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -1112,6 +1190,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 0.9,
       "lastRaceGradeScore": 2.5,
       "lastRaceGradeLabel": "L",
+      "lastRaceDistance": 1600,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -1138,6 +1218,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 2.1,
       "lastRaceGradeScore": 2,
       "lastRaceGradeLabel": "OP",
+      "lastRaceDistance": 1200,
+      "distanceChange": 200,
       "condition": 5
     },
     {
@@ -1164,6 +1246,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -4.5,
       "lastRaceGradeScore": 5,
       "lastRaceGradeLabel": "G1",
+      "lastRaceDistance": 1600,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -1190,6 +1274,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": 1.2,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 1600,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -1216,6 +1302,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -0.3,
       "lastRaceGradeScore": 3,
       "lastRaceGradeLabel": "G3",
+      "lastRaceDistance": 1600,
+      "distanceChange": -200,
       "condition": 5
     },
     {
@@ -1242,6 +1330,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "recentTimeIndex": -0.3,
       "lastRaceGradeScore": 5,
       "lastRaceGradeLabel": "G1",
+      "lastRaceDistance": 1600,
+      "distanceChange": -200,
       "condition": 5
     }
   ]

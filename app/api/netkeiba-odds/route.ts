@@ -50,6 +50,7 @@ type ParsedPerformanceEntry = {
   recentTimeIndex: number | null;
   lastRaceGradeScore: number | null;
   lastRaceGradeLabel: string | null;
+  lastRaceDistance: number | null;
   averageRunSpeed: number | null;
 };
 
@@ -359,6 +360,7 @@ function parseShutubaPastEntries(shutubaPastHtml: string): ParsedPerformanceEntr
       return {
         finish: Number.isFinite(finish) && finish > 0 ? finish : null,
         gradeLabel,
+        distance,
         runSpeed,
       };
     });
@@ -391,6 +393,7 @@ function parseShutubaPastEntries(shutubaPastHtml: string): ParsedPerformanceEntr
       recentTimeIndex: null,
       lastRaceGradeScore: lastRaceGradeScore !== null ? Math.round(lastRaceGradeScore * 10) / 10 : null,
       lastRaceGradeLabel,
+      lastRaceDistance: runs[0]?.distance ?? null,
       averageRunSpeed: avgSpeed !== null ? Math.round(avgSpeed * 1000) / 1000 : null,
     });
   }
@@ -530,6 +533,7 @@ export async function GET(request: NextRequest) {
         recentTimeIndex?: number;
         lastRaceGradeScore?: number;
         lastRaceGradeLabel?: string;
+        lastRaceDistance?: number;
       }
     > = {};
     const weeklyHorseByGate = new Map(
@@ -580,6 +584,7 @@ export async function GET(request: NextRequest) {
           ...(entry.recentTimeIndex !== null ? { recentTimeIndex: entry.recentTimeIndex } : {}),
           ...(entry.lastRaceGradeScore !== null ? { lastRaceGradeScore: entry.lastRaceGradeScore } : {}),
           ...(entry.lastRaceGradeLabel ? { lastRaceGradeLabel: entry.lastRaceGradeLabel } : {}),
+          ...(entry.lastRaceDistance !== null ? { lastRaceDistance: entry.lastRaceDistance } : {}),
         };
       }
     } catch {
@@ -609,7 +614,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }
-
 
 
 

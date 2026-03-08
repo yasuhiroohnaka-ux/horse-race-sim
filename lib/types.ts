@@ -25,6 +25,8 @@ export interface Horse {
   recentTimeIndex?: number;
   lastRaceGradeScore?: number;
   lastRaceGradeLabel?: string;
+  lastRaceDistance?: number;
+  distanceChange?: number;
   condition?: number;
   weight?: number;
   sex?: HorseSex;

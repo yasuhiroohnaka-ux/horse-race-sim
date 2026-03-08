@@ -112,6 +112,71 @@ function getWeatherSeverity(condition: RaceCondition): number {
   }
 }
 
+function getDistanceShiftRaceBias(
+  course: Course,
+  condition: RaceCondition,
+  tightness: number,
+  distanceScale: number
+): number {
+  const sprintBias = clamp((1600 - course.distance) / 500, 0, 1);
+  const stayingBias = clamp((course.distance - 1800) / 800, 0, 1);
+  const straightBias = clamp((course.straightLength - 380) / 180, -1, 1);
+  const frontBias = clamp(condition.trackBias.frontBack / 5, -1, 1);
+
+  let bias =
+    stayingBias * 0.95 -
+    sprintBias * 0.9 +
+    straightBias * 0.25 -
+    tightness * 0.28 -
+    frontBias * 0.24 +
+    distanceScale * 0.24 +
+    getGroundSeverity(condition) * 0.32;
+
+  if (condition.paceScenario === "Fast") bias += 0.3;
+  if (condition.paceScenario === "Slow") bias -= 0.3;
+
+  return clamp(bias, -1.2, 1.2);
+}
+
+function getDistanceShiftAdjustment(
+  horse: Horse,
+  course: Course,
+  condition: RaceCondition,
+  tightness: number,
+  distanceScale: number
+): number {
+  const lastRaceDistance = Number(horse.lastRaceDistance ?? 0);
+  if (!(lastRaceDistance > 0)) return 0;
+
+  const distanceChangeRaw = Number.isFinite(Number(horse.distanceChange))
+    ? Number(horse.distanceChange)
+    : course.distance - lastRaceDistance;
+  if (Math.abs(distanceChangeRaw) < 100) return 0;
+
+  const changeUnits = clamp(distanceChangeRaw / 400, -1.25, 1.25);
+  const styleBias =
+    horse.runningStyle === "Nige"
+      ? -0.65
+      : horse.runningStyle === "Senko"
+        ? -0.25
+        : horse.runningStyle === "Sashi"
+          ? 0.25
+          : 0.55;
+  const staminaEdge = clamp((horse.stamina - horse.speed) / 18, -1.4, 1.4);
+  const recoveryEdge = clamp((horse.guts - 75) / 18, -0.8, 0.8);
+  const horseBias = clamp(styleBias + staminaEdge * 0.72 + recoveryEdge * 0.18, -1.4, 1.4);
+  const raceBias = getDistanceShiftRaceBias(course, condition, tightness, distanceScale);
+  const alignment = changeUnits * (horseBias * 0.75 + raceBias * 0.55);
+  const resilience = clamp(
+    ((horse.recentFormScore ?? 0) / 5) * 0.65 + (((horse.lastRaceGradeScore ?? 2) - 2) / 3) * 0.35,
+    -1,
+    1
+  );
+  const magnitudePenalty = Math.abs(changeUnits) * 1.05;
+
+  return clamp(alignment * 5.8 - magnitudePenalty + Math.abs(changeUnits) * resilience * 1.8, -8, 8);
+}
+
 export function calculateExpertSignal(horse: Horse): number {
   const favorite = Math.max(0, horse.favoriteCount ?? 0);
   const buzz = Math.max(0, horse.xBuzzScore ?? 0);
@@ -188,6 +253,7 @@ export function getResolvedTraitScores(
     horse.guts * 0.14 +
     horse.power * 0.1 +
     (distanceScale > 0.55 ? backBoost * 4 : frontBoost * 4);
+  const distanceShiftAdjustment = getDistanceShiftAdjustment(horse, course, condition, tightness, distanceScale);
 
   const groundDerived =
     course.surface === "Dirt"
@@ -217,7 +283,7 @@ export function getResolvedTraitScores(
 
   const pedigree = horse.pedigreeScore ?? round1(clamp(pedigreeDerived + groundSeverity * 3 + weatherSeverity * 2, 45, 99));
   const courseFit = horse.courseFitScore ?? round1(clamp(courseDerived + tightness * (frontBoost * 6 - backBoost * 4), 45, 99));
-  const distanceFit = horse.distanceFitScore ?? round1(clamp(distanceDerived, 45, 99));
+  const distanceFit = horse.distanceFitScore ?? round1(clamp(distanceDerived + distanceShiftAdjustment, 45, 99));
   const groundFit =
     horse.groundFitScore ??
     round1(

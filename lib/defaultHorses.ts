@@ -43,7 +43,9 @@ export function getDefaultHorses(courseId: string): Horse[] {
           recentAverageFinish: h.recentAverageFinish ?? 0,
           recentTimeIndex: h.recentTimeIndex ?? 0,
           lastRaceGradeScore: h.lastRaceGradeScore ?? 2,
-          lastRaceGradeLabel: h.lastRaceGradeLabel ?? "OP"
+          lastRaceGradeLabel: h.lastRaceGradeLabel ?? "OP",
+          lastRaceDistance: h.lastRaceDistance ?? 0,
+          distanceChange: h.distanceChange ?? 0
         })
       )
       .sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
@@ -79,6 +81,8 @@ export function getDefaultHorses(courseId: string): Horse[] {
         recentTimeIndex: h.recentTimeIndex ?? 0,
         lastRaceGradeScore: h.lastRaceGradeScore ?? 2,
         lastRaceGradeLabel: h.lastRaceGradeLabel ?? "OP",
+        lastRaceDistance: h.lastRaceDistance ?? 0,
+        distanceChange: h.distanceChange ?? 0,
         jockey: h.jockey ?? "未定"
       });
     })

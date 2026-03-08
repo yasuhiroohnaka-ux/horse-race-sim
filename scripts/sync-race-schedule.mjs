@@ -54,6 +54,8 @@ async function main() {
       recentTimeIndex: Number(h.recentTimeIndex ?? 0),
       lastRaceGradeScore: Number(h.lastRaceGradeScore ?? 2),
       lastRaceGradeLabel: String(h.lastRaceGradeLabel ?? "OP"),
+      lastRaceDistance: Number(h.lastRaceDistance ?? 0),
+      distanceChange: Number(h.distanceChange ?? 0),
       condition: Number(h.condition ?? 5)
     }));
   }
@@ -87,6 +89,8 @@ export interface GeneratedHorseSeed {
   recentTimeIndex: number;
   lastRaceGradeScore: number;
   lastRaceGradeLabel: string;
+  lastRaceDistance: number;
+  distanceChange: number;
   condition: number;
 }
 

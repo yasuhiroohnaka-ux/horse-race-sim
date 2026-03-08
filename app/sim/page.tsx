@@ -112,6 +112,7 @@ function SimulatorContent() {
             recentTimeIndex?: number;
             lastRaceGradeScore?: number;
             lastRaceGradeLabel?: string;
+            lastRaceDistance?: number;
           }>;
         };
 
@@ -130,6 +131,7 @@ function SimulatorContent() {
 
         setHorses((previous) => {
           let changed = false;
+          const currentCourse = COURSES.find((entry) => entry.id === currentCourseId);
           const updated = previous.map((horse) => {
             let nextHorse = horse;
             let touched = false;
@@ -167,12 +169,19 @@ function SimulatorContent() {
               const timeIndex = Number(latestPerformance.recentTimeIndex);
               const gradeScore = Number(latestPerformance.lastRaceGradeScore);
               const gradeLabel = String(latestPerformance.lastRaceGradeLabel ?? "").trim();
+              const lastDistance = Number(latestPerformance.lastRaceDistance);
 
               if (Number.isFinite(form)) nextFields.recentFormScore = Math.round(form * 10) / 10;
               if (Number.isFinite(averageFinish) && averageFinish > 0) nextFields.recentAverageFinish = Math.round(averageFinish * 10) / 10;
               if (Number.isFinite(timeIndex)) nextFields.recentTimeIndex = Math.round(timeIndex * 10) / 10;
               if (Number.isFinite(gradeScore)) nextFields.lastRaceGradeScore = Math.round(gradeScore * 10) / 10;
               if (gradeLabel) nextFields.lastRaceGradeLabel = gradeLabel;
+              if (Number.isFinite(lastDistance) && lastDistance > 0) {
+                nextFields.lastRaceDistance = Math.round(lastDistance);
+                if (Number.isFinite(currentCourse?.distance)) {
+                  nextFields.distanceChange = Number(currentCourse?.distance) - Math.round(lastDistance);
+                }
+              }
 
               if (Object.keys(nextFields).some((key) => nextHorse[key as keyof Horse] !== nextFields[key as keyof Horse])) {
                 touched = true;
@@ -408,6 +417,5 @@ function SimulatorContent() {
     </div>
   );
 }
-
 
 

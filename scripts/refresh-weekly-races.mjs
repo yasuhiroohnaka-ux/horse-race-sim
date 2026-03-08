@@ -350,6 +350,7 @@ function parseShutubaPastEntries(shutubaPastHtml) {
       return {
         finish: Number.isFinite(finish) && finish > 0 ? finish : null,
         gradeLabel,
+        distance,
         runSpeed
       };
     });
@@ -381,6 +382,7 @@ function parseShutubaPastEntries(shutubaPastHtml) {
       recentTimeIndex: null,
       lastRaceGradeScore: lastRaceGradeScore !== null ? Math.round(lastRaceGradeScore * 10) / 10 : null,
       lastRaceGradeLabel,
+      lastRaceDistance: runs[0]?.distance ?? null,
       averageRunSpeed: avgSpeed !== null ? Math.round(avgSpeed * 1000) / 1000 : null
     });
   }
@@ -554,6 +556,9 @@ async function buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate) {
     // Ability seed comes from past performance only; market data is kept for the market layer.
     const abilityBase = performanceToAbilityBase(pastEntry);
     const ability = buildAbilityStats(abilityBase, runningStyle, `${meta.raceId}:${seed.id}:${seed.name}`);
+    const lastRaceDistance = Number(pastEntry?.lastRaceDistance);
+    const distanceChange =
+      Number.isFinite(lastRaceDistance) && lastRaceDistance > 0 ? meta.distance - lastRaceDistance : 0;
 
     return {
       id: String(index + 1),
@@ -580,7 +585,9 @@ async function buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate) {
       recentAverageFinish: pastEntry?.recentAverageFinish ?? 0,
       recentTimeIndex: pastEntry?.recentTimeIndex ?? 0,
       lastRaceGradeScore: pastEntry?.lastRaceGradeScore ?? 2,
-      lastRaceGradeLabel: pastEntry?.lastRaceGradeLabel ?? "OP"
+      lastRaceGradeLabel: pastEntry?.lastRaceGradeLabel ?? "OP",
+      lastRaceDistance: Number.isFinite(lastRaceDistance) && lastRaceDistance > 0 ? lastRaceDistance : 0,
+      distanceChange
     };
   });
 }

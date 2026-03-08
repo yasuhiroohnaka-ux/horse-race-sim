@@ -106,6 +106,56 @@ function computePaceModifier(race) {
   return ratio - 0.45;
 }
 
+function getDistanceShiftRaceBias(race) {
+  const distance = Number(race.distance ?? 0);
+  const straightLength = Number(race.straightLength ?? 360);
+  const sprintBias = clamp((1600 - distance) / 500, 0, 1);
+  const stayingBias = clamp((distance - 1800) / 800, 0, 1);
+  const straightBias = clamp((straightLength - 380) / 180, -1, 1);
+  const frontBias = clamp(Number(race.trackBias?.frontBack ?? 0) / 5, -1, 1);
+
+  return clamp(
+    stayingBias * 0.95 -
+      sprintBias * 0.9 +
+      straightBias * 0.25 -
+      getCourseInnerTiltFromId(race.courseId) * 0.28 -
+      frontBias * 0.24,
+    -1.2,
+    1.2
+  );
+}
+
+function getDistanceShiftScore(horse, race) {
+  const lastRaceDistance = Number(horse.lastRaceDistance ?? 0);
+  if (!(lastRaceDistance > 0)) return 0;
+
+  const distanceChange = Number.isFinite(Number(horse.distanceChange))
+    ? Number(horse.distanceChange)
+    : Number(race.distance ?? 0) - lastRaceDistance;
+  if (Math.abs(distanceChange) < 100) return 0;
+
+  const changeUnits = clamp(distanceChange / 400, -1.25, 1.25);
+  const styleBias =
+    horse.runningStyle === "Nige"
+      ? -0.65
+      : horse.runningStyle === "Senko"
+        ? -0.25
+        : horse.runningStyle === "Sashi"
+          ? 0.25
+          : 0.55;
+  const staminaEdge = clamp((horse.stamina - horse.speed) / 18, -1.4, 1.4);
+  const recoveryEdge = clamp((horse.guts - 75) / 18, -0.8, 0.8);
+  const horseBias = clamp(styleBias + staminaEdge * 0.72 + recoveryEdge * 0.18, -1.4, 1.4);
+  const alignment = changeUnits * (horseBias * 0.75 + getDistanceShiftRaceBias(race) * 0.55);
+  const resilience = clamp(
+    ((horse.recentFormScore ?? 0) / 5) * 0.65 + (((horse.lastRaceGradeScore ?? 2) - 2) / 3) * 0.35,
+    -1,
+    1
+  );
+
+  return clamp(alignment * 6 - Math.abs(changeUnits) + Math.abs(changeUnits) * resilience * 1.8, -6, 6);
+}
+
 function isFrontStyle(style) {
   return style === "Nige" || style === "Senko";
 }
@@ -178,7 +228,8 @@ function scoreHorse(horse, race, includeBodyWeight = false, drawMap = null) {
   const paceAdvantage = isFront ? -pace * 10 : pace * 10;
   const bodyWeightBonus = includeBodyWeight ? Number(horse.bodyWeightDiff ?? 0) * -0.3 : 0;
   const drawMod = drawMap?.get(horse.id) ?? 1.0;
-  return ability * drawMod + popularity * 0.15 + simWinProxy * 0.35 + paceAdvantage + bodyWeightBonus;
+  const distanceShiftBonus = getDistanceShiftScore(horse, race);
+  return ability * drawMod + popularity * 0.15 + simWinProxy * 0.35 + paceAdvantage + bodyWeightBonus + distanceShiftBonus;
 }
 
 function pickBestHorse(races, day, includeBodyWeight = false, applyDraw = true) {
