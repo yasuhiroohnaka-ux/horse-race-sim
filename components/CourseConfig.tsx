@@ -1,6 +1,9 @@
-﻿"use client";
+"use client";
 
+import { useEffect, useState } from "react";
+import { GradeFilterChips } from "@/components/GradeFilterChips";
 import { ACTIVE_COURSES, ARCHIVED_COURSES } from "@/lib/courses";
+import { countCoursesByGrade, CourseGradeFilter, filterCoursesByGrade, getCourseGrade } from "@/lib/courseGrades";
 import { Course, GroundCondition, PaceScenario, RaceCondition, Weather, WindDirection } from "@/lib/types";
 
 interface CourseConfigProps {
@@ -38,6 +41,12 @@ const paceLabels: Record<PaceScenario, string> = {
 };
 
 export function CourseConfig({ selectedCourse, condition, onCourseChange, onConditionChange, liveConditionSummary }: CourseConfigProps) {
+  const [gradeFilter, setGradeFilter] = useState<CourseGradeFilter>(getCourseGrade(selectedCourse) ?? "ALL");
+
+  useEffect(() => {
+    setGradeFilter(getCourseGrade(selectedCourse) ?? "ALL");
+  }, [selectedCourse.id]);
+
   const updateBias = (key: "innerOuter" | "frontBack", value: number) => {
     onConditionChange({
       ...condition,
@@ -46,6 +55,21 @@ export function CourseConfig({ selectedCourse, condition, onCourseChange, onCond
         [key]: value,
       },
     });
+  };
+
+  const allCourses = [...ACTIVE_COURSES, ...ARCHIVED_COURSES];
+  const counts = countCoursesByGrade(allCourses);
+  const activeCourses = filterCoursesByGrade(ACTIVE_COURSES, gradeFilter);
+  const archivedCourses = filterCoursesByGrade(ARCHIVED_COURSES, gradeFilter);
+
+  const handleGradeFilterChange = (nextFilter: CourseGradeFilter) => {
+    setGradeFilter(nextFilter);
+
+    if (nextFilter === "ALL") return;
+    const visibleCourses = [...filterCoursesByGrade(ACTIVE_COURSES, nextFilter), ...filterCoursesByGrade(ARCHIVED_COURSES, nextFilter)];
+    if (!visibleCourses.some((course) => course.id === selectedCourse.id) && visibleCourses[0]) {
+      onCourseChange(visibleCourses[0].id);
+    }
   };
 
   return (
@@ -69,21 +93,28 @@ export function CourseConfig({ selectedCourse, condition, onCourseChange, onCond
       <div className="grid gap-4 xl:grid-cols-[minmax(280px,1.2fr)_repeat(3,minmax(140px,0.6fr))]">
         <label className="flex flex-col gap-1.5">
           <span className="text-xs font-medium text-slate-500">レース</span>
+          <p className="text-[11px] font-medium tracking-[0.16em] text-slate-400">GRADE FILTER</p>
+          <GradeFilterChips
+            value={gradeFilter}
+            onChange={handleGradeFilterChange}
+            counts={counts}
+            totalCount={allCourses.length}
+          />
           <select
             className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900"
             value={selectedCourse.id}
             onChange={(event) => onCourseChange(event.target.value)}
           >
-            <optgroup label="今週の重賞">
-              {ACTIVE_COURSES.map((course) => (
+            <optgroup label="今週の対象レース">
+              {activeCourses.map((course) => (
                 <option key={course.id} value={course.id}>
                   {course.name}
                 </option>
               ))}
             </optgroup>
-            {ARCHIVED_COURSES.length > 0 && (
+            {archivedCourses.length > 0 && (
               <optgroup label="アーカイブ">
-                {ARCHIVED_COURSES.map((course) => (
+                {archivedCourses.map((course) => (
                   <option key={course.id} value={course.id}>
                     {course.name}
                   </option>

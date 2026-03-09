@@ -1,21 +1,9 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { PerformancePanel } from "@/components/PerformancePanel";
+import { WeeklyRaceBrowser } from "@/components/WeeklyRaceBrowser";
 import { ACTIVE_COURSES } from "@/lib/courses";
-import type { Course } from "@/lib/types";
-
-function courseBadgeLabel(course: Course): string {
-  if (course.grade) return course.grade;
-  if (course.name.includes("G1")) return "G1";
-  if (course.name.includes("G2")) return "G2";
-  if (course.name.includes("G3")) return "G3";
-  if (course.name.includes("(L)")) return "L";
-  if (course.name.includes("OP")) return "OP";
-  return "注目";
-}
 
 export default function Home() {
-  const featuredCourses = ACTIVE_COURSES;
-
   return (
     <div className="min-h-screen bg-slate-100 px-4 py-6 md:px-8 md:py-10">
       <div className="mx-auto max-w-6xl space-y-6">
@@ -69,36 +57,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <div>
-              <p className="text-xs font-semibold tracking-[0.2em] text-slate-400">THIS WEEK</p>
-              <h2 className="mt-1 text-2xl font-bold text-slate-900">今週の対象レース</h2>
-            </div>
-            <Link href="/sim" className="text-sm font-semibold text-blue-600 hover:underline">
-              分析画面へ
-            </Link>
-          </div>
-
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {featuredCourses.map((course) => (
-              <Link
-                key={course.id}
-                href={`/sim?course=${encodeURIComponent(course.id)}`}
-                className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-blue-300 hover:bg-blue-50"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="rounded-full bg-slate-900 px-2.5 py-1 text-[11px] font-bold text-white">
-                    {courseBadgeLabel(course)}
-                  </span>
-                  <span className="text-xs text-slate-400">{course.distance}m</span>
-                </div>
-                <p className="mt-3 text-lg font-bold text-slate-900">{course.name}</p>
-                <p className="mt-2 text-sm text-slate-500">コース形状と市場乖離をすぐ確認できます。</p>
-              </Link>
-            ))}
-          </div>
-        </section>
+        <WeeklyRaceBrowser courses={ACTIVE_COURSES} />
 
         <PerformancePanel />
 
@@ -161,4 +120,3 @@ export default function Home() {
     </div>
   );
 }
-

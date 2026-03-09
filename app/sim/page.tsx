@@ -68,10 +68,12 @@ export default function SimulatorPage() {
 
 function SimulatorContent() {
   const searchParams = useSearchParams();
+  const courseParam = searchParams.get("course");
   const archiveParam = searchParams.get("archive");
   const fallbackCourse = COURSES[0];
-  const initialCourseId = archiveParam
-    ? COURSES.find((course) => course.id === archiveParam)?.id ?? fallbackCourse?.id
+  const requestedCourseId = courseParam ?? archiveParam;
+  const initialCourseId = requestedCourseId
+    ? COURSES.find((course) => course.id === requestedCourseId)?.id ?? fallbackCourse?.id
     : ACTIVE_COURSES[0]?.id ?? fallbackCourse?.id;
   const initialCourse = COURSES.find((course) => course.id === initialCourseId) ?? fallbackCourse;
 
