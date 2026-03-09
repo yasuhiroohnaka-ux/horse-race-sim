@@ -108,7 +108,7 @@ export function CourseConfig({ selectedCourse, condition, onCourseChange, onCond
             <optgroup label="今週の対象レース">
               {activeCourses.map((course) => (
                 <option key={course.id} value={course.id}>
-                  {course.name}
+                  {course.displayName ?? course.name}
                 </option>
               ))}
             </optgroup>
@@ -116,7 +116,7 @@ export function CourseConfig({ selectedCourse, condition, onCourseChange, onCond
               <optgroup label="アーカイブ">
                 {archivedCourses.map((course) => (
                   <option key={course.id} value={course.id}>
-                    {course.name}
+                    {course.displayName ?? course.name}
                   </option>
                 ))}
               </optgroup>

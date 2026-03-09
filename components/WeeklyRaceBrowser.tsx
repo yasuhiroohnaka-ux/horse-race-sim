@@ -15,6 +15,11 @@ export function WeeklyRaceBrowser({ courses }: WeeklyRaceBrowserProps) {
 
   const counts = countCoursesByGrade(courses);
   const filteredCourses = filterCoursesByGrade(courses, gradeFilter);
+  const dayLabel = (day?: string) => {
+    if (day === "Sat") return "土曜";
+    if (day === "Sun") return "日曜";
+    return null;
+  };
 
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -56,10 +61,12 @@ export function WeeklyRaceBrowser({ courses }: WeeklyRaceBrowserProps) {
                 <span className="rounded-full bg-slate-900 px-2.5 py-1 text-[11px] font-bold text-white">
                   {courseBadgeLabel(course)}
                 </span>
-                <span className="text-xs text-slate-400">{course.distance}m</span>
+                {dayLabel(course.day) ? (
+                  <span className="text-xs text-slate-400">{dayLabel(course.day)}</span>
+                ) : null}
               </div>
-              <p className="mt-3 text-lg font-bold text-slate-900">{course.name}</p>
-              <p className="mt-2 text-sm text-slate-500">コース形状と市場乖離をすぐ確認できます。</p>
+              <p className="mt-3 text-lg font-bold text-slate-900">{course.displayName ?? course.name}</p>
+              <p className="mt-2 text-sm text-slate-500">{course.shortComment ?? "コース形状と市場乖離をすぐ確認できます。"}</p>
             </Link>
           ))}
         </div>

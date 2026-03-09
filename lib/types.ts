@@ -53,6 +53,10 @@ export interface CourseSegment {
 export interface Course {
   id: string;
   name: string;
+  displayName?: string;
+  shortComment?: string;
+  venue?: string;
+  day?: string;
   grade?: string;
   distance: number;
   surface: "Turf" | "Dirt";
