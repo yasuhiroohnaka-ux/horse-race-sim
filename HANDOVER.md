@@ -2,152 +2,99 @@
 
 更新日: 2026-03-14
 
-## 1. プロダクトの現在地
+## 現在の状態
 
-- アプリ名は `KEIBA GAP LAB`。
-- 目的は「能力と人気の乖離を見抜く」こと。
-- 主な判断軸は次の4つ。
-  - 試走勝率
-  - フェアオッズ
-  - 公式オッズ
-  - 俺プロ由来のガチ勢オッズ
-- 今週の対象レースは `G1-G3 / リステッド / オープン`。
-- トップの一覧カードは、グレード絞り込みあり。
-- カード文言は `レース名（競馬場 芝/ダート 距離） 出馬表` の形式に統一済み。
+- アプリ名: `KEIBA GAP LAB`
+- 目的: 能力値・適性・馬場条件と、市場オッズのズレを比較してレースを読む
+- 主な画面
+  - `/`: 今週の対象レース一覧
+  - `/sim`: レース選択、馬データ調整、シミュレーション結果
+  - `/archive`: 過去レース一覧
 
-## 2. いま動いているもの
+## 最近の反映
 
-### 週次データ生成
-
-- `scripts/refresh-weekly-races.mjs` が今週対象レースの出馬表、人気、近走、オッズ系の初期データを生成する。
-- 生成結果は `data/weekly-races.json` に入り、最終的に `lib/generatedRaceSchedule.ts` に同期される。
-
-### トップのレース一覧
-
-- `components/WeeklyRaceBrowser.tsx` がトップのカード一覧を描画する。
-- グレードチップは `すべて / G1 / G2 / G3 / L / OP`。
-- カード表示名と短評は `lib/courses.ts` で `Course` に付与している。
-- 短評の文言マップは `lib/raceCardContent.ts` に置いている。
-  - 既知レースは個別コメント。
-  - 未登録レースは汎用コメントにフォールバック。
-
-### /sim のライブ更新
-
-- `app/sim/page.tsx` で初回表示時にライブ更新をかける。
-- 土日だけ10分ごとに再取得する。
-- 取得先は次の2本。
-  - `/api/netkeiba-odds`: 公式オッズ、俺プロ本命人数、騎手、近走情報
-  - `/api/live-race-conditions`: 天気、馬場、風向、風速
-- `/sim?course=...` でトップから渡したレースIDを初期選択できる。
-
-### 条件データ
-
-- 馬場は netkeiba の出馬表ページから取得。
-- 風と天気は Open-Meteo を使って開催場の現在値を取得。
-- 風向は開催場ごとの直線方位に対して `Headwind / Tailwind / Crosswind` に変換している。
-
-### X 投稿
-
-- `components/SimulationResults.tsx` に X 投稿ボタンがある。
-  - 分析全体を投稿
-  - 的中率おすすめ1頭 + 回収率おすすめ1頭を同時投稿
-- 投稿文生成は `app/sim/page.tsx` 側で行う。
-- composer を開く方式で、自動投稿ではない。
-
-## 3. 直近の重要な変更
-
+- `df8a5b6 Improve live odds refresh visibility`
+  - `/sim` に一般オッズの最終取得時刻を表示
+  - 一般オッズの取得失敗時に警告を表示
+  - 手動の「一般オッズを更新」ボタンを追加
+  - 一般オッズの自動更新を `週末5分ごと` に短縮
+  - レース当日午後のメインレース帯は `2分ごと` に短縮
+  - ライブ馬場情報は週末 `10分ごと` のまま
+- `2c54d1a docs: refresh handover after dedupe fix`
+  - 重複馬対応後の引き継ぎ更新
 - `19a45be Add dedupe to initial horse list`
-  - `/sim` の馬一覧で同一馬が二重に混ざる事故に備えて、初期化・ライブ更新・手編集の3箇所で重複除去を追加。
-  - `Horse.id` と `馬名+馬番` の両方で重複検知する。
-  - 重複発見時は console に warning を出す。
-  - 2026-03-14 時点の repo データでは、全14コースを検査して重複は再現しなかった。
+  - 初期馬データ、ライブ更新、手編集の各経路で dedupe を追加
+  - `Horse.id` と `馬名 + 馬番` の両方で重複検知
 - `fdfeff1 Refine race card labels and notes`
-  - トップのカード文言を `レース名（競馬場 芝/ダート 距離） 出馬表` に変更。
-  - レースごとの短評を追加。
-  - `/sim` のレース選択プルダウンも同じ表示名に統一。
+  - レースカード表示を `レース名（競馬場 芝/ダート 距離） 出馬表` に統一
+  - レースごとの短評を追加
 - `a24490f Add race grade filters to course selection`
-  - トップ一覧にグレード絞り込みUIを追加。
-  - `/sim` のレース選択にも同じグレード絞り込みを追加。
-  - `/sim?course=...` が効くように修正。
-- `fb6d551 feat: expand weekly coverage to listed and open races`
-  - 今週の対象を重賞だけでなく `L / OP` まで拡張。
+  - G1/G2/G3/L/OP の絞り込み UI をトップと `/sim` に追加
 
-## 4. 重複馬の調査メモ
+## オッズ更新まわり
 
-- ユーザー報告: `/sim` で `ホワイトオーキッド` が二重表示された。
-- repo 上の検査では再現せず。
-  - `getDefaultHorses(courseId)`
-  - `calculateOdds(getDefaultHorses(courseId))`
-  - 対象: `ACTIVE_COURSES + ARCHIVED_COURSES` の全14コース
-  - 結果: `id` 重複、`馬名+馬番` 重複ともに `0件`
-- そのため、原因候補は次のどちらか。
-  - ライブ更新時の一時的な混入
-  - クライアント側状態の崩れ
-- 恒久対策として `lib/horseIntegrity.ts` を追加し、描画前に重複を落とすガードを入れている。
+- 一般オッズ API: `app/api/netkeiba-odds/route.ts`
+  - `fetchedAt` を返す
+  - `cache: "no-store"` で最新取得
+- `/sim` 画面: `app/sim/page.tsx`
+  - 初回表示時に一般オッズを取得
+  - 自動更新
+    - 平日: 自動更新なし
+    - 週末: 5分ごと
+    - 当日午後のメインレース帯: 2分ごと
+  - 失敗時は古い値のまま残しつつ、警告メッセージを表示
+  - 手動更新ボタンあり
+- ライブ馬場情報 API: `app/api/live-race-conditions/route.ts`
+  - 週末 10分ごとに自動更新
 
-## 5. 重要ファイル
+## 重複馬対応
+
+- 重複検知/除去: `lib/horseIntegrity.ts`
+- 初期馬生成: `lib/defaultHorses.ts`
+- `/sim` 初期化とライブ更新: `app/sim/page.tsx`
+- 手編集時: `components/HorseInput.tsx`
+- 2026-03-14 時点で `ACTIVE_COURSES + ARCHIVED_COURSES` 全14コースを確認し、repo 内初期データの重複は未再現
+
+## レース一覧と表示名
+
+- 一覧 UI: `components/WeeklyRaceBrowser.tsx`
+- グレード絞り込み: `components/GradeFilterChips.tsx`, `lib/courseGrades.ts`
+- レース表示名と短評: `lib/raceCardContent.ts`
+- コース定義: `lib/courses.ts`
+
+## 主要ファイル
 
 - `app/page.tsx`
-  - トップページ本体。今週レース一覧は `WeeklyRaceBrowser` を使用。
-- `components/WeeklyRaceBrowser.tsx`
-  - 今週の対象レース一覧とグレード絞り込みUI。
-- `components/GradeFilterChips.tsx`
-  - グレードチップの共通UI。
-- `components/CourseConfig.tsx`
-  - 条件設定UI。/sim 側のレース絞り込みもここにある。
-- `components/HorseInput.tsx`
-  - 馬データ入力。手編集時の重複検知と dedupe をここでかける。
-- `components/SimulationResults.tsx`
-  - 試走結果テーブル、推奨カード、X投稿ボタン。
+  - トップ画面
 - `app/sim/page.tsx`
-  - /sim 画面本体、ライブ更新、X投稿文生成、`course` / `archive` クエリ解釈。
-  - 初期馬データ生成とライブ更新後の dedupe を実施。
-- `lib/defaultHorses.ts`
-  - 初期馬データの組み立て。返却前に dedupe を実施。
-- `lib/horseIntegrity.ts`
-  - 重複検知と重複除去の共通ロジック。
-- `lib/courses.ts`
-  - `Course` の組み立て。表示名と短評もここで付与。
-- `lib/courseGrades.ts`
-  - グレード判定、絞り込み、件数集計。
-- `lib/raceCardContent.ts`
-  - レースカードの表示名と短評の生成。
+  - シミュレーター画面本体
+- `components/CourseConfig.tsx`
+  - レース条件設定、一般オッズ更新表示
+- `components/HorseInput.tsx`
+  - 馬データ編集
+- `components/SimulationResults.tsx`
+  - 結果表示と X 投稿
 - `app/api/netkeiba-odds/route.ts`
-  - 公式オッズ、俺プロ人数、騎手、近走データの取得。
+  - 一般オッズ、人気度、騎手、近走情報の取得
 - `app/api/live-race-conditions/route.ts`
-  - 天候、馬場、風向、風速の取得。
-- `scripts/refresh-weekly-races.mjs`
-  - 週次データ再生成の中心。
-- `lib/raceAnalysis.ts`
-  - 試走勝率、フェア、公式差、ガチ勢差の算出。
+  - 天気、馬場、風向・風速の取得
+- `lib/defaultHorses.ts`
+  - 初期馬データ生成
+- `lib/horseIntegrity.ts`
+  - 重複検知と dedupe
 - `lib/simulation.ts`
-  - Monte Carlo 試走本体。
+  - Monte Carlo シミュレーション本体
+- `scripts/refresh-weekly-races.mjs`
+  - 週次レースデータ更新
 
-## 6. 運用メモ
-
-- `main` へ push すると Vercel が再デプロイする想定。
-- 2026-03-14 時点の最新反映コミットは `19a45be`。
-- 古い Vercel deployment URL を見続けると古い表示が残ることがある。必ず Current / Production を確認すること。
-- PowerShell 上では一部の日本語が文字化けして見えることがある。ブラウザ表示と build 成功を優先して確認すること。
-
-## 7. 確認コマンド
+## 確認コマンド
 
 - `cmd /c npx tsc --noEmit --incremental false`
 - `cmd /c npm run build`
 - `node scripts/refresh-weekly-races.mjs`
 
-## 8. 未解決・注意点
+## 補足
 
-- `lib/raceCardContent.ts` の短評は手書きマップなので、対象レースが入れ替わった週は見直しが必要。
-- 重複馬の現象は repo 上では未再現。再発時はブラウザ console の warning と network payload を合わせて確認したい。
-- X 投稿は composer 起動のみ。完全自動投稿は別系統の workflow / webhook 管理。
-- 公式オッズとガチ勢オッズの差が肝なので、土日の更新頻度をさらに上げる余地はある。
-- `eslint` はローカル依存として入っていないので、`npx eslint ...` は環境によって外部取得に失敗することがある。
-
-## 9. 次に触るなら候補
-
-- 重複馬が再発したら、`/api/netkeiba-odds` のレスポンスを保存して原因箇所を切り分ける。
-- 短評を data 側へ寄せるか、週次生成スクリプトから自動付与するか検討。
-- 土日のライブ更新間隔を `10分 -> 5分` にするか検討。
-- X投稿文に略称ではなくカード表示名を揃える。
-- 自動投稿 workflow と画面の X 投稿文を共通化する。
+- `main` に push すると Vercel がデプロイされる運用
+- PowerShell で日本語が崩れて見えることがあるので、UI 文言変更時は build とブラウザ確認を優先
+- `eslint` はローカル依存の都合で未整備のまま
