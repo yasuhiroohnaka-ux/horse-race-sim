@@ -15,6 +15,8 @@ type WeeklyHorse = {
 
 type WeeklyRace = {
   courseId?: string;
+  raceId?: string;
+  raceNumber?: number;
   day?: string;
   horses?: WeeklyHorse[];
 };
@@ -182,6 +184,44 @@ function extractRaceIds(raceListHtml: string): string[] {
     ids.add(m[1]);
   }
   return [...ids];
+}
+
+function extractRaceIdFromCourseId(courseId: string): string | null {
+  const match = String(courseId ?? "").match(/(\d{12})$/);
+  return match?.[1] ?? null;
+}
+
+function buildCandidateRaceIds(params: {
+  courseId: string;
+  race: WeeklyRace;
+  raceDate: Date;
+  trackCode: string;
+  raceListHtml: string;
+}) {
+  const { courseId, race, raceDate, trackCode, raceListHtml } = params;
+  const year = String(raceDate.getFullYear());
+  const exactRaceId = String(race.raceId ?? extractRaceIdFromCourseId(courseId) ?? "").trim();
+  const raceNumber =
+    (Number.isFinite(Number(race.raceNumber)) && Number(race.raceNumber) > 0
+      ? String(Number(race.raceNumber)).padStart(2, "0")
+      : exactRaceId.length === 12
+        ? exactRaceId.slice(-2)
+        : "");
+
+  const candidates = new Set<string>();
+  if (/^\d{12}$/.test(exactRaceId)) {
+    candidates.add(exactRaceId);
+  }
+
+  const allRaceIds = extractRaceIds(raceListHtml);
+  const raceNoCandidates = raceNumber ? new Set([raceNumber]) : new Set(["10", "11", "12"]);
+  for (const raceId of allRaceIds) {
+    if (raceId.startsWith(`${year}${trackCode}`) && raceNoCandidates.has(raceId.slice(-2))) {
+      candidates.add(raceId);
+    }
+  }
+
+  return [...candidates];
 }
 
 function parseShutubaEntries(shutubaHtml: string): ParsedEntry[] {
@@ -467,13 +507,19 @@ export async function GET(request: NextRequest) {
 
   try {
     const raceListUrl = `https://race.netkeiba.com/top/race_list.html?kaisai_date=${yyyymmddFromDate(raceDate)}`;
-    const raceListHtml = await fetchText(raceListUrl);
-    const allRaceIds = extractRaceIds(raceListHtml);
-    const year = String(raceDate.getFullYear());
-    const raceNoCandidates = new Set(["11", "10", "12"]);
-    const candidateRaceIds = allRaceIds.filter(
-      (id) => id.startsWith(`${year}${trackCode}`) && raceNoCandidates.has(id.slice(-2))
-    );
+    let raceListHtml = "";
+    try {
+      raceListHtml = await fetchText(raceListUrl);
+    } catch {
+      raceListHtml = "";
+    }
+    const candidateRaceIds = buildCandidateRaceIds({
+      courseId,
+      race,
+      raceDate,
+      trackCode,
+      raceListHtml,
+    });
 
     if (candidateRaceIds.length === 0) {
       return NextResponse.json({ error: "no candidate race IDs found" }, { status: 404 });
@@ -483,21 +529,25 @@ export async function GET(request: NextRequest) {
     let best: CandidateResult | null = null;
 
     for (const raceId of candidateRaceIds) {
-      const html = await fetchText(`https://race.netkeiba.com/race/shutuba.html?race_id=${raceId}`);
-      const entries = parseShutubaEntries(html);
-      if (entries.length === 0) continue;
+      try {
+        const html = await fetchText(`https://race.netkeiba.com/race/shutuba.html?race_id=${raceId}`);
+        const entries = parseShutubaEntries(html);
+        if (entries.length === 0) continue;
 
-      const overlap = calculateOverlap(entries, candidateNames);
-      const oddsCount = entries.filter((e) => Number.isFinite(e.odds) && (e.odds ?? 0) > 0).length;
-      const score = { raceId, overlap, oddsCount, entries };
+        const overlap = calculateOverlap(entries, candidateNames);
+        const oddsCount = entries.filter((e) => Number.isFinite(e.odds) && (e.odds ?? 0) > 0).length;
+        const score = { raceId, overlap, oddsCount, entries };
 
-      if (!best) {
-        best = score;
-        continue;
-      }
+        if (!best) {
+          best = score;
+          continue;
+        }
 
-      if (score.overlap > best.overlap || (score.overlap === best.overlap && score.oddsCount > best.oddsCount)) {
-        best = score;
+        if (score.overlap > best.overlap || (score.overlap === best.overlap && score.oddsCount > best.oddsCount)) {
+          best = score;
+        }
+      } catch {
+        // Try the next candidate if one race page is unavailable.
       }
     }
 
@@ -614,9 +664,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }
-
-
-
 
 
 
