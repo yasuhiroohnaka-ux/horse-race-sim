@@ -12,6 +12,10 @@ interface CourseConfigProps {
   onCourseChange: (courseId: string) => void;
   onConditionChange: (condition: RaceCondition) => void;
   liveConditionSummary?: string;
+  oddsRefreshSummary?: string;
+  oddsRefreshWarning?: string;
+  isRefreshingOdds?: boolean;
+  onRefreshOdds?: () => void;
 }
 
 const groundLabels: Record<GroundCondition, string> = {
@@ -22,8 +26,8 @@ const groundLabels: Record<GroundCondition, string> = {
 };
 
 const weatherLabels: Record<Weather, string> = {
-  Sunny: "晴れ",
-  Cloudy: "曇り",
+  Sunny: "晴",
+  Cloudy: "曇",
   Rain: "雨",
   Snow: "雪",
 };
@@ -40,12 +44,22 @@ const paceLabels: Record<PaceScenario, string> = {
   Fast: "ハイ",
 };
 
-export function CourseConfig({ selectedCourse, condition, onCourseChange, onConditionChange, liveConditionSummary }: CourseConfigProps) {
+export function CourseConfig({
+  selectedCourse,
+  condition,
+  onCourseChange,
+  onConditionChange,
+  liveConditionSummary,
+  oddsRefreshSummary,
+  oddsRefreshWarning,
+  isRefreshingOdds,
+  onRefreshOdds,
+}: CourseConfigProps) {
   const [gradeFilter, setGradeFilter] = useState<CourseGradeFilter>(getCourseGrade(selectedCourse) ?? "ALL");
 
   useEffect(() => {
     setGradeFilter(getCourseGrade(selectedCourse) ?? "ALL");
-  }, [selectedCourse.id]);
+  }, [selectedCourse.id, selectedCourse.grade]);
 
   const updateBias = (key: "innerOuter" | "frontBack", value: number) => {
     onConditionChange({
@@ -75,18 +89,36 @@ export function CourseConfig({ selectedCourse, condition, onCourseChange, onCond
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-        <div>
+        <div className="max-w-3xl">
           <p className="text-xs font-semibold tracking-[0.2em] text-slate-400">RACE SCENARIO</p>
-          <h2 className="text-lg font-bold text-slate-900">条件設定</h2>
+          <h2 className="text-lg font-bold text-slate-900">レース条件</h2>
           <p className="mt-1 text-xs text-slate-500">
-            公式オッズとガチ勢オッズの乖離を見るため、試走シナリオを先に固定します。
+            公式オッズと市場オッズの差を見ながら、馬場、風、展開バイアスをその場で調整できます。
           </p>
           {liveConditionSummary ? (
             <p className="mt-2 text-xs font-medium text-sky-600">{liveConditionSummary}</p>
           ) : null}
+          {oddsRefreshSummary ? (
+            <p className="mt-1 text-xs font-medium text-slate-600">{oddsRefreshSummary}</p>
+          ) : null}
+          {oddsRefreshWarning ? (
+            <p className="mt-1 text-xs font-medium text-rose-600">{oddsRefreshWarning}</p>
+          ) : null}
         </div>
-        <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-          {selectedCourse.distance}m / 直線 {selectedCourse.straightLength}m
+        <div className="flex flex-col items-end gap-2">
+          <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+            {selectedCourse.distance}m / 直線 {selectedCourse.straightLength}m
+          </div>
+          {onRefreshOdds ? (
+            <button
+              type="button"
+              onClick={onRefreshOdds}
+              disabled={isRefreshingOdds}
+              className="rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isRefreshingOdds ? "一般オッズ更新中..." : "一般オッズを更新"}
+            </button>
+          ) : null}
         </div>
       </div>
 
@@ -155,7 +187,7 @@ export function CourseConfig({ selectedCourse, condition, onCourseChange, onCond
         </label>
 
         <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-slate-500">展開</span>
+          <span className="text-xs font-medium text-slate-500">ペース</span>
           <select
             className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900"
             value={condition.paceScenario}
@@ -205,7 +237,7 @@ export function CourseConfig({ selectedCourse, condition, onCourseChange, onCond
             </label>
           </div>
           <p className="mt-3 text-xs text-slate-500">
-            向かい風は前受けの消耗を増やし、追い風は先行勢の粘りに寄せます。横風は全体のブレを大きくします。
+            向かい風は前受けの粘りを削り、追い風は差し脚の伸びを助けます。強風時は全体のブレも大きくなります。
           </p>
         </div>
 
@@ -249,7 +281,7 @@ export function CourseConfig({ selectedCourse, condition, onCourseChange, onCond
                     ? "フラット"
                     : condition.trackBias.frontBack > 0
                       ? `前 +${condition.trackBias.frontBack}`
-                      : `差 ${condition.trackBias.frontBack}`}
+                      : `差し ${condition.trackBias.frontBack}`}
                 </span>
               </div>
               <input
@@ -274,7 +306,7 @@ export function CourseConfig({ selectedCourse, condition, onCourseChange, onCond
         <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">馬場: {groundLabels[condition.groundCondition]}</span>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">天気: {weatherLabels[condition.weather]}</span>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">風: {windLabels[condition.windDirection]} {condition.windSpeed}m/s</span>
-        <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">展開: {paceLabels[condition.paceScenario]}</span>
+        <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">ペース: {paceLabels[condition.paceScenario]}</span>
       </div>
     </div>
   );
