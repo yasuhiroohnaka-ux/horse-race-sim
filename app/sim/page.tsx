@@ -8,6 +8,7 @@ import { Horse, RaceCondition } from "@/lib/types";
 import { runMonteCarlo, calculateOdds } from "@/lib/simulation";
 import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
 import { getDefaultHorses } from "@/lib/defaultHorses";
+import { dedupeHorses, findHorseDuplicates } from "@/lib/horseIntegrity";
 import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
 import { CourseConfig } from "@/components/CourseConfig";
 import { HorseInput } from "@/components/HorseInput";
@@ -52,6 +53,10 @@ function createDefaultCondition(courseId: string): RaceCondition {
   };
 }
 
+function buildInitialHorses(courseId: string): Horse[] {
+  return calculateOdds(dedupeHorses(getDefaultHorses(courseId)));
+}
+
 export default function SimulatorPage() {
   return (
     <Suspense
@@ -78,7 +83,7 @@ function SimulatorContent() {
   const initialCourse = COURSES.find((course) => course.id === initialCourseId) ?? fallbackCourse;
 
   const [condition, setCondition] = useState<RaceCondition>(createDefaultCondition(initialCourseId ?? ""));
-  const [horses, setHorses] = useState<Horse[]>(initialCourseId ? calculateOdds(getDefaultHorses(initialCourseId)) : []);
+  const [horses, setHorses] = useState<Horse[]>(initialCourseId ? buildInitialHorses(initialCourseId) : []);
   const [results, setResults] = useState<{ horseId: string; winCount: number; bestTime: number }[] | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [liveConditionSummary, setLiveConditionSummary] = useState("");
@@ -88,7 +93,7 @@ function SimulatorContent() {
 
   const handleCourseChange = (courseId: string) => {
     setCondition(createDefaultCondition(courseId));
-    setHorses(calculateOdds(getDefaultHorses(courseId)));
+    setHorses(buildInitialHorses(courseId));
     setResults(null);
     setLiveConditionSummary("");
   };
@@ -200,7 +205,14 @@ function SimulatorContent() {
             return touched ? nextHorse : horse;
           });
 
-          return changed ? calculateOdds(updated) : previous;
+          if (!changed) return previous;
+
+          const duplicates = findHorseDuplicates(updated);
+          if (duplicates.length > 0) {
+            console.warn("[sim] duplicate horses detected during live refresh", currentCourseId, duplicates, updated);
+          }
+
+          return calculateOdds(dedupeHorses(updated));
         });
       } catch {
         // Ignore refresh errors and keep local state.

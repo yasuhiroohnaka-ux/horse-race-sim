@@ -5,6 +5,7 @@ import { Course, Horse, RaceCondition } from "@/lib/types";
 import { calculateOdds } from "@/lib/simulation";
 import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
 import { getFrameColor, getFrameNumber } from "@/lib/frameColor";
+import { dedupeHorses, findHorseDuplicates } from "@/lib/horseIntegrity";
 import { calculateOfficialImpliedProbability, getScenarioProfile, round1 } from "@/lib/raceAnalysis";
 
 interface HorseInputProps {
@@ -31,7 +32,11 @@ export function HorseInput({ horses, course, condition, onHorsesChange, hashtag 
   );
 
   const updateHorses = (nextHorses: Horse[]) => {
-    const sorted = [...nextHorses].sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
+    const duplicates = findHorseDuplicates(nextHorses);
+    if (duplicates.length > 0) {
+      console.warn("[HorseInput] duplicate horses detected before update", duplicates, nextHorses);
+    }
+    const sorted = [...dedupeHorses(nextHorses)].sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
     onHorsesChange(calculateOdds(sorted));
   };
 

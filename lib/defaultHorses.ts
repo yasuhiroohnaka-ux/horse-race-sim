@@ -2,6 +2,7 @@ import { Horse } from "./types";
 import { getDefaultHorses as getLegacyDefaultHorses } from "./raceData";
 import { GENERATED_ARCHIVED_RACES, GENERATED_WEEKLY_HORSES_MAP, type GeneratedHorseSeed } from "./generatedRaceSchedule";
 import { GENERATED_DRAW_OVERRIDES } from "./generatedDrawOverrides";
+import { dedupeHorses } from "./horseIntegrity";
 import { applyNetkeibaRatings } from "./netkeibaRatings";
 
 function enrichHorse(_courseId: string, horse: Horse): Horse {
@@ -44,27 +45,27 @@ function mapGeneratedHorse(courseId: string, h: GeneratedHorseSeed, index: numbe
   });
 }
 
+function sortByGateNumber(horses: Horse[]): Horse[] {
+  return [...horses].sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
+}
+
 export function getDefaultHorses(courseId: string): Horse[] {
   const generated = GENERATED_WEEKLY_HORSES_MAP[courseId];
 
   if (generated && generated.length > 0) {
-    return generated
-      .map((h, i) => mapGeneratedHorse(courseId, h, i))
-      .sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
+    return sortByGateNumber(dedupeHorses(generated.map((h, i) => mapGeneratedHorse(courseId, h, i))));
   }
 
   const generatedArchived = GENERATED_ARCHIVED_RACES.find((race) => race.courseId === courseId);
   if (generatedArchived?.horses?.length) {
-    return generatedArchived.horses
-      .map((h, i) => mapGeneratedHorse(courseId, h, i))
-      .sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
+    return sortByGateNumber(dedupeHorses(generatedArchived.horses.map((h, i) => mapGeneratedHorse(courseId, h, i))));
   }
 
   const generatedById = new Map((generated ?? []).map((g) => [String(g.id), g]));
   const drawOverrides = GENERATED_DRAW_OVERRIDES[courseId] ?? {};
   const drawByName = new Map(Object.entries(drawOverrides).map(([name, gate]) => [normalizeName(name), Number(gate)]));
 
-  return getLegacyDefaultHorses(courseId)
+  return sortByGateNumber(dedupeHorses(getLegacyDefaultHorses(courseId)
     .map((h, i) => {
       const g = generatedById.get(String(h.id));
       const byName = drawByName.get(normalizeName(h.name));
@@ -94,6 +95,5 @@ export function getDefaultHorses(courseId: string): Horse[] {
         distanceChange: h.distanceChange ?? 0,
         jockey: h.jockey ?? "未定",
       });
-    })
-    .sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
+    })));
 }
