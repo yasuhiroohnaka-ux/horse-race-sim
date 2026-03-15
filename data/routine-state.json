@@ -4,7 +4,7 @@
   "drawConfirmedAt": "2026-03-07T03:13:15.973Z",
   "performance": {
     "weekly": {
-      "weekOf": "2026-03-01",
+      "weekOf": "2026-03-09",
       "bets": 0,
       "tanHits": 0,
       "fukuHits": 0,
@@ -22,6 +22,6 @@
       "fukuStake": 0,
       "fukuPayout": 0
     },
-    "updatedAt": "2026-03-08T07:52:41.006Z"
+    "updatedAt": "2026-03-15T07:56:55.689Z"
   }
 }
