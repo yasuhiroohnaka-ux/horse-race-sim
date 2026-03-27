@@ -241,7 +241,12 @@ function parseHorseSeedEntries(shutubaHtml) {
     const gateNumber = Number.isFinite(parsedGateNumber) && parsedGateNumber > 0 ? parsedGateNumber : index + 1;
 
     const horseUrl = row.match(/\/horse\/(\d+)\/?/i)?.[1] ?? "";
-    const horseNameRaw = row.match(/title="([^"]+)"/i)?.[1] ?? row.match(/\/horse\/\d+\/?[^>]*>([^<]+)</i)?.[1] ?? "";
+    const horseNameRaw =
+      row.match(/<span class="HorseName"[\s\S]*?<a[^>]*title="([^"]+)"/i)?.[1] ??
+      row.match(/<td class="HorseInfo"[\s\S]*?<a[^>]*title="([^"]+)"/i)?.[1] ??
+      row.match(/<a[^>]*href="[^"]*\/horse\/\d+\/?[^"]*"[^>]*title="([^"]+)"/i)?.[1] ??
+      row.match(/<a[^>]*href="[^"]*\/horse\/\d+\/?[^"]*"[^>]*>([\s\S]*?)<\/a>/i)?.[1] ??
+      "";
     const horseName = normalizeSpace(horseNameRaw);
     if (!horseName) continue;
 
@@ -276,7 +281,16 @@ function parseHorseSeedEntries(shutubaHtml) {
     });
   }
 
-  return entries.sort((a, b) => a.gateNumber - b.gateNumber);
+  // Deduplicate: netkeiba may have extra HorseList rows (scratched/template).
+  // Keep the first entry per horse URL; discard rows without a valid gate from HTML.
+  const seen = new Map();
+  for (const entry of entries) {
+    const key = entry.id && entry.id !== String(entry.gateNumber) ? entry.id : entry.name;
+    if (!seen.has(key)) {
+      seen.set(key, entry);
+    }
+  }
+  return [...seen.values()].sort((a, b) => a.gateNumber - b.gateNumber);
 }
 
 function parseOreproEntries(oreproHtml) {
