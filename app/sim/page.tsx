@@ -47,9 +47,24 @@ const WEEKEND_CONDITIONS_POLL_MS = 10 * 60 * 1000;
 type NetkeibaOddsPayload = {
   fetchedAt?: string;
   oddsByGate?: Record<string, number>;
+  gateByHorseKey?: Record<string, number>;
+  oddsByHorseKey?: Record<string, number>;
   popularityByGate?: Record<string, number>;
+  popularityByHorseKey?: Record<string, number>;
   jockeyByGate?: Record<string, string>;
+  jockeyByHorseKey?: Record<string, string>;
   performanceByGate?: Record<
+    string,
+    {
+      recentFormScore?: number;
+      recentAverageFinish?: number;
+      recentTimeIndex?: number;
+      lastRaceGradeScore?: number;
+      lastRaceGradeLabel?: string;
+      lastRaceDistance?: number;
+    }
+  >;
+  performanceByHorseKey?: Record<
     string,
     {
       recentFormScore?: number;
@@ -86,6 +101,14 @@ function createDefaultCondition(courseId: string): RaceCondition {
 
 function buildInitialHorses(courseId: string): Horse[] {
   return calculateOdds(dedupeHorses(getDefaultHorses(courseId)));
+}
+
+function normalizeHorseKey(name: string) {
+  return String(name ?? "")
+    .toLowerCase()
+    .replace(/\u3000/g, "")
+    .replace(/\s+/g, "")
+    .replace(/[\u30fb\uff65\-_.]/g, "");
 }
 
 function getCourseRaceDay(day?: string) {
@@ -230,14 +253,24 @@ function SimulatorContent() {
         if (cancelled) return;
 
         const oddsByGate = payload.oddsByGate ?? {};
+        const gateByHorseKey = payload.gateByHorseKey ?? {};
+        const oddsByHorseKey = payload.oddsByHorseKey ?? {};
         const popularityByGate = payload.popularityByGate ?? {};
+        const popularityByHorseKey = payload.popularityByHorseKey ?? {};
         const jockeyByGate = payload.jockeyByGate ?? {};
+        const jockeyByHorseKey = payload.jockeyByHorseKey ?? {};
         const performanceByGate = payload.performanceByGate ?? {};
+        const performanceByHorseKey = payload.performanceByHorseKey ?? {};
         if (
+          Object.keys(gateByHorseKey).length === 0 &&
           Object.keys(oddsByGate).length === 0 &&
+          Object.keys(oddsByHorseKey).length === 0 &&
           Object.keys(popularityByGate).length === 0 &&
+          Object.keys(popularityByHorseKey).length === 0 &&
           Object.keys(jockeyByGate).length === 0 &&
-          Object.keys(performanceByGate).length === 0
+          Object.keys(jockeyByHorseKey).length === 0 &&
+          Object.keys(performanceByGate).length === 0 &&
+          Object.keys(performanceByHorseKey).length === 0
         ) {
           setOddsRefreshError("一般オッズの更新データが見つからなかったため、登録済みデータを表示しています。");
           return;
@@ -252,8 +285,15 @@ function SimulatorContent() {
             let nextHorse = horse;
             let touched = false;
             let needsRatingsRecalc = false;
+            const horseKey = normalizeHorseKey(horse.name);
 
-            const latestOdds = Number(oddsByGate[String(horse.gateNumber)]);
+            const latestGate = Number(gateByHorseKey[horseKey]);
+            if (Number.isFinite(latestGate) && latestGate > 0 && nextHorse.gateNumber !== latestGate) {
+              touched = true;
+              nextHorse = { ...nextHorse, gateNumber: Math.round(latestGate) };
+            }
+
+            const latestOdds = Number(oddsByHorseKey[horseKey] ?? oddsByGate[String(horse.gateNumber)]);
             if (Number.isFinite(latestOdds) && latestOdds > 0) {
               const roundedLatestOdds = Math.round(latestOdds * 10) / 10;
               const currentOdds = Number(horse.realOdds ?? 0);
@@ -264,20 +304,22 @@ function SimulatorContent() {
               }
             }
 
-            const latestPopularity = Math.round(Number(popularityByGate[String(horse.gateNumber)]));
+            const latestPopularity = Math.round(
+              Number(popularityByHorseKey[horseKey] ?? popularityByGate[String(horse.gateNumber)])
+            );
             if (Number.isFinite(latestPopularity) && latestPopularity > 0 && nextHorse.predictionCount !== latestPopularity) {
               touched = true;
               nextHorse = { ...nextHorse, predictionCount: latestPopularity };
             }
 
-            const latestJockey = String(jockeyByGate[String(horse.gateNumber)] ?? "").trim();
+            const latestJockey = String(jockeyByHorseKey[horseKey] ?? jockeyByGate[String(horse.gateNumber)] ?? "").trim();
             if (latestJockey && nextHorse.jockey !== latestJockey) {
               touched = true;
               needsRatingsRecalc = true;
               nextHorse = { ...nextHorse, jockey: latestJockey };
             }
 
-            const latestPerformance = performanceByGate[String(horse.gateNumber)];
+            const latestPerformance = performanceByHorseKey[horseKey] ?? performanceByGate[String(horse.gateNumber)];
             if (latestPerformance) {
               const nextFields: Partial<Horse> = {};
               const form = Number(latestPerformance.recentFormScore);
@@ -315,12 +357,13 @@ function SimulatorContent() {
 
           if (!changed) return previous;
 
-          const duplicates = findHorseDuplicates(updated);
+          const sortedUpdated = [...dedupeHorses(updated)].sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
+          const duplicates = findHorseDuplicates(sortedUpdated);
           if (duplicates.length > 0) {
-            console.warn("[sim] duplicate horses detected during live refresh", currentCourseId, duplicates, updated);
+            console.warn("[sim] duplicate horses detected during live refresh", currentCourseId, duplicates, sortedUpdated);
           }
 
-          return calculateOdds(dedupeHorses(updated));
+          return calculateOdds(sortedUpdated);
         });
       } catch {
         if (!cancelled) {
