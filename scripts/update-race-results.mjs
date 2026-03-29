@@ -7,6 +7,7 @@ const GENERATED_REVIEWS_PATH = path.join(ROOT, "data", "generated-reviews.json")
 
 const ARG_DAY = process.argv.find((arg) => arg.startsWith("--day="))?.split("=")[1] ?? "";
 const TARGET_DAY = ARG_DAY === "Sat" || ARG_DAY === "Sun" ? ARG_DAY : null;
+const INCLUDE_ARCHIVES = process.argv.includes("--include-archives");
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
@@ -318,13 +319,42 @@ async function updateRace(race) {
   }
 }
 
-async function main() {
-  const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { races: [] }, archives: [] });
-  const generatedReviews = await readJson(GENERATED_REVIEWS_PATH, {});
-  const originalGeneratedReviews = JSON.stringify(generatedReviews);
-  const races = Array.isArray(weekly.currentWeek?.races) ? weekly.currentWeek.races : [];
+function updateGeneratedReviewEntry(generatedReviews, race, updatedRace, reviewDraft) {
+  if (!reviewDraft) return false;
 
+  const key = reviewKeyForRace(updatedRace);
+  const previousReview = generatedReviews[key] ?? race.review ?? null;
+  const nextReviewComparable = {
+    raceId: String(updatedRace.raceId ?? ""),
+    courseId: String(updatedRace.courseId ?? ""),
+    summary: String(reviewDraft.summary ?? ""),
+    xPostText: String(reviewDraft.xPostText ?? ""),
+    reasons: Array.isArray(reviewDraft.reasons) ? reviewDraft.reasons.map((reason) => String(reason)) : [],
+  };
+  const previousComparable = previousReview
+    ? {
+        raceId: String(previousReview.raceId ?? updatedRace.raceId ?? ""),
+        courseId: String(previousReview.courseId ?? updatedRace.courseId ?? ""),
+        summary: String(previousReview.summary ?? ""),
+        xPostText: String(previousReview.xPostText ?? ""),
+        reasons: Array.isArray(previousReview.reasons) ? previousReview.reasons.map((reason) => String(reason)) : [],
+      }
+    : null;
+
+  generatedReviews[key] = {
+    ...nextReviewComparable,
+    updatedAt:
+      previousComparable && JSON.stringify(previousComparable) === JSON.stringify(nextReviewComparable)
+        ? String(previousReview.updatedAt ?? "")
+        : new Date().toISOString(),
+  };
+
+  return !previousComparable || JSON.stringify(previousComparable) !== JSON.stringify(nextReviewComparable);
+}
+
+async function updateRaceCollection(races, generatedReviews) {
   let changed = false;
+  let reviewChanged = false;
   const nextRaces = [];
 
   for (const race of races) {
@@ -338,42 +368,52 @@ async function main() {
       changed = true;
     }
 
-    if (reviewDraft) {
-      const key = reviewKeyForRace(updatedRace);
-      const previousReview = generatedReviews[key] ?? race.review ?? null;
-      const nextReviewComparable = {
-        raceId: String(updatedRace.raceId ?? ""),
-        courseId: String(updatedRace.courseId ?? ""),
-        summary: String(reviewDraft.summary ?? ""),
-        xPostText: String(reviewDraft.xPostText ?? ""),
-        reasons: Array.isArray(reviewDraft.reasons) ? reviewDraft.reasons.map((reason) => String(reason)) : [],
-      };
-      const previousComparable = previousReview
-        ? {
-            raceId: String(previousReview.raceId ?? updatedRace.raceId ?? ""),
-            courseId: String(previousReview.courseId ?? updatedRace.courseId ?? ""),
-            summary: String(previousReview.summary ?? ""),
-            xPostText: String(previousReview.xPostText ?? ""),
-            reasons: Array.isArray(previousReview.reasons) ? previousReview.reasons.map((reason) => String(reason)) : [],
-          }
-        : null;
-
-      generatedReviews[key] = {
-        ...nextReviewComparable,
-        updatedAt:
-          previousComparable && JSON.stringify(previousComparable) === JSON.stringify(nextReviewComparable)
-            ? String(previousReview.updatedAt ?? "")
-            : new Date().toISOString(),
-      };
+    if (updateGeneratedReviewEntry(generatedReviews, race, updatedRace, reviewDraft)) {
+      reviewChanged = true;
     }
 
     nextRaces.push(updatedRace);
   }
 
-  const reviewsChanged = JSON.stringify(generatedReviews) !== originalGeneratedReviews;
+  return { nextRaces, changed, reviewChanged };
+}
+
+async function main() {
+  const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { races: [] }, archives: [] });
+  const generatedReviews = await readJson(GENERATED_REVIEWS_PATH, {});
+  const originalGeneratedReviews = JSON.stringify(generatedReviews);
+
+  const currentWeekRaces = Array.isArray(weekly.currentWeek?.races) ? weekly.currentWeek.races : [];
+  const currentWeekUpdate = await updateRaceCollection(currentWeekRaces, generatedReviews);
+
+  let archivesChanged = false;
+  let archiveReviewChanged = false;
+  let nextArchives = Array.isArray(weekly.archives) ? weekly.archives : [];
+
+  if (INCLUDE_ARCHIVES) {
+    nextArchives = [];
+    for (const archive of Array.isArray(weekly.archives) ? weekly.archives : []) {
+      const archiveRaces = Array.isArray(archive?.races) ? archive.races : [];
+      const archiveUpdate = await updateRaceCollection(archiveRaces, generatedReviews);
+      if (archiveUpdate.changed) archivesChanged = true;
+      if (archiveUpdate.reviewChanged) archiveReviewChanged = true;
+      nextArchives.push({
+        ...archive,
+        races: archiveUpdate.nextRaces,
+      });
+    }
+  }
+
+  const changed = currentWeekUpdate.changed || archivesChanged;
+  const reviewsChanged =
+    currentWeekUpdate.reviewChanged ||
+    archiveReviewChanged ||
+    JSON.stringify(generatedReviews) !== originalGeneratedReviews;
 
   if (!changed && !reviewsChanged) {
-    console.log(`[update-race-results] no changes${TARGET_DAY ? ` day=${TARGET_DAY}` : ""}`);
+    console.log(
+      `[update-race-results] no changes${TARGET_DAY ? ` day=${TARGET_DAY}` : ""}${INCLUDE_ARCHIVES ? " includeArchives=true" : ""}`
+    );
     return;
   }
 
@@ -382,14 +422,22 @@ async function main() {
     currentWeek: {
       ...weekly.currentWeek,
       updatedAt: new Date().toISOString(),
-      races: nextRaces,
+      races: currentWeekUpdate.nextRaces,
     },
+    archives: nextArchives,
   };
 
   await fs.writeFile(WEEKLY_RACES_PATH, JSON.stringify(next, null, 2), "utf8");
   await fs.writeFile(GENERATED_REVIEWS_PATH, JSON.stringify(generatedReviews, null, 2), "utf8");
-  const updatedCount = nextRaces.filter((race) => race.result?.winnerHorseName).length;
-  console.log(`[update-race-results] updated=${updatedCount}${TARGET_DAY ? ` day=${TARGET_DAY}` : ""}`);
+  const updatedCurrentCount = currentWeekUpdate.nextRaces.filter((race) => race.result?.winnerHorseName).length;
+  const updatedArchiveCount = INCLUDE_ARCHIVES
+    ? nextArchives.flatMap((archive) => archive?.races ?? []).filter((race) => race.result?.winnerHorseName).length
+    : 0;
+  console.log(
+    `[update-race-results] updatedCurrent=${updatedCurrentCount}${
+      INCLUDE_ARCHIVES ? ` updatedArchives=${updatedArchiveCount}` : ""
+    }${TARGET_DAY ? ` day=${TARGET_DAY}` : ""}`
+  );
 }
 
 main().catch((error) => {
