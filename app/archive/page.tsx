@@ -8,20 +8,8 @@ import {
   GENERATED_COMPLETED_RACES,
   type GeneratedReviewRace,
 } from "@/lib/generatedRaceSchedule";
-import { ARCHIVED_RACES as LEGACY_ARCHIVED_RACES } from "@/lib/raceData";
+import { ARCHIVED_RACES as LEGACY_ARCHIVED_RACES, type ArchivedRace as LegacyArchivedRace } from "@/lib/raceData";
 import type { PredictionSnapshot, RaceCommentaryPayload } from "@/lib/types";
-
-type LegacyArchiveCard = {
-  courseId: string;
-  label: string;
-  date: string;
-  resultText?: string;
-  reviewSummary?: string;
-  reviewPostText?: string;
-  horses: { id: string; name: string; predictionCount: number }[];
-  surfaceLabel: string;
-  distance: number;
-};
 
 type ReviewCard = GeneratedReviewRace & { archived?: boolean };
 
@@ -186,6 +174,139 @@ function getRaceKey(race: ReviewCard): { raceId: string | null; courseId: string
   return { raceId: match?.[1] ?? null, courseId };
 }
 
+function buildLegacyRaceId(courseId: string, date: string) {
+  return `legacy-${courseId}-${date.replace(/[^0-9]/g, "")}`;
+}
+
+function buildLegacyHorseSeeds(race: LegacyArchivedRace): GeneratedReviewRace["horses"] {
+  return race.horses.map((horse) => ({
+    id: String(horse.id),
+    name: String(horse.name),
+    jockey: String(horse.jockey ?? ""),
+    trainer: horse.trainer ? String(horse.trainer) : undefined,
+    runningStyle: horse.runningStyle,
+    gateNumber: Number(horse.gateNumber ?? 0),
+    sex: horse.sex ?? "M",
+    weight: Number(horse.weight ?? 57),
+    favoriteCount: Number(horse.favoriteCount ?? 0),
+    xBuzzScore: Number(horse.xBuzzScore ?? 0),
+    predictionCount: Number(horse.predictionCount ?? 0),
+    realOdds: Number(horse.realOdds ?? 0),
+    oddsSource: String(horse.oddsSource ?? "legacy"),
+    speed: Number(horse.speed ?? 80),
+    stamina: Number(horse.stamina ?? 80),
+    power: Number(horse.power ?? 80),
+    guts: Number(horse.guts ?? 80),
+    trainingScore: Number(horse.trainingScore ?? 0),
+    recentFormScore: Number(horse.recentFormScore ?? 0),
+    recentAverageFinish: Number(horse.recentAverageFinish ?? 0),
+    recentTimeIndex: Number(horse.recentTimeIndex ?? 0),
+    lastRaceGradeScore: Number(horse.lastRaceGradeScore ?? 2),
+    lastRaceGradeLabel: String(horse.lastRaceGradeLabel ?? "legacy"),
+    lastRaceDistance: Number(horse.lastRaceDistance ?? 0),
+    distanceChange: Number(horse.distanceChange ?? 0),
+    condition: Number(horse.condition ?? 5),
+  }));
+}
+
+function buildLegacyResult(race: LegacyArchivedRace): GeneratedReviewRace["result"] {
+  if (!race.result?.winnerHorseId || !Array.isArray(race.result.top3HorseIds)) return undefined;
+
+  const horseMap = new Map(race.horses.map((horse) => [String(horse.id), horse]));
+  const top3HorseIds = race.result.top3HorseIds.map((id) => String(id));
+  const top3HorseNames = top3HorseIds
+    .map((horseId) => horseMap.get(horseId)?.name ?? "")
+    .filter(Boolean);
+  const popularityMap = new Map(
+    [...race.horses]
+      .sort((left, right) => {
+        const leftOdds = Number(left.realOdds ?? Number.MAX_SAFE_INTEGER);
+        const rightOdds = Number(right.realOdds ?? Number.MAX_SAFE_INTEGER);
+        return leftOdds - rightOdds || String(left.id).localeCompare(String(right.id));
+      })
+      .map((horse, index) => [String(horse.id), index + 1] as const)
+  );
+  const explicitPositions = Array.isArray(race.result.positions) ? race.result.positions : [];
+  const mergedHorseIds = [
+    ...top3HorseIds,
+    ...explicitPositions.map((entry) => String(entry.horseId ?? "")),
+  ].filter(Boolean);
+
+  const finishers = [...new Set(mergedHorseIds)]
+    .map((horseId) => {
+      const horse = horseMap.get(horseId);
+      if (!horse) return null;
+      const explicit = explicitPositions.find((entry) => String(entry.horseId ?? "") === horseId)?.position;
+      const top3Index = top3HorseIds.findIndex((id) => id === horseId);
+      return {
+        position: top3Index >= 0 ? top3Index + 1 : Number(explicit ?? 99),
+        horseId,
+        gateNumber: Number(horse.gateNumber ?? 0),
+        horseNumber: Number(horse.gateNumber ?? 0),
+        name: horse.name,
+        jockey: String(horse.jockey ?? ""),
+        finishTime: "",
+        margin: "",
+        popularity: popularityMap.get(horseId) ?? 0,
+        odds: Number(horse.realOdds ?? 0),
+      };
+    })
+    .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+    .sort((left, right) => left.position - right.position)
+    .slice(0, 3);
+
+  return {
+    updatedAt: new Date(`${race.date}T18:00:00+09:00`).toISOString(),
+    winnerHorseId: String(race.result.winnerHorseId),
+    winnerHorseName: horseMap.get(String(race.result.winnerHorseId))?.name ?? undefined,
+    top3HorseIds,
+    top3HorseNames,
+    finishers,
+  };
+}
+
+function buildLegacyReviewCards(): ReviewCard[] {
+  return LEGACY_ARCHIVED_RACES.map((race) => {
+    const course = ARCHIVED_COURSES.find((entry) => entry.id === race.courseId);
+    const raceDate = new Date(`${race.date}T00:00:00+09:00`);
+
+    return {
+      courseId: race.courseId,
+      raceId: buildLegacyRaceId(race.courseId, race.date),
+      label: race.label,
+      grade: String(course?.grade ?? "legacy"),
+      day: raceDate.getDay() === 0 ? "Sun" : "Sat",
+      venue: String(course?.venue ?? ""),
+      venueKey: String(race.courseId.split("-")[0] ?? ""),
+      surface: course?.surface ?? "Turf",
+      distance: Number(course?.distance ?? 0),
+      straightLength: Number(course?.straightLength ?? 360),
+      hashtag: race.hashtag,
+      hasRace: true,
+      oddsSource: "legacy",
+      date: race.date,
+      archivedAt: race.date,
+      archived: true,
+      result: buildLegacyResult(race),
+      review: race.review
+        ? {
+            updatedAt: new Date(`${race.date}T18:00:00+09:00`).toISOString(),
+            summary: race.review.summary,
+            xPostText: race.review.xPostText,
+            reasons: [],
+          }
+        : undefined,
+      horses: buildLegacyHorseSeeds(race),
+    };
+  });
+}
+
+function getSimTopRows(snapshot: PredictionSnapshot) {
+  return [...snapshot.rankedRows]
+    .sort((left, right) => left.rank - right.rank)
+    .slice(0, 3);
+}
+
 function getHorseNameFromSnapshot(snapshot: PredictionSnapshot | undefined, horseId?: string | null) {
   if (!snapshot || !horseId) return "";
   return snapshot.rankedRows.find((row) => row.horseId === horseId)?.horseName ?? "";
@@ -213,37 +334,6 @@ function getRecommendationFinishLabel(rec: RecommendationSettlement | null) {
   if (rec.fukuOutcome === "hit" || rec.fukuOutcome === "hit_missing_payout") return "複勝的中";
   if (rec.fukuOutcome === "miss") return "複勝圏外";
   return formatSettlementStatus(rec.settlementStatus);
-}
-
-function buildLegacyCards(): LegacyArchiveCard[] {
-  return LEGACY_ARCHIVED_RACES.map((race) => {
-    const course = ARCHIVED_COURSES.find((entry) => entry.id === race.courseId);
-    const top3Names = (race.result?.top3HorseIds ?? [])
-      .map((horseId) => race.horses.find((horse) => horse.id === horseId)?.name ?? "")
-      .filter(Boolean);
-    return {
-      courseId: race.courseId,
-      label: race.label,
-      date: race.date,
-      resultText:
-        top3Names.length >= 3
-          ? `1着 ${top3Names[0]} / 2着 ${top3Names[1]} / 3着 ${top3Names[2]}`
-          : top3Names.length === 2
-            ? `1着 ${top3Names[0]} / 2着 ${top3Names[1]}`
-            : top3Names.length === 1
-              ? `1着 ${top3Names[0]}`
-              : "",
-      reviewSummary: race.review?.summary,
-      reviewPostText: race.review?.xPostText,
-      horses: race.horses.map((horse) => ({
-        id: horse.id,
-        name: horse.name,
-        predictionCount: horse.predictionCount,
-      })),
-      surfaceLabel: course?.surface === "Dirt" ? "ダート" : "芝",
-      distance: course?.distance ?? 0,
-    };
-  });
 }
 
 function resultText(race: ReviewCard) {
@@ -619,6 +709,57 @@ function renderSettlementComparison(settlement?: RecommendationSettlementBundle 
   );
 }
 
+function buildFallbackSummaryComment(
+  race: ReviewCard,
+  snapshot?: PredictionSnapshot,
+  settlement?: RecommendationSettlementBundle | null
+) {
+  const top3HorseIds = race.result?.top3HorseIds?.map((id) => String(id)) ?? [];
+  if (!snapshot) {
+    return settlement?.win
+      ? `単複本命は${getRecommendationFinishLabel(settlement.win)}。事前 snapshot は残っていないが、結果検証の材料は確保できている。`
+      : "このレースは結果だけ確認でき、事前予想データは残っていない。";
+  }
+
+  const topRows = getSimTopRows(snapshot);
+  const top1 = topRows[0];
+  const top2 = topRows[1];
+  const top3 = topRows[2];
+  const top1Placed = Boolean(top1 && top3HorseIds.includes(String(top1.horseId)));
+  const top2Placed = Boolean(top2 && top3HorseIds.includes(String(top2.horseId)));
+  const top3Placed = Boolean(top3 && top3HorseIds.includes(String(top3.horseId)));
+  const valuePlaced = Boolean(snapshot.valueHorseId && top3HorseIds.includes(String(snapshot.valueHorseId)));
+
+  if (top1 && String(race.result?.winnerHorseId ?? "") === String(top1.horseId)) {
+    return "シミュレーション本命が1着。上位想定は概ね機能した。";
+  }
+  if (top1Placed) {
+    return "シミュレーション本命は馬券内を確保。勝ち切れなかったが方向性は悪くない。";
+  }
+  if (top2Placed || top3Placed) {
+    return "本命は崩れたが、シミュレーション上位の相手候補は機能した。順位付けに課題がある。";
+  }
+  if (valuePlaced) {
+    return "シミュレーション上位は崩れたが、人気薄側の拾いは効いており、妙味の読み自体は悪くない。";
+  }
+  return "シミュレーション上位勢が総崩れ。条件評価か序列づけを見直したい。";
+}
+
+function buildFallbackMarketGapComment(race: ReviewCard, snapshot?: PredictionSnapshot) {
+  if (!snapshot) return null;
+  const top3HorseIds = race.result?.top3HorseIds?.map((id) => String(id)) ?? [];
+  const valuePlaced = Boolean(snapshot.valueHorseId && top3HorseIds.includes(String(snapshot.valueHorseId)));
+  const watchPlaced = Boolean(snapshot.watchHorseId && top3HorseIds.includes(String(snapshot.watchHorseId)));
+
+  if (valuePlaced && snapshot.valueHorseId) {
+    return "人気薄側の拾いは機能しており、オッズ差に着目する視点は維持したい。";
+  }
+  if (snapshot.watchHorseId && !watchPlaced) {
+    return "市場寄りに買われた馬は走り切れず、人気評価との差が出たレースだった。";
+  }
+  return null;
+}
+
 function renderReviewCard(
   race: ReviewCard,
   snapshot: PredictionSnapshot | undefined,
@@ -627,6 +768,8 @@ function renderReviewCard(
 ) {
   const summaryText = race.review?.summary ?? "回顧テキストはまだありません。";
   const reasons = race.review?.reasons ?? [];
+  const autoSummaryComment = commentary?.summaryComment ?? buildFallbackSummaryComment(race, snapshot, settlement);
+  const autoMarketGapComment = commentary?.marketGapComment ?? buildFallbackMarketGapComment(race, snapshot);
 
   return (
     <article key={`${race.courseId}-${race.date}`} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -669,12 +812,12 @@ function renderReviewCard(
         ) : null}
       </div>
 
-      {commentary ? (
+      {autoSummaryComment ? (
         <div className="mt-4 rounded-lg border border-indigo-100 bg-indigo-50 px-4 py-3">
           <p className="text-xs font-semibold text-indigo-800">自動短評</p>
-          <p className="mt-2 text-sm leading-6 text-slate-700">{commentary.summaryComment}</p>
-          {commentary.marketGapComment ? (
-            <p className="mt-2 text-xs text-slate-600">市場差分: {commentary.marketGapComment}</p>
+          <p className="mt-2 text-sm leading-6 text-slate-700">{autoSummaryComment}</p>
+          {autoMarketGapComment ? (
+            <p className="mt-2 text-xs text-slate-600">市場差分: {autoMarketGapComment}</p>
           ) : null}
         </div>
       ) : null}
@@ -685,40 +828,6 @@ function renderReviewCard(
           {renderSnapshotComparison(race, snapshot)}
           {renderSettlementComparison(settlement)}
         </div>
-      </div>
-    </article>
-  );
-}
-
-function renderLegacyCard(card: LegacyArchiveCard) {
-  return (
-    <article key={`${card.courseId}-${card.date}`} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-        {card.date} / {card.surfaceLabel} {card.distance}m
-      </p>
-      <h3 className="mt-1 text-xl font-bold text-slate-900">{card.label}</h3>
-      {card.resultText ? <p className="mt-2 text-sm text-slate-600">結果: {card.resultText}</p> : null}
-      {card.reviewSummary ? (
-        <div className="mt-4 rounded-lg border border-slate-100 bg-slate-50 px-4 py-3">
-          <p className="text-sm leading-7 text-slate-700">{card.reviewSummary}</p>
-        </div>
-      ) : null}
-      <div className="mt-4 flex flex-wrap gap-2">
-        {card.reviewPostText ? (
-          <button
-            type="button"
-            onClick={() => openReviewPost(card.reviewPostText ?? "")}
-            className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
-          >
-            Xに投稿
-          </button>
-        ) : null}
-        <Link
-          href={`/sim?course=${encodeURIComponent(card.courseId)}`}
-          className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900"
-        >
-          Replay
-        </Link>
       </div>
     </article>
   );
@@ -772,7 +881,7 @@ export default function ArchivePage() {
     ],
     []
   );
-  const legacyCards = useMemo(() => buildLegacyCards(), []);
+  const legacyCards = useMemo<ReviewCard[]>(() => buildLegacyReviewCards(), []);
 
   return (
     <main className="min-h-screen bg-slate-50 py-12">
@@ -811,9 +920,20 @@ export default function ArchivePage() {
           <section className="mt-10 space-y-6">
             <div>
               <h2 className="text-lg font-bold text-slate-900">旧アーカイブ</h2>
-              <p className="mt-1 text-sm text-slate-500">旧データ形式の回顧です。比較サマリー対象外です。</p>
+              <p className="mt-1 text-sm text-slate-500">旧データ形式の回顧を、後追い snapshot と単複検証つきで再構築しています。</p>
             </div>
-            <div className="space-y-6">{legacyCards.map((card) => renderLegacyCard(card))}</div>
+            <div className="space-y-6">
+              {legacyCards.map((race) => {
+                const { raceId, courseId } = getRaceKey(race);
+                const snapshot = raceId ? snapshotsByRaceId[raceId] : undefined;
+                const settlement =
+                  (raceId ? settlementsByRaceId[raceId] : null) ??
+                  settlementsByCourseId[courseId] ??
+                  null;
+                const commentary = raceId ? commentariesByRaceId[raceId] : undefined;
+                return renderReviewCard(race, snapshot, settlement, commentary);
+              })}
+            </div>
           </section>
         ) : null}
       </div>

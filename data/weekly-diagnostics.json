@@ -1,6 +1,210 @@
 {
   "entries": [
     {
+      "storeKey": "2026-03-05_to_2026-03-28__sim-page-v1__c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+      "weekKey": "2026-03-05_to_2026-03-28",
+      "modelVersion": "sim-page-v1",
+      "scoringConfigHash": "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+      "savedAt": "2026-03-29T15:03:26.966Z",
+      "diagnostics": {
+        "meta": {
+          "weekKey": "2026-03-05_to_2026-03-28",
+          "generatedAt": "2026-03-29T15:03:26.964Z",
+          "modelVersion": "sim-page-v1",
+          "scoringConfigHash": "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+          "modelVersions": [
+            "sim-page-v1"
+          ],
+          "scoringConfigHashes": [
+            "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9"
+          ],
+          "raceCount": 16,
+          "settledRaceCount": 8,
+          "dateRange": {
+            "start": "2026-03-05",
+            "end": "2026-03-28"
+          }
+        },
+        "placeCore": {
+          "snapshotHonmei": {
+            "raceCount": 2,
+            "placeHitCount": 1,
+            "placeRate": 50
+          },
+          "routineHonmei": {
+            "raceCount": 2,
+            "placeHitCount": 1,
+            "placeRate": 50,
+            "placeReturnRate": 125
+          },
+          "snapshotRanks": [
+            {
+              "rank": 1,
+              "raceCount": 2,
+              "placeHitCount": 1,
+              "placeRate": 50
+            },
+            {
+              "rank": 2,
+              "raceCount": 2,
+              "placeHitCount": 1,
+              "placeRate": 50
+            },
+            {
+              "rank": 3,
+              "raceCount": 2,
+              "placeHitCount": 0,
+              "placeRate": 0
+            }
+          ]
+        },
+        "valueCore": {
+          "raceCount": 2,
+          "placeHitCount": 0,
+          "placeRate": 0,
+          "placeReturnRate": 0,
+          "popularityBands": [
+            {
+              "band": "top3",
+              "raceCount": 0,
+              "placeHitCount": 0,
+              "placeRate": 0,
+              "placeReturnRate": 0
+            },
+            {
+              "band": "mid",
+              "raceCount": 0,
+              "placeHitCount": 0,
+              "placeRate": 0,
+              "placeReturnRate": 0
+            },
+            {
+              "band": "longshot",
+              "raceCount": 2,
+              "placeHitCount": 0,
+              "placeRate": 0,
+              "placeReturnRate": 0
+            }
+          ],
+          "longshot": {
+            "raceCount": 2,
+            "placeHitCount": 0,
+            "placeRate": 0,
+            "placeReturnRate": 0
+          }
+        },
+        "agreement": {
+          "raceCount": 2,
+          "sameHonmeiCount": 2,
+          "agreementRate": 100,
+          "samePlaceRate": 50,
+          "disagreementSnapshotPlaceRate": 0,
+          "disagreementRoutinePlaceRate": 0
+        },
+        "disagreement": {
+          "raceCount": 0,
+          "snapshotPlaceRate": 0,
+          "routinePlaceRate": 0,
+          "valuePlaceCount": 0,
+          "snapshotOnlyPlaceCount": 0,
+          "routineOnlyPlaceCount": 0
+        },
+        "representativeRaces": {
+          "bestHits": [
+            {
+              "raceId": "202606020311",
+              "courseId": "nakayama-turf-1800-202606020311",
+              "label": "中山牝馬Ｓ 出馬表",
+              "date": "2026-03-05",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "3",
+                "2",
+                "4"
+              ],
+              "resultTop3HorseNames": [
+                "エセルフリーダ",
+                "ビヨンドザヴァレー",
+                "パラディレーヌ"
+              ],
+              "snapshotHonmeiHorseId": "4",
+              "snapshotHonmeiHorseName": "パラディレーヌ",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "4",
+              "routineHonmeiHorseName": "パラディレーヌ",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "12",
+              "valueHorseName": "ポルカリズム",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "エセルフリーダは条件が噛み合って突き抜けた。距離短縮で追走負荷が軽くなった、先行力を生かしやすい舞台だった、内目の枠からロスなく運べた。"
+            }
+          ],
+          "worstMisses": [
+            {
+              "raceId": "202609010511",
+              "courseId": "hanshin-turf-1400-202609010511",
+              "label": "フィリーズレビュー 出馬表",
+              "date": "2026-03-05",
+              "category": "worst_miss",
+              "resultTop3HorseIds": [
+                "2",
+                "17",
+                "7"
+              ],
+              "resultTop3HorseNames": [
+                "ギリーズボール",
+                "サンアントワーヌ",
+                "アイニードユー"
+              ],
+              "snapshotHonmeiHorseId": "4",
+              "snapshotHonmeiHorseName": "ショウナンカリス",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "4",
+              "routineHonmeiHorseName": "ショウナンカリス",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "14",
+              "valueHorseName": "コラルリーフ",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "ギリーズボールは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、近走の能力水準がこの相手では上位だった、人気以上に能力を出せる下地があった。"
+            }
+          ],
+          "disagreementCases": [],
+          "valueHits": []
+        },
+        "signals": {
+          "snapshotHonmeiUnderperformsRoutineHonmei": false,
+          "secondRankOutperformsFirstRank": false,
+          "thirdRankOutperformsFirstRank": false,
+          "valueCandidateWorksBetterInLongshots": false,
+          "agreementImprovesPlaceRate": true,
+          "disagreementFavoursRoutine": false,
+          "disagreementFavoursSnapshot": false
+        },
+        "recommendations": [
+          {
+            "id": "agreement_is_place_stability_filter",
+            "category": "agreement",
+            "targetStyle": "place_hit_rate",
+            "priority": "medium",
+            "title": "本命一致時の方が複勝率が安定している可能性",
+            "summary": "Snapshot本命と単複本命が一致したレースをフィルタとして使うと、複勝軸の安定性が上がる可能性があります。",
+            "evidence": {
+              "agreementRate": 100,
+              "samePlaceRate": 50,
+              "disagreementSnapshotPlaceRate": 0,
+              "disagreementRoutinePlaceRate": 0,
+              "sameHonmeiCount": 2
+            },
+            "metricSignals": [
+              "agreementImprovesPlaceRate"
+            ]
+          }
+        ]
+      }
+    },
+    {
       "storeKey": "2026-03-05_to_2026-03-13__none__none",
       "weekKey": "2026-03-05_to_2026-03-13",
       "modelVersion": null,

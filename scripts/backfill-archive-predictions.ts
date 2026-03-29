@@ -1,7 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { ARCHIVED_COURSES } from "../lib/courses";
+import { ARCHIVED_COURSES, COURSES } from "../lib/courses";
 import { buildPredictionSnapshot } from "../lib/predictionSnapshots";
+import { ARCHIVED_RACES as LEGACY_ARCHIVED_RACES } from "../lib/raceData";
 import { runMonteCarlo } from "../lib/simulation";
 import type { Course, Horse, PredictionSnapshot, PredictionSnapshotRow, RaceCondition } from "../lib/types";
 
@@ -18,7 +19,9 @@ type RacePayoutTable = {
 type RaceResultRecord = {
   updatedAt?: string;
   winnerHorseId?: string;
+  winnerHorseName?: string;
   top3HorseIds?: string[];
+  top3HorseNames?: string[];
   finishers?: Array<{
     position: number;
     horseId?: string;
@@ -52,6 +55,10 @@ type WeeklyArchiveRecord = {
 };
 
 type WeeklyRacesFile = {
+  currentWeek?: {
+    weekOf?: string;
+    races?: WeeklyRaceRecord[];
+  };
   archives?: WeeklyArchiveRecord[];
 };
 
@@ -66,8 +73,8 @@ type PayoutSource = "official" | "missing";
 type BackfilledRecommendation = {
   weekOf: string;
   day: string;
-  stage: "archive_backfill";
-  source: "archive_simulation_backfill";
+  stage: string;
+  source: string;
   postedAt: string;
   settledAt: string | null;
   courseId: string;
@@ -156,7 +163,7 @@ function createDefaultCondition(course: Course): RaceCondition {
 }
 
 function getArchivedCourse(race: WeeklyRaceRecord): Course {
-  const matched = ARCHIVED_COURSES.find((course) => course.id === race.courseId);
+  const matched = COURSES.find((course) => course.id === race.courseId) ?? ARCHIVED_COURSES.find((course) => course.id === race.courseId);
   if (matched) return matched;
 
   return {
@@ -334,12 +341,136 @@ function buildRecommendationKey(courseId: string, pickType: "win" | "value") {
   return `${courseId}::${pickType}`;
 }
 
+function buildLegacyRaceId(courseId: string, date: string) {
+  return `legacy-${courseId}-${date.replace(/[^0-9]/g, "")}`;
+}
+
+function startOfWeekMonday(dateString: string) {
+  const date = new Date(`${dateString}T00:00:00+09:00`);
+  const day = date.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  date.setDate(date.getDate() + diff);
+  return date.toISOString().slice(0, 10);
+}
+
+function buildLegacyResult(legacyRace: (typeof LEGACY_ARCHIVED_RACES)[number]): RaceResultRecord | undefined {
+  if (!legacyRace.result?.winnerHorseId || !Array.isArray(legacyRace.result.top3HorseIds)) return undefined;
+
+  const horseMap = new Map(legacyRace.horses.map((horse) => [horse.id, horse]));
+  const explicitPositions = Array.isArray(legacyRace.result.positions) ? legacyRace.result.positions : [];
+  const explicitByHorseId = new Map(explicitPositions.map((entry) => [String(entry.horseId), Number(entry.position)]));
+  const mergedHorseIds = [
+    ...legacyRace.result.top3HorseIds.map((id) => String(id)),
+    ...explicitPositions.map((entry) => String(entry.horseId)),
+  ].filter(Boolean);
+  const uniqueHorseIds = [...new Set(mergedHorseIds)];
+
+  const finishers = uniqueHorseIds
+    .map((horseId) => {
+      const horse = horseMap.get(horseId);
+      if (!horse) return null;
+      const top3Index = legacyRace.result?.top3HorseIds.findIndex((id) => String(id) === horseId) ?? -1;
+      const explicitPosition = explicitByHorseId.get(horseId);
+      const position =
+        top3Index >= 0
+          ? top3Index + 1
+          : Number.isFinite(explicitPosition)
+            ? Number(explicitPosition)
+            : 99;
+      return {
+        position,
+        horseId,
+        horseNumber: Number(horse.gateNumber ?? 0),
+        name: horse.name,
+      };
+    })
+    .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+    .sort((left, right) => left.position - right.position)
+    .slice(0, 3);
+
+  const top3HorseNames = legacyRace.result.top3HorseIds
+    .map((horseId) => horseMap.get(String(horseId))?.name ?? "")
+    .filter(Boolean);
+
+  return {
+    updatedAt: new Date(`${legacyRace.date}T18:00:00+09:00`).toISOString(),
+    winnerHorseId: String(legacyRace.result.winnerHorseId),
+    top3HorseIds: legacyRace.result.top3HorseIds.map((horseId) => String(horseId)),
+    finishers,
+    payouts: {
+      tansho: undefined,
+      fukusho: undefined,
+    },
+    winnerHorseName: top3HorseNames[0],
+    top3HorseNames,
+  };
+}
+
+type BackfillTarget = {
+  origin: "current" | "archive" | "legacy";
+  weekOf: string;
+  raceDate: string;
+  race: WeeklyRaceRecord;
+};
+
+function buildBackfillTargets(weekly: WeeklyRacesFile): BackfillTarget[] {
+  const targets: BackfillTarget[] = [];
+
+  for (const race of weekly.currentWeek?.races ?? []) {
+    if (!race?.result?.winnerHorseId) continue;
+    targets.push({
+      origin: "current",
+      weekOf: String(weekly.currentWeek?.weekOf ?? startOfWeekMonday(new Date().toISOString().slice(0, 10))),
+      raceDate: getArchiveRaceDate(String(weekly.currentWeek?.weekOf ?? startOfWeekMonday(new Date().toISOString().slice(0, 10))), race.day),
+      race,
+    });
+  }
+
+  for (const archive of weekly.archives ?? []) {
+    for (const race of archive.races ?? []) {
+      if (!race?.result?.winnerHorseId) continue;
+      targets.push({
+        origin: "archive",
+        weekOf: String(archive.weekOf ?? ""),
+        raceDate: getArchiveRaceDate(String(archive.weekOf ?? ""), race.day),
+        race,
+      });
+    }
+  }
+
+  for (const legacyRace of LEGACY_ARCHIVED_RACES) {
+    const syntheticRace: WeeklyRaceRecord = {
+      courseId: legacyRace.courseId,
+      raceId: buildLegacyRaceId(legacyRace.courseId, legacyRace.date),
+      label: legacyRace.label,
+      grade: ARCHIVED_COURSES.find((course) => course.id === legacyRace.courseId)?.grade ?? "OP",
+      day: new Date(`${legacyRace.date}T00:00:00+09:00`).getDay() === 0 ? "Sun" : "Sat",
+      venue: ARCHIVED_COURSES.find((course) => course.id === legacyRace.courseId)?.venue ?? "",
+      surface: ARCHIVED_COURSES.find((course) => course.id === legacyRace.courseId)?.surface ?? "Turf",
+      distance: ARCHIVED_COURSES.find((course) => course.id === legacyRace.courseId)?.distance ?? 0,
+      straightLength: ARCHIVED_COURSES.find((course) => course.id === legacyRace.courseId)?.straightLength ?? 360,
+      oddsSource: "legacy",
+      horses: legacyRace.horses.map((horse) => ({ ...horse })),
+      result: buildLegacyResult(legacyRace),
+    };
+
+    if (!syntheticRace.result?.winnerHorseId) continue;
+    targets.push({
+      origin: "legacy",
+      weekOf: startOfWeekMonday(legacyRace.date),
+      raceDate: legacyRace.date,
+      race: syntheticRace,
+    });
+  }
+
+  return targets;
+}
+
 async function main() {
-  const weekly = await readJson<WeeklyRacesFile>(WEEKLY_RACES_PATH, { archives: [] });
+  const weekly = await readJson<WeeklyRacesFile>(WEEKLY_RACES_PATH, { currentWeek: { races: [] }, archives: [] });
   const state = await readJson<RoutineState>(STATE_PATH, {});
   const { lines, latestByRaceId } = await readExistingSnapshots();
-
-  const archives = Array.isArray(weekly.archives) ? weekly.archives : [];
+  const targets = buildBackfillTargets(weekly);
   const existingRecommendations = new Map<string, true>();
   const recommendations = Array.isArray(state.tanpukuRecommendations) ? [...state.tanpukuRecommendations] : [];
 
@@ -353,63 +484,66 @@ async function main() {
   const appendedSnapshotLines: string[] = [];
   const addedRecommendations: BackfilledRecommendation[] = [];
 
-  for (const archive of archives) {
-    for (const race of archive.races ?? []) {
-      const raceId = normalizeHorseId(race.raceId);
-      if (!raceId || !race.result?.winnerHorseId || !Array.isArray(race.horses) || race.horses.length === 0) {
-        continue;
-      }
+  for (const target of targets) {
+    const { origin, weekOf, raceDate, race } = target;
+    const raceId = normalizeHorseId(race.raceId);
+    if (!raceId || !race.result?.winnerHorseId || !Array.isArray(race.horses) || race.horses.length === 0) {
+      continue;
+    }
 
-      let snapshot = latestByRaceId[raceId];
-      if (!snapshot) {
-        const course = getArchivedCourse(race);
-        const condition = createDefaultCondition(course);
-        const horses = race.horses.map((horse) => ({ ...horse })) as Horse[];
-        const results = runMonteCarlo(horses, course, condition, 100);
-        snapshot = await buildPredictionSnapshot({
-          results,
-          horses,
-          course,
-          condition,
-          simulationCount: 100,
-          oddsFetchedAt: race.result?.updatedAt ?? null,
-          oddsSource: race.oddsSource ?? "official",
-        });
-        latestByRaceId[raceId] = snapshot;
-        appendedSnapshotLines.push(JSON.stringify(snapshot));
-      }
+    let snapshot = latestByRaceId[raceId];
+    if (!snapshot) {
+      const course = getArchivedCourse(race);
+      const condition = createDefaultCondition(course);
+      const horses = race.horses.map((horse) => ({ ...horse })) as Horse[];
+      const results = runMonteCarlo(horses, course, condition, 100);
+      snapshot = await buildPredictionSnapshot({
+        results,
+        horses,
+        course,
+        condition,
+        simulationCount: 100,
+        oddsFetchedAt: race.result?.updatedAt ?? null,
+        oddsSource: race.oddsSource ?? "official",
+      });
+      latestByRaceId[raceId] = snapshot;
+      appendedSnapshotLines.push(JSON.stringify(snapshot));
+    }
 
-      const postedAt = createPostedAt(getArchiveRaceDate(archive.weekOf, race.day));
-      const winKey = buildRecommendationKey(race.courseId, "win");
-      const valueKey = buildRecommendationKey(race.courseId, "value");
-      const winRow = pickWinRow(snapshot);
-      const valueRow = pickValueRow(snapshot);
+    const postedAt = createPostedAt(raceDate);
+    const winKey = buildRecommendationKey(race.courseId, "win");
+    const valueKey = buildRecommendationKey(race.courseId, "value");
+    const winRow = pickWinRow(snapshot);
+    const valueRow = pickValueRow(snapshot);
 
-      if (winRow && !existingRecommendations.has(winKey)) {
-        const recommendation = buildBackfilledRecommendation({
-          archiveWeekOf: archive.weekOf,
-          race,
-          row: winRow,
-          pickType: "win",
-          postedAt,
-        });
-        recommendations.push(recommendation);
-        addedRecommendations.push(recommendation);
-        existingRecommendations.set(winKey, true);
-      }
+    if (winRow && !existingRecommendations.has(winKey)) {
+      const recommendation = buildBackfilledRecommendation({
+        archiveWeekOf: weekOf,
+        race,
+        row: winRow,
+        pickType: "win",
+        postedAt,
+      });
+      recommendation.stage = `${origin}_backfill`;
+      recommendation.source = `${origin}_simulation_backfill`;
+      recommendations.push(recommendation);
+      addedRecommendations.push(recommendation);
+      existingRecommendations.set(winKey, true);
+    }
 
-      if (valueRow && !existingRecommendations.has(valueKey)) {
-        const recommendation = buildBackfilledRecommendation({
-          archiveWeekOf: archive.weekOf,
-          race,
-          row: valueRow,
-          pickType: "value",
-          postedAt,
-        });
-        recommendations.push(recommendation);
-        addedRecommendations.push(recommendation);
-        existingRecommendations.set(valueKey, true);
-      }
+    if (valueRow && !existingRecommendations.has(valueKey)) {
+      const recommendation = buildBackfilledRecommendation({
+        archiveWeekOf: weekOf,
+        race,
+        row: valueRow,
+        pickType: "value",
+        postedAt,
+      });
+      recommendation.stage = `${origin}_backfill`;
+      recommendation.source = `${origin}_simulation_backfill`;
+      recommendations.push(recommendation);
+      addedRecommendations.push(recommendation);
+      existingRecommendations.set(valueKey, true);
     }
   }
 
@@ -427,7 +561,7 @@ async function main() {
   console.log(
     JSON.stringify(
       {
-        archivedRaceCount: archives.reduce((sum, archive) => sum + (archive.races?.length ?? 0), 0),
+        targetRaceCount: targets.length,
         snapshotsAdded: appendedSnapshotLines.length,
         recommendationsAdded: addedRecommendations.length,
       },
