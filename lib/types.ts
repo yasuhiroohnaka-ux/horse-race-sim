@@ -87,3 +87,329 @@ export interface RaceResult {
   finishTime: number;
   position: number;
 }
+
+export type PredictionSnapshotContributorKey =
+  | "abilityScore"
+  | "courseFit"
+  | "distanceFit"
+  | "groundFit"
+  | "paceFit"
+  | "marketEdge";
+
+export interface PredictionSnapshotContributor {
+  key: PredictionSnapshotContributorKey;
+  label: string;
+  value: number;
+}
+
+export interface PredictionSnapshotSignalReason {
+  signalLabel: string;
+  signalDetailLabel: string | null;
+  signalReason: string | null;
+}
+
+export interface PredictionSnapshotRow {
+  horseId: string;
+  horseName: string;
+  rank: number;
+  score: number;
+  winProb: number;
+  fairOdds: number | null;
+  realOdds: number | null;
+  edge: number;
+  runningStyle: RunningStyle;
+  gateNumber: number;
+  jockey: string;
+  majorContributors: PredictionSnapshotContributor[];
+}
+
+export interface PredictionSnapshotMarketMeta {
+  fieldSize: number;
+  oddsFetchedAt: string | null;
+  oddsSource: string | null;
+}
+
+export interface PredictionSnapshot {
+  snapshotId: string;
+  raceId: string;
+  courseId: string;
+  capturedAt: string;
+  modelFamily: string;
+  modelVersion: string;
+  scoringConfigHash: string;
+  simulationCount: number;
+  condition: RaceCondition;
+  rankedRows: PredictionSnapshotRow[];
+  honmeiHorseId: string | null;
+  valueHorseId: string | null;
+  watchHorseId: string | null;
+  signalReasons: Record<string, PredictionSnapshotSignalReason>;
+  marketMeta: PredictionSnapshotMarketMeta;
+}
+
+export type WeeklyDiagnosticsPopularityBandKey = "top3" | "mid" | "longshot";
+
+export interface WeeklyDiagnosticsMeta {
+  weekKey: string;
+  generatedAt: string;
+  modelVersion: string | null;
+  scoringConfigHash: string | null;
+  modelVersions: string[];
+  scoringConfigHashes: string[];
+  raceCount: number;
+  settledRaceCount: number;
+  dateRange: {
+    start: string | null;
+    end: string | null;
+  };
+}
+
+export interface WeeklyDiagnosticsRankStat {
+  rank: 1 | 2 | 3;
+  raceCount: number;
+  placeHitCount: number;
+  placeRate: number;
+}
+
+export interface WeeklyDiagnosticsPlaceCore {
+  snapshotHonmei: {
+    raceCount: number;
+    placeHitCount: number;
+    placeRate: number;
+  };
+  routineHonmei: {
+    raceCount: number;
+    placeHitCount: number;
+    placeRate: number;
+    placeReturnRate: number;
+  };
+  snapshotRanks: WeeklyDiagnosticsRankStat[];
+}
+
+export interface WeeklyDiagnosticsPopularityBand {
+  band: WeeklyDiagnosticsPopularityBandKey;
+  raceCount: number;
+  placeHitCount: number;
+  placeRate: number;
+  placeReturnRate: number;
+}
+
+export interface WeeklyDiagnosticsValueCore {
+  raceCount: number;
+  placeHitCount: number;
+  placeRate: number;
+  placeReturnRate: number;
+  popularityBands: WeeklyDiagnosticsPopularityBand[];
+  longshot: {
+    raceCount: number;
+    placeHitCount: number;
+    placeRate: number;
+    placeReturnRate: number;
+  };
+}
+
+export interface WeeklyDiagnosticsAgreement {
+  raceCount: number;
+  sameHonmeiCount: number;
+  agreementRate: number;
+  samePlaceRate: number;
+  disagreementSnapshotPlaceRate: number;
+  disagreementRoutinePlaceRate: number;
+}
+
+export interface WeeklyDiagnosticsRepresentativeRace {
+  raceId: string;
+  courseId: string;
+  label: string;
+  date: string;
+  category: "best_hit" | "worst_miss" | "disagreement" | "value_hit";
+  resultTop3HorseIds: string[];
+  resultTop3HorseNames: string[];
+  snapshotHonmeiHorseId: string | null;
+  snapshotHonmeiHorseName: string | null;
+  snapshotHonmeiPlaced: boolean | null;
+  routineHonmeiHorseId: string | null;
+  routineHonmeiHorseName: string | null;
+  routineHonmeiPlaced: boolean | null;
+  valueHorseId: string | null;
+  valueHorseName: string | null;
+  valuePlaced: boolean | null;
+  valueReturnRate: number | null;
+  reviewSummary: string | null;
+}
+
+export interface WeeklyDiagnosticsSignals {
+  snapshotHonmeiUnderperformsRoutineHonmei: boolean;
+  secondRankOutperformsFirstRank: boolean;
+  thirdRankOutperformsFirstRank: boolean;
+  valueCandidateWorksBetterInLongshots: boolean;
+  agreementImprovesPlaceRate: boolean;
+  disagreementFavoursRoutine: boolean;
+  disagreementFavoursSnapshot: boolean;
+}
+
+export type WeeklyDiagnosticRecommendationCategory =
+  | "place_core"
+  | "value_core"
+  | "agreement"
+  | "ranking"
+  | "longshot";
+
+export type WeeklyDiagnosticRecommendationTargetStyle =
+  | "place_hit_rate"
+  | "place_return_rate"
+  | "balanced";
+
+export type WeeklyDiagnosticRecommendationPriority = "high" | "medium" | "low";
+
+export interface WeeklyDiagnosticRecommendation {
+  id: string;
+  category: WeeklyDiagnosticRecommendationCategory;
+  targetStyle: WeeklyDiagnosticRecommendationTargetStyle;
+  priority: WeeklyDiagnosticRecommendationPriority;
+  title: string;
+  summary: string;
+  evidence: Record<string, number | string | boolean | null>;
+  metricSignals: string[];
+}
+
+export interface WeeklyDiagnosticsStoreEntry {
+  storeKey: string;
+  weekKey: string;
+  modelVersion: string | null;
+  scoringConfigHash: string | null;
+  savedAt: string;
+  diagnostics: WeeklyDiagnostics;
+}
+
+export interface WeeklyDiagnosticsStore {
+  entries: WeeklyDiagnosticsStoreEntry[];
+}
+
+export interface WeeklyDiagnosticsComparisonSummary {
+  current: {
+    weekKey: string;
+    modelVersion: string | null;
+    scoringConfigHash: string | null;
+  };
+  previous: {
+    weekKey: string;
+    modelVersion: string | null;
+    scoringConfigHash: string | null;
+  } | null;
+  deltas: {
+    snapshotHonmeiPlaceRateDelta: number | null;
+    routineHonmeiPlaceRateDelta: number | null;
+    valuePlaceReturnRateDelta: number | null;
+    agreementRateDelta: number | null;
+  };
+}
+
+export interface WeeklyDiagnostics {
+  meta: WeeklyDiagnosticsMeta;
+  placeCore: WeeklyDiagnosticsPlaceCore;
+  valueCore: WeeklyDiagnosticsValueCore;
+  agreement: WeeklyDiagnosticsAgreement;
+  disagreement: {
+    raceCount: number;
+    snapshotPlaceRate: number;
+    routinePlaceRate: number;
+    valuePlaceCount: number;
+    snapshotOnlyPlaceCount: number;
+    routineOnlyPlaceCount: number;
+  };
+  representativeRaces: {
+    bestHits: WeeklyDiagnosticsRepresentativeRace[];
+    worstMisses: WeeklyDiagnosticsRepresentativeRace[];
+    disagreementCases: WeeklyDiagnosticsRepresentativeRace[];
+    valueHits: WeeklyDiagnosticsRepresentativeRace[];
+  };
+  signals: WeeklyDiagnosticsSignals;
+  recommendations: WeeklyDiagnosticRecommendation[];
+}
+
+export interface RaceCommentarySimHorse {
+  rank: number;
+  horseId: string;
+  horseName: string;
+  winProb: number;
+  fairOdds: number | null;
+  realOdds: number | null;
+}
+
+export interface RaceCommentaryActualHorse {
+  position: number;
+  horseId: string | null;
+  horseName: string;
+  popularity: number | null;
+  odds: number | null;
+}
+
+export interface RaceCommentaryPayoutItem {
+  horseNumber: number;
+  payout: number;
+}
+
+export interface RaceCommentaryPayouts {
+  tansho: RaceCommentaryPayoutItem[];
+  fukusho: RaceCommentaryPayoutItem[];
+}
+
+export interface RaceCommentaryPayload {
+  raceId: string;
+  courseId: string;
+  raceLabel: string;
+  simHonmeiHorseId: string | null;
+  simSecondHorseId: string | null;
+  simThirdHorseId: string | null;
+  snapshotTop3: RaceCommentarySimHorse[];
+  actualTop3: RaceCommentaryActualHorse[];
+  payouts: RaceCommentaryPayouts | null;
+  resultPattern: string;
+  marketFadeCandidate: {
+    horseId: string | null;
+    reason: string | null;
+  } | null;
+  marketGapComment: string | null;
+  marketOverbetSignal: boolean;
+  summaryComment: string;
+}
+
+export interface WeeklyNoteSummaryBlock {
+  key:
+    | "weekly_overview"
+    | "place_core"
+    | "value_core"
+    | "snapshot_ranks"
+    | "popularity_trends"
+    | "disagreement_review"
+    | "comparison"
+    | "best_hits"
+    | "worst_misses"
+    | "next_actions";
+  title: string;
+  points: string[];
+}
+
+export interface WeeklyNotePayload {
+  weekKey: string;
+  generatedAt: string;
+  diagnostics: WeeklyDiagnostics;
+  recommendations: WeeklyDiagnosticRecommendation[];
+  comparison: WeeklyDiagnosticsComparisonSummary | null;
+  summaryBlocks: WeeklyNoteSummaryBlock[];
+  representativeRaces: {
+    bestHits: RaceCommentaryPayload[];
+    worstMisses: RaceCommentaryPayload[];
+    disagreementCases: RaceCommentaryPayload[];
+    valueHits: RaceCommentaryPayload[];
+  };
+  raceCommentaries: RaceCommentaryPayload[];
+}
+
+export interface WeeklyNoteDraft {
+  weekKey: string;
+  generatedAt: string;
+  format: "markdown" | "text";
+  content: string;
+}

@@ -56,6 +56,15 @@ type ParsedPerformanceEntry = {
   averageRunSpeed: number | null;
 };
 
+type PerformancePayload = {
+  recentFormScore?: number;
+  recentAverageFinish?: number;
+  recentTimeIndex?: number;
+  lastRaceGradeScore?: number;
+  lastRaceGradeLabel?: string;
+  lastRaceDistance?: number;
+};
+
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -572,20 +581,16 @@ export async function GET(request: NextRequest) {
     }
 
     const oddsByGate: Record<string, number> = {};
+    const gateByHorseKey: Record<string, number> = {};
+    const oddsByHorseKey: Record<string, number> = {};
     const popularityRankByGate: Record<string, number> = {};
+    const popularityRankByHorseKey: Record<string, number> = {};
     const popularityByGate: Record<string, number> = {};
+    const popularityByHorseKey: Record<string, number> = {};
     const jockeyByGate: Record<string, string> = {};
-    const performanceByGate: Record<
-      string,
-      {
-        recentFormScore?: number;
-        recentAverageFinish?: number;
-        recentTimeIndex?: number;
-        lastRaceGradeScore?: number;
-        lastRaceGradeLabel?: string;
-        lastRaceDistance?: number;
-      }
-    > = {};
+    const jockeyByHorseKey: Record<string, string> = {};
+    const performanceByGate: Record<string, PerformancePayload> = {};
+    const performanceByHorseKey: Record<string, PerformancePayload> = {};
     const weeklyHorseByGate = new Map(
       (race.horses ?? [])
         .filter((horse) => Number.isFinite(horse.gateNumber) && Number(horse.gateNumber) > 0)
@@ -598,25 +603,41 @@ export async function GET(request: NextRequest) {
     );
     for (const entry of best.entries) {
       const gateKey = String(entry.gateNumber);
-      const oreproEntry = oreproByGate.get(gateKey) ?? oreproByName.get(normalizeName(entry.horseName));
+      const horseKey = normalizeName(entry.horseName);
+      const oreproEntry = oreproByGate.get(gateKey) ?? oreproByName.get(horseKey);
       const resolvedOdds = entry.odds ?? oreproEntry?.odds ?? null;
       const resolvedPopularityRank = entry.popularityRank ?? oreproEntry?.popularityRank ?? null;
       const resolvedJockey = entry.jockey ?? oreproEntry?.jockey ?? null;
 
+      if (horseKey && Number.isFinite(entry.gateNumber) && entry.gateNumber > 0) {
+        gateByHorseKey[horseKey] = entry.gateNumber;
+      }
       if (Number.isFinite(resolvedOdds) && (resolvedOdds ?? 0) > 0) {
         oddsByGate[gateKey] = Number(resolvedOdds);
+        if (horseKey) {
+          oddsByHorseKey[horseKey] = Number(resolvedOdds);
+        }
       }
       if (Number.isFinite(resolvedPopularityRank) && (resolvedPopularityRank ?? 0) > 0) {
         popularityRankByGate[gateKey] = Number(resolvedPopularityRank);
+        if (horseKey) {
+          popularityRankByHorseKey[horseKey] = Number(resolvedPopularityRank);
+        }
       }
-      const weeklyHorse = weeklyHorseByGate.get(gateKey) ?? weeklyHorseByName.get(normalizeName(entry.horseName));
+      const weeklyHorse = weeklyHorseByGate.get(gateKey) ?? weeklyHorseByName.get(horseKey);
       const xBuzzScore = Number(weeklyHorse?.xBuzzScore ?? 0);
       const popularityScore = oddsToPopularityScore(resolvedOdds, xBuzzScore);
       if (popularityScore > 0) {
         popularityByGate[gateKey] = popularityScore;
+        if (horseKey) {
+          popularityByHorseKey[horseKey] = popularityScore;
+        }
       }
       if (resolvedJockey) {
         jockeyByGate[gateKey] = resolvedJockey;
+        if (horseKey) {
+          jockeyByHorseKey[horseKey] = resolvedJockey;
+        }
       }
     }
 
@@ -625,10 +646,14 @@ export async function GET(request: NextRequest) {
       const pastEntries = parseShutubaPastEntries(pastHtml);
       for (const entry of pastEntries) {
         const gateKey = String(entry.gateNumber);
+        const horseKey = normalizeName(entry.horseName);
         if (entry.jockey) {
           jockeyByGate[gateKey] = entry.jockey;
+          if (horseKey) {
+            jockeyByHorseKey[horseKey] = entry.jockey;
+          }
         }
-        performanceByGate[gateKey] = {
+        const performancePayload: PerformancePayload = {
           ...(entry.recentFormScore !== null ? { recentFormScore: entry.recentFormScore } : {}),
           ...(entry.recentAverageFinish !== null ? { recentAverageFinish: entry.recentAverageFinish } : {}),
           ...(entry.recentTimeIndex !== null ? { recentTimeIndex: entry.recentTimeIndex } : {}),
@@ -636,6 +661,10 @@ export async function GET(request: NextRequest) {
           ...(entry.lastRaceGradeLabel ? { lastRaceGradeLabel: entry.lastRaceGradeLabel } : {}),
           ...(entry.lastRaceDistance !== null ? { lastRaceDistance: entry.lastRaceDistance } : {}),
         };
+        performanceByGate[gateKey] = performancePayload;
+        if (horseKey) {
+          performanceByHorseKey[horseKey] = performancePayload;
+        }
       }
     } catch {
       // Keep odds/popularity/jockey refresh working even if past-performance parsing fails.
@@ -648,10 +677,16 @@ export async function GET(request: NextRequest) {
         fetchedAt: new Date().toISOString(),
         overlap: best.overlap,
         oddsByGate,
+        gateByHorseKey,
+        oddsByHorseKey,
         popularityRankByGate,
+        popularityRankByHorseKey,
         popularityByGate,
+        popularityByHorseKey,
         jockeyByGate,
+        jockeyByHorseKey,
         performanceByGate,
+        performanceByHorseKey,
       },
       {
         headers: {
@@ -664,7 +699,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }
-
 
 
 
