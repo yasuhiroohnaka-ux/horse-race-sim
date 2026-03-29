@@ -66,6 +66,15 @@ type RoutineState = {
   tanpukuRecommendations?: Array<Record<string, unknown>>;
 };
 
+type ExistingRecommendationRecord = {
+  courseId?: unknown;
+  pickType?: unknown;
+  raceId?: unknown;
+  settlementStatus?: unknown;
+  tanPayoutSource?: unknown;
+  fukuPayoutSource?: unknown;
+};
+
 type SettlementStatus = "pending_result" | "pending_payouts" | "settled";
 type BetOutcome = "not_settled" | "hit" | "miss" | "hit_missing_payout";
 type PayoutSource = "official" | "missing";
@@ -452,6 +461,23 @@ function buildRecommendationKey(courseId: string, pickType: "win" | "value") {
   return `${courseId}::${pickType}`;
 }
 
+function shouldReplaceRecommendation(existing: Record<string, unknown> | undefined, next: BackfilledRecommendation) {
+  if (!existing) return false;
+
+  const current = existing as ExistingRecommendationRecord;
+  const currentRaceId = normalizeHorseId(current.raceId);
+  const currentSettlementStatus = String(current.settlementStatus ?? "");
+  const currentTanSource = String(current.tanPayoutSource ?? "");
+  const currentFukuSource = String(current.fukuPayoutSource ?? "");
+
+  if (currentRaceId !== next.raceId) return true;
+  if (currentSettlementStatus !== "settled" && next.settlementStatus === "settled") return true;
+  if (currentTanSource !== "official" && next.tanPayoutSource === "official") return true;
+  if (currentFukuSource !== "official" && next.fukuPayoutSource === "official") return true;
+
+  return false;
+}
+
 function buildLegacyRaceId(courseId: string, date: string) {
   return `legacy-${courseId}-${date.replace(/[^0-9]/g, "")}`;
 }
@@ -639,14 +665,14 @@ async function main() {
   const state = await readJson<RoutineState>(STATE_PATH, {});
   const { lines, latestByRaceId } = await readExistingSnapshots();
   const targets = await buildBackfillTargets(weekly);
-  const existingRecommendations = new Map<string, true>();
+  const existingRecommendations = new Map<string, number>();
   const recommendations = Array.isArray(state.tanpukuRecommendations) ? [...state.tanpukuRecommendations] : [];
 
-  for (const entry of recommendations) {
+  for (const [index, entry] of recommendations.entries()) {
     const courseId = normalizeHorseId(entry.courseId);
     const pickType = String(entry.pickType ?? "") === "value" ? "value" : String(entry.pickType ?? "") === "win" ? "win" : null;
     if (!courseId || !pickType) continue;
-    existingRecommendations.set(buildRecommendationKey(courseId, pickType), true);
+    existingRecommendations.set(buildRecommendationKey(courseId, pickType), index);
   }
 
   const appendedSnapshotLines: string[] = [];
@@ -685,7 +711,7 @@ async function main() {
     const winRow = pickWinRow(snapshot);
     const valueRow = pickValueRow(snapshot);
 
-    if (winRow && !existingRecommendations.has(winKey)) {
+    if (winRow) {
       const recommendation = buildBackfilledRecommendation({
         archiveWeekOf: weekOf,
         race,
@@ -695,12 +721,19 @@ async function main() {
       });
       recommendation.stage = `${origin}_backfill`;
       recommendation.source = `${origin}_simulation_backfill`;
-      recommendations.push(recommendation);
-      addedRecommendations.push(recommendation);
-      existingRecommendations.set(winKey, true);
+
+      const existingIndex = existingRecommendations.get(winKey);
+      if (existingIndex === undefined) {
+        recommendations.push(recommendation);
+        addedRecommendations.push(recommendation);
+        existingRecommendations.set(winKey, recommendations.length - 1);
+      } else if (shouldReplaceRecommendation(recommendations[existingIndex], recommendation)) {
+        recommendations[existingIndex] = recommendation;
+        addedRecommendations.push(recommendation);
+      }
     }
 
-    if (valueRow && !existingRecommendations.has(valueKey)) {
+    if (valueRow) {
       const recommendation = buildBackfilledRecommendation({
         archiveWeekOf: weekOf,
         race,
@@ -710,9 +743,16 @@ async function main() {
       });
       recommendation.stage = `${origin}_backfill`;
       recommendation.source = `${origin}_simulation_backfill`;
-      recommendations.push(recommendation);
-      addedRecommendations.push(recommendation);
-      existingRecommendations.set(valueKey, true);
+
+      const existingIndex = existingRecommendations.get(valueKey);
+      if (existingIndex === undefined) {
+        recommendations.push(recommendation);
+        addedRecommendations.push(recommendation);
+        existingRecommendations.set(valueKey, recommendations.length - 1);
+      } else if (shouldReplaceRecommendation(recommendations[existingIndex], recommendation)) {
+        recommendations[existingIndex] = recommendation;
+        addedRecommendations.push(recommendation);
+      }
     }
   }
 
