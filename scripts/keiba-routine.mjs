@@ -10,6 +10,7 @@ const AUTO = process.argv.includes("--auto");
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
 const STATE_PATH = path.join(ROOT, "data", "routine-state.json");
 const PENDING_POSTS_PATH = path.join(ROOT, "data", "pending-posts.jsonl");
+const GENERATED_REVIEWS_PATH = path.join(ROOT, "data", "generated-reviews.json");
 
 const X_POST_WEBHOOK_URL = process.env.X_POST_WEBHOOK_URL || "";
 
@@ -74,6 +75,10 @@ async function readJson(filePath, fallback) {
 
 async function writeJson(filePath, value) {
   await fs.writeFile(filePath, JSON.stringify(value, null, 2), "utf8");
+}
+
+function reviewKeyForRace(race) {
+  return String(race?.raceId ?? race?.courseId ?? "");
 }
 
 async function publishOrQueuePost(stage, text) {
@@ -423,17 +428,18 @@ async function handleNextDayReview(day, stage) {
   await runNodeScript("scripts/sync-race-schedule.mjs");
 
   const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { races: [] } });
+  const generatedReviews = await readJson(GENERATED_REVIEWS_PATH, {});
   const state = await readJson(STATE_PATH, {});
   state.reviewPosts = state.reviewPosts || {};
 
   const reviewedRaces = (weekly.currentWeek?.races || []).filter(
-    (race) => race.day === day && race.result?.winnerHorseName && race.review?.xPostText
+    (race) => race.day === day && race.result?.winnerHorseName && generatedReviews[reviewKeyForRace(race)]?.xPostText
   );
 
   for (const race of reviewedRaces) {
     const key = `${stage}:${race.raceId || race.courseId}`;
     if (state.reviewPosts[key]) continue;
-    await publishOrQueuePost(key, race.review.xPostText);
+    await publishOrQueuePost(key, generatedReviews[reviewKeyForRace(race)].xPostText);
     state.reviewPosts[key] = new Date().toISOString();
   }
 
