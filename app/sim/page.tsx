@@ -10,6 +10,7 @@ import { ACTIVE_COURSES, COURSES } from "@/lib/courses";
 import { getDefaultHorses } from "@/lib/defaultHorses";
 import { dedupeHorses, findHorseDuplicates } from "@/lib/horseIntegrity";
 import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
+import { buildPredictionSnapshot } from "@/lib/predictionSnapshots";
 import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
 import { calculateOdds, runMonteCarlo } from "@/lib/simulation";
 import { Course, Horse, RaceCondition } from "@/lib/types";
@@ -478,6 +479,34 @@ function SimulatorContent() {
       const simulationResults = runMonteCarlo(horses, selectedCourse, condition, 100);
       setResults(simulationResults);
       setIsRunning(false);
+
+      void (async () => {
+        try {
+          const snapshot = await buildPredictionSnapshot({
+            results: simulationResults,
+            horses,
+            course: selectedCourse,
+            condition,
+            simulationCount: 100,
+            oddsFetchedAt: oddsLastFetchedAt || null,
+            oddsSource: horses.find((horse) => String(horse.oddsSource ?? "").trim())?.oddsSource ?? null,
+          });
+
+          const response = await fetch("/api/prediction-snapshots", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify(snapshot),
+          });
+
+          if (!response.ok) {
+            throw new Error(`failed to save prediction snapshot: ${response.status}`);
+          }
+        } catch (error) {
+          console.warn("[sim] failed to persist prediction snapshot", error);
+        }
+      })();
     }, 250);
   };
 

@@ -3,6 +3,7 @@ import path from "node:path";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
+const GENERATED_REVIEWS_PATH = path.join(ROOT, "data", "generated-reviews.json");
 
 const ARG_DAY = process.argv.find((arg) => arg.startsWith("--day="))?.split("=")[1] ?? "";
 const TARGET_DAY = ARG_DAY === "Sat" || ARG_DAY === "Sun" ? ARG_DAY : null;
@@ -82,6 +83,10 @@ async function readJson(filePath, fallback) {
   } catch {
     return fallback;
   }
+}
+
+function reviewKeyForRace(race) {
+  return String(race?.raceId ?? race?.courseId ?? "");
 }
 
 function parseNumber(raw) {
@@ -239,7 +244,7 @@ function buildReview(race, top3, winnerHorse) {
 
 function mergeRaceResult(race, resultHtml) {
   const parsedFinishers = parseResultEntries(resultHtml);
-  if (parsedFinishers.length === 0) return race;
+  if (parsedFinishers.length === 0) return { race, reviewDraft: null };
 
   const horses = Array.isArray(race?.horses) ? race.horses : [];
   const horseByExternalId = new Map(
@@ -260,7 +265,7 @@ function mergeRaceResult(race, resultHtml) {
   });
 
   const top3 = finishers.filter((entry) => entry.position > 0).sort((a, b) => a.position - b.position).slice(0, 3);
-  if (top3.length === 0) return race;
+  if (top3.length === 0) return { race, reviewDraft: null };
 
   const winner = top3[0];
   const winnerHorse =
@@ -289,53 +294,34 @@ function mergeRaceResult(race, resultHtml) {
       ? race.result.updatedAt
       : new Date().toISOString();
 
-  const nextReview = review
-    ? {
-        ...review,
-        updatedAt:
-          race.review &&
-          JSON.stringify({ ...race.review, updatedAt: undefined }) === JSON.stringify({ ...review, updatedAt: undefined })
-            ? race.review.updatedAt
-            : new Date().toISOString(),
-      }
-    : race.review;
-
   const nextRace = {
     ...race,
     result: {
       updatedAt: resultUpdatedAt,
       ...nextResult,
     },
-    review: nextReview,
   };
 
-  if (winner.horseId) {
-    nextRace.winnerHorseId = winner.horseId;
-  }
-
-  const top3HorseIds = top3.map((entry) => entry.horseId).filter(Boolean);
-  if (top3HorseIds.length === 3) {
-    nextRace.top3HorseIds = top3HorseIds;
-  }
-
-  return nextRace;
+  return { race: nextRace, reviewDraft: review };
 }
 
 async function updateRace(race) {
   if (!race?.raceId || !Array.isArray(race.horses) || race.horses.length === 0) {
-    return race;
+    return { race, reviewDraft: null };
   }
 
   try {
     const resultHtml = await fetchText(`https://race.netkeiba.com/race/result.html?race_id=${race.raceId}`);
     return mergeRaceResult(race, resultHtml);
   } catch {
-    return race;
+    return { race, reviewDraft: null };
   }
 }
 
 async function main() {
   const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { races: [] }, archives: [] });
+  const generatedReviews = await readJson(GENERATED_REVIEWS_PATH, {});
+  const originalGeneratedReviews = JSON.stringify(generatedReviews);
   const races = Array.isArray(weekly.currentWeek?.races) ? weekly.currentWeek.races : [];
 
   let changed = false;
@@ -347,14 +333,46 @@ async function main() {
       continue;
     }
 
-    const updatedRace = await updateRace(race);
+    const { race: updatedRace, reviewDraft } = await updateRace(race);
     if (JSON.stringify(updatedRace) !== JSON.stringify(race)) {
       changed = true;
     }
+
+    if (reviewDraft) {
+      const key = reviewKeyForRace(updatedRace);
+      const previousReview = generatedReviews[key] ?? race.review ?? null;
+      const nextReviewComparable = {
+        raceId: String(updatedRace.raceId ?? ""),
+        courseId: String(updatedRace.courseId ?? ""),
+        summary: String(reviewDraft.summary ?? ""),
+        xPostText: String(reviewDraft.xPostText ?? ""),
+        reasons: Array.isArray(reviewDraft.reasons) ? reviewDraft.reasons.map((reason) => String(reason)) : [],
+      };
+      const previousComparable = previousReview
+        ? {
+            raceId: String(previousReview.raceId ?? updatedRace.raceId ?? ""),
+            courseId: String(previousReview.courseId ?? updatedRace.courseId ?? ""),
+            summary: String(previousReview.summary ?? ""),
+            xPostText: String(previousReview.xPostText ?? ""),
+            reasons: Array.isArray(previousReview.reasons) ? previousReview.reasons.map((reason) => String(reason)) : [],
+          }
+        : null;
+
+      generatedReviews[key] = {
+        ...nextReviewComparable,
+        updatedAt:
+          previousComparable && JSON.stringify(previousComparable) === JSON.stringify(nextReviewComparable)
+            ? String(previousReview.updatedAt ?? "")
+            : new Date().toISOString(),
+      };
+    }
+
     nextRaces.push(updatedRace);
   }
 
-  if (!changed) {
+  const reviewsChanged = JSON.stringify(generatedReviews) !== originalGeneratedReviews;
+
+  if (!changed && !reviewsChanged) {
     console.log(`[update-race-results] no changes${TARGET_DAY ? ` day=${TARGET_DAY}` : ""}`);
     return;
   }
@@ -369,6 +387,7 @@ async function main() {
   };
 
   await fs.writeFile(WEEKLY_RACES_PATH, JSON.stringify(next, null, 2), "utf8");
+  await fs.writeFile(GENERATED_REVIEWS_PATH, JSON.stringify(generatedReviews, null, 2), "utf8");
   const updatedCount = nextRaces.filter((race) => race.result?.winnerHorseName).length;
   console.log(`[update-race-results] updated=${updatedCount}${TARGET_DAY ? ` day=${TARGET_DAY}` : ""}`);
 }

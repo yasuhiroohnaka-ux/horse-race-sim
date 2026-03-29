@@ -87,3 +87,62 @@ export interface RaceResult {
   finishTime: number;
   position: number;
 }
+
+export type PredictionSnapshotContributorKey =
+  | "abilityScore"
+  | "courseFit"
+  | "distanceFit"
+  | "groundFit"
+  | "paceFit"
+  | "marketEdge";
+
+export interface PredictionSnapshotContributor {
+  key: PredictionSnapshotContributorKey;
+  label: string;
+  value: number;
+}
+
+export interface PredictionSnapshotSignalReason {
+  signalLabel: string;
+  signalDetailLabel: string | null;
+  signalReason: string | null;
+}
+
+export interface PredictionSnapshotRow {
+  horseId: string;
+  horseName: string;
+  rank: number;
+  score: number;
+  winProb: number;
+  fairOdds: number | null;
+  realOdds: number | null;
+  edge: number;
+  runningStyle: RunningStyle;
+  gateNumber: number;
+  jockey: string;
+  majorContributors: PredictionSnapshotContributor[];
+}
+
+export interface PredictionSnapshotMarketMeta {
+  fieldSize: number;
+  oddsFetchedAt: string | null;
+  oddsSource: string | null;
+}
+
+export interface PredictionSnapshot {
+  snapshotId: string;
+  raceId: string;
+  courseId: string;
+  capturedAt: string;
+  modelFamily: string;
+  modelVersion: string;
+  scoringConfigHash: string;
+  simulationCount: number;
+  condition: RaceCondition;
+  rankedRows: PredictionSnapshotRow[];
+  honmeiHorseId: string | null;
+  valueHorseId: string | null;
+  watchHorseId: string | null;
+  signalReasons: Record<string, PredictionSnapshotSignalReason>;
+  marketMeta: PredictionSnapshotMarketMeta;
+}

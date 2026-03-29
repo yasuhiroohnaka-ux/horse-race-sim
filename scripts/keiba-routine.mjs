@@ -315,6 +315,49 @@ function pickTanpukuPair(race, includeBodyWeight = false, applyDraw = true) {
   return { winPick, valuePick };
 }
 
+function hasOfficialPayoutTable(payoutTable) {
+  return Boolean(
+    payoutTable &&
+      Array.isArray(payoutTable.resultNumbers) &&
+      payoutTable.resultNumbers.length > 0 &&
+      Array.isArray(payoutTable.payouts) &&
+      payoutTable.payouts.length > 0
+  );
+}
+
+function getResultFinisherForHorse(race, horseId) {
+  const finishers = race?.result?.finishers;
+  if (!Array.isArray(finishers) || !horseId) return null;
+  return finishers.find((finisher) => String(finisher?.horseId ?? "") === String(horseId)) ?? null;
+}
+
+function getOfficialPayoutByHorseNumber(payoutTable, horseNumber) {
+  if (!hasOfficialPayoutTable(payoutTable)) return null;
+
+  const normalizedHorseNumber = Number(horseNumber ?? 0);
+  if (!(normalizedHorseNumber > 0)) return null;
+
+  const resultNumbers = payoutTable.resultNumbers.map((value) => Number(value));
+  const payouts = payoutTable.payouts.map((value) => Number(value));
+  const index = resultNumbers.findIndex((value) => value === normalizedHorseNumber);
+  if (index < 0) return null;
+
+  const payout = payouts[index];
+  return Number.isFinite(payout) ? Math.round(payout) : null;
+}
+
+function getOfficialTanshoPayoutForHorse(race, horseId) {
+  const finisher = getResultFinisherForHorse(race, horseId);
+  if (!finisher) return null;
+  return getOfficialPayoutByHorseNumber(race?.result?.payouts?.tansho, finisher.horseNumber);
+}
+
+function getOfficialFukushoPayoutForHorse(race, horseId) {
+  const finisher = getResultFinisherForHorse(race, horseId);
+  if (!finisher) return null;
+  return getOfficialPayoutByHorseNumber(race?.result?.payouts?.fukusho, finisher.horseNumber);
+}
+
 function buildPackedOvervaluedText(day, overvalued, maxChars = 280) {
   const prefix = `${day}対象レース 過大評価馬: `;
   if (!overvalued || overvalued.length === 0) return `${prefix}該当なし`;
@@ -488,6 +531,13 @@ async function handleRecommendation(day, stage) {
       placeOdds: Number(winPick.placeOdds),
       winProb: Number(winPick.winProb),
       placeProb: Number(winPick.placeProb),
+      settlementStatus: "pending_result",
+      tanOutcome: "not_settled",
+      fukuOutcome: "not_settled",
+      actualWinnerHorseId: null,
+      actualTop3HorseIds: [],
+      tanPayoutSource: "missing",
+      fukuPayoutSource: "missing",
       resolved: false,
     });
     state.tanpukuRecommendations.push({
@@ -504,6 +554,13 @@ async function handleRecommendation(day, stage) {
       placeOdds: Number(valuePick.placeOdds),
       winProb: Number(valuePick.winProb),
       placeProb: Number(valuePick.placeProb),
+      settlementStatus: "pending_result",
+      tanOutcome: "not_settled",
+      fukuOutcome: "not_settled",
+      actualWinnerHorseId: null,
+      actualTop3HorseIds: [],
+      tanPayoutSource: "missing",
+      fukuPayoutSource: "missing",
       resolved: false,
     });
     await writeJson(STATE_PATH, state);
@@ -523,21 +580,71 @@ async function handleSundaySettle() {
     const race = (weekly.currentWeek?.races || []).find((r) => r.courseId === rec.courseId && r.label === rec.raceLabel);
     if (!race) continue;
 
-    const drawMap = buildDrawTacticalMap(race);
-    const ranked = [...race.horses]
-      .map((h) => ({ h, s: scoreHorse(h, race, false, drawMap) }))
-      .sort((a, b) => b.s - a.s)
-      .map((x) => x.h.id);
+    const result = race.result;
+    const winnerId = result?.winnerHorseId ? String(result.winnerHorseId) : "";
+    const top3 = Array.isArray(result?.top3HorseIds) ? result.top3HorseIds.map((id) => String(id)) : [];
+    rec.actualWinnerHorseId = winnerId || null;
+    rec.actualTop3HorseIds = top3;
 
-    const winnerId = race.winnerHorseId || ranked[0];
-    const top3 = race.top3HorseIds || ranked.slice(0, 3);
+    if (!result || !winnerId || top3.length === 0) {
+      rec.settlementStatus = "pending_result";
+      rec.tanOutcome = "not_settled";
+      rec.fukuOutcome = "not_settled";
+      rec.tanPayout = 0;
+      rec.fukuPayout = 0;
+      rec.tanPayoutSource = "missing";
+      rec.fukuPayoutSource = "missing";
+      rec.resolved = false;
+      continue;
+    }
 
-    const tanHit = winnerId === rec.horseId;
-    const fukuHit = top3.includes(rec.horseId);
+    const tanHit = winnerId === String(rec.horseId);
+    const fukuHit = top3.includes(String(rec.horseId));
     const tanStake = 100;
     const fukuStake = 100;
-    const tanPayout = tanHit ? Math.round((Number(rec.realOdds || 0) || 0) * 100) : 0;
-    const fukuPayout = fukuHit ? Math.round((Number(rec.placeOdds || 1.1) || 1.1) * 100) : 0;
+
+    const hasTanshoTable = hasOfficialPayoutTable(result?.payouts?.tansho);
+    const hasFukushoTable = hasOfficialPayoutTable(result?.payouts?.fukusho);
+    const officialTanPayout = tanHit ? getOfficialTanshoPayoutForHorse(race, rec.horseId) : 0;
+    const officialFukuPayout = fukuHit ? getOfficialFukushoPayoutForHorse(race, rec.horseId) : 0;
+
+    const tanOutcome =
+      tanHit
+        ? officialTanPayout !== null
+          ? "hit"
+          : "hit_missing_payout"
+        : "miss";
+    const fukuOutcome =
+      fukuHit
+        ? officialFukuPayout !== null
+          ? "hit"
+          : "hit_missing_payout"
+        : "miss";
+
+    const tanPayout = tanHit && officialTanPayout !== null ? officialTanPayout : 0;
+    const fukuPayout = fukuHit && officialFukuPayout !== null ? officialFukuPayout : 0;
+    const tanPayoutSource = hasTanshoTable ? "official" : "missing";
+    const fukuPayoutSource = hasFukushoTable ? "official" : "missing";
+    const settlementStatus =
+      !hasTanshoTable ||
+      !hasFukushoTable ||
+      (tanHit && officialTanPayout === null) ||
+      (fukuHit && officialFukuPayout === null)
+        ? "pending_payouts"
+        : "settled";
+
+    rec.settlementStatus = settlementStatus;
+    rec.tanOutcome = tanOutcome;
+    rec.fukuOutcome = fukuOutcome;
+    rec.tanPayout = tanPayout;
+    rec.fukuPayout = fukuPayout;
+    rec.tanPayoutSource = tanPayoutSource;
+    rec.fukuPayoutSource = fukuPayoutSource;
+
+    if (settlementStatus !== "settled") {
+      rec.resolved = false;
+      continue;
+    }
 
     state.performance.weekly.bets += 1;
     state.performance.weekly.tanHits += tanHit ? 1 : 0;
@@ -559,8 +666,6 @@ async function handleSundaySettle() {
     rec.settledAt = new Date().toISOString();
     rec.tanHit = tanHit;
     rec.fukuHit = fukuHit;
-    rec.tanPayout = tanPayout;
-    rec.fukuPayout = fukuPayout;
   }
 
   const w = state.performance.weekly;

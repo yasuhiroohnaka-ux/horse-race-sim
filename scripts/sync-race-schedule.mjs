@@ -2,6 +2,20 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const ROOT = process.cwd();
+const GENERATED_REVIEWS_PATH = path.join(ROOT, "data", "generated-reviews.json");
+
+async function readJson(filePath, fallback) {
+  try {
+    const raw = await fs.readFile(filePath, "utf8");
+    return JSON.parse(raw.replace(/^\uFEFF/, ""));
+  } catch {
+    return fallback;
+  }
+}
+
+function reviewKeyForRace(race) {
+  return String(race?.raceId ?? race?.courseId ?? "");
+}
 
 function isoDateFromWeekAndDay(weekOf, day) {
   const base = new Date(`${weekOf}T00:00:00+09:00`);
@@ -60,16 +74,64 @@ function mapRaceMeta(race) {
   };
 }
 
-function mapRaceResult(result) {
-  if (!result) return undefined;
+function resolveRaceResultSource(race) {
+  const result = race?.result;
+  const hasResultPayload =
+    result &&
+    (
+      result.winnerHorseId ||
+      result.winnerHorseName ||
+      (Array.isArray(result.top3HorseIds) && result.top3HorseIds.length > 0) ||
+      (Array.isArray(result.top3HorseNames) && result.top3HorseNames.length > 0) ||
+      (Array.isArray(result.finishers) && result.finishers.length > 0)
+    );
+
+  if (hasResultPayload) {
+    return {
+      // Source of truth: result block inside weekly-races.json.
+      updatedAt: result.updatedAt,
+      winnerHorseId: result.winnerHorseId,
+      winnerHorseName: result.winnerHorseName,
+      top3HorseIds: result.top3HorseIds,
+      top3HorseNames: result.top3HorseNames,
+      finishers: result.finishers,
+    };
+  }
+
+  const legacyWinnerHorseId = race?.winnerHorseId;
+  const legacyTop3HorseIds = race?.top3HorseIds;
+  const legacyTop3HorseNames = race?.top3HorseNames;
+  if (
+    legacyWinnerHorseId ||
+    (Array.isArray(legacyTop3HorseIds) && legacyTop3HorseIds.length > 0) ||
+    (Array.isArray(legacyTop3HorseNames) && legacyTop3HorseNames.length > 0)
+  ) {
+    return {
+      // Legacy fallback only for backward compatibility with older weekly-races.json data.
+      updatedAt: "",
+      winnerHorseId: legacyWinnerHorseId,
+      winnerHorseName: race?.winnerHorseName,
+      top3HorseIds: legacyTop3HorseIds,
+      top3HorseNames: legacyTop3HorseNames,
+      finishers: [],
+    };
+  }
+
+  return null;
+}
+
+function mapRaceResult(race) {
+  const resolved = resolveRaceResultSource(race);
+  if (!resolved) return undefined;
+
   return {
-    updatedAt: String(result.updatedAt ?? ""),
-    winnerHorseId: result.winnerHorseId ? String(result.winnerHorseId) : undefined,
-    winnerHorseName: result.winnerHorseName ? String(result.winnerHorseName) : undefined,
-    top3HorseIds: Array.isArray(result.top3HorseIds) ? result.top3HorseIds.map((id) => String(id)) : [],
-    top3HorseNames: Array.isArray(result.top3HorseNames) ? result.top3HorseNames.map((name) => String(name)) : [],
-    finishers: Array.isArray(result.finishers)
-      ? result.finishers.map((entry) => ({
+    updatedAt: String(resolved.updatedAt ?? ""),
+    winnerHorseId: resolved.winnerHorseId ? String(resolved.winnerHorseId) : undefined,
+    winnerHorseName: resolved.winnerHorseName ? String(resolved.winnerHorseName) : undefined,
+    top3HorseIds: Array.isArray(resolved.top3HorseIds) ? resolved.top3HorseIds.map((id) => String(id)) : [],
+    top3HorseNames: Array.isArray(resolved.top3HorseNames) ? resolved.top3HorseNames.map((name) => String(name)) : [],
+    finishers: Array.isArray(resolved.finishers)
+      ? resolved.finishers.map((entry) => ({
           position: Number(entry.position ?? 0),
           horseId: entry.horseId ? String(entry.horseId) : undefined,
           externalHorseId: entry.externalHorseId ? String(entry.externalHorseId) : undefined,
@@ -96,21 +158,26 @@ function mapRaceReview(review) {
   };
 }
 
-function mapReviewRace(race, weekOf, archivedAt) {
+function getPreferredReviewForRace(race, generatedReviews) {
+  const generatedReview = generatedReviews[reviewKeyForRace(race)];
+  return generatedReview ?? race.review;
+}
+
+function mapReviewRace(race, weekOf, archivedAt, generatedReviews) {
   return {
     ...mapRaceMeta(race),
     date: isoDateFromWeekAndDay(String(weekOf ?? ""), String(race.day ?? "")),
     archivedAt: archivedAt ? String(archivedAt) : undefined,
-    result: mapRaceResult(race.result),
-    review: mapRaceReview(race.review),
+    result: mapRaceResult(race),
+    review: mapRaceReview(getPreferredReviewForRace(race, generatedReviews)),
     horses: Array.isArray(race.horses) ? race.horses.map((h) => mapHorseSeed(h, race)) : [],
   };
 }
 
 async function main() {
   const srcPath = path.join(ROOT, "data", "weekly-races.json");
-  const srcRaw = await fs.readFile(srcPath, "utf8");
-  const src = JSON.parse(srcRaw.replace(/^\uFEFF/, ""));
+  const src = await readJson(srcPath, { currentWeek: { races: [] }, archives: [] });
+  const generatedReviews = await readJson(GENERATED_REVIEWS_PATH, {});
 
   const raceMap = {};
   const raceMeta = [];
@@ -122,14 +189,19 @@ async function main() {
   }
 
   const completedCurrentRaces = (src.currentWeek?.races ?? [])
-    .filter((race) => race?.courseId && Array.isArray(race.horses) && (race.result || race.review || race.winnerHorseId))
-    .map((race) => mapReviewRace(race, src.currentWeek?.weekOf ?? "", undefined));
+    .filter(
+      (race) =>
+        race?.courseId &&
+        Array.isArray(race.horses) &&
+        (resolveRaceResultSource(race) || getPreferredReviewForRace(race, generatedReviews))
+    )
+    .map((race) => mapReviewRace(race, src.currentWeek?.weekOf ?? "", undefined, generatedReviews));
 
   const archivedRaces = [];
   for (const archive of src.archives ?? []) {
     for (const race of archive?.races ?? []) {
       if (!race?.courseId || !Array.isArray(race.horses)) continue;
-      archivedRaces.push(mapReviewRace(race, archive.weekOf ?? "", archive.archivedAt ?? ""));
+      archivedRaces.push(mapReviewRace(race, archive.weekOf ?? "", archive.archivedAt ?? "", generatedReviews));
     }
   }
 
