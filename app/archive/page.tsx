@@ -9,7 +9,7 @@ import {
   type GeneratedReviewRace,
 } from "@/lib/generatedRaceSchedule";
 import { ARCHIVED_RACES as LEGACY_ARCHIVED_RACES } from "@/lib/raceData";
-import type { PredictionSnapshot } from "@/lib/types";
+import type { PredictionSnapshot, RaceCommentaryPayload } from "@/lib/types";
 
 type LegacyArchiveCard = {
   courseId: string;
@@ -120,6 +120,13 @@ type PerformanceLookupResponse = {
   settlementsByCourseId: Record<string, RecommendationSettlementBundle>;
   settlementsByRaceId: Record<string, RecommendationSettlementBundle>;
   summary: AggregateSummary | null;
+};
+
+type NotePayloadResponse = {
+  ok: boolean;
+  payload: {
+    raceCommentaries: RaceCommentaryPayload[];
+  } | null;
 };
 
 function formatSurface(surface: "Turf" | "Dirt") {
@@ -615,7 +622,8 @@ function renderSettlementComparison(settlement?: RecommendationSettlementBundle 
 function renderReviewCard(
   race: ReviewCard,
   snapshot: PredictionSnapshot | undefined,
-  settlement: RecommendationSettlementBundle | null
+  settlement: RecommendationSettlementBundle | null,
+  commentary?: RaceCommentaryPayload
 ) {
   const summaryText = race.review?.summary ?? "回顧テキストはまだありません。";
   const reasons = race.review?.reasons ?? [];
@@ -660,6 +668,16 @@ function renderReviewCard(
           </ul>
         ) : null}
       </div>
+
+      {commentary ? (
+        <div className="mt-4 rounded-lg border border-indigo-100 bg-indigo-50 px-4 py-3">
+          <p className="text-xs font-semibold text-indigo-800">自動短評</p>
+          <p className="mt-2 text-sm leading-6 text-slate-700">{commentary.summaryComment}</p>
+          {commentary.marketGapComment ? (
+            <p className="mt-2 text-xs text-slate-600">市場差分: {commentary.marketGapComment}</p>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="mt-4">
         {renderHonmeiComparison(race, snapshot, settlement)}
@@ -711,25 +729,31 @@ export default function ArchivePage() {
   const [settlementsByRaceId, setSettlementsByRaceId] = useState<Record<string, RecommendationSettlementBundle>>({});
   const [settlementsByCourseId, setSettlementsByCourseId] = useState<Record<string, RecommendationSettlementBundle>>({});
   const [aggregateSummary, setAggregateSummary] = useState<AggregateSummary | null>(null);
+  const [commentariesByRaceId, setCommentariesByRaceId] = useState<Record<string, RaceCommentaryPayload>>({});
 
   useEffect(() => {
     let isMounted = true;
 
     async function load() {
       try {
-        const [snapshotRes, performanceRes] = await Promise.all([
+        const [snapshotRes, performanceRes, notePayloadRes] = await Promise.all([
           fetch("/api/prediction-snapshots", { cache: "no-store" }),
           fetch("/api/performance", { cache: "no-store" }),
+          fetch("/api/note-payload", { cache: "no-store" }),
         ]);
 
         const snapshotJson = (await snapshotRes.json()) as SnapshotLookupResponse;
         const performanceJson = (await performanceRes.json()) as PerformanceLookupResponse;
+        const notePayloadJson = (await notePayloadRes.json()) as NotePayloadResponse;
 
         if (!isMounted) return;
         setSnapshotsByRaceId(snapshotJson.snapshotsByRaceId ?? {});
         setSettlementsByRaceId(performanceJson.settlementsByRaceId ?? {});
         setSettlementsByCourseId(performanceJson.settlementsByCourseId ?? {});
         setAggregateSummary(performanceJson.summary ?? null);
+        setCommentariesByRaceId(
+          Object.fromEntries((notePayloadJson.payload?.raceCommentaries ?? []).map((item) => [item.raceId, item]))
+        );
       } catch (error) {
         console.warn("failed to load archive comparison data", error);
       }
@@ -777,7 +801,8 @@ export default function ArchivePage() {
                 (raceId ? settlementsByRaceId[raceId] : null) ??
                 settlementsByCourseId[courseId] ??
                 null;
-              return renderReviewCard(race, snapshot, settlement);
+              const commentary = raceId ? commentariesByRaceId[raceId] : undefined;
+              return renderReviewCard(race, snapshot, settlement, commentary);
             })}
           </div>
         </section>

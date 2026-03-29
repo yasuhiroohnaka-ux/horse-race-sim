@@ -1,0 +1,127 @@
+{
+  "entries": [
+    {
+      "storeKey": "2026-03-05_to_2026-03-13__none__none",
+      "weekKey": "2026-03-05_to_2026-03-13",
+      "modelVersion": null,
+      "scoringConfigHash": null,
+      "savedAt": "2026-03-29T13:22:52.698Z",
+      "diagnostics": {
+        "meta": {
+          "weekKey": "2026-03-05_to_2026-03-13",
+          "generatedAt": "2026-03-29T13:22:52.694Z",
+          "modelVersion": null,
+          "scoringConfigHash": null,
+          "modelVersions": [],
+          "scoringConfigHashes": [],
+          "raceCount": 10,
+          "settledRaceCount": 2,
+          "dateRange": {
+            "start": "2026-03-05",
+            "end": "2026-03-13"
+          }
+        },
+        "placeCore": {
+          "snapshotHonmei": {
+            "raceCount": 0,
+            "placeHitCount": 0,
+            "placeRate": 0
+          },
+          "routineHonmei": {
+            "raceCount": 0,
+            "placeHitCount": 0,
+            "placeRate": 0,
+            "placeReturnRate": 0
+          },
+          "snapshotRanks": [
+            {
+              "rank": 1,
+              "raceCount": 0,
+              "placeHitCount": 0,
+              "placeRate": 0
+            },
+            {
+              "rank": 2,
+              "raceCount": 0,
+              "placeHitCount": 0,
+              "placeRate": 0
+            },
+            {
+              "rank": 3,
+              "raceCount": 0,
+              "placeHitCount": 0,
+              "placeRate": 0
+            }
+          ]
+        },
+        "valueCore": {
+          "raceCount": 0,
+          "placeHitCount": 0,
+          "placeRate": 0,
+          "placeReturnRate": 0,
+          "popularityBands": [
+            {
+              "band": "top3",
+              "raceCount": 0,
+              "placeHitCount": 0,
+              "placeRate": 0,
+              "placeReturnRate": 0
+            },
+            {
+              "band": "mid",
+              "raceCount": 0,
+              "placeHitCount": 0,
+              "placeRate": 0,
+              "placeReturnRate": 0
+            },
+            {
+              "band": "longshot",
+              "raceCount": 0,
+              "placeHitCount": 0,
+              "placeRate": 0,
+              "placeReturnRate": 0
+            }
+          ],
+          "longshot": {
+            "raceCount": 0,
+            "placeHitCount": 0,
+            "placeRate": 0,
+            "placeReturnRate": 0
+          }
+        },
+        "agreement": {
+          "raceCount": 0,
+          "sameHonmeiCount": 0,
+          "agreementRate": 0,
+          "samePlaceRate": 0,
+          "disagreementSnapshotPlaceRate": 0,
+          "disagreementRoutinePlaceRate": 0
+        },
+        "disagreement": {
+          "raceCount": 0,
+          "snapshotPlaceRate": 0,
+          "routinePlaceRate": 0,
+          "valuePlaceCount": 0,
+          "snapshotOnlyPlaceCount": 0,
+          "routineOnlyPlaceCount": 0
+        },
+        "representativeRaces": {
+          "bestHits": [],
+          "worstMisses": [],
+          "disagreementCases": [],
+          "valueHits": []
+        },
+        "signals": {
+          "snapshotHonmeiUnderperformsRoutineHonmei": false,
+          "secondRankOutperformsFirstRank": false,
+          "thirdRankOutperformsFirstRank": false,
+          "valueCandidateWorksBetterInLongshots": false,
+          "agreementImprovesPlaceRate": false,
+          "disagreementFavoursRoutine": false,
+          "disagreementFavoursSnapshot": false
+        },
+        "recommendations": []
+      }
+    }
+  ]
+}
