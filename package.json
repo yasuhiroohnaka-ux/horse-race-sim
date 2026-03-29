@@ -12,6 +12,7 @@
     "update:race-results": "node scripts/update-race-results.mjs",
     "update:race-volatility": "node scripts/update-race-volatility.mjs",
     "sync:race-schedule": "node scripts/sync-race-schedule.mjs",
+    "backfill:archive-predictions": "npx tsx scripts/backfill-archive-predictions.ts",
     "routine:keiba": "node scripts/keiba-routine.mjs",
     "audit:entry-data": "node scripts/daily-entry-check.mjs"
   },
