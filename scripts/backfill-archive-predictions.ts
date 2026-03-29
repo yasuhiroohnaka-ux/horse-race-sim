@@ -110,6 +110,65 @@ type BackfilledRecommendation = {
   fukuHit: boolean;
 };
 
+const MANUAL_RECOMMENDATION_OVERRIDES: Record<string, Partial<BackfilledRecommendation>> = {
+  "202606020211::win::1": {
+    settlementStatus: "settled",
+    tanOutcome: "hit",
+    fukuOutcome: "hit",
+    tanPayout: 420,
+    fukuPayout: 160,
+    tanPayoutSource: "official",
+    fukuPayoutSource: "official",
+    actualWinnerHorseId: "1",
+    actualTop3HorseIds: ["1", "5", "2"],
+    resolved: true,
+    tanHit: true,
+    fukuHit: true,
+  },
+  "202606020211::value::14": {
+    settlementStatus: "settled",
+    tanOutcome: "miss",
+    fukuOutcome: "miss",
+    tanPayout: 0,
+    fukuPayout: 0,
+    tanPayoutSource: "official",
+    fukuPayoutSource: "official",
+    actualWinnerHorseId: "1",
+    actualTop3HorseIds: ["1", "5", "2"],
+    resolved: true,
+    tanHit: false,
+    fukuHit: false,
+  },
+  "202609010411::win::1": {
+    settlementStatus: "settled",
+    tanOutcome: "miss",
+    fukuOutcome: "hit",
+    tanPayout: 0,
+    fukuPayout: 130,
+    tanPayoutSource: "official",
+    fukuPayoutSource: "official",
+    actualWinnerHorseId: "2",
+    actualTop3HorseIds: ["2", "6", "1"],
+    resolved: true,
+    tanHit: false,
+    fukuHit: true,
+  },
+  "202609010411::value::4": {
+    settlementStatus: "settled",
+    tanOutcome: "miss",
+    fukuOutcome: "miss",
+    tanPayout: 0,
+    fukuPayout: 0,
+    tanPayoutSource: "official",
+    fukuPayoutSource: "official",
+    actualWinnerHorseId: "2",
+    actualTop3HorseIds: ["2", "6", "1"],
+    resolved: true,
+    tanHit: false,
+    fukuHit: false,
+  },
+};
+
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
@@ -461,6 +520,16 @@ function buildRecommendationKey(courseId: string, pickType: "win" | "value") {
   return `${courseId}::${pickType}`;
 }
 
+function applyManualRecommendationOverride(recommendation: BackfilledRecommendation) {
+  const overrideKey = `${recommendation.raceId}::${recommendation.pickType}::${recommendation.horseId}`;
+  const override = MANUAL_RECOMMENDATION_OVERRIDES[overrideKey];
+  if (!override) return recommendation;
+  return {
+    ...recommendation,
+    ...override,
+  };
+}
+
 function shouldReplaceRecommendation(existing: Record<string, unknown> | undefined, next: BackfilledRecommendation) {
   if (!existing) return false;
 
@@ -469,8 +538,14 @@ function shouldReplaceRecommendation(existing: Record<string, unknown> | undefin
   const currentSettlementStatus = String(current.settlementStatus ?? "");
   const currentTanSource = String(current.tanPayoutSource ?? "");
   const currentFukuSource = String(current.fukuPayoutSource ?? "");
+  const currentWinnerHorseId = normalizeHorseId((existing as Record<string, unknown>).actualWinnerHorseId);
+  const currentTop3HorseIds = Array.isArray((existing as Record<string, unknown>).actualTop3HorseIds)
+    ? ((existing as Record<string, unknown>).actualTop3HorseIds as unknown[]).map((value) => normalizeHorseId(value)).filter(Boolean)
+    : [];
 
   if (currentRaceId !== next.raceId) return true;
+  if (currentWinnerHorseId !== next.actualWinnerHorseId) return true;
+  if (JSON.stringify(currentTop3HorseIds) !== JSON.stringify(next.actualTop3HorseIds)) return true;
   if (currentSettlementStatus !== "settled" && next.settlementStatus === "settled") return true;
   if (currentTanSource !== "official" && next.tanPayoutSource === "official") return true;
   if (currentFukuSource !== "official" && next.fukuPayoutSource === "official") return true;
@@ -597,6 +672,27 @@ function buildLegacyResult(legacyRace: (typeof LEGACY_ARCHIVED_RACES)[number]): 
   };
 }
 
+function mergeLegacyPreferredResult(
+  fallbackResult: RaceResultRecord | undefined,
+  scrapedResult: RaceResultRecord | undefined
+): RaceResultRecord | undefined {
+  if (!fallbackResult) return scrapedResult;
+  if (!scrapedResult) return fallbackResult;
+
+  return {
+    updatedAt: scrapedResult.updatedAt ?? fallbackResult.updatedAt,
+    winnerHorseId: fallbackResult.winnerHorseId ?? scrapedResult.winnerHorseId,
+    winnerHorseName: fallbackResult.winnerHorseName ?? scrapedResult.winnerHorseName,
+    top3HorseIds: fallbackResult.top3HorseIds?.length ? fallbackResult.top3HorseIds : scrapedResult.top3HorseIds,
+    top3HorseNames: fallbackResult.top3HorseNames?.length ? fallbackResult.top3HorseNames : scrapedResult.top3HorseNames,
+    finishers: fallbackResult.finishers?.length ? fallbackResult.finishers : scrapedResult.finishers,
+    payouts: {
+      tansho: scrapedResult.payouts?.tansho ?? fallbackResult.payouts?.tansho,
+      fukusho: scrapedResult.payouts?.fukusho ?? fallbackResult.payouts?.fukusho,
+    },
+  };
+}
+
 type BackfillTarget = {
   origin: "current" | "archive" | "legacy";
   weekOf: string;
@@ -633,6 +729,7 @@ async function buildBackfillTargets(weekly: WeeklyRacesFile): Promise<BackfillTa
     const resolvedRaceId = normalizeHorseId(legacyRace.raceId) || buildLegacyRaceId(legacyRace.courseId, legacyRace.date);
     const scrapedResult = legacyRace.raceId ? await fetchLegacyRaceResult(legacyRace.raceId, legacyRace.horses) : undefined;
     const fallbackResult = buildLegacyResult(legacyRace);
+    const mergedResult = mergeLegacyPreferredResult(fallbackResult, scrapedResult);
     const syntheticRace: WeeklyRaceRecord = {
       courseId: legacyRace.courseId,
       raceId: resolvedRaceId,
@@ -645,7 +742,7 @@ async function buildBackfillTargets(weekly: WeeklyRacesFile): Promise<BackfillTa
       straightLength: ARCHIVED_COURSES.find((course) => course.id === legacyRace.courseId)?.straightLength ?? 360,
       oddsSource: "legacy",
       horses: legacyRace.horses.map((horse) => ({ ...horse })),
-      result: scrapedResult ?? fallbackResult,
+      result: mergedResult,
     };
 
     if (!syntheticRace.result?.winnerHorseId) continue;
@@ -712,13 +809,13 @@ async function main() {
     const valueRow = pickValueRow(snapshot);
 
     if (winRow) {
-      const recommendation = buildBackfilledRecommendation({
+      const recommendation = applyManualRecommendationOverride(buildBackfilledRecommendation({
         archiveWeekOf: weekOf,
         race,
         row: winRow,
         pickType: "win",
         postedAt,
-      });
+      }));
       recommendation.stage = `${origin}_backfill`;
       recommendation.source = `${origin}_simulation_backfill`;
 
@@ -734,13 +831,13 @@ async function main() {
     }
 
     if (valueRow) {
-      const recommendation = buildBackfilledRecommendation({
+      const recommendation = applyManualRecommendationOverride(buildBackfilledRecommendation({
         archiveWeekOf: weekOf,
         race,
         row: valueRow,
         pickType: "value",
         postedAt,
-      });
+      }));
       recommendation.stage = `${origin}_backfill`;
       recommendation.source = `${origin}_simulation_backfill`;
 
@@ -762,8 +859,17 @@ async function main() {
     await fs.writeFile(SNAPSHOT_PATH, `${currentText}${appendedSnapshotLines.join("\n")}\n`, "utf8");
   }
 
+  const normalizedRecommendations = recommendations.map((entry) => {
+    const raceId = normalizeHorseId(entry.raceId);
+    const pickType = String(entry.pickType ?? "") === "value" ? "value" : "win";
+    const horseId = normalizeHorseId(entry.horseId);
+    const overrideKey = `${raceId}::${pickType}::${horseId}`;
+    const override = MANUAL_RECOMMENDATION_OVERRIDES[overrideKey];
+    return override ? { ...entry, ...override } : entry;
+  });
+
   if (addedRecommendations.length > 0) {
-    state.tanpukuRecommendations = recommendations;
+    state.tanpukuRecommendations = normalizedRecommendations;
     await fs.writeFile(STATE_PATH, JSON.stringify(state, null, 2), "utf8");
   }
 
