@@ -135,6 +135,7 @@ export async function buildPredictionSnapshot(params: {
   course: Course;
   condition: RaceCondition;
   simulationCount: number;
+  raceId?: string | null;
   oddsFetchedAt?: string | null;
   oddsSource?: string | null;
 }): Promise<PredictionSnapshot> {
@@ -144,6 +145,7 @@ export async function buildPredictionSnapshot(params: {
     course,
     condition,
     simulationCount,
+    raceId = null,
     oddsFetchedAt = null,
     oddsSource = null,
   } = params;
@@ -203,7 +205,7 @@ export async function buildPredictionSnapshot(params: {
 
   return {
     snapshotId: createSnapshotId(),
-    raceId: extractRaceId(course.id),
+    raceId: raceId ? String(raceId) : extractRaceId(course.id),
     courseId: course.id,
     capturedAt: new Date().toISOString(),
     modelFamily: PREDICTION_SNAPSHOT_MODEL_FAMILY,

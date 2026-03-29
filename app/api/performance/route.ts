@@ -20,6 +20,7 @@ type PopularityBandKey = "fav_1_3" | "fav_4_6" | "fav_7_plus";
 
 type RecommendationRecord = {
   courseId?: unknown;
+  raceId?: unknown;
   raceLabel?: unknown;
   pickType?: unknown;
   horseId?: unknown;
@@ -266,7 +267,7 @@ function normalizeRecommendation(value: unknown): RecommendationSettlement | nul
 
   return {
     courseId,
-    raceId: extractRaceId(courseId),
+    raceId: normalizeString(record.raceId) ?? extractRaceId(courseId),
     raceLabel: normalizeString(record.raceLabel),
     pickType: record.pickType,
     horseId,

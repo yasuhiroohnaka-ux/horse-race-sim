@@ -270,9 +270,9 @@ function buildLegacyReviewCards(): ReviewCard[] {
     const course = ARCHIVED_COURSES.find((entry) => entry.id === race.courseId);
     const raceDate = new Date(`${race.date}T00:00:00+09:00`);
 
-    return {
-      courseId: race.courseId,
-      raceId: buildLegacyRaceId(race.courseId, race.date),
+      return {
+        courseId: race.courseId,
+        raceId: race.raceId ?? buildLegacyRaceId(race.courseId, race.date),
       label: race.label,
       grade: String(course?.grade ?? "legacy"),
       day: raceDate.getDay() === 0 ? "Sun" : "Sat",
@@ -416,7 +416,7 @@ function renderAggregateSummary(summary: AggregateSummary | null) {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <SummaryCard title="Snapshot本命" tone="border-sky-200 bg-sky-50 text-sky-800">
+        <SummaryCard title="シミュレーション本命" tone="border-sky-200 bg-sky-50 text-sky-800">
           <SummaryMetric label="対象レース数" value={`${summary.snapshotHonmei.raceCount}R`} />
           <SummaryMetric label="1着数" value={`${summary.snapshotHonmei.firstCount}`} />
           <SummaryMetric label="3着内数" value={`${summary.snapshotHonmei.placeCount}`} />
@@ -424,7 +424,7 @@ function renderAggregateSummary(summary: AggregateSummary | null) {
           <SummaryMetric label="複勝率" value={formatRate(summary.snapshotHonmei.placeRate)} />
         </SummaryCard>
 
-        <SummaryCard title="単複本命" tone="border-amber-200 bg-amber-50 text-amber-800">
+        <SummaryCard title="単複推奨の本命" tone="border-amber-200 bg-amber-50 text-amber-800">
           <SummaryMetric label="対象レース数" value={`${summary.routineHonmei.raceCount}R`} />
           <SummaryMetric label="単勝的中数" value={`${summary.routineHonmei.tanHitCount}`} />
           <SummaryMetric label="複勝的中数" value={`${summary.routineHonmei.fukuHitCount}`} />
@@ -449,7 +449,7 @@ function renderAggregateSummary(summary: AggregateSummary | null) {
           <SummaryMetric label="一致率" value={formatRate(summary.agreement.samePickRate)} />
           <SummaryMetric label="一致時の複勝率" value={formatRate(summary.agreement.samePickPlaceRate)} />
           <SummaryMetric
-            label="不一致時 Snapshot複勝率"
+            label="不一致時 シミュ本命複勝率"
             value={formatRate(summary.agreement.snapshotPlaceRateWhenDifferent)}
           />
           <SummaryMetric
@@ -464,7 +464,7 @@ function renderAggregateSummary(summary: AggregateSummary | null) {
         <PopularityBandSection title="人気帯別の複勝成績: 妙味候補" data={summary.popularityBands.valueCandidate} />
 
         <div className="rounded-lg border border-slate-200 bg-white px-4 py-4">
-          <p className="text-sm font-bold text-slate-800">Snapshot順位別の複勝率</p>
+          <p className="text-sm font-bold text-slate-800">シミュレーション順位別の複勝率</p>
           <div className="mt-3 space-y-3">
             {summary.snapshotRanks.map((item) => (
               <div key={item.rank} className="rounded-md border border-slate-100 bg-slate-50 px-3 py-3">
@@ -484,15 +484,15 @@ function renderAggregateSummary(summary: AggregateSummary | null) {
         <p className="text-sm font-bold text-rose-800">不一致レース診断</p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           <SummaryMetric label="不一致レース数" value={`${summary.disagreementDetail.raceCount}R`} />
-          <SummaryMetric label="Snapshot本命複勝率" value={formatRate(summary.disagreementDetail.snapshotPlaceRate)} />
+          <SummaryMetric label="シミュ本命複勝率" value={formatRate(summary.disagreementDetail.snapshotPlaceRate)} />
           <SummaryMetric label="単複本命複勝率" value={formatRate(summary.disagreementDetail.routinePlaceRate)} />
           <SummaryMetric label="妙味候補が3着内" value={`${summary.disagreementDetail.valuePlaceCount}`} />
           <SummaryMetric
-            label="Snapshot圏外 / 単複本命複勝"
+            label="シミュ本命圏外 / 単複本命複勝"
             value={`${summary.disagreementDetail.snapshotMissRoutinePlaceCount}`}
           />
           <SummaryMetric
-            label="単複本命圏外 / Snapshot3着内"
+            label="単複本命圏外 / シミュ本命3着内"
             value={`${summary.disagreementDetail.routineMissSnapshotPlaceCount}`}
           />
         </div>
@@ -520,23 +520,26 @@ function renderHonmeiComparison(
   const detailItems =
     snapshotHorseId && routineHorseId
       ? [
-          agreement === "一致" ? "両モデルの本命は一致" : "両モデルの本命は不一致",
-          `Snapshot本命は${getSnapshotFinishLabel(race, snapshotHorseId)}、単複本命は${getRecommendationFinishLabel(
+          agreement === "一致" ? "シミュ本命と単複本命は一致" : "シミュ本命と単複本命は不一致",
+          `シミュ本命は${getSnapshotFinishLabel(race, snapshotHorseId)}、単複本命は${getRecommendationFinishLabel(
             settlement?.win ?? null
           )}`,
         ]
       : [
           snapshotHorseId
-            ? `Snapshot本命のみ取得: ${getSnapshotFinishLabel(race, snapshotHorseId)}`
+            ? `シミュ本命のみ取得: ${getSnapshotFinishLabel(race, snapshotHorseId)}`
             : `単複本命のみ取得: ${getRecommendationFinishLabel(settlement?.win ?? null)}`,
         ];
 
   return (
     <div className="mb-4 rounded-lg border border-violet-200 bg-violet-50 px-4 py-3">
       <p className="text-sm font-bold text-violet-800">本命の定義</p>
+      <p className="mt-2 text-xs leading-5 text-violet-700">
+        シミュ本命は「シミュレーション順位の1位」、単複本命は「単複向け推奨ロジックが選んだ本命」です。
+      </p>
       <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-violet-700">
         <span className="rounded-full bg-white px-3 py-1">
-          Snapshot本命 {getSnapshotHorseDisplay(snapshot, snapshotHorseId)}
+          シミュ本命 {getSnapshotHorseDisplay(snapshot, snapshotHorseId)}
         </span>
         <span className="rounded-full bg-white px-3 py-1">
           単複本命 {settlement?.win ? `${settlement.win.horseName} (${settlement.win.horseId})` : "-"}
@@ -556,7 +559,7 @@ function renderSnapshotComparison(race: ReviewCard, snapshot?: PredictionSnapsho
   if (!snapshot) {
     return (
       <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-        <p className="text-sm font-semibold text-slate-700">Snapshot予想 vs 実結果</p>
+        <p className="text-sm font-semibold text-slate-700">シミュレーション予想 vs 実結果</p>
         <p className="mt-2 text-sm text-slate-500">
           このレースに対応する prediction snapshot は見つかりませんでした。
         </p>
@@ -572,13 +575,13 @@ function renderSnapshotComparison(race: ReviewCard, snapshot?: PredictionSnapsho
 
   return (
     <div className="rounded-lg border border-slate-200 bg-white px-4 py-3">
-      <p className="text-sm font-semibold text-slate-800">Snapshot予想 vs 実結果</p>
+      <p className="text-sm font-semibold text-slate-800">シミュレーション予想 vs 実結果</p>
       <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-slate-600">
         <span className="rounded-full bg-slate-100 px-3 py-1">取得 {formatTimestamp(snapshot.capturedAt)}</span>
         <span className="rounded-full bg-slate-100 px-3 py-1">family {snapshot.modelFamily}</span>
         <span className="rounded-full bg-slate-100 px-3 py-1">version {snapshot.modelVersion}</span>
         <span className="rounded-full bg-sky-100 px-3 py-1">
-          Snapshot本命 {getSnapshotHorseDisplay(snapshot, snapshot.honmeiHorseId)}
+          シミュ本命 {getSnapshotHorseDisplay(snapshot, snapshot.honmeiHorseId)}
         </span>
         <span className="rounded-full bg-emerald-100 px-3 py-1">
           妙味候補 {getSnapshotHorseDisplay(snapshot, snapshot.valueHorseId)}
@@ -590,7 +593,7 @@ function renderSnapshotComparison(race: ReviewCard, snapshot?: PredictionSnapsho
 
       <div className="mt-3 grid gap-4 lg:grid-cols-2">
         <div className="rounded-md border border-slate-100 bg-slate-50 px-3 py-3">
-          <p className="text-xs font-semibold text-slate-700">Snapshot上位3頭</p>
+          <p className="text-xs font-semibold text-slate-700">シミュレーション上位3頭</p>
           <div className="mt-2 space-y-3">
             {topRows.map((row) => (
               <div key={`${row.rank}-${row.horseId}`} className="rounded-md border border-white bg-white px-3 py-3">
@@ -646,7 +649,7 @@ function renderSnapshotComparison(race: ReviewCard, snapshot?: PredictionSnapsho
       </div>
 
       <div className="mt-3 rounded-md border border-slate-100 bg-slate-50 px-3 py-3 text-xs text-slate-700">
-        <p>Snapshot本命: {getSnapshotFinishLabel(race, snapshot.honmeiHorseId)}</p>
+        <p>シミュ本命: {getSnapshotFinishLabel(race, snapshot.honmeiHorseId)}</p>
         <p>妙味候補: {getSnapshotFinishLabel(race, snapshot.valueHorseId)}</p>
         <p>市場注目: {getSnapshotFinishLabel(race, snapshot.watchHorseId)}</p>
       </div>
@@ -717,7 +720,7 @@ function buildFallbackSummaryComment(
   const top3HorseIds = race.result?.top3HorseIds?.map((id) => String(id)) ?? [];
   if (!snapshot) {
     return settlement?.win
-      ? `単複本命は${getRecommendationFinishLabel(settlement.win)}。事前 snapshot は残っていないが、結果検証の材料は確保できている。`
+      ? `単複本命は${getRecommendationFinishLabel(settlement.win)}。事前のシミュレーション予想は残っていないが、結果検証の材料は確保できている。`
       : "このレースは結果だけ確認でき、事前予想データは残っていない。";
   }
 

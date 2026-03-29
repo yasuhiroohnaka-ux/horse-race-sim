@@ -78,6 +78,7 @@ type BackfilledRecommendation = {
   postedAt: string;
   settledAt: string | null;
   courseId: string;
+  raceId: string;
   raceLabel: string;
   pickType: "win" | "value";
   horseId: string;
@@ -104,6 +105,28 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
 
+function decodeHtmlText(value: string) {
+  return String(value ?? "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">");
+}
+
+function stripTags(value: string) {
+  return String(value ?? "").replace(/<[^>]*>/g, " ");
+}
+
+function normalizeSpace(value: string) {
+  return decodeHtmlText(stripTags(value)).replace(/\s+/g, " ").trim();
+}
+
+function normalizeHorseName(value: string) {
+  return normalizeSpace(value).toLowerCase().replace(/[\s縲・･\-_.]/g, "");
+}
+
 async function readJson<T>(filePath: string, fallback: T): Promise<T> {
   try {
     const raw = await fs.readFile(filePath, "utf8");
@@ -113,6 +136,93 @@ async function readJson<T>(filePath: string, fallback: T): Promise<T> {
     if (code === "ENOENT") return fallback;
     throw error;
   }
+}
+
+async function fetchText(url: string) {
+  const response = await fetch(url, {
+    headers: {
+      "user-agent": "horse-race-sim-bot/2.0",
+      accept: "text/html,application/xml,text/xml,*/*",
+    },
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    throw new Error(`fetch failed ${response.status}: ${url}`);
+  }
+
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  const contentType = response.headers.get("content-type") || "";
+  const latin1Head = Buffer.from(bytes.slice(0, 4096)).toString("latin1");
+  const charsetRaw =
+    contentType.match(/charset=([^;]+)/i)?.[1]?.trim() ||
+    latin1Head.match(/charset=["']?([a-zA-Z0-9._-]+)/i)?.[1] ||
+    "utf-8";
+  const charset = charsetRaw.toLowerCase() === "x-euc-jp" ? "euc-jp" : charsetRaw.toLowerCase();
+
+  try {
+    return new TextDecoder(charset).decode(bytes);
+  } catch {
+    return new TextDecoder("utf-8").decode(bytes);
+  }
+}
+
+function parseResultEntries(resultHtml: string) {
+  const rows = [...String(resultHtml).matchAll(/<tr[^>]*class="[^"]*HorseList[^"]*"[^>]*>([\s\S]*?)<\/tr>/g)].map(
+    (match) => match[1]
+  );
+
+  return rows
+    .map((row) => {
+      const position = Number.parseInt(row.match(/<div class="Rank">(\d+)<\/div>/i)?.[1] ?? "", 10);
+      if (!(position > 0)) return null;
+
+      const horseNumber = Number.parseInt(row.match(/<td class="Num Txt_C">\s*<div>(\d{1,2})<\/div>/i)?.[1] ?? "", 10);
+      const horseName = normalizeSpace(
+        row.match(/<span class="HorseNameSpan">([\s\S]*?)<\/span>/i)?.[1] ??
+          row.match(/<a[^>]*href="[^"]*\/horse\/\d+\/?[^"]*"[^>]*>([\s\S]*?)<\/a>/i)?.[1] ??
+          ""
+      );
+      const jockey = normalizeSpace(
+        row.match(/<span class="JockeyNameSpan">([\s\S]*?)<\/span>/i)?.[1] ??
+          row.match(/\/jockey\/[^"]*"[^>]*>([\s\S]*?)<\/a>/i)?.[1] ??
+          ""
+      );
+      const popularity = Number.parseInt(row.match(/<span class="OddsPeople">(\d+)<\/span>/i)?.[1] ?? "", 10);
+      const odds = parseNumber(row.match(/<td class="Odds Txt_R">[\s\S]*?<span[^>]*>\s*([\d.]+)\s*<\/span>/i)?.[1] ?? "");
+
+      return {
+        position,
+        horseNumber: Number.isFinite(horseNumber) ? horseNumber : 0,
+        name: horseName,
+        jockey,
+        popularity: Number.isFinite(popularity) ? popularity : 0,
+        odds: odds !== null && Number.isFinite(odds) ? Math.round(odds * 10) / 10 : 0,
+      };
+    })
+    .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+}
+
+function parsePayoutRow(resultHtml: string, className: string): RacePayoutTable | null {
+  const row = resultHtml.match(new RegExp(`<tr class="${className}">([\\s\\S]*?)<\\/tr>`, "i"))?.[1] ?? "";
+  if (!row) return null;
+
+  const resultNumbers = [...row.matchAll(/<span>(\d+)<\/span>/g)]
+    .map((match) => Number.parseInt(match[1], 10))
+    .filter(Number.isFinite);
+  const payouts = [...row.matchAll(/<td class="Payout">[\s\S]*?<span>([\s\S]*?)<\/span>/gi)]
+    .flatMap((match) => normalizeSpace(match[1]).split(/\s+/))
+    .map((value) => parseNumber(value))
+    .filter((value): value is number => Number.isFinite(value));
+
+  if (resultNumbers.length === 0 && payouts.length === 0) return null;
+  return { resultNumbers, payouts };
+}
+
+function parseNumber(raw: string) {
+  const cleaned = String(raw ?? "").replace(/,/g, "").replace(/[^\d.]/g, "");
+  if (!cleaned) return null;
+  const parsed = Number.parseFloat(cleaned);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
 async function readExistingSnapshots(): Promise<{ lines: string[]; latestByRaceId: Record<string, PredictionSnapshot> }> {
@@ -292,6 +402,7 @@ function buildBackfilledRecommendation(params: {
     postedAt,
     settledAt: settlementStatus === "settled" ? (result?.updatedAt ?? new Date().toISOString()) : null,
     courseId: race.courseId,
+    raceId: normalizeHorseId(race.raceId),
     raceLabel: race.label,
     pickType,
     horseId: row.horseId,
@@ -343,6 +454,60 @@ function buildRecommendationKey(courseId: string, pickType: "win" | "value") {
 
 function buildLegacyRaceId(courseId: string, date: string) {
   return `legacy-${courseId}-${date.replace(/[^0-9]/g, "")}`;
+}
+
+async function fetchLegacyRaceResult(raceId: string, horses: Horse[]): Promise<RaceResultRecord | undefined> {
+  try {
+    const resultHtml = await fetchText(`https://race.netkeiba.com/race/result.html?race_id=${raceId}`);
+    const parsedFinishers = parseResultEntries(resultHtml);
+    if (parsedFinishers.length === 0) return undefined;
+
+    const horseByNumber = new Map<number, Horse>(
+      horses
+        .map((horse): [number, Horse] => [Number(horse.gateNumber ?? 0), horse])
+        .filter(([horseNumber]) => horseNumber > 0)
+    );
+    const horseByName = new Map(horses.map((horse) => [normalizeHorseName(horse.name), horse]));
+
+    const finishers = parsedFinishers.map((entry) => {
+      const localHorse =
+        horseByNumber.get(Number(entry.horseNumber ?? 0)) ??
+        horseByName.get(normalizeHorseName(entry.name)) ??
+        null;
+
+      return {
+        position: entry.position,
+        gateNumber: localHorse ? Number(localHorse.gateNumber ?? 0) : Number(entry.horseNumber ?? 0),
+        horseNumber: Number(entry.horseNumber ?? 0),
+        horseId: localHorse?.id ? String(localHorse.id) : undefined,
+        name: localHorse?.name ?? entry.name,
+        jockey: entry.jockey,
+        finishTime: "",
+        margin: "",
+        popularity: entry.popularity,
+        odds: entry.odds,
+      };
+    });
+
+    const top3 = finishers.filter((entry) => entry.position > 0).sort((a, b) => a.position - b.position).slice(0, 3);
+    if (top3.length === 0) return undefined;
+
+    const winner = top3[0];
+    return {
+      updatedAt: new Date().toISOString(),
+      winnerHorseId: winner.horseId,
+      winnerHorseName: winner.name,
+      top3HorseIds: top3.map((entry) => entry.horseId).filter((value): value is string => Boolean(value)),
+      top3HorseNames: top3.map((entry) => entry.name),
+      finishers,
+      payouts: {
+        tansho: parsePayoutRow(resultHtml, "Tansho") ?? undefined,
+        fukusho: parsePayoutRow(resultHtml, "Fukusho") ?? undefined,
+      },
+    };
+  } catch {
+    return undefined;
+  }
 }
 
 function startOfWeekMonday(dateString: string) {
@@ -413,7 +578,7 @@ type BackfillTarget = {
   race: WeeklyRaceRecord;
 };
 
-function buildBackfillTargets(weekly: WeeklyRacesFile): BackfillTarget[] {
+async function buildBackfillTargets(weekly: WeeklyRacesFile): Promise<BackfillTarget[]> {
   const targets: BackfillTarget[] = [];
 
   for (const race of weekly.currentWeek?.races ?? []) {
@@ -439,9 +604,12 @@ function buildBackfillTargets(weekly: WeeklyRacesFile): BackfillTarget[] {
   }
 
   for (const legacyRace of LEGACY_ARCHIVED_RACES) {
+    const resolvedRaceId = normalizeHorseId(legacyRace.raceId) || buildLegacyRaceId(legacyRace.courseId, legacyRace.date);
+    const scrapedResult = legacyRace.raceId ? await fetchLegacyRaceResult(legacyRace.raceId, legacyRace.horses) : undefined;
+    const fallbackResult = buildLegacyResult(legacyRace);
     const syntheticRace: WeeklyRaceRecord = {
       courseId: legacyRace.courseId,
-      raceId: buildLegacyRaceId(legacyRace.courseId, legacyRace.date),
+      raceId: resolvedRaceId,
       label: legacyRace.label,
       grade: ARCHIVED_COURSES.find((course) => course.id === legacyRace.courseId)?.grade ?? "OP",
       day: new Date(`${legacyRace.date}T00:00:00+09:00`).getDay() === 0 ? "Sun" : "Sat",
@@ -451,7 +619,7 @@ function buildBackfillTargets(weekly: WeeklyRacesFile): BackfillTarget[] {
       straightLength: ARCHIVED_COURSES.find((course) => course.id === legacyRace.courseId)?.straightLength ?? 360,
       oddsSource: "legacy",
       horses: legacyRace.horses.map((horse) => ({ ...horse })),
-      result: buildLegacyResult(legacyRace),
+      result: scrapedResult ?? fallbackResult,
     };
 
     if (!syntheticRace.result?.winnerHorseId) continue;
@@ -470,7 +638,7 @@ async function main() {
   const weekly = await readJson<WeeklyRacesFile>(WEEKLY_RACES_PATH, { currentWeek: { races: [] }, archives: [] });
   const state = await readJson<RoutineState>(STATE_PATH, {});
   const { lines, latestByRaceId } = await readExistingSnapshots();
-  const targets = buildBackfillTargets(weekly);
+  const targets = await buildBackfillTargets(weekly);
   const existingRecommendations = new Map<string, true>();
   const recommendations = Array.isArray(state.tanpukuRecommendations) ? [...state.tanpukuRecommendations] : [];
 
@@ -503,6 +671,7 @@ async function main() {
         course,
         condition,
         simulationCount: 100,
+        raceId,
         oddsFetchedAt: race.result?.updatedAt ?? null,
         oddsSource: race.oddsSource ?? "official",
       });

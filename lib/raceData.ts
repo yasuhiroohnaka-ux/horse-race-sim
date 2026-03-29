@@ -16,6 +16,7 @@ interface ArchivedReviewContext {
 }
 
 export interface ArchivedRace {
+    raceId?: string;
     courseId: string;
     label: string;
     date: string;
@@ -335,6 +336,7 @@ const DEFAULT_HORSES_MAP: Record<string, Horse[]> = {
 // ============================================================
 export const ARCHIVED_RACES: ArchivedRace[] = [
     buildArchivedRace({
+        raceId: '202606020211',
         courseId: 'nakayama-turf-1800',
         label: '中山記念 2026',
         date: '2026-03-01',
@@ -352,6 +354,7 @@ export const ARCHIVED_RACES: ArchivedRace[] = [
         },
     }),
     buildArchivedRace({
+        raceId: '202606020111',
         courseId: 'nakayama-turf-1200',
         label: 'オーシャンS 2026',
         date: '2026-02-28',
@@ -369,9 +372,10 @@ export const ARCHIVED_RACES: ArchivedRace[] = [
         },
     }),
     buildArchivedRace({
+        raceId: '202609010411',
         courseId: 'hanshin-turf-1600',
         label: 'チューリップ賞 2026',
-        date: '2026-02-28',
+        date: '2026-03-01',
         hashtag: '#チューリップ賞',
         horses: TULIP_SHO_HORSES,
         result: {
@@ -385,6 +389,7 @@ export const ARCHIVED_RACES: ArchivedRace[] = [
         },
     }),
     {
+        raceId: '202605010811',
         courseId: 'tokyo-dirt-1600',
         label: 'フェブラリーS 2026',
         date: '2026-02-22',
@@ -406,7 +411,15 @@ export const ARCHIVED_RACES: ArchivedRace[] = [
             { id: '14', gateNumber: 14, name: 'ウィルソンテソーロ', jockey: '川田将雅', speed: 85, stamina: 88, power: 90, guts: 92, runningStyle: 'Senko', predictionCount: 30, simulatedOdds: 0, realOdds: 6.2, sex: 'M', weight: 58, condition: 6 },
             { id: '15', gateNumber: 15, name: 'ペプチドナイル', jockey: '富田暁', speed: 83, stamina: 85, power: 85, guts: 80, runningStyle: 'Senko', predictionCount: 12, simulatedOdds: 0, realOdds: 57.8, sex: 'M', weight: 58, condition: 4 },
             { id: '16', gateNumber: 16, name: 'サイモンザナドゥ', jockey: '池添謙一', speed: 81, stamina: 84, power: 82, guts: 85, runningStyle: 'Sashi', predictionCount: 10, simulatedOdds: 0, realOdds: 59.6, sex: 'M', weight: 58, condition: 5 },
-        ]
+        ],
+        result: {
+            winnerHorseId: '12',
+            top3HorseIds: ['12', '14', '9'],
+            positions: [
+                { horseId: '3', position: 4 },
+                { horseId: '1', position: 5 },
+            ],
+        }
     }
 ];
 
