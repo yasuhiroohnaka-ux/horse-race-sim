@@ -9173,16 +9173,16 @@
           "result": {
             "updatedAt": "2026-03-30T00:00:00.000Z",
             "winnerHorseId": "1",
-            "winnerHorseName": "????????",
+            "winnerHorseName": "マテンロウゲイル",
             "top3HorseIds": [
               "1",
               "9",
               "7"
             ],
             "top3HorseNames": [
-              "????????",
-              "????????",
-              "????????"
+              "マテンロウゲイル",
+              "ロードフィレール",
+              "サヴォアフェール"
             ],
             "finishers": [
               {
@@ -9190,8 +9190,8 @@
                 "gateNumber": 1,
                 "horseNumber": 1,
                 "externalHorseId": "2023100946",
-                "name": "????????",
-                "jockey": "???",
+                "name": "マテンロウゲイル",
+                "jockey": "横山和",
                 "finishTime": "",
                 "margin": "",
                 "popularity": 1,
@@ -9203,8 +9203,8 @@
                 "gateNumber": 9,
                 "horseNumber": 9,
                 "externalHorseId": "2023105818",
-                "name": "????????",
-                "jockey": "??",
+                "name": "ロードフィレール",
+                "jockey": "坂井",
                 "finishTime": "",
                 "margin": "",
                 "popularity": 6,
@@ -9216,8 +9216,8 @@
                 "gateNumber": 7,
                 "horseNumber": 7,
                 "externalHorseId": "2023105645",
-                "name": "????????",
-                "jockey": "??",
+                "name": "サヴォアフェール",
+                "jockey": "松山",
                 "finishTime": "",
                 "margin": "",
                 "popularity": 2,
@@ -9733,16 +9733,16 @@
           "result": {
             "updatedAt": "2026-03-30T00:00:00.000Z",
             "winnerHorseId": "4",
-            "winnerHorseName": "?????????",
+            "winnerHorseName": "テーオーグランビル",
             "top3HorseIds": [
               "4",
               "7",
               "5"
             ],
             "top3HorseNames": [
-              "?????????",
-              "???????",
-              "??????"
+              "テーオーグランビル",
+              "タガノバビロン",
+              "モックモック"
             ],
             "finishers": [
               {
@@ -9750,8 +9750,8 @@
                 "gateNumber": 4,
                 "horseNumber": 4,
                 "externalHorseId": "2020110081",
-                "name": "?????????",
-                "jockey": "???",
+                "name": "テーオーグランビル",
+                "jockey": "岩田望",
                 "finishTime": "",
                 "margin": "",
                 "popularity": 7,
@@ -9763,8 +9763,8 @@
                 "gateNumber": 7,
                 "horseNumber": 7,
                 "externalHorseId": "2022106553",
-                "name": "???????",
-                "jockey": "??",
+                "name": "タガノバビロン",
+                "jockey": "松山",
                 "finishTime": "",
                 "margin": "",
                 "popularity": 2,
@@ -9776,8 +9776,8 @@
                 "gateNumber": 5,
                 "horseNumber": 5,
                 "externalHorseId": "2020100061",
-                "name": "??????",
-                "jockey": "??",
+                "name": "モックモック",
+                "jockey": "武豊",
                 "finishTime": "",
                 "margin": "",
                 "popularity": 3,

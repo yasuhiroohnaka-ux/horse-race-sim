@@ -8502,16 +8502,16 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "result": {
       "updatedAt": "2026-03-30T00:00:00.000Z",
       "winnerHorseId": "1",
-      "winnerHorseName": "????????",
+      "winnerHorseName": "マテンロウゲイル",
       "top3HorseIds": [
         "1",
         "9",
         "7"
       ],
       "top3HorseNames": [
-        "????????",
-        "????????",
-        "????????"
+        "マテンロウゲイル",
+        "ロードフィレール",
+        "サヴォアフェール"
       ],
       "finishers": [
         {
@@ -8520,8 +8520,8 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "externalHorseId": "2023100946",
           "gateNumber": 1,
           "horseNumber": 1,
-          "name": "????????",
-          "jockey": "???",
+          "name": "マテンロウゲイル",
+          "jockey": "横山和",
           "finishTime": "",
           "margin": "",
           "popularity": 1,
@@ -8533,8 +8533,8 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "externalHorseId": "2023105818",
           "gateNumber": 9,
           "horseNumber": 9,
-          "name": "????????",
-          "jockey": "??",
+          "name": "ロードフィレール",
+          "jockey": "坂井",
           "finishTime": "",
           "margin": "",
           "popularity": 6,
@@ -8546,8 +8546,8 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "externalHorseId": "2023105645",
           "gateNumber": 7,
           "horseNumber": 7,
-          "name": "????????",
-          "jockey": "??",
+          "name": "サヴォアフェール",
+          "jockey": "松山",
           "finishTime": "",
           "margin": "",
           "popularity": 2,
@@ -8913,16 +8913,16 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "result": {
       "updatedAt": "2026-03-30T00:00:00.000Z",
       "winnerHorseId": "4",
-      "winnerHorseName": "?????????",
+      "winnerHorseName": "テーオーグランビル",
       "top3HorseIds": [
         "4",
         "7",
         "5"
       ],
       "top3HorseNames": [
-        "?????????",
-        "???????",
-        "??????"
+        "テーオーグランビル",
+        "タガノバビロン",
+        "モックモック"
       ],
       "finishers": [
         {
@@ -8931,8 +8931,8 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "externalHorseId": "2020110081",
           "gateNumber": 4,
           "horseNumber": 4,
-          "name": "?????????",
-          "jockey": "???",
+          "name": "テーオーグランビル",
+          "jockey": "岩田望",
           "finishTime": "",
           "margin": "",
           "popularity": 7,
@@ -8944,8 +8944,8 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "externalHorseId": "2022106553",
           "gateNumber": 7,
           "horseNumber": 7,
-          "name": "???????",
-          "jockey": "??",
+          "name": "タガノバビロン",
+          "jockey": "松山",
           "finishTime": "",
           "margin": "",
           "popularity": 2,
@@ -8957,8 +8957,8 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "externalHorseId": "2020100061",
           "gateNumber": 5,
           "horseNumber": 5,
-          "name": "??????",
-          "jockey": "??",
+          "name": "モックモック",
+          "jockey": "武豊",
           "finishTime": "",
           "margin": "",
           "popularity": 3,
