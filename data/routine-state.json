@@ -2165,21 +2165,21 @@
       "runnerUpPlaceScore": 0.515,
       "runnerUpPlaceProb": 0.644,
       "settlementStatus": "settled",
-      "tanOutcome": "miss",
-      "fukuOutcome": "miss",
-      "tanPayout": 0,
-      "fukuPayout": 0,
+      "tanOutcome": "hit",
+      "fukuOutcome": "hit",
+      "tanPayout": 210,
+      "fukuPayout": 110,
       "tanPayoutSource": "official",
       "fukuPayoutSource": "official",
-      "actualWinnerHorseId": "5",
+      "actualWinnerHorseId": "1",
       "actualTop3HorseIds": [
-        "5",
-        "8",
-        "3"
+        "1",
+        "9",
+        "7"
       ],
       "resolved": true,
-      "tanHit": false,
-      "fukuHit": false
+      "tanHit": true,
+      "fukuHit": true
     },
     {
       "weekOf": "2026-03-16",
@@ -2215,11 +2215,11 @@
       "fukuPayout": 0,
       "tanPayoutSource": "official",
       "fukuPayoutSource": "official",
-      "actualWinnerHorseId": "5",
+      "actualWinnerHorseId": "1",
       "actualTop3HorseIds": [
-        "5",
-        "8",
-        "3"
+        "1",
+        "9",
+        "7"
       ],
       "resolved": true,
       "tanHit": false,
@@ -2227,10 +2227,10 @@
     },
     {
       "weekOf": "2026-03-16",
-      "day": "Sat",
+      "day": "Sun",
       "stage": "archive_backfill",
       "source": "archive_simulation_backfill",
-      "postedAt": "2026-03-20T05:55:00.000Z",
+      "postedAt": "2026-03-21T05:55:00.000Z",
       "settledAt": "2026-03-30T00:00:00.000Z",
       "courseId": "hanshin-dirt-1800-202609011010",
       "raceId": "202609011010",
@@ -2254,27 +2254,27 @@
       "runnerUpPlaceProb": 0.647,
       "settlementStatus": "settled",
       "tanOutcome": "miss",
-      "fukuOutcome": "miss",
+      "fukuOutcome": "hit",
       "tanPayout": 0,
-      "fukuPayout": 0,
+      "fukuPayout": 180,
       "tanPayoutSource": "official",
       "fukuPayoutSource": "official",
-      "actualWinnerHorseId": "10",
+      "actualWinnerHorseId": "4",
       "actualTop3HorseIds": [
-        "10",
-        "1",
-        "6"
+        "4",
+        "7",
+        "5"
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": true
     },
     {
       "weekOf": "2026-03-16",
-      "day": "Sat",
+      "day": "Sun",
       "stage": "archive_backfill",
       "source": "archive_simulation_backfill",
-      "postedAt": "2026-03-20T05:55:00.000Z",
+      "postedAt": "2026-03-21T05:55:00.000Z",
       "settledAt": "2026-03-30T00:00:00.000Z",
       "courseId": "hanshin-dirt-1800-202609011010",
       "raceId": "202609011010",
@@ -2303,11 +2303,11 @@
       "fukuPayout": 0,
       "tanPayoutSource": "official",
       "fukuPayoutSource": "official",
-      "actualWinnerHorseId": "10",
+      "actualWinnerHorseId": "4",
       "actualTop3HorseIds": [
-        "10",
-        "1",
-        "6"
+        "4",
+        "7",
+        "5"
       ],
       "resolved": true,
       "tanHit": false,

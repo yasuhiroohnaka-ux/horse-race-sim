@@ -18,11 +18,13 @@ function reviewKeyForRace(race) {
 }
 
 function isoDateFromWeekAndDay(weekOf, day) {
-  const base = new Date(`${weekOf}T00:00:00+09:00`);
-  if (Number.isNaN(base.getTime())) return "";
+  const [year, month, date] = String(weekOf ?? "")
+    .split("-")
+    .map((value) => Number.parseInt(value, 10));
+  if (![year, month, date].every(Number.isFinite)) return "";
   const offset = day === "Sat" ? 5 : day === "Sun" ? 6 : 0;
-  base.setDate(base.getDate() + offset);
-  return base.toISOString().slice(0, 10);
+  const base = new Date(Date.UTC(year, month - 1, date + offset));
+  return `${base.getUTCFullYear()}-${String(base.getUTCMonth() + 1).padStart(2, "0")}-${String(base.getUTCDate()).padStart(2, "0")}`;
 }
 
 function mapHorseSeed(h, race) {

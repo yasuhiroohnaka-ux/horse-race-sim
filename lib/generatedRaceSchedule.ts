@@ -2826,7 +2826,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#伏竜Ｓ",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-27",
+    "date": "2026-03-28",
     "archivedAt": "2026-03-29T22:21:37.315Z",
     "result": {
       "updatedAt": "2026-03-29T14:43:36.338Z",
@@ -3281,7 +3281,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#日経賞",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-27",
+    "date": "2026-03-28",
     "archivedAt": "2026-03-29T22:21:37.315Z",
     "result": {
       "updatedAt": "2026-03-29T14:43:36.463Z",
@@ -3941,7 +3941,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#マーチＳ",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-28",
+    "date": "2026-03-29",
     "archivedAt": "2026-03-29T22:21:37.315Z",
     "result": {
       "updatedAt": "2026-03-29T14:43:36.935Z",
@@ -4629,7 +4629,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#高松宮記念",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-28",
+    "date": "2026-03-29",
     "archivedAt": "2026-03-29T22:21:37.315Z",
     "result": {
       "updatedAt": "2026-03-29T14:43:37.048Z",
@@ -5411,7 +5411,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#毎日杯",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-27",
+    "date": "2026-03-28",
     "archivedAt": "2026-03-29T22:21:37.315Z",
     "result": {
       "updatedAt": "2026-03-29T14:43:36.578Z",
@@ -5744,7 +5744,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#六甲Ｓ",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-28",
+    "date": "2026-03-29",
     "archivedAt": "2026-03-29T22:21:37.315Z",
     "result": {
       "updatedAt": "2026-03-29T14:43:37.191Z",
@@ -6321,7 +6321,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#フラワーＣ",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-20",
+    "date": "2026-03-21",
     "archivedAt": "2026-03-22T22:17:16.385Z",
     "result": {
       "updatedAt": "2026-03-30T00:00:00.000Z",
@@ -6844,7 +6844,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#千葉Ｓ",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-20",
+    "date": "2026-03-21",
     "archivedAt": "2026-03-22T22:17:16.385Z",
     "result": {
       "updatedAt": "2026-03-30T00:00:00.000Z",
@@ -7367,7 +7367,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#ファルコンＳ",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-20",
+    "date": "2026-03-21",
     "archivedAt": "2026-03-22T22:17:16.385Z",
     "result": {
       "updatedAt": "2026-03-30T00:00:00.000Z",
@@ -7918,7 +7918,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#愛知杯",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-20",
+    "date": "2026-03-21",
     "archivedAt": "2026-03-22T22:17:16.385Z",
     "result": {
       "updatedAt": "2026-03-30T00:00:00.000Z",
@@ -8497,61 +8497,61 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#若葉Ｓ",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-20",
+    "date": "2026-03-21",
     "archivedAt": "2026-03-22T22:17:16.385Z",
     "result": {
       "updatedAt": "2026-03-30T00:00:00.000Z",
-      "winnerHorseId": "5",
-      "winnerHorseName": "エチゴドラゴン",
+      "winnerHorseId": "1",
+      "winnerHorseName": "????????",
       "top3HorseIds": [
-        "5",
-        "8",
-        "3"
+        "1",
+        "9",
+        "7"
       ],
       "top3HorseNames": [
-        "エチゴドラゴン",
-        "エイシンイグニース",
-        "コロナドブリッジ"
+        "????????",
+        "????????",
+        "????????"
       ],
       "finishers": [
         {
           "position": 1,
-          "horseId": "5",
-          "externalHorseId": "2023102810",
-          "gateNumber": 5,
-          "horseNumber": 5,
-          "name": "エチゴドラゴン",
-          "jockey": "幸",
+          "horseId": "1",
+          "externalHorseId": "2023100946",
+          "gateNumber": 1,
+          "horseNumber": 1,
+          "name": "????????",
+          "jockey": "???",
           "finishTime": "",
           "margin": "",
-          "popularity": 8,
-          "odds": 17.6
+          "popularity": 1,
+          "odds": 2.1
         },
         {
           "position": 2,
-          "horseId": "8",
-          "externalHorseId": "2023105534",
-          "gateNumber": 8,
-          "horseNumber": 8,
-          "name": "エイシンイグニース",
-          "jockey": "田口",
+          "horseId": "9",
+          "externalHorseId": "2023105818",
+          "gateNumber": 9,
+          "horseNumber": 9,
+          "name": "????????",
+          "jockey": "??",
           "finishTime": "",
           "margin": "",
-          "popularity": 9,
-          "odds": 39.8
+          "popularity": 6,
+          "odds": 12.4
         },
         {
           "position": 3,
-          "horseId": "3",
-          "externalHorseId": "2023107368",
-          "gateNumber": 3,
-          "horseNumber": 3,
-          "name": "コロナドブリッジ",
-          "jockey": "丸山",
+          "horseId": "7",
+          "externalHorseId": "2023105645",
+          "gateNumber": 7,
+          "horseNumber": 7,
+          "name": "????????",
+          "jockey": "??",
           "finishTime": "",
           "margin": "",
-          "popularity": 5,
-          "odds": 8.5
+          "popularity": 2,
+          "odds": 6.8
         }
       ]
     },
@@ -8899,7 +8899,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "raceId": "202609011010",
     "label": "レグルスＳ",
     "grade": "OP",
-    "day": "Sat",
+    "day": "Sun",
     "venue": "阪神",
     "venueKey": "hanshin",
     "surface": "Dirt",
@@ -8908,61 +8908,61 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#レグルスＳ",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-20",
+    "date": "2026-03-22",
     "archivedAt": "2026-03-22T22:17:16.385Z",
     "result": {
       "updatedAt": "2026-03-30T00:00:00.000Z",
-      "winnerHorseId": "10",
-      "winnerHorseName": "レッドプロフェシー",
+      "winnerHorseId": "4",
+      "winnerHorseName": "?????????",
       "top3HorseIds": [
-        "10",
-        "1",
-        "6"
+        "4",
+        "7",
+        "5"
       ],
       "top3HorseNames": [
-        "レッドプロフェシー",
-        "カペルブリュッケ",
-        "メイショウズイウン"
+        "?????????",
+        "???????",
+        "??????"
       ],
       "finishers": [
         {
           "position": 1,
-          "horseId": "10",
-          "externalHorseId": "2020101579",
-          "gateNumber": 10,
-          "horseNumber": 10,
-          "name": "レッドプロフェシー",
-          "jockey": "酒井",
+          "horseId": "4",
+          "externalHorseId": "2020110081",
+          "gateNumber": 4,
+          "horseNumber": 4,
+          "name": "?????????",
+          "jockey": "???",
           "finishTime": "",
           "margin": "",
-          "popularity": 11,
-          "odds": 19.5
+          "popularity": 7,
+          "odds": 11.2
         },
         {
           "position": 2,
-          "horseId": "1",
-          "externalHorseId": "2022105262",
-          "gateNumber": 1,
-          "horseNumber": 1,
-          "name": "カペルブリュッケ",
-          "jockey": "斎藤",
+          "horseId": "7",
+          "externalHorseId": "2022106553",
+          "gateNumber": 7,
+          "horseNumber": 7,
+          "name": "???????",
+          "jockey": "??",
           "finishTime": "",
           "margin": "",
-          "popularity": 10,
-          "odds": 19.5
+          "popularity": 2,
+          "odds": 6.2
         },
         {
           "position": 3,
-          "horseId": "6",
-          "externalHorseId": "2022100154",
-          "gateNumber": 6,
-          "horseNumber": 6,
-          "name": "メイショウズイウン",
-          "jockey": "太宰",
+          "horseId": "5",
+          "externalHorseId": "2020100061",
+          "gateNumber": 5,
+          "horseNumber": 5,
+          "name": "??????",
+          "jockey": "??",
           "finishTime": "",
           "margin": "",
-          "popularity": 6,
-          "odds": 10.6
+          "popularity": 3,
+          "odds": 6.7
         }
       ]
     },
@@ -9431,7 +9431,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#阪神大賞典",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-20",
+    "date": "2026-03-21",
     "archivedAt": "2026-03-22T22:17:16.385Z",
     "result": {
       "updatedAt": "2026-03-30T00:00:00.000Z",
@@ -9786,7 +9786,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#アネモネステークス",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-13",
+    "date": "2026-03-14",
     "archivedAt": "2026-03-27T05:58:17.908Z",
     "result": {
       "updatedAt": "2026-03-29T14:49:34.105Z",
@@ -10514,7 +10514,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#東風Ｓ",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-13",
+    "date": "2026-03-14",
     "archivedAt": "2026-03-27T05:58:17.908Z",
     "result": {
       "updatedAt": "2026-03-29T14:49:34.247Z",
@@ -11216,7 +11216,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#スプリングＳ",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-13",
+    "date": "2026-03-14",
     "archivedAt": "2026-03-27T05:58:17.908Z",
     "result": {
       "updatedAt": "2026-03-29T14:49:34.427Z",
@@ -11945,7 +11945,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#昇竜Ｓ",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-13",
+    "date": "2026-03-14",
     "archivedAt": "2026-03-27T05:58:17.908Z",
     "result": {
       "updatedAt": "2026-03-29T14:49:34.513Z",
@@ -12481,7 +12481,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#金鯱賞",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-13",
+    "date": "2026-03-14",
     "archivedAt": "2026-03-27T05:58:17.908Z",
     "result": {
       "updatedAt": "2026-03-29T14:49:34.583Z",
@@ -13128,7 +13128,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#コーラルステークス",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-13",
+    "date": "2026-03-14",
     "archivedAt": "2026-03-27T05:58:17.908Z",
     "result": {
       "updatedAt": "2026-03-29T14:49:34.651Z",
@@ -13733,7 +13733,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#米子城Ｓ",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-13",
+    "date": "2026-03-14",
     "archivedAt": "2026-03-27T05:58:17.908Z",
     "result": {
       "updatedAt": "2026-03-29T14:49:34.808Z",
@@ -14418,7 +14418,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#中山牝馬Ｓ出馬表",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-05",
+    "date": "2026-03-06",
     "archivedAt": "2026-03-08T23:19:23.744Z",
     "result": {
       "updatedAt": "2026-03-08T07:07:41.989Z",
@@ -15120,7 +15120,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#弥生賞ディープ記念出馬表",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-06",
+    "date": "2026-03-07",
     "archivedAt": "2026-03-08T23:19:23.744Z",
     "result": {
       "updatedAt": "2026-03-29T14:49:35.355Z",
@@ -15576,7 +15576,7 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "hashtag": "#フィリーズレビュー出馬表",
     "hasRace": true,
     "oddsSource": "official",
-    "date": "2026-03-05",
+    "date": "2026-03-06",
     "archivedAt": "2026-03-08T23:19:23.744Z",
     "result": {
       "updatedAt": "2026-03-08T07:07:42.202Z",
