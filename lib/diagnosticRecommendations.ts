@@ -235,5 +235,28 @@ export function buildDiagnosticRecommendations(
     });
   }
 
+  const heat = diagnostics.evaluation.secondaryKpis.marketHeatCounts;
+  if (heat && heat.honmeiOverbetCount >= MIN_SAMPLE_SMALL && heat.honmeiNonOverbetCount >= MIN_SAMPLE_SMALL) {
+    const overbetPlaceRate = (heat.honmeiOverbetPlaceHitCount / heat.honmeiOverbetCount) * 100;
+    const nonOverbetPlaceRate = (heat.honmeiNonOverbetPlaceHitCount / heat.honmeiNonOverbetCount) * 100;
+    if (nonOverbetPlaceRate - overbetPlaceRate >= PLACE_RATE_GAP_THRESHOLD) {
+      addRecommendation(recommendations, {
+        id: "market_overbet_honmei_drag",
+        category: "place_core",
+        targetStyle: "place_hit_rate",
+        priority: "medium",
+        title: "市場過熱馬の本命選出が複勝率を押し下げている可能性",
+        summary: `過熱ラベル付き本命の複勝率${Math.round(overbetPlaceRate)}%に対し、非過熱本命は${Math.round(nonOverbetPlaceRate)}%。overbetRisk の減点幅拡大または overbet 本命への警告表示を検討。`,
+        evidence: {
+          honmeiOverbetCount: heat.honmeiOverbetCount,
+          overbetPlaceRate: Math.round(overbetPlaceRate),
+          nonOverbetPlaceRate: Math.round(nonOverbetPlaceRate),
+          gap: Math.round(nonOverbetPlaceRate - overbetPlaceRate),
+        },
+        metricSignals: ["marketHeatCounts"],
+      });
+    }
+  }
+
   return recommendations;
 }

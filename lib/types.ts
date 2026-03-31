@@ -4,6 +4,8 @@ export type GroundCondition = "Firm" | "Good" | "Yielding" | "Soft";
 export type Weather = "Sunny" | "Cloudy" | "Rain" | "Snow";
 export type WindDirection = "Headwind" | "Tailwind" | "Crosswind";
 export type PaceScenario = "Slow" | "Average" | "Fast";
+export type PredictionOrigin = "saved_live" | "saved_manual" | "backfill";
+export type DiagnosticsAggregationScope = "all" | "saved_only";
 
 export interface Horse {
   id: string;
@@ -134,6 +136,8 @@ export interface PredictionSnapshot {
   raceId: string;
   courseId: string;
   capturedAt: string;
+  predictionOrigin: PredictionOrigin;
+  scoringVersion: string;
   modelFamily: string;
   modelVersion: string;
   scoringConfigHash: string;
@@ -152,8 +156,11 @@ export type WeeklyDiagnosticsPopularityBandKey = "top3" | "mid" | "longshot";
 export interface WeeklyDiagnosticsMeta {
   weekKey: string;
   generatedAt: string;
+  aggregationScope: DiagnosticsAggregationScope;
+  scoringVersion: string | null;
   modelVersion: string | null;
   scoringConfigHash: string | null;
+  scoringVersions: string[];
   modelVersions: string[];
   scoringConfigHashes: string[];
   raceCount: number;
@@ -196,9 +203,11 @@ export interface WeeklyDiagnosticsPopularityBand {
 
 export interface WeeklyDiagnosticsValueCore {
   raceCount: number;
+  skippedCount: number;
   placeHitCount: number;
   placeRate: number;
   placeReturnRate: number;
+  candidateRate: number;
   popularityBands: WeeklyDiagnosticsPopularityBand[];
   longshot: {
     raceCount: number;
@@ -273,9 +282,38 @@ export interface WeeklyDiagnosticRecommendation {
   metricSignals: string[];
 }
 
+export interface WeeklyDiagnosticsMissPatternCounts {
+  rankError: number;
+  top3TotalMiss: number;
+  valueRescueHit: number;
+  honmeiAndValueMiss: number;
+}
+
+export interface WeeklyDiagnosticsMarketHeatCounts {
+  honmeiOverbetCount: number;
+  honmeiOverbetPlaceHitCount: number;
+  honmeiNonOverbetCount: number;
+  honmeiNonOverbetPlaceHitCount: number;
+}
+
+export interface WeeklyDiagnosticsEvaluation {
+  primaryKpis: {
+    tanpukuHonmeiPlaceHitRate: number;
+    tanpukuHonmeiPlaceRoi: number;
+  };
+  secondaryKpis: {
+    sim1VsSim2PlaceGap: number | null;
+    honmeiValueDivergenceRate: number | null;
+    missPatternCounts: WeeklyDiagnosticsMissPatternCounts;
+    marketHeatCounts: WeeklyDiagnosticsMarketHeatCounts;
+  };
+}
+
 export interface WeeklyDiagnosticsStoreEntry {
   storeKey: string;
   weekKey: string;
+  aggregationScope: DiagnosticsAggregationScope;
+  scoringVersion: string | null;
   modelVersion: string | null;
   scoringConfigHash: string | null;
   savedAt: string;
@@ -289,11 +327,15 @@ export interface WeeklyDiagnosticsStore {
 export interface WeeklyDiagnosticsComparisonSummary {
   current: {
     weekKey: string;
+    aggregationScope: DiagnosticsAggregationScope;
+    scoringVersion: string | null;
     modelVersion: string | null;
     scoringConfigHash: string | null;
   };
   previous: {
     weekKey: string;
+    aggregationScope: DiagnosticsAggregationScope;
+    scoringVersion: string | null;
     modelVersion: string | null;
     scoringConfigHash: string | null;
   } | null;
@@ -325,6 +367,7 @@ export interface WeeklyDiagnostics {
     valueHits: WeeklyDiagnosticsRepresentativeRace[];
   };
   signals: WeeklyDiagnosticsSignals;
+  evaluation: WeeklyDiagnosticsEvaluation;
   recommendations: WeeklyDiagnosticRecommendation[];
 }
 
@@ -382,6 +425,7 @@ export interface WeeklyNoteSummaryBlock {
     | "value_core"
     | "snapshot_ranks"
     | "popularity_trends"
+    | "market_heat"
     | "disagreement_review"
     | "comparison"
     | "best_hits"

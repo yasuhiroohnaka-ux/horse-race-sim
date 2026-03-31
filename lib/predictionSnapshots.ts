@@ -1,5 +1,13 @@
 import { buildRaceAnalysisRows, getScenarioProfile, round1 } from "./raceAnalysis";
-import { Course, Horse, PredictionSnapshot, PredictionSnapshotContributor, PredictionSnapshotContributorKey, RaceCondition } from "./types";
+import {
+  Course,
+  Horse,
+  PredictionOrigin,
+  PredictionSnapshot,
+  PredictionSnapshotContributor,
+  PredictionSnapshotContributorKey,
+  RaceCondition,
+} from "./types";
 
 const CONTRIBUTOR_LABELS: Record<PredictionSnapshotContributorKey, string> = {
   abilityScore: "能力指数",
@@ -12,6 +20,8 @@ const CONTRIBUTOR_LABELS: Record<PredictionSnapshotContributorKey, string> = {
 
 export const PREDICTION_SNAPSHOT_MODEL_FAMILY = "manual-sim-montecarlo";
 export const PREDICTION_SNAPSHOT_MODEL_VERSION = "sim-page-v1";
+export const DEFAULT_PREDICTION_ORIGIN: PredictionOrigin = "saved_manual";
+export const DEFAULT_SCORING_VERSION = "tanpuku-place-v2.2";
 
 const SCORING_CONFIG_SOURCE = {
   engine: "runMonteCarlo",
@@ -64,6 +74,15 @@ function createSnapshotId(): string {
 function extractRaceId(courseId: string): string {
   const match = String(courseId ?? "").match(/(\d{12})$/);
   return match?.[1] ?? String(courseId ?? "");
+}
+
+export function normalizePredictionOrigin(value: unknown, fallback: PredictionOrigin = DEFAULT_PREDICTION_ORIGIN): PredictionOrigin {
+  return value === "saved_live" || value === "saved_manual" || value === "backfill" ? value : fallback;
+}
+
+export function normalizeScoringVersion(value: unknown, fallback = DEFAULT_SCORING_VERSION): string {
+  const normalized = String(value ?? "").trim();
+  return normalized || fallback;
 }
 
 function resolveOddsSource(horses: Horse[], explicitOddsSource?: string | null): string | null {
@@ -138,6 +157,8 @@ export async function buildPredictionSnapshot(params: {
   raceId?: string | null;
   oddsFetchedAt?: string | null;
   oddsSource?: string | null;
+  predictionOrigin?: PredictionOrigin;
+  scoringVersion?: string | null;
 }): Promise<PredictionSnapshot> {
   const {
     results,
@@ -148,6 +169,8 @@ export async function buildPredictionSnapshot(params: {
     raceId = null,
     oddsFetchedAt = null,
     oddsSource = null,
+    predictionOrigin = DEFAULT_PREDICTION_ORIGIN,
+    scoringVersion = DEFAULT_SCORING_VERSION,
   } = params;
 
   const rows = buildRaceAnalysisRows(results, horses, course, condition);
@@ -208,6 +231,8 @@ export async function buildPredictionSnapshot(params: {
     raceId: raceId ? String(raceId) : extractRaceId(course.id),
     courseId: course.id,
     capturedAt: new Date().toISOString(),
+    predictionOrigin,
+    scoringVersion: normalizeScoringVersion(scoringVersion),
     modelFamily: PREDICTION_SNAPSHOT_MODEL_FAMILY,
     modelVersion: PREDICTION_SNAPSHOT_MODEL_VERSION,
     scoringConfigHash,

@@ -1,6 +1,12 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
+import {
+  DEFAULT_PREDICTION_ORIGIN,
+  DEFAULT_SCORING_VERSION,
+  normalizePredictionOrigin,
+  normalizeScoringVersion,
+} from "@/lib/predictionSnapshots";
 import type { PredictionSnapshot } from "@/lib/types";
 
 const ROOT = process.cwd();
@@ -27,6 +33,14 @@ function isPredictionSnapshot(value: unknown): value is PredictionSnapshot {
   );
 }
 
+function toNormalizedSnapshot(value: PredictionSnapshot): PredictionSnapshot {
+  return {
+    ...value,
+    predictionOrigin: normalizePredictionOrigin(value.predictionOrigin, DEFAULT_PREDICTION_ORIGIN),
+    scoringVersion: normalizeScoringVersion(value.scoringVersion, DEFAULT_SCORING_VERSION),
+  };
+}
+
 function toIsoTime(value: string): number {
   const parsed = Date.parse(String(value ?? ""));
   return Number.isFinite(parsed) ? parsed : 0;
@@ -50,12 +64,13 @@ export async function GET() {
       }
 
       if (!isPredictionSnapshot(parsed)) continue;
-      const raceId = String(parsed.raceId ?? "");
+      const normalized = toNormalizedSnapshot(parsed);
+      const raceId = String(normalized.raceId ?? "");
       if (!raceId) continue;
 
       const existing = latestByRaceId[raceId];
-      if (!existing || toIsoTime(parsed.capturedAt) >= toIsoTime(existing.capturedAt)) {
-        latestByRaceId[raceId] = parsed;
+      if (!existing || toIsoTime(normalized.capturedAt) >= toIsoTime(existing.capturedAt)) {
+        latestByRaceId[raceId] = normalized;
       }
     }
 
@@ -80,13 +95,14 @@ export async function POST(request: Request) {
     if (!isPredictionSnapshot(payload)) {
       return NextResponse.json({ ok: false, error: "invalid prediction snapshot payload" }, { status: 400 });
     }
+    const normalizedPayload = toNormalizedSnapshot(payload);
 
     await fs.mkdir(DATA_DIR, { recursive: true });
-    await fs.appendFile(SNAPSHOT_PATH, `${JSON.stringify(payload)}\n`, "utf8");
+    await fs.appendFile(SNAPSHOT_PATH, `${JSON.stringify(normalizedPayload)}\n`, "utf8");
 
     return NextResponse.json({
       ok: true,
-      snapshotId: payload.snapshotId,
+      snapshotId: normalizedPayload.snapshotId,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "failed to save prediction snapshot";

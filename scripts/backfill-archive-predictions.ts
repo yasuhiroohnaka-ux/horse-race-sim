@@ -1,10 +1,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { ARCHIVED_COURSES, COURSES } from "../lib/courses";
-import { buildPredictionSnapshot } from "../lib/predictionSnapshots";
+import { buildPredictionSnapshot, DEFAULT_SCORING_VERSION } from "../lib/predictionSnapshots";
 import { ARCHIVED_RACES as LEGACY_ARCHIVED_RACES } from "../lib/raceData";
 import { runMonteCarlo } from "../lib/simulation";
-import type { Course, Horse, PredictionSnapshot, PredictionSnapshotRow, RaceCondition } from "../lib/types";
+import { pickTanpukuPair as pickRoutineTanpukuPair } from "../lib/tanpukuSelection.mjs";
+import type { Course, Horse, PredictionOrigin, PredictionSnapshot, PredictionSnapshotRow, RaceCondition } from "../lib/types";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -70,9 +71,13 @@ type ExistingRecommendationRecord = {
   courseId?: unknown;
   pickType?: unknown;
   raceId?: unknown;
+  horseId?: unknown;
   settlementStatus?: unknown;
   tanPayoutSource?: unknown;
   fukuPayoutSource?: unknown;
+  scoringVersion?: unknown;
+  predictionOrigin?: unknown;
+  source?: unknown;
 };
 
 type SettlementStatus = "pending_result" | "pending_payouts" | "settled";
@@ -90,12 +95,23 @@ type BackfilledRecommendation = {
   raceId: string;
   raceLabel: string;
   pickType: "win" | "value";
+  predictionOrigin: PredictionOrigin;
+  scoringVersion: string;
   horseId: string;
   horseName: string;
   realOdds: number;
   placeOdds: number;
   winProb: number;
   placeProb: number;
+  placeScore: number;
+  valueScore: number;
+  selectionReason: string;
+  scoreGap: number;
+  runnerUpHorseId: string | null;
+  runnerUpHorseName: string | null;
+  runnerUpPlaceScore: number | null;
+  runnerUpPlaceProb: number | null;
+  overbetLabel: string | null;
   settlementStatus: SettlementStatus;
   tanOutcome: BetOutcome;
   fukuOutcome: BetOutcome;
@@ -437,10 +453,26 @@ function buildBackfilledRecommendation(params: {
   archiveWeekOf: string;
   race: WeeklyRaceRecord;
   row: PredictionSnapshotRow;
+  scoredEntry?: {
+    winProb?: number;
+    placeProb?: number;
+    placeOdds?: number;
+    placeScore?: number;
+    valueScore?: number;
+    selectionReason?: string;
+    scoreGap?: number;
+    overbetLabel?: string | null;
+  } | null;
+  runnerUp?: {
+    horseId?: string;
+    horseName?: string;
+    placeScore?: number;
+    placeProb?: number;
+  } | null;
   pickType: "win" | "value";
   postedAt: string;
 }): BackfilledRecommendation {
-  const { archiveWeekOf, race, row, pickType, postedAt } = params;
+  const { archiveWeekOf, race, row, scoredEntry, runnerUp, pickType, postedAt } = params;
   const result = race.result;
   const winnerHorseId = normalizeHorseId(result?.winnerHorseId);
   const top3HorseIds = (result?.top3HorseIds ?? []).map((horseId) => normalizeHorseId(horseId)).filter(Boolean);
@@ -457,10 +489,11 @@ function buildBackfilledRecommendation(params: {
         ? "pending_payouts"
         : "settled";
 
-  const winProbDecimal = clamp((Number(row.winProb ?? 0) || 0) / 100, 0.03, 0.95);
-  const placeProbDecimal = clamp(winProbDecimal * 2.2 + 0.05, 0.12, 0.9);
+  const fallbackWinProbDecimal = clamp((Number(row.winProb ?? 0) || 0) / 100, 0.03, 0.95);
+  const winProbDecimal = clamp(Number(scoredEntry?.winProb ?? fallbackWinProbDecimal), 0.03, 0.95);
+  const placeProbDecimal = clamp(Number(scoredEntry?.placeProb ?? (fallbackWinProbDecimal * 2.2 + 0.05)), 0.12, 0.9);
   const realOdds = Number(row.realOdds ?? 0) > 0 ? Number(row.realOdds) : Number(row.fairOdds ?? 0);
-  const placeOdds = Math.max(1.1, (realOdds > 0 ? realOdds : 5) * 0.35 + 1.0);
+  const placeOdds = Math.max(1.1, Number(scoredEntry?.placeOdds ?? (realOdds > 0 ? realOdds : 5) * 0.35 + 1.0));
 
   return {
     weekOf: archiveWeekOf,
@@ -473,12 +506,23 @@ function buildBackfilledRecommendation(params: {
     raceId: normalizeHorseId(race.raceId),
     raceLabel: race.label,
     pickType,
+    predictionOrigin: "backfill",
+    scoringVersion: DEFAULT_SCORING_VERSION,
     horseId: row.horseId,
     horseName: row.horseName,
     realOdds: round1(realOdds),
     placeOdds: round1(placeOdds),
     winProb: round3(winProbDecimal),
     placeProb: round3(placeProbDecimal),
+    placeScore: round3(Number(scoredEntry?.placeScore ?? 0)),
+    valueScore: round3(Number(scoredEntry?.valueScore ?? 0)),
+    selectionReason: String(scoredEntry?.selectionReason ?? ""),
+    scoreGap: round3(Number(scoredEntry?.scoreGap ?? 0)),
+    runnerUpHorseId: runnerUp?.horseId ? String(runnerUp.horseId) : null,
+    runnerUpHorseName: runnerUp?.horseName ? String(runnerUp.horseName) : null,
+    runnerUpPlaceScore: runnerUp?.placeScore != null ? round3(Number(runnerUp.placeScore)) : null,
+    runnerUpPlaceProb: runnerUp?.placeProb != null ? round3(Number(runnerUp.placeProb)) : null,
+    overbetLabel: scoredEntry?.overbetLabel ?? null,
     settlementStatus,
     tanOutcome:
       settlementStatus === "pending_result"
@@ -516,6 +560,21 @@ function round3(value: number) {
   return Math.round(value * 1000) / 1000;
 }
 
+function normalizeExistingSnapshotLine(line: string) {
+  try {
+    const parsed = JSON.parse(line) as PredictionSnapshot & { predictionOrigin?: string; scoringVersion?: string };
+    if (!parsed || typeof parsed !== "object" || !parsed.snapshotId || !parsed.raceId) return line;
+    if (parsed.predictionOrigin && parsed.scoringVersion) return line;
+    return JSON.stringify({
+      ...parsed,
+      predictionOrigin: parsed.predictionOrigin ?? "saved_manual",
+      scoringVersion: parsed.scoringVersion ?? DEFAULT_SCORING_VERSION,
+    });
+  } catch {
+    return line;
+  }
+}
+
 function buildRecommendationKey(courseId: string, pickType: "win" | "value") {
   return `${courseId}::${pickType}`;
 }
@@ -535,15 +594,24 @@ function shouldReplaceRecommendation(existing: Record<string, unknown> | undefin
 
   const current = existing as ExistingRecommendationRecord;
   const currentRaceId = normalizeHorseId(current.raceId);
+  const currentHorseId = normalizeHorseId(current.horseId);
   const currentSettlementStatus = String(current.settlementStatus ?? "");
   const currentTanSource = String(current.tanPayoutSource ?? "");
   const currentFukuSource = String(current.fukuPayoutSource ?? "");
+  const currentScoringVersion = String(current.scoringVersion ?? "");
+  const currentPredictionOrigin =
+    current.source === "backfill" || (typeof current.source === "string" && String(current.source).includes("backfill"))
+      ? "backfill"
+      : String(current.predictionOrigin ?? "");
   const currentWinnerHorseId = normalizeHorseId((existing as Record<string, unknown>).actualWinnerHorseId);
   const currentTop3HorseIds = Array.isArray((existing as Record<string, unknown>).actualTop3HorseIds)
     ? ((existing as Record<string, unknown>).actualTop3HorseIds as unknown[]).map((value) => normalizeHorseId(value)).filter(Boolean)
     : [];
 
   if (currentRaceId !== next.raceId) return true;
+  if (currentHorseId !== next.horseId) return true;
+  if (currentScoringVersion !== next.scoringVersion) return true;
+  if (currentPredictionOrigin !== "backfill" && next.predictionOrigin === "backfill") return true;
   if (currentWinnerHorseId !== next.actualWinnerHorseId) return true;
   if (JSON.stringify(currentTop3HorseIds) !== JSON.stringify(next.actualTop3HorseIds)) return true;
   if (currentSettlementStatus !== "settled" && next.settlementStatus === "settled") return true;
@@ -797,7 +865,21 @@ async function main() {
         raceId,
         oddsFetchedAt: race.result?.updatedAt ?? null,
         oddsSource: race.oddsSource ?? "official",
+        predictionOrigin: "backfill",
+        scoringVersion: DEFAULT_SCORING_VERSION,
       });
+      latestByRaceId[raceId] = snapshot;
+      appendedSnapshotLines.push(JSON.stringify(snapshot));
+    } else if (
+      origin !== "current" &&
+      (snapshot.predictionOrigin !== "backfill" || snapshot.scoringVersion !== DEFAULT_SCORING_VERSION)
+    ) {
+      snapshot = {
+        ...snapshot,
+        predictionOrigin: "backfill",
+        scoringVersion: DEFAULT_SCORING_VERSION,
+        capturedAt: new Date().toISOString(),
+      };
       latestByRaceId[raceId] = snapshot;
       appendedSnapshotLines.push(JSON.stringify(snapshot));
     }
@@ -805,14 +887,37 @@ async function main() {
     const postedAt = createPostedAt(raceDate);
     const winKey = buildRecommendationKey(race.courseId, "win");
     const valueKey = buildRecommendationKey(race.courseId, "value");
-    const winRow = pickWinRow(snapshot);
-    const valueRow = pickValueRow(snapshot);
+    const routinePair = pickRoutineTanpukuPair(
+      {
+        courseId: race.courseId,
+        label: race.label,
+        day: race.day,
+        distance: race.distance,
+        straightLength: race.straightLength,
+        trackBias: { innerOuter: 0, frontBack: 0 },
+        horses: race.horses,
+      },
+      false,
+      true
+    );
+    const routineWinEntry = routinePair?.winPick ?? null;
+    const routineValueEntry = routinePair?.valuePick ?? null;
+    const winRow =
+      (routineWinEntry && snapshot.rankedRows.find((row) => row.horseId === routineWinEntry.horse.id)) ??
+      pickWinRow(snapshot);
+    // When scoring engine ran but returned null valuePick, respect the quality gate
+    const valueRow = routinePair && !routineValueEntry
+      ? null
+      : (routineValueEntry && snapshot.rankedRows.find((row) => row.horseId === routineValueEntry.horse.id)) ??
+        pickValueRow(snapshot);
 
     if (winRow) {
       const recommendation = applyManualRecommendationOverride(buildBackfilledRecommendation({
         archiveWeekOf: weekOf,
         race,
         row: winRow,
+        scoredEntry: routineWinEntry,
+        runnerUp: routinePair?.winRunnerUp ?? null,
         pickType: "win",
         postedAt,
       }));
@@ -835,6 +940,8 @@ async function main() {
         archiveWeekOf: weekOf,
         race,
         row: valueRow,
+        scoredEntry: routineValueEntry,
+        runnerUp: routinePair?.valueRunnerUp ?? null,
         pickType: "value",
         postedAt,
       }));
@@ -853,9 +960,12 @@ async function main() {
     }
   }
 
-  if (appendedSnapshotLines.length > 0) {
+  const normalizedSnapshotLines = lines.map(normalizeExistingSnapshotLine);
+  const snapshotLinesChanged = normalizedSnapshotLines.some((line, index) => line !== lines[index]);
+
+  if (appendedSnapshotLines.length > 0 || snapshotLinesChanged) {
     await fs.mkdir(path.dirname(SNAPSHOT_PATH), { recursive: true });
-    const currentText = lines.length > 0 ? `${lines.join("\n")}\n` : "";
+    const currentText = normalizedSnapshotLines.length > 0 ? `${normalizedSnapshotLines.join("\n")}\n` : "";
     await fs.writeFile(SNAPSHOT_PATH, `${currentText}${appendedSnapshotLines.join("\n")}\n`, "utf8");
   }
 
@@ -865,10 +975,25 @@ async function main() {
     const horseId = normalizeHorseId(entry.horseId);
     const overrideKey = `${raceId}::${pickType}::${horseId}`;
     const override = MANUAL_RECOMMENDATION_OVERRIDES[overrideKey];
-    return override ? { ...entry, ...override } : entry;
+    const normalizedOrigin =
+      entry.source === "backfill" || (typeof entry.source === "string" && String(entry.source).includes("backfill"))
+        ? "backfill"
+        : String(entry.predictionOrigin ?? "saved_live");
+    const normalizedScoringVersion = String(entry.scoringVersion ?? DEFAULT_SCORING_VERSION);
+    const baseEntry = {
+      ...entry,
+      predictionOrigin: normalizedOrigin,
+      scoringVersion: normalizedScoringVersion,
+    };
+    return override ? { ...baseEntry, ...override } : baseEntry;
   });
 
-  if (addedRecommendations.length > 0) {
+  const recommendationsChanged =
+    addedRecommendations.length > 0 ||
+    normalizedRecommendations.length !== recommendations.length ||
+    normalizedRecommendations.some((entry, index) => JSON.stringify(entry) !== JSON.stringify(recommendations[index]));
+
+  if (recommendationsChanged) {
     state.tanpukuRecommendations = normalizedRecommendations;
     await fs.writeFile(STATE_PATH, JSON.stringify(state, null, 2), "utf8");
   }

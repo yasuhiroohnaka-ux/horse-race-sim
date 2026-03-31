@@ -2,6 +2,16 @@
 import path from "node:path";
 import { spawn } from "node:child_process";
 
+import {
+  TANPUKU_SCORING_VERSION,
+  pickTanpukuPair as pickSharedTanpukuPair,
+} from "../lib/tanpukuSelection.mjs";
+import {
+  buildPreRacePostPayload,
+  buildReviewPostPayload,
+  buildWeeklySummaryPostPayload,
+} from "../lib/xPostPayload.mjs";
+
 const ROOT = process.cwd();
 
 const ARG_STAGE = process.argv.find((arg) => arg.startsWith("--stage="))?.split("=")[1];
@@ -11,6 +21,7 @@ const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
 const STATE_PATH = path.join(ROOT, "data", "routine-state.json");
 const PENDING_POSTS_PATH = path.join(ROOT, "data", "pending-posts.jsonl");
 const GENERATED_REVIEWS_PATH = path.join(ROOT, "data", "generated-reviews.json");
+const DEFAULT_SCORING_VERSION = TANPUKU_SCORING_VERSION;
 
 const X_POST_WEBHOOK_URL = process.env.X_POST_WEBHOOK_URL || "";
 
@@ -81,11 +92,12 @@ function reviewKeyForRace(race) {
   return String(race?.raceId ?? race?.courseId ?? "");
 }
 
-async function publishOrQueuePost(stage, text) {
+async function publishOrQueuePost(stage, text, structuredPayload = null) {
   const payload = {
     stage,
     text,
     postedAt: new Date().toISOString(),
+    ...(structuredPayload ? { payload: structuredPayload } : {}),
   };
 
   if (X_POST_WEBHOOK_URL) {
@@ -292,34 +304,6 @@ function listOvervaluedHorsesInRace(race, includeBodyWeight = false, applyDraw =
     .sort((a, b) => b.gap - a.gap);
 }
 
-function pickTanpukuPair(race, includeBodyWeight = false, applyDraw = true) {
-  const drawMap = buildDrawTacticalMap(race, applyDraw);
-  const scored = race.horses
-    .map((horse) => {
-      const score = scoreHorse(horse, race, includeBodyWeight, drawMap);
-      const odds = Number(horse.realOdds ?? 0);
-      if (!(odds > 0)) return null;
-      const winProb = Math.max(0.03, Math.min(0.7, score / 220));
-      const placeProb = Math.max(0.12, Math.min(0.9, winProb * 2.2 + 0.05));
-      const placeOdds = Math.max(1.1, odds * 0.35 + 1.0);
-      const tanRoi = winProb * odds * 100;
-      const fukuRoi = placeProb * placeOdds * 100;
-      const value = tanRoi * 0.6 + fukuRoi * 0.4;
-      return { horse, score, winProb, placeProb, placeOdds, tanRoi, fukuRoi, value };
-    })
-    .filter((x) => x !== null)
-    .sort((a, b) => b.value - a.value);
-
-  if (scored.length === 0) return null;
-  const winPick = [...scored].sort((a, b) => b.winProb - a.winProb)[0];
-  const valueCandidates = scored.filter((x) => x.winProb >= 0.18);
-  const valuePick =
-    [...(valueCandidates.length > 0 ? valueCandidates : scored)]
-      .sort((a, b) => b.value - a.value)
-      .find((x) => x.horse.id !== winPick.horse.id) ?? scored[0];
-  return { winPick, valuePick };
-}
-
 function hasOfficialPayoutTable(payoutTable) {
   return Boolean(
     payoutTable &&
@@ -431,16 +415,41 @@ async function handleNextDayReview(day, stage) {
   const generatedReviews = await readJson(GENERATED_REVIEWS_PATH, {});
   const state = await readJson(STATE_PATH, {});
   state.reviewPosts = state.reviewPosts || {};
+  const recs = state.tanpukuRecommendations || [];
 
   const reviewedRaces = (weekly.currentWeek?.races || []).filter(
-    (race) => race.day === day && race.result?.winnerHorseName && generatedReviews[reviewKeyForRace(race)]?.xPostText
+    (race) => race.day === day && race.result?.winnerHorseName
   );
 
   for (const race of reviewedRaces) {
     const key = `${stage}:${race.raceId || race.courseId}`;
     if (state.reviewPosts[key]) continue;
-    await publishOrQueuePost(key, generatedReviews[reviewKeyForRace(race)].xPostText);
-    state.reviewPosts[key] = new Date().toISOString();
+
+    // Look up tanpuku recommendation for this race
+    const winRec = recs.find(
+      (r) => r.pickType === "win" && (r.courseId === race.courseId || r.raceLabel === race.label)
+    );
+
+    if (winRec && race.result?.top3HorseIds?.length > 0) {
+      // Structured review for races with tanpuku recs
+      const review = buildReviewPostPayload({
+        race,
+        winRec,
+        simBestHorseId: null, // sim best not tracked in rec
+      });
+      if (review) {
+        await publishOrQueuePost(key, review.text, review);
+        state.reviewPosts[key] = new Date().toISOString();
+        continue;
+      }
+    }
+
+    // Fallback to generated review xPostText
+    const genReview = generatedReviews[reviewKeyForRace(race)];
+    if (genReview?.xPostText) {
+      await publishOrQueuePost(key, genReview.xPostText);
+      state.reviewPosts[key] = new Date().toISOString();
+    }
   }
 
   state.lastResultReviewRun = state.lastResultReviewRun || {};
@@ -497,29 +506,17 @@ async function handleRecommendation(day, stage) {
   const horse = best.horse;
   const undervalued = listUndervaluedHorsesInRace(race, includeBodyWeight, applyDraw);
   const overvalued = listOvervaluedHorsesInRace(race, includeBodyWeight, applyDraw);
-  const tanpuku = pickTanpukuPair(race, includeBodyWeight, applyDraw);
-
-  const undervaluedText =
-    undervalued.length > 0
-      ? undervalued.map((x) => `${x.horse.name}(人気${x.horse.predictionCount}, 想定${x.horse.realOdds}倍, ギャップ+${x.gap})`).join("、")
-      : "該当なし";
+  const tanpuku = pickSharedTanpukuPair(race, includeBodyWeight, applyDraw);
 
   const overvaluedText = buildPackedOvervaluedText(day, overvalued);
-
-  await publishOrQueuePost(
-    stage,
-    `${day}対象レースおすすめ: ${horse.name} (${race.label}) / score=${best.score.toFixed(1)} / 人気=${horse.predictionCount} / 想定オッズ=${horse.realOdds}\n過小評価馬(全頭): ${undervaluedText}`
-  );
-
   await publishOrQueuePost(`${stage}_overvalued`, overvaluedText);
 
   if (tanpuku) {
+    const preRace = buildPreRacePostPayload({ day, race, tanpukuPair: tanpuku, simBestHorse: best });
+    await publishOrQueuePost(`${stage}_pre_race`, preRace.text, preRace);
+
     const winPick = tanpuku.winPick;
     const valuePick = tanpuku.valuePick;
-    await publishOrQueuePost(
-      `${stage}_tanpuku`,
-      `${day}対象レース 単複おすすめ: 勝率重視=${winPick.horse.name}(勝率${(winPick.winProb * 100).toFixed(1)}%) / 回収率重視=${valuePick.horse.name}(単回収${valuePick.tanRoi.toFixed(1)}% 複回収${valuePick.fukuRoi.toFixed(1)}% 勝率${(valuePick.winProb * 100).toFixed(1)}%)`
-    );
 
     const weekOf = weekly.currentWeek?.weekOf || isoDate(startOfWeekMonday(jstNow()));
     state.tanpukuRecommendations = state.tanpukuRecommendations || [];
@@ -528,6 +525,8 @@ async function handleRecommendation(day, stage) {
       day,
       stage,
       postedAt: new Date().toISOString(),
+      predictionOrigin: "saved_live",
+      scoringVersion: DEFAULT_SCORING_VERSION,
       courseId: race.courseId,
       raceLabel: race.label,
       pickType: "win",
@@ -537,6 +536,15 @@ async function handleRecommendation(day, stage) {
       placeOdds: Number(winPick.placeOdds),
       winProb: Number(winPick.winProb),
       placeProb: Number(winPick.placeProb),
+      placeScore: Number(winPick.placeScore),
+      valueScore: Number(winPick.valueScore),
+      selectionReason: String(winPick.selectionReason ?? ""),
+      scoreGap: Number(winPick.scoreGap ?? 0),
+      runnerUpHorseId: tanpuku.winRunnerUp?.horseId ?? null,
+      runnerUpHorseName: tanpuku.winRunnerUp?.horseName ?? null,
+      runnerUpPlaceScore: tanpuku.winRunnerUp?.placeScore ?? null,
+      runnerUpPlaceProb: tanpuku.winRunnerUp?.placeProb ?? null,
+      overbetLabel: winPick.overbetLabel ?? null,
       settlementStatus: "pending_result",
       tanOutcome: "not_settled",
       fukuOutcome: "not_settled",
@@ -546,29 +554,42 @@ async function handleRecommendation(day, stage) {
       fukuPayoutSource: "missing",
       resolved: false,
     });
-    state.tanpukuRecommendations.push({
-      weekOf,
-      day,
-      stage,
-      postedAt: new Date().toISOString(),
-      courseId: race.courseId,
-      raceLabel: race.label,
-      pickType: "value",
-      horseId: valuePick.horse.id,
-      horseName: valuePick.horse.name,
-      realOdds: Number(valuePick.horse.realOdds ?? 0),
-      placeOdds: Number(valuePick.placeOdds),
-      winProb: Number(valuePick.winProb),
-      placeProb: Number(valuePick.placeProb),
-      settlementStatus: "pending_result",
-      tanOutcome: "not_settled",
-      fukuOutcome: "not_settled",
-      actualWinnerHorseId: null,
-      actualTop3HorseIds: [],
-      tanPayoutSource: "missing",
-      fukuPayoutSource: "missing",
-      resolved: false,
-    });
+    if (valuePick) {
+      state.tanpukuRecommendations.push({
+        weekOf,
+        day,
+        stage,
+        postedAt: new Date().toISOString(),
+        predictionOrigin: "saved_live",
+        scoringVersion: DEFAULT_SCORING_VERSION,
+        courseId: race.courseId,
+        raceLabel: race.label,
+        pickType: "value",
+        horseId: valuePick.horse.id,
+        horseName: valuePick.horse.name,
+        realOdds: Number(valuePick.horse.realOdds ?? 0),
+        placeOdds: Number(valuePick.placeOdds),
+        winProb: Number(valuePick.winProb),
+        placeProb: Number(valuePick.placeProb),
+        placeScore: Number(valuePick.placeScore),
+        valueScore: Number(valuePick.valueScore),
+        selectionReason: String(valuePick.selectionReason ?? ""),
+        scoreGap: Number(valuePick.scoreGap ?? 0),
+        runnerUpHorseId: tanpuku.valueRunnerUp?.horseId ?? null,
+        runnerUpHorseName: tanpuku.valueRunnerUp?.horseName ?? null,
+        runnerUpPlaceScore: tanpuku.valueRunnerUp?.placeScore ?? null,
+        runnerUpPlaceProb: tanpuku.valueRunnerUp?.placeProb ?? null,
+        overbetLabel: valuePick.overbetLabel ?? null,
+        settlementStatus: "pending_result",
+        tanOutcome: "not_settled",
+        fukuOutcome: "not_settled",
+        actualWinnerHorseId: null,
+        actualTop3HorseIds: [],
+        tanPayoutSource: "missing",
+        fukuPayoutSource: "missing",
+        resolved: false,
+      });
+    }
     await writeJson(STATE_PATH, state);
   }
 }
@@ -674,19 +695,15 @@ async function handleSundaySettle() {
     rec.fukuHit = fukuHit;
   }
 
-  const w = state.performance.weekly;
-  const tanHitRate = w.bets > 0 ? (w.tanHits / w.bets) * 100 : 0;
-  const fukuHitRate = w.bets > 0 ? (w.fukuHits / w.bets) * 100 : 0;
-  const tanRoi = w.tanStake > 0 ? (w.tanPayout / w.tanStake) * 100 : 0;
-  const fukuRoi = w.fukuStake > 0 ? (w.fukuPayout / w.fukuStake) * 100 : 0;
-
   state.performance.updatedAt = new Date().toISOString();
   await writeJson(STATE_PATH, state);
 
-  await publishOrQueuePost(
-    "sun_16",
-    `単複おすすめ成績: 件数${w.bets} / 単勝的中率${tanHitRate.toFixed(1)}% 単回収${tanRoi.toFixed(1)}% / 複勝的中率${fukuHitRate.toFixed(1)}% 複回収${fukuRoi.toFixed(1)}%`
-  );
+  const summary = buildWeeklySummaryPostPayload({
+    weeklyPerf: state.performance.weekly,
+    recs,
+    weekOf,
+  });
+  await publishOrQueuePost("sun_16", summary.text, summary);
 }
 
 async function main() {

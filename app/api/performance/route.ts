@@ -6,7 +6,13 @@ import {
   GENERATED_COMPLETED_RACES,
   type GeneratedReviewRace,
 } from "@/lib/generatedRaceSchedule";
-import type { PredictionSnapshot } from "@/lib/types";
+import {
+  DEFAULT_PREDICTION_ORIGIN,
+  DEFAULT_SCORING_VERSION,
+  normalizePredictionOrigin,
+  normalizeScoringVersion,
+} from "@/lib/predictionSnapshots";
+import type { DiagnosticsAggregationScope, PredictionOrigin, PredictionSnapshot } from "@/lib/types";
 
 const ROOT = process.cwd();
 const STATE_PATH = path.join(ROOT, "data", "routine-state.json");
@@ -23,6 +29,9 @@ type RecommendationRecord = {
   raceId?: unknown;
   raceLabel?: unknown;
   pickType?: unknown;
+  scoringVersion?: unknown;
+  predictionOrigin?: unknown;
+  source?: unknown;
   horseId?: unknown;
   horseName?: unknown;
   postedAt?: unknown;
@@ -36,6 +45,19 @@ type RecommendationRecord = {
   fukuPayoutSource?: unknown;
   actualWinnerHorseId?: unknown;
   actualTop3HorseIds?: unknown;
+  realOdds?: unknown;
+  placeOdds?: unknown;
+  winProb?: unknown;
+  placeProb?: unknown;
+  placeScore?: unknown;
+  valueScore?: unknown;
+  selectionReason?: unknown;
+  scoreGap?: unknown;
+  runnerUpHorseId?: unknown;
+  runnerUpHorseName?: unknown;
+  runnerUpPlaceScore?: unknown;
+  runnerUpPlaceProb?: unknown;
+  overbetLabel?: unknown;
 };
 
 type RecommendationSettlement = {
@@ -43,6 +65,8 @@ type RecommendationSettlement = {
   raceId: string | null;
   raceLabel: string | null;
   pickType: PickType;
+  predictionOrigin: PredictionOrigin;
+  scoringVersion: string;
   horseId: string;
   horseName: string;
   postedAt: string | null;
@@ -56,6 +80,19 @@ type RecommendationSettlement = {
   fukuPayoutSource: PayoutSource;
   actualWinnerHorseId: string | null;
   actualTop3HorseIds: string[];
+  realOdds: number;
+  placeOdds: number;
+  winProb: number;
+  placeProb: number;
+  placeScore: number;
+  valueScore: number;
+  selectionReason: string | null;
+  scoreGap: number;
+  runnerUpHorseId: string | null;
+  runnerUpHorseName: string | null;
+  runnerUpPlaceScore: number;
+  runnerUpPlaceProb: number;
+  overbetLabel: string | null;
 };
 
 type RecommendationSettlementBundle = {
@@ -90,6 +127,8 @@ type RoutineHonmeiSummary = {
 
 type ValueCandidateSummary = {
   raceCount: number;
+  skippedCount: number;
+  candidateRate: number;
   placeCount: number;
   placeRate: number;
   fukuRoi: number;
@@ -153,7 +192,7 @@ function createEmptySummary(): AggregateSummary {
   return {
     snapshotHonmei: { raceCount: 0, firstCount: 0, placeCount: 0, winRate: 0, placeRate: 0 },
     routineHonmei: { raceCount: 0, tanHitCount: 0, fukuHitCount: 0, tanHitRate: 0, fukuHitRate: 0, tanRoi: 0, fukuRoi: 0, pendingCount: 0 },
-    valueCandidate: { raceCount: 0, placeCount: 0, placeRate: 0, fukuRoi: 0, pendingCount: 0 },
+    valueCandidate: { raceCount: 0, skippedCount: 0, candidateRate: 0, placeCount: 0, placeRate: 0, fukuRoi: 0, pendingCount: 0 },
     agreement: {
       raceCount: 0,
       samePickCount: 0,
@@ -216,6 +255,20 @@ function normalizePayoutSource(value: unknown): PayoutSource {
   return value === "official" ? "official" : "missing";
 }
 
+function normalizeAggregationScope(value: string | null | undefined): DiagnosticsAggregationScope {
+  return value === "saved_only" ? "saved_only" : "all";
+}
+
+function inferRecommendationOrigin(record: RecommendationRecord): PredictionOrigin {
+  if (record.source === "backfill") return "backfill";
+  if (typeof record.source === "string" && String(record.source).includes("backfill")) return "backfill";
+  return normalizePredictionOrigin(record.predictionOrigin, "saved_live");
+}
+
+function includePredictionOrigin(origin: PredictionOrigin, scope: DiagnosticsAggregationScope) {
+  return scope === "all" || origin !== "backfill";
+}
+
 function extractRaceId(courseId: string): string | null {
   const match = courseId.match(/(\d{12})$/);
   return match?.[1] ?? null;
@@ -270,6 +323,8 @@ function normalizeRecommendation(value: unknown): RecommendationSettlement | nul
     raceId: normalizeString(record.raceId) ?? extractRaceId(courseId),
     raceLabel: normalizeString(record.raceLabel),
     pickType: record.pickType,
+    predictionOrigin: inferRecommendationOrigin(record),
+    scoringVersion: normalizeScoringVersion(record.scoringVersion, DEFAULT_SCORING_VERSION),
     horseId,
     horseName,
     postedAt: normalizeString(record.postedAt),
@@ -285,6 +340,19 @@ function normalizeRecommendation(value: unknown): RecommendationSettlement | nul
     actualTop3HorseIds: Array.isArray(record.actualTop3HorseIds)
       ? record.actualTop3HorseIds.map((id) => String(id ?? "").trim()).filter(Boolean)
       : [],
+    realOdds: normalizeNumber(record.realOdds),
+    placeOdds: normalizeNumber(record.placeOdds),
+    winProb: normalizeNumber(record.winProb),
+    placeProb: normalizeNumber(record.placeProb),
+    placeScore: normalizeNumber(record.placeScore),
+    valueScore: normalizeNumber(record.valueScore),
+    selectionReason: normalizeString(record.selectionReason),
+    scoreGap: normalizeNumber(record.scoreGap),
+    runnerUpHorseId: normalizeString(record.runnerUpHorseId),
+    runnerUpHorseName: normalizeString(record.runnerUpHorseName),
+    runnerUpPlaceScore: normalizeNumber(record.runnerUpPlaceScore),
+    runnerUpPlaceProb: normalizeNumber(record.runnerUpPlaceProb),
+    overbetLabel: normalizeString(record.overbetLabel),
   };
 }
 
@@ -294,7 +362,15 @@ function isPredictionSnapshot(value: unknown): value is PredictionSnapshot {
   return typeof snapshot.raceId === "string" && typeof snapshot.courseId === "string" && typeof snapshot.capturedAt === "string" && Array.isArray(snapshot.rankedRows);
 }
 
-async function loadLatestSnapshotsByRaceId(): Promise<Record<string, PredictionSnapshot>> {
+function toNormalizedSnapshot(snapshot: PredictionSnapshot): PredictionSnapshot {
+  return {
+    ...snapshot,
+    predictionOrigin: normalizePredictionOrigin(snapshot.predictionOrigin, DEFAULT_PREDICTION_ORIGIN),
+    scoringVersion: normalizeScoringVersion(snapshot.scoringVersion, DEFAULT_SCORING_VERSION),
+  };
+}
+
+async function loadLatestSnapshotsByRaceId(scope: DiagnosticsAggregationScope): Promise<Record<string, PredictionSnapshot>> {
   try {
     const raw = await fs.readFile(SNAPSHOT_PATH, "utf8");
     const latestByRaceId: Record<string, PredictionSnapshot> = {};
@@ -306,10 +382,11 @@ async function loadLatestSnapshotsByRaceId(): Promise<Record<string, PredictionS
         continue;
       }
       if (!isPredictionSnapshot(parsed)) continue;
-      if (!parsed.raceId) continue;
-      const existing = latestByRaceId[parsed.raceId];
-      if (!existing || toTimestamp(parsed.capturedAt) >= toTimestamp(existing.capturedAt)) {
-        latestByRaceId[parsed.raceId] = parsed;
+      const normalized = toNormalizedSnapshot(parsed);
+      if (!normalized.raceId || !includePredictionOrigin(normalized.predictionOrigin, scope)) continue;
+      const existing = latestByRaceId[normalized.raceId];
+      if (!existing || toTimestamp(normalized.capturedAt) >= toTimestamp(existing.capturedAt)) {
+        latestByRaceId[normalized.raceId] = normalized;
       }
     }
     return latestByRaceId;
@@ -447,6 +524,9 @@ function buildAggregateSummary(
       } else {
         summary.valueCandidate.pendingCount += 1;
       }
+    } else if (bundle.win) {
+      // Win exists but no value candidate: quality gate filtered all out
+      summary.valueCandidate.skippedCount += 1;
     }
   }
 
@@ -458,6 +538,8 @@ function buildAggregateSummary(
   summary.routineHonmei.fukuRoi = roi(summary.routineHonmei.fukuRoi, summary.routineHonmei.raceCount);
   summary.valueCandidate.placeRate = percentage(summary.valueCandidate.placeCount, summary.valueCandidate.raceCount);
   summary.valueCandidate.fukuRoi = roi(summary.valueCandidate.fukuRoi, summary.valueCandidate.raceCount);
+  const valueTotalEligible = summary.valueCandidate.raceCount + summary.valueCandidate.skippedCount;
+  summary.valueCandidate.candidateRate = valueTotalEligible > 0 ? percentage(summary.valueCandidate.raceCount, valueTotalEligible) : 0;
   summary.agreement.samePickRate = percentage(summary.agreement.samePickCount, summary.agreement.raceCount);
   summary.agreement.samePickPlaceRate = percentage(summary.agreement.samePickPlaceCount, summary.agreement.samePickCount);
   summary.agreement.snapshotPlaceRateWhenDifferent = percentage(summary.agreement.snapshotPlaceCountWhenDifferent, summary.agreement.differentPickCount);
@@ -485,11 +567,13 @@ function buildAggregateSummary(
   return summary;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const scope = normalizeAggregationScope(searchParams.get("scope"));
     const [stateRaw, snapshotsByRaceId] = await Promise.all([
       fs.readFile(STATE_PATH, "utf8"),
-      loadLatestSnapshotsByRaceId(),
+      loadLatestSnapshotsByRaceId(scope),
     ]);
     const state = JSON.parse(stateRaw.replace(/^\uFEFF/, ""));
 
@@ -498,6 +582,7 @@ export async function GET() {
     for (const rawRecommendation of rawRecommendations) {
       const recommendation = normalizeRecommendation(rawRecommendation);
       if (!recommendation) continue;
+      if (!includePredictionOrigin(recommendation.predictionOrigin, scope)) continue;
       const existing = settlementsByCourseId[recommendation.courseId] ?? {
         courseId: recommendation.courseId,
         raceId: recommendation.raceId,
@@ -527,6 +612,7 @@ export async function GET() {
     const summary = buildAggregateSummary(races, snapshotsByRaceId, settlementsByRaceId);
 
     return NextResponse.json({
+      scope,
       performance: state.performance ?? null,
       updatedAt: state.performance?.updatedAt ?? null,
       settlementsByCourseId,
@@ -535,6 +621,7 @@ export async function GET() {
     });
   } catch {
     return NextResponse.json({
+      scope: "all",
       performance: null,
       updatedAt: null,
       settlementsByCourseId: {},

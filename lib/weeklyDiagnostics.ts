@@ -6,9 +6,19 @@ import {
   type GeneratedReviewRace,
 } from "@/lib/generatedRaceSchedule";
 import { buildDiagnosticRecommendations } from "@/lib/diagnosticRecommendations";
+import {
+  DEFAULT_PREDICTION_ORIGIN,
+  DEFAULT_SCORING_VERSION,
+  normalizePredictionOrigin,
+  normalizeScoringVersion,
+} from "@/lib/predictionSnapshots";
 import type {
+  DiagnosticsAggregationScope,
+  PredictionOrigin,
   PredictionSnapshot,
   WeeklyDiagnostics,
+  WeeklyDiagnosticsEvaluation,
+  WeeklyDiagnosticsMissPatternCounts,
   WeeklyDiagnosticsPopularityBand,
   WeeklyDiagnosticsRepresentativeRace,
 } from "@/lib/types";
@@ -27,8 +37,12 @@ type PopularityBandKey = "top3" | "mid" | "longshot";
 
 type RecommendationRecord = {
   courseId?: unknown;
+  raceId?: unknown;
   raceLabel?: unknown;
   pickType?: unknown;
+  scoringVersion?: unknown;
+  predictionOrigin?: unknown;
+  source?: unknown;
   horseId?: unknown;
   horseName?: unknown;
   postedAt?: unknown;
@@ -42,6 +56,7 @@ type RecommendationRecord = {
   fukuPayoutSource?: unknown;
   actualWinnerHorseId?: unknown;
   actualTop3HorseIds?: unknown;
+  overbetLabel?: unknown;
 };
 
 type RecommendationSettlement = {
@@ -49,6 +64,8 @@ type RecommendationSettlement = {
   raceId: string | null;
   raceLabel: string | null;
   pickType: PickType;
+  predictionOrigin: PredictionOrigin;
+  scoringVersion: string;
   horseId: string;
   horseName: string;
   postedAt: string | null;
@@ -62,6 +79,7 @@ type RecommendationSettlement = {
   fukuPayoutSource: PayoutSource;
   actualWinnerHorseId: string | null;
   actualTop3HorseIds: string[];
+  overbetLabel: string | null;
 };
 
 type RecommendationSettlementBundle = {
@@ -81,6 +99,7 @@ type GeneratedReviewRecord = {
 };
 
 type DiagnosticsContext = {
+  scope: DiagnosticsAggregationScope;
   races: GeneratedReviewRace[];
   snapshotsByRaceId: Record<string, PredictionSnapshot>;
   settlementsByRaceId: Record<string, RecommendationSettlementBundle>;
@@ -107,6 +126,20 @@ function normalizeBetOutcome(value: unknown): BetOutcome {
 
 function normalizePayoutSource(value: unknown): PayoutSource {
   return value === "official" ? "official" : "missing";
+}
+
+function normalizeAggregationScope(value: DiagnosticsAggregationScope | string | null | undefined): DiagnosticsAggregationScope {
+  return value === "saved_only" ? "saved_only" : "all";
+}
+
+function inferRecommendationOrigin(record: RecommendationRecord): PredictionOrigin {
+  if (record.source === "backfill") return "backfill";
+  if (typeof record.source === "string" && String(record.source).includes("backfill")) return "backfill";
+  return normalizePredictionOrigin(record.predictionOrigin, "saved_live");
+}
+
+function includePredictionOrigin(origin: PredictionOrigin, scope: DiagnosticsAggregationScope) {
+  return scope === "all" || origin !== "backfill";
 }
 
 function extractRaceId(courseId: string): string | null {
@@ -162,9 +195,11 @@ function normalizeRecommendation(value: unknown): RecommendationSettlement | nul
 
   return {
     courseId,
-    raceId: extractRaceId(courseId),
+    raceId: normalizeString(record.raceId) ?? extractRaceId(courseId),
     raceLabel: normalizeString(record.raceLabel),
     pickType: record.pickType,
+    predictionOrigin: inferRecommendationOrigin(record),
+    scoringVersion: normalizeScoringVersion(record.scoringVersion, DEFAULT_SCORING_VERSION),
     horseId,
     horseName,
     postedAt: normalizeString(record.postedAt),
@@ -180,6 +215,7 @@ function normalizeRecommendation(value: unknown): RecommendationSettlement | nul
     actualTop3HorseIds: Array.isArray(record.actualTop3HorseIds)
       ? record.actualTop3HorseIds.map((id) => String(id ?? "").trim()).filter(Boolean)
       : [],
+    overbetLabel: typeof record.overbetLabel === "string" ? record.overbetLabel : null,
   };
 }
 
@@ -195,7 +231,15 @@ function isPredictionSnapshot(value: unknown): value is PredictionSnapshot {
   );
 }
 
-async function loadLatestSnapshotsByRaceId() {
+function toNormalizedSnapshot(snapshot: PredictionSnapshot): PredictionSnapshot {
+  return {
+    ...snapshot,
+    predictionOrigin: normalizePredictionOrigin(snapshot.predictionOrigin, DEFAULT_PREDICTION_ORIGIN),
+    scoringVersion: normalizeScoringVersion(snapshot.scoringVersion, DEFAULT_SCORING_VERSION),
+  };
+}
+
+async function loadLatestSnapshotsByRaceId(scope: DiagnosticsAggregationScope) {
   try {
     const raw = await fs.readFile(SNAPSHOT_PATH, "utf8");
     const latestByRaceId: Record<string, PredictionSnapshot> = {};
@@ -206,10 +250,12 @@ async function loadLatestSnapshotsByRaceId() {
       } catch {
         continue;
       }
-      if (!isPredictionSnapshot(parsed) || !parsed.raceId) continue;
-      const existing = latestByRaceId[parsed.raceId];
-      if (!existing || toTimestamp(parsed.capturedAt) >= toTimestamp(existing.capturedAt)) {
-        latestByRaceId[parsed.raceId] = parsed;
+      if (!isPredictionSnapshot(parsed)) continue;
+      const normalized = toNormalizedSnapshot(parsed);
+      if (!normalized.raceId || !includePredictionOrigin(normalized.predictionOrigin, scope)) continue;
+      const existing = latestByRaceId[normalized.raceId];
+      if (!existing || toTimestamp(normalized.capturedAt) >= toTimestamp(existing.capturedAt)) {
+        latestByRaceId[normalized.raceId] = normalized;
       }
     }
     return latestByRaceId;
@@ -220,7 +266,7 @@ async function loadLatestSnapshotsByRaceId() {
   }
 }
 
-async function loadSettlementsByRaceId() {
+async function loadSettlementsByRaceId(scope: DiagnosticsAggregationScope) {
   const raw = await fs.readFile(STATE_PATH, "utf8");
   const state = JSON.parse(raw.replace(/^\uFEFF/, ""));
   const settlementsByCourseId: Record<string, RecommendationSettlementBundle> = {};
@@ -229,6 +275,7 @@ async function loadSettlementsByRaceId() {
   for (const rawRecommendation of rawRecommendations) {
     const recommendation = normalizeRecommendation(rawRecommendation);
     if (!recommendation) continue;
+    if (!includePredictionOrigin(recommendation.predictionOrigin, scope)) continue;
 
     const existing = settlementsByCourseId[recommendation.courseId] ?? {
       courseId: recommendation.courseId,
@@ -318,6 +365,10 @@ function buildWeekKey(races: GeneratedReviewRace[]) {
   return "unknown_week";
 }
 
+function round2(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
 function getHorseName(snapshot: PredictionSnapshot | undefined, horseId: string | null) {
   if (!snapshot || !horseId) return null;
   return snapshot.rankedRows.find((row) => row.horseId === horseId)?.horseName ?? null;
@@ -358,14 +409,16 @@ function toRepresentativeRace(
   };
 }
 
-export async function loadWeeklyDiagnosticsContext(): Promise<DiagnosticsContext> {
+export async function loadWeeklyDiagnosticsContext(scope: DiagnosticsAggregationScope = "all"): Promise<DiagnosticsContext> {
+  const normalizedScope = normalizeAggregationScope(scope);
   const [snapshotsByRaceId, settlementsByRaceId, reviewsByRaceId] = await Promise.all([
-    loadLatestSnapshotsByRaceId(),
-    loadSettlementsByRaceId(),
+    loadLatestSnapshotsByRaceId(normalizedScope),
+    loadSettlementsByRaceId(normalizedScope),
     loadGeneratedReviewsByRaceId(),
   ]);
 
   return {
+    scope: normalizedScope,
     races: [...GENERATED_COMPLETED_RACES, ...GENERATED_ARCHIVED_RACES],
     snapshotsByRaceId,
     settlementsByRaceId,
@@ -377,6 +430,24 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
   const confirmedRaces = context.races.filter(hasConfirmedResult);
   const dateRange = getDateRange(context.races);
   const weekKey = buildWeekKey(context.races);
+  const recommendationScoringVersions = Array.from(
+    new Set(
+      confirmedRaces
+        .flatMap((race) => {
+          const settlement = context.settlementsByRaceId[String(race.raceId ?? "")];
+          return [settlement?.win?.scoringVersion, settlement?.value?.scoringVersion];
+        })
+        .filter((value): value is string => Boolean(value))
+    )
+  ).sort();
+  const snapshotScoringVersions = Array.from(
+    new Set(
+      confirmedRaces
+        .map((race) => context.snapshotsByRaceId[String(race.raceId ?? "")]?.scoringVersion)
+        .filter((value): value is string => Boolean(value))
+    )
+  ).sort();
+  const scoringVersions = recommendationScoringVersions.length > 0 ? recommendationScoringVersions : snapshotScoringVersions;
 
   const modelVersions = Array.from(
     new Set(
@@ -407,9 +478,11 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
   const valueBandMap = createPopularityBandMap();
   const valueCore = {
     raceCount: 0,
+    skippedCount: 0,
     placeHitCount: 0,
     placeRate: 0,
     placeReturnRate: 0,
+    candidateRate: 0,
     popularityBands: [] as WeeklyDiagnosticsPopularityBand[],
     longshot: { raceCount: 0, placeHitCount: 0, placeRate: 0, placeReturnRate: 0 },
   };
@@ -430,6 +503,21 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
     valuePlaceCount: 0,
     snapshotOnlyPlaceCount: 0,
     routineOnlyPlaceCount: 0,
+  };
+  const missPatternCounts: WeeklyDiagnosticsMissPatternCounts = {
+    rankError: 0,
+    top3TotalMiss: 0,
+    valueRescueHit: 0,
+    honmeiAndValueMiss: 0,
+  };
+  let honmeiValueComparableRaceCount = 0;
+  let honmeiValueDivergenceCount = 0;
+
+  const marketHeatCounts = {
+    honmeiOverbetCount: 0,
+    honmeiOverbetPlaceHitCount: 0,
+    honmeiNonOverbetCount: 0,
+    honmeiNonOverbetPlaceHitCount: 0,
   };
 
   const bestHitCandidates: Array<{ score: number; race: WeeklyDiagnosticsRepresentativeRace }> = [];
@@ -460,8 +548,17 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
 
     if (settlement?.win?.settlementStatus === "settled") {
       placeCore.routineHonmei.raceCount += 1;
-      if (settlement.win.fukuOutcome === "hit") placeCore.routineHonmei.placeHitCount += 1;
+      const winPlaced = settlement.win.fukuOutcome === "hit";
+      if (winPlaced) placeCore.routineHonmei.placeHitCount += 1;
       placeCore.routineHonmei.placeReturnRate += settlement.win.fukuPayout;
+
+      if (settlement.win.overbetLabel) {
+        marketHeatCounts.honmeiOverbetCount += 1;
+        if (winPlaced) marketHeatCounts.honmeiOverbetPlaceHitCount += 1;
+      } else {
+        marketHeatCounts.honmeiNonOverbetCount += 1;
+        if (winPlaced) marketHeatCounts.honmeiNonOverbetPlaceHitCount += 1;
+      }
     }
 
     if (settlement?.value?.settlementStatus === "settled") {
@@ -477,6 +574,9 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
         if (valuePlaced) band.placeHitCount += 1;
         band.placeReturnRate += settlement.value.fukuPayout;
       }
+    } else if (settlement?.win?.settlementStatus === "settled" && !settlement?.value) {
+      // Win candidate exists but no value candidate: quality gate filtered all out
+      valueCore.skippedCount += 1;
     }
 
     if (snapshot?.honmeiHorseId && settlement?.win) {
@@ -512,6 +612,25 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
     const snapshotPlaced = snapshot?.honmeiHorseId ? top3HorseIds.includes(snapshot.honmeiHorseId) : false;
     const routinePlaced = settlement?.win ? top3HorseIds.includes(settlement.win.horseId) : false;
     const valuePlaced = settlement?.value ? top3HorseIds.includes(settlement.value.horseId) : false;
+    const simTopRows = snapshot
+      ? [1, 2, 3]
+          .map((rank) => snapshot.rankedRows.find((row) => row.rank === rank))
+          .filter((row): row is NonNullable<typeof row> => Boolean(row))
+      : [];
+    const simTop3PlacedCount = simTopRows.filter((row) => top3HorseIds.includes(String(row.horseId))).length;
+
+    if (snapshot?.honmeiHorseId && settlement?.value) {
+      honmeiValueComparableRaceCount += 1;
+      if (snapshot.honmeiHorseId !== settlement.value.horseId) {
+        honmeiValueDivergenceCount += 1;
+      }
+    }
+    if (snapshot && !snapshotPlaced && simTop3PlacedCount > 0) missPatternCounts.rankError += 1;
+    if (snapshot && simTop3PlacedCount === 0) missPatternCounts.top3TotalMiss += 1;
+    if (settlement?.win?.settlementStatus === "settled" && settlement?.value?.settlementStatus === "settled") {
+      if (!routinePlaced && valuePlaced) missPatternCounts.valueRescueHit += 1;
+      if (!routinePlaced && !valuePlaced) missPatternCounts.honmeiAndValueMiss += 1;
+    }
 
     if (snapshotPlaced || routinePlaced) {
       bestHitCandidates.push({
@@ -559,6 +678,8 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
 
   valueCore.placeRate = percentage(valueCore.placeHitCount, valueCore.raceCount);
   valueCore.placeReturnRate = roi(valueCore.placeReturnRate, valueCore.raceCount);
+  const valueTotalEligible = valueCore.raceCount + valueCore.skippedCount;
+  valueCore.candidateRate = valueTotalEligible > 0 ? round2((valueCore.raceCount / valueTotalEligible) * 100) : 0;
   for (const band of Object.values(valueBandMap)) {
     band.placeRate = percentage(band.placeHitCount, band.raceCount);
     band.placeReturnRate = roi(band.placeReturnRate, band.raceCount);
@@ -630,12 +751,34 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
       agreement.disagreementSnapshotPlaceRate > agreement.disagreementRoutinePlaceRate,
   };
 
+  const evaluation: WeeklyDiagnosticsEvaluation = {
+    primaryKpis: {
+      tanpukuHonmeiPlaceHitRate: placeCore.routineHonmei.placeRate,
+      tanpukuHonmeiPlaceRoi: placeCore.routineHonmei.placeReturnRate,
+    },
+    secondaryKpis: {
+      sim1VsSim2PlaceGap:
+        placeCore.snapshotRanks[0].raceCount > 0 && placeCore.snapshotRanks[1].raceCount > 0
+          ? round2(placeCore.snapshotRanks[1].placeRate - placeCore.snapshotRanks[0].placeRate)
+          : null,
+      honmeiValueDivergenceRate:
+        honmeiValueComparableRaceCount > 0
+          ? round2((honmeiValueDivergenceCount / honmeiValueComparableRaceCount) * 100)
+          : null,
+      missPatternCounts,
+      marketHeatCounts,
+    },
+  };
+
   const diagnosticsBase = {
     meta: {
       weekKey,
       generatedAt: new Date().toISOString(),
+      aggregationScope: context.scope,
+      scoringVersion: scoringVersions.length === 1 ? scoringVersions[0] : null,
       modelVersion: modelVersions.length === 1 ? modelVersions[0] : null,
       scoringConfigHash: scoringConfigHashes.length === 1 ? scoringConfigHashes[0] : null,
+      scoringVersions,
       modelVersions,
       scoringConfigHashes,
       raceCount: context.races.length,
@@ -648,6 +791,7 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
     disagreement,
     representativeRaces,
     signals,
+    evaluation,
   };
 
   return {
@@ -656,7 +800,7 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
   };
 }
 
-export async function getWeeklyDiagnostics(): Promise<WeeklyDiagnostics> {
-  const context = await loadWeeklyDiagnosticsContext();
+export async function getWeeklyDiagnostics(scope: DiagnosticsAggregationScope = "all"): Promise<WeeklyDiagnostics> {
+  const context = await loadWeeklyDiagnosticsContext(scope);
   return buildWeeklyDiagnostics(context);
 }

@@ -1,17 +1,590 @@
 {
   "entries": [
     {
-      "storeKey": "2026-03-05_to_2026-03-28__sim-page-v1__c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
-      "weekKey": "2026-03-05_to_2026-03-28",
+      "storeKey": "2026-03-06_to_2026-03-29__all__tanpuku-place-v2.2__sim-page-v1__c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+      "weekKey": "2026-03-06_to_2026-03-29",
+      "aggregationScope": "all",
+      "scoringVersion": "tanpuku-place-v2.2",
       "modelVersion": "sim-page-v1",
       "scoringConfigHash": "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
-      "savedAt": "2026-03-29T15:03:26.966Z",
+      "savedAt": "2026-03-31T23:01:30.501Z",
+      "diagnostics": {
+        "meta": {
+          "weekKey": "2026-03-06_to_2026-03-29",
+          "generatedAt": "2026-03-31T23:01:30.496Z",
+          "aggregationScope": "all",
+          "scoringVersion": "tanpuku-place-v2.2",
+          "modelVersion": "sim-page-v1",
+          "scoringConfigHash": "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+          "scoringVersions": [
+            "tanpuku-place-v2.2"
+          ],
+          "modelVersions": [
+            "sim-page-v1"
+          ],
+          "scoringConfigHashes": [
+            "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9"
+          ],
+          "raceCount": 23,
+          "settledRaceCount": 23,
+          "dateRange": {
+            "start": "2026-03-06",
+            "end": "2026-03-29"
+          }
+        },
+        "placeCore": {
+          "snapshotHonmei": {
+            "raceCount": 23,
+            "placeHitCount": 8,
+            "placeRate": 34.78260869565217
+          },
+          "routineHonmei": {
+            "raceCount": 23,
+            "placeHitCount": 15,
+            "placeRate": 65.21739130434783,
+            "placeReturnRate": 100.8695652173913
+          },
+          "snapshotRanks": [
+            {
+              "rank": 1,
+              "raceCount": 23,
+              "placeHitCount": 8,
+              "placeRate": 34.78260869565217
+            },
+            {
+              "rank": 2,
+              "raceCount": 23,
+              "placeHitCount": 13,
+              "placeRate": 56.52173913043478
+            },
+            {
+              "rank": 3,
+              "raceCount": 23,
+              "placeHitCount": 8,
+              "placeRate": 34.78260869565217
+            }
+          ]
+        },
+        "valueCore": {
+          "raceCount": 23,
+          "skippedCount": 0,
+          "placeHitCount": 5,
+          "placeRate": 21.73913043478261,
+          "placeReturnRate": 47.82608695652174,
+          "candidateRate": 100,
+          "popularityBands": [
+            {
+              "band": "top3",
+              "raceCount": 5,
+              "placeHitCount": 1,
+              "placeRate": 20,
+              "placeReturnRate": 36
+            },
+            {
+              "band": "mid",
+              "raceCount": 17,
+              "placeHitCount": 4,
+              "placeRate": 23.52941176470588,
+              "placeReturnRate": 54.11764705882353
+            },
+            {
+              "band": "longshot",
+              "raceCount": 1,
+              "placeHitCount": 0,
+              "placeRate": 0,
+              "placeReturnRate": 0
+            }
+          ],
+          "longshot": {
+            "raceCount": 1,
+            "placeHitCount": 0,
+            "placeRate": 0,
+            "placeReturnRate": 0
+          }
+        },
+        "agreement": {
+          "raceCount": 23,
+          "sameHonmeiCount": 5,
+          "agreementRate": 21.73913043478261,
+          "samePlaceRate": 60,
+          "disagreementSnapshotPlaceRate": 27.77777777777778,
+          "disagreementRoutinePlaceRate": 66.66666666666666
+        },
+        "disagreement": {
+          "raceCount": 18,
+          "snapshotPlaceRate": 27.77777777777778,
+          "routinePlaceRate": 66.66666666666666,
+          "valuePlaceCount": 4,
+          "snapshotOnlyPlaceCount": 2,
+          "routineOnlyPlaceCount": 9
+        },
+        "representativeRaces": {
+          "bestHits": [
+            {
+              "raceId": "202609020111",
+              "courseId": "hanshin-turf-1800-202609020111",
+              "label": "毎日杯",
+              "date": "2026-03-28",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "4",
+                "3",
+                "2"
+              ],
+              "resultTop3HorseNames": [
+                "アルトラムス",
+                "ローベルクランツ",
+                "カフジエメンタール"
+              ],
+              "snapshotHonmeiHorseId": "4",
+              "snapshotHonmeiHorseName": "アルトラムス",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "4",
+              "routineHonmeiHorseName": "アルトラムス",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "7",
+              "valueHorseName": "シーズザスローン",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "アルトラムスは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
+            },
+            {
+              "raceId": "202606020711",
+              "courseId": "nakayama-turf-1800-202606020711",
+              "label": "フラワーＣ",
+              "date": "2026-03-21",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "10",
+                "11",
+                "8"
+              ],
+              "resultTop3HorseNames": [
+                "スマートプリエール",
+                "ロンギングセリーヌ",
+                "イクシード"
+              ],
+              "snapshotHonmeiHorseId": "10",
+              "snapshotHonmeiHorseName": "スマートプリエール",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "8",
+              "routineHonmeiHorseName": "イクシード",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "10",
+              "valueHorseName": "スマートプリエール",
+              "valuePlaced": true,
+              "valueReturnRate": 290,
+              "reviewSummary": null
+            },
+            {
+              "raceId": "202607010211",
+              "courseId": "chukyo-turf-2000-202607010211",
+              "label": "金鯱賞",
+              "date": "2026-03-14",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "9",
+                "3",
+                "12"
+              ],
+              "resultTop3HorseNames": [
+                "シェイクユアハート",
+                "ジョバンニ",
+                "クイーンズウォーク"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "シェイクユアハート",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "12",
+              "routineHonmeiHorseName": "クイーンズウォーク",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "1",
+              "valueHorseName": "ドゥラドーレス",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "シェイクユアハートは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
+            }
+          ],
+          "worstMisses": [
+            {
+              "raceId": "202606030211",
+              "courseId": "nakayama-dirt-1800-202606030211",
+              "label": "マーチＳ",
+              "date": "2026-03-29",
+              "category": "worst_miss",
+              "resultTop3HorseIds": [
+                "15",
+                "7",
+                "4"
+              ],
+              "resultTop3HorseNames": [
+                "サンデーファンデー",
+                "アクションプラン",
+                "ブレイクフォース"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "オメガギネス",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "9",
+              "routineHonmeiHorseName": "オメガギネス",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "7",
+              "valueHorseName": "アクションプラン",
+              "valuePlaced": true,
+              "valueReturnRate": 280,
+              "reviewSummary": "サンデーファンデーは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった、人気以上に能力を出せる下地があった。"
+            },
+            {
+              "raceId": "202609010511",
+              "courseId": "hanshin-turf-1400-202609010511",
+              "label": "フィリーズレビュー 出馬表",
+              "date": "2026-03-06",
+              "category": "worst_miss",
+              "resultTop3HorseIds": [
+                "2",
+                "17",
+                "7"
+              ],
+              "resultTop3HorseNames": [
+                "ギリーズボール",
+                "サンアントワーヌ",
+                "アイニードユー"
+              ],
+              "snapshotHonmeiHorseId": "4",
+              "snapshotHonmeiHorseName": "ショウナンカリス",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "4",
+              "routineHonmeiHorseName": "ショウナンカリス",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "13",
+              "valueHorseName": "デアヴェローチェ",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "ギリーズボールは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、近走の能力水準がこの相手では上位だった、人気以上に能力を出せる下地があった。"
+            },
+            {
+              "raceId": "202607010411",
+              "courseId": "chukyo-turf-1400-202607010411",
+              "label": "愛知杯",
+              "date": "2026-03-21",
+              "category": "worst_miss",
+              "resultTop3HorseIds": [
+                "18",
+                "8",
+                "10"
+              ],
+              "resultTop3HorseNames": [
+                "アイサンサン",
+                "ソルトクィーン",
+                "セフィロ"
+              ],
+              "snapshotHonmeiHorseId": "12",
+              "snapshotHonmeiHorseName": "カルプスペルシュ",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "5",
+              "routineHonmeiHorseName": "ウイントワイライト",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "16",
+              "valueHorseName": "ドロップオブライト",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": null
+            }
+          ],
+          "disagreementCases": [
+            {
+              "raceId": "202606020711",
+              "courseId": "nakayama-turf-1800-202606020711",
+              "label": "フラワーＣ",
+              "date": "2026-03-21",
+              "category": "disagreement",
+              "resultTop3HorseIds": [
+                "10",
+                "11",
+                "8"
+              ],
+              "resultTop3HorseNames": [
+                "スマートプリエール",
+                "ロンギングセリーヌ",
+                "イクシード"
+              ],
+              "snapshotHonmeiHorseId": "10",
+              "snapshotHonmeiHorseName": "スマートプリエール",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "8",
+              "routineHonmeiHorseName": "イクシード",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "10",
+              "valueHorseName": "スマートプリエール",
+              "valuePlaced": true,
+              "valueReturnRate": 290,
+              "reviewSummary": null
+            },
+            {
+              "raceId": "202609011010",
+              "courseId": "hanshin-dirt-1800-202609011010",
+              "label": "レグルスＳ",
+              "date": "2026-03-22",
+              "category": "disagreement",
+              "resultTop3HorseIds": [
+                "4",
+                "7",
+                "5"
+              ],
+              "resultTop3HorseNames": [
+                "テーオーグランビル",
+                "タガノバビロン",
+                "モックモック"
+              ],
+              "snapshotHonmeiHorseId": "5",
+              "snapshotHonmeiHorseName": "モックモック",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "7",
+              "routineHonmeiHorseName": "タガノバビロン",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "6",
+              "valueHorseName": "メイショウズイウン",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": null
+            },
+            {
+              "raceId": "202607010211",
+              "courseId": "chukyo-turf-2000-202607010211",
+              "label": "金鯱賞",
+              "date": "2026-03-14",
+              "category": "disagreement",
+              "resultTop3HorseIds": [
+                "9",
+                "3",
+                "12"
+              ],
+              "resultTop3HorseNames": [
+                "シェイクユアハート",
+                "ジョバンニ",
+                "クイーンズウォーク"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "シェイクユアハート",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "12",
+              "routineHonmeiHorseName": "クイーンズウォーク",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "1",
+              "valueHorseName": "ドゥラドーレス",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "シェイクユアハートは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
+            }
+          ],
+          "valueHits": [
+            {
+              "raceId": "202606020711",
+              "courseId": "nakayama-turf-1800-202606020711",
+              "label": "フラワーＣ",
+              "date": "2026-03-21",
+              "category": "value_hit",
+              "resultTop3HorseIds": [
+                "10",
+                "11",
+                "8"
+              ],
+              "resultTop3HorseNames": [
+                "スマートプリエール",
+                "ロンギングセリーヌ",
+                "イクシード"
+              ],
+              "snapshotHonmeiHorseId": "10",
+              "snapshotHonmeiHorseName": "スマートプリエール",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "8",
+              "routineHonmeiHorseName": "イクシード",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "10",
+              "valueHorseName": "スマートプリエール",
+              "valuePlaced": true,
+              "valueReturnRate": 290,
+              "reviewSummary": null
+            },
+            {
+              "raceId": "202606030211",
+              "courseId": "nakayama-dirt-1800-202606030211",
+              "label": "マーチＳ",
+              "date": "2026-03-29",
+              "category": "value_hit",
+              "resultTop3HorseIds": [
+                "15",
+                "7",
+                "4"
+              ],
+              "resultTop3HorseNames": [
+                "サンデーファンデー",
+                "アクションプラン",
+                "ブレイクフォース"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "オメガギネス",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "9",
+              "routineHonmeiHorseName": "オメガギネス",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "7",
+              "valueHorseName": "アクションプラン",
+              "valuePlaced": true,
+              "valueReturnRate": 280,
+              "reviewSummary": "サンデーファンデーは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった、人気以上に能力を出せる下地があった。"
+            },
+            {
+              "raceId": "202606030110",
+              "courseId": "nakayama-dirt-1800-202606030110",
+              "label": "伏竜Ｓ",
+              "date": "2026-03-28",
+              "category": "value_hit",
+              "resultTop3HorseIds": [
+                "5",
+                "1",
+                "8"
+              ],
+              "resultTop3HorseNames": [
+                "ダノンバーボン",
+                "ドンエレクトス",
+                "チャーリー"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "ラッキーキッド",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "5",
+              "routineHonmeiHorseName": "ダノンバーボン",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "1",
+              "valueHorseName": "ドンエレクトス",
+              "valuePlaced": true,
+              "valueReturnRate": 180,
+              "reviewSummary": "ダノンバーボンは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった、近走内容の良さがそのまま結果につながった。"
+            }
+          ]
+        },
+        "signals": {
+          "snapshotHonmeiUnderperformsRoutineHonmei": true,
+          "secondRankOutperformsFirstRank": true,
+          "thirdRankOutperformsFirstRank": false,
+          "valueCandidateWorksBetterInLongshots": false,
+          "agreementImprovesPlaceRate": false,
+          "disagreementFavoursRoutine": true,
+          "disagreementFavoursSnapshot": false
+        },
+        "evaluation": {
+          "primaryKpis": {
+            "tanpukuHonmeiPlaceHitRate": 65.21739130434783,
+            "tanpukuHonmeiPlaceRoi": 100.8695652173913
+          },
+          "secondaryKpis": {
+            "sim1VsSim2PlaceGap": 21.74,
+            "honmeiValueDivergenceRate": 82.61,
+            "missPatternCounts": {
+              "rankError": 13,
+              "top3TotalMiss": 2,
+              "valueRescueHit": 3,
+              "honmeiAndValueMiss": 5
+            },
+            "marketHeatCounts": {
+              "honmeiOverbetCount": 1,
+              "honmeiOverbetPlaceHitCount": 0,
+              "honmeiNonOverbetCount": 22,
+              "honmeiNonOverbetPlaceHitCount": 15
+            }
+          }
+        },
+        "recommendations": [
+          {
+            "id": "routine_honmei_over_snapshot_honmei",
+            "category": "place_core",
+            "targetStyle": "place_hit_rate",
+            "priority": "high",
+            "title": "Snapshot本命を勝率寄りに押しすぎている可能性",
+            "summary": "現状は Snapshot本命より単複本命の方が複勝軸として安定している可能性があります。",
+            "evidence": {
+              "snapshotPlaceRate": 34.78260869565217,
+              "routinePlaceRate": 65.21739130434783,
+              "rateGap": 30.434782608695656,
+              "snapshotRaceCount": 23,
+              "routineRaceCount": 23
+            },
+            "metricSignals": [
+              "snapshotHonmeiUnderperformsRoutineHonmei"
+            ]
+          },
+          {
+            "id": "second_rank_as_place_axis",
+            "category": "ranking",
+            "targetStyle": "place_hit_rate",
+            "priority": "high",
+            "title": "2番手を複勝軸として再評価すべき可能性",
+            "summary": "Snapshot1番手より2番手の方が複勝率で上回っており、軸の置き方を見直す余地があります。",
+            "evidence": {
+              "firstRankPlaceRate": 34.78260869565217,
+              "secondRankPlaceRate": 56.52173913043478,
+              "firstRankRaceCount": 23,
+              "secondRankRaceCount": 23
+            },
+            "metricSignals": [
+              "secondRankOutperformsFirstRank"
+            ]
+          },
+          {
+            "id": "prefer_routine_when_disagreement",
+            "category": "agreement",
+            "targetStyle": "place_hit_rate",
+            "priority": "high",
+            "title": "不一致時は単複本命を優先した方がよい可能性",
+            "summary": "本命不一致レースでは Snapshot本命より単複本命の方が複勝圏に届きやすい傾向があります。",
+            "evidence": {
+              "disagreementRaceCount": 18,
+              "disagreementSnapshotPlaceRate": 27.77777777777778,
+              "disagreementRoutinePlaceRate": 66.66666666666666,
+              "routineOnlyPlaceCount": 9
+            },
+            "metricSignals": [
+              "disagreementFavoursRoutine"
+            ]
+          },
+          {
+            "id": "place_axis_style_current_strength",
+            "category": "place_core",
+            "targetStyle": "place_hit_rate",
+            "priority": "medium",
+            "title": "現状は妙味より複勝軸型を重視した方がよい可能性",
+            "summary": "妙味候補の回収寄り運用より、単複本命を軸にした複勝重視の使い方が安定しやすい週です。",
+            "evidence": {
+              "routinePlaceRate": 65.21739130434783,
+              "routinePlaceReturnRate": 100.8695652173913,
+              "valuePlaceRate": 21.73913043478261,
+              "valuePlaceReturnRate": 47.82608695652174
+            },
+            "metricSignals": []
+          }
+        ]
+      }
+    },
+    {
+      "storeKey": "2026-03-05_to_2026-03-28__saved_only__tanpuku-baseline-v1__sim-page-v1__c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+      "weekKey": "2026-03-05_to_2026-03-28",
+      "aggregationScope": "saved_only",
+      "scoringVersion": "tanpuku-baseline-v1",
+      "modelVersion": "sim-page-v1",
+      "scoringConfigHash": "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+      "savedAt": "2026-03-30T10:35:14.732Z",
       "diagnostics": {
         "meta": {
           "weekKey": "2026-03-05_to_2026-03-28",
-          "generatedAt": "2026-03-29T15:03:26.964Z",
+          "generatedAt": "2026-03-30T10:35:14.728Z",
+          "aggregationScope": "saved_only",
+          "scoringVersion": "tanpuku-baseline-v1",
           "modelVersion": "sim-page-v1",
           "scoringConfigHash": "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+          "scoringVersions": [
+            "tanpuku-baseline-v1"
+          ],
           "modelVersions": [
             "sim-page-v1"
           ],
@@ -19,7 +592,7 @@
             "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9"
           ],
           "raceCount": 16,
-          "settledRaceCount": 8,
+          "settledRaceCount": 16,
           "dateRange": {
             "start": "2026-03-05",
             "end": "2026-03-28"
@@ -27,39 +600,39 @@
         },
         "placeCore": {
           "snapshotHonmei": {
-            "raceCount": 2,
-            "placeHitCount": 1,
-            "placeRate": 50
+            "raceCount": 16,
+            "placeHitCount": 6,
+            "placeRate": 37.5
           },
           "routineHonmei": {
-            "raceCount": 2,
-            "placeHitCount": 1,
-            "placeRate": 50,
-            "placeReturnRate": 125
+            "raceCount": 0,
+            "placeHitCount": 0,
+            "placeRate": 0,
+            "placeReturnRate": 0
           },
           "snapshotRanks": [
             {
               "rank": 1,
-              "raceCount": 2,
-              "placeHitCount": 1,
-              "placeRate": 50
+              "raceCount": 16,
+              "placeHitCount": 6,
+              "placeRate": 37.5
             },
             {
               "rank": 2,
-              "raceCount": 2,
-              "placeHitCount": 1,
-              "placeRate": 50
+              "raceCount": 16,
+              "placeHitCount": 10,
+              "placeRate": 62.5
             },
             {
               "rank": 3,
-              "raceCount": 2,
-              "placeHitCount": 0,
-              "placeRate": 0
+              "raceCount": 16,
+              "placeHitCount": 5,
+              "placeRate": 31.25
             }
           ]
         },
         "valueCore": {
-          "raceCount": 2,
+          "raceCount": 0,
           "placeHitCount": 0,
           "placeRate": 0,
           "placeReturnRate": 0,
@@ -80,24 +653,24 @@
             },
             {
               "band": "longshot",
-              "raceCount": 2,
+              "raceCount": 0,
               "placeHitCount": 0,
               "placeRate": 0,
               "placeReturnRate": 0
             }
           ],
           "longshot": {
-            "raceCount": 2,
+            "raceCount": 0,
             "placeHitCount": 0,
             "placeRate": 0,
             "placeReturnRate": 0
           }
         },
         "agreement": {
-          "raceCount": 2,
-          "sameHonmeiCount": 2,
-          "agreementRate": 100,
-          "samePlaceRate": 50,
+          "raceCount": 0,
+          "sameHonmeiCount": 0,
+          "agreementRate": 0,
+          "samePlaceRate": 0,
           "disagreementSnapshotPlaceRate": 0,
           "disagreementRoutinePlaceRate": 0
         },
@@ -112,35 +685,930 @@
         "representativeRaces": {
           "bestHits": [
             {
-              "raceId": "202606020311",
-              "courseId": "nakayama-turf-1800-202606020311",
-              "label": "中山牝馬Ｓ 出馬表",
-              "date": "2026-03-05",
+              "raceId": "202609020111",
+              "courseId": "hanshin-turf-1800-202609020111",
+              "label": "毎日杯",
+              "date": "2026-03-27",
               "category": "best_hit",
               "resultTop3HorseIds": [
+                "4",
                 "3",
-                "2",
-                "4"
+                "2"
               ],
               "resultTop3HorseNames": [
-                "エセルフリーダ",
-                "ビヨンドザヴァレー",
-                "パラディレーヌ"
+                "アルトラムス",
+                "ローベルクランツ",
+                "カフジエメンタール"
               ],
               "snapshotHonmeiHorseId": "4",
-              "snapshotHonmeiHorseName": "パラディレーヌ",
+              "snapshotHonmeiHorseName": "アルトラムス",
               "snapshotHonmeiPlaced": true,
-              "routineHonmeiHorseId": "4",
-              "routineHonmeiHorseName": "パラディレーヌ",
-              "routineHonmeiPlaced": true,
-              "valueHorseId": "12",
-              "valueHorseName": "ポルカリズム",
+              "routineHonmeiHorseId": null,
+              "routineHonmeiHorseName": null,
+              "routineHonmeiPlaced": null,
+              "valueHorseId": "5",
+              "valueHorseName": "ブリガンティン",
               "valuePlaced": false,
               "valueReturnRate": null,
-              "reviewSummary": "エセルフリーダは条件が噛み合って突き抜けた。距離短縮で追走負荷が軽くなった、先行力を生かしやすい舞台だった、内目の枠からロスなく運べた。"
+              "reviewSummary": "アルトラムスは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
+            },
+            {
+              "raceId": "202607010211",
+              "courseId": "chukyo-turf-2000-202607010211",
+              "label": "金鯱賞",
+              "date": "2026-03-13",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "9",
+                "3",
+                "12"
+              ],
+              "resultTop3HorseNames": [
+                "シェイクユアハート",
+                "ジョバンニ",
+                "クイーンズウォーク"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "シェイクユアハート",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": null,
+              "routineHonmeiHorseName": null,
+              "routineHonmeiPlaced": null,
+              "valueHorseId": "9",
+              "valueHorseName": "シェイクユアハート",
+              "valuePlaced": true,
+              "valueReturnRate": null,
+              "reviewSummary": "シェイクユアハートは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
+            },
+            {
+              "raceId": "202606020511",
+              "courseId": "nakayama-turf-1600-202606020511",
+              "label": "アネモネステークス",
+              "date": "2026-03-13",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "4",
+                "16",
+                "2"
+              ],
+              "resultTop3HorseNames": [
+                "ディアダイヤモンド",
+                "ルールザウェイヴ",
+                "バルボアパーク"
+              ],
+              "snapshotHonmeiHorseId": "2",
+              "snapshotHonmeiHorseName": "バルボアパーク",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": null,
+              "routineHonmeiHorseName": null,
+              "routineHonmeiPlaced": null,
+              "valueHorseId": "12",
+              "valueHorseName": "メイショウハッケイ",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "ディアダイヤモンドは能力と条件が噛み合って押し切った。内目の枠からロスなく運べた、近走の能力水準がこの相手では上位だった。"
+            }
+          ],
+          "worstMisses": [],
+          "disagreementCases": [],
+          "valueHits": []
+        },
+        "signals": {
+          "snapshotHonmeiUnderperformsRoutineHonmei": false,
+          "secondRankOutperformsFirstRank": true,
+          "thirdRankOutperformsFirstRank": false,
+          "valueCandidateWorksBetterInLongshots": false,
+          "agreementImprovesPlaceRate": false,
+          "disagreementFavoursRoutine": false,
+          "disagreementFavoursSnapshot": false
+        },
+        "evaluation": {
+          "primaryKpis": {
+            "tanpukuHonmeiPlaceHitRate": 0,
+            "tanpukuHonmeiPlaceRoi": 0
+          },
+          "secondaryKpis": {
+            "sim1VsSim2PlaceGap": 25,
+            "honmeiValueDivergenceRate": null,
+            "missPatternCounts": {
+              "rankError": 9,
+              "top3TotalMiss": 1,
+              "valueRescueHit": 0,
+              "honmeiAndValueMiss": 0
+            }
+          }
+        },
+        "recommendations": [
+          {
+            "id": "second_rank_as_place_axis",
+            "category": "ranking",
+            "targetStyle": "place_hit_rate",
+            "priority": "high",
+            "title": "2番手を複勝軸として再評価すべき可能性",
+            "summary": "Snapshot1番手より2番手の方が複勝率で上回っており、軸の置き方を見直す余地があります。",
+            "evidence": {
+              "firstRankPlaceRate": 37.5,
+              "secondRankPlaceRate": 62.5,
+              "firstRankRaceCount": 16,
+              "secondRankRaceCount": 16
+            },
+            "metricSignals": [
+              "secondRankOutperformsFirstRank"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "storeKey": "2026-03-05_to_2026-03-28__all__tanpuku-place-v2__sim-page-v1__c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+      "weekKey": "2026-03-05_to_2026-03-28",
+      "aggregationScope": "all",
+      "scoringVersion": "tanpuku-place-v2",
+      "modelVersion": "sim-page-v1",
+      "scoringConfigHash": "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+      "savedAt": "2026-03-30T10:35:14.283Z",
+      "diagnostics": {
+        "meta": {
+          "weekKey": "2026-03-05_to_2026-03-28",
+          "generatedAt": "2026-03-30T10:35:14.277Z",
+          "aggregationScope": "all",
+          "scoringVersion": "tanpuku-place-v2",
+          "modelVersion": "sim-page-v1",
+          "scoringConfigHash": "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+          "scoringVersions": [
+            "tanpuku-place-v2"
+          ],
+          "modelVersions": [
+            "sim-page-v1"
+          ],
+          "scoringConfigHashes": [
+            "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9"
+          ],
+          "raceCount": 16,
+          "settledRaceCount": 16,
+          "dateRange": {
+            "start": "2026-03-05",
+            "end": "2026-03-28"
+          }
+        },
+        "placeCore": {
+          "snapshotHonmei": {
+            "raceCount": 16,
+            "placeHitCount": 6,
+            "placeRate": 37.5
+          },
+          "routineHonmei": {
+            "raceCount": 16,
+            "placeHitCount": 8,
+            "placeRate": 50,
+            "placeReturnRate": 76.875
+          },
+          "snapshotRanks": [
+            {
+              "rank": 1,
+              "raceCount": 16,
+              "placeHitCount": 6,
+              "placeRate": 37.5
+            },
+            {
+              "rank": 2,
+              "raceCount": 16,
+              "placeHitCount": 10,
+              "placeRate": 62.5
+            },
+            {
+              "rank": 3,
+              "raceCount": 16,
+              "placeHitCount": 5,
+              "placeRate": 31.25
+            }
+          ]
+        },
+        "valueCore": {
+          "raceCount": 16,
+          "placeHitCount": 2,
+          "placeRate": 12.5,
+          "placeReturnRate": 45.625,
+          "popularityBands": [
+            {
+              "band": "top3",
+              "raceCount": 1,
+              "placeHitCount": 0,
+              "placeRate": 0,
+              "placeReturnRate": 0
+            },
+            {
+              "band": "mid",
+              "raceCount": 4,
+              "placeHitCount": 1,
+              "placeRate": 25,
+              "placeReturnRate": 42.5
+            },
+            {
+              "band": "longshot",
+              "raceCount": 11,
+              "placeHitCount": 1,
+              "placeRate": 9.090909090909092,
+              "placeReturnRate": 50.90909090909091
+            }
+          ],
+          "longshot": {
+            "raceCount": 11,
+            "placeHitCount": 1,
+            "placeRate": 9.090909090909092,
+            "placeReturnRate": 50.90909090909091
+          }
+        },
+        "agreement": {
+          "raceCount": 16,
+          "sameHonmeiCount": 4,
+          "agreementRate": 25,
+          "samePlaceRate": 50,
+          "disagreementSnapshotPlaceRate": 33.33333333333333,
+          "disagreementRoutinePlaceRate": 50
+        },
+        "disagreement": {
+          "raceCount": 12,
+          "snapshotPlaceRate": 33.33333333333333,
+          "routinePlaceRate": 50,
+          "valuePlaceCount": 2,
+          "snapshotOnlyPlaceCount": 2,
+          "routineOnlyPlaceCount": 4
+        },
+        "representativeRaces": {
+          "bestHits": [
+            {
+              "raceId": "202609020111",
+              "courseId": "hanshin-turf-1800-202609020111",
+              "label": "毎日杯",
+              "date": "2026-03-27",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "4",
+                "3",
+                "2"
+              ],
+              "resultTop3HorseNames": [
+                "アルトラムス",
+                "ローベルクランツ",
+                "カフジエメンタール"
+              ],
+              "snapshotHonmeiHorseId": "4",
+              "snapshotHonmeiHorseName": "アルトラムス",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "4",
+              "routineHonmeiHorseName": "アルトラムス",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "5",
+              "valueHorseName": "ブリガンティン",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "アルトラムスは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
+            },
+            {
+              "raceId": "202607010211",
+              "courseId": "chukyo-turf-2000-202607010211",
+              "label": "金鯱賞",
+              "date": "2026-03-13",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "9",
+                "3",
+                "12"
+              ],
+              "resultTop3HorseNames": [
+                "シェイクユアハート",
+                "ジョバンニ",
+                "クイーンズウォーク"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "シェイクユアハート",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "12",
+              "routineHonmeiHorseName": "クイーンズウォーク",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "5",
+              "valueHorseName": "ディマイザキッド",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "シェイクユアハートは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
+            },
+            {
+              "raceId": "202609020211",
+              "courseId": "hanshin-turf-1600-202609020211",
+              "label": "六甲Ｓ",
+              "date": "2026-03-28",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "6",
+                "7",
+                "1"
+              ],
+              "resultTop3HorseNames": [
+                "ベラジオボンド",
+                "クランフォード",
+                "メイショウチタン"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "ブルーミンデザイン",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "6",
+              "routineHonmeiHorseName": "ベラジオボンド",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "4",
+              "valueHorseName": "アクートゥス",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "ベラジオボンドは条件が噛み合って突き抜けた。近走内容の良さがそのまま結果につながった。"
             }
           ],
           "worstMisses": [
+            {
+              "raceId": "202606030211",
+              "courseId": "nakayama-dirt-1800-202606030211",
+              "label": "マーチＳ",
+              "date": "2026-03-28",
+              "category": "worst_miss",
+              "resultTop3HorseIds": [
+                "15",
+                "7",
+                "4"
+              ],
+              "resultTop3HorseNames": [
+                "サンデーファンデー",
+                "アクションプラン",
+                "ブレイクフォース"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "オメガギネス",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "9",
+              "routineHonmeiHorseName": "オメガギネス",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "12",
+              "valueHorseName": "ハナウマビーチ",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "サンデーファンデーは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった、人気以上に能力を出せる下地があった。"
+            },
+            {
+              "raceId": "202607010611",
+              "courseId": "chukyo-turf-1200-202607010611",
+              "label": "高松宮記念",
+              "date": "2026-03-28",
+              "category": "worst_miss",
+              "resultTop3HorseIds": [
+                "9",
+                "6",
+                "8"
+              ],
+              "resultTop3HorseNames": [
+                "サトノレーヴ",
+                "レッドモンレーヴ",
+                "ウインカーネリアン"
+              ],
+              "snapshotHonmeiHorseId": "13",
+              "snapshotHonmeiHorseName": "ナムラクレア",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "13",
+              "routineHonmeiHorseName": "ナムラクレア",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "1",
+              "valueHorseName": "パンジャタワー",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "サトノレーヴは能力上位で押し切った。近走の能力水準がこの相手では上位だった。"
+            },
+            {
+              "raceId": "202609010511",
+              "courseId": "hanshin-turf-1400-202609010511",
+              "label": "フィリーズレビュー 出馬表",
+              "date": "2026-03-05",
+              "category": "worst_miss",
+              "resultTop3HorseIds": [
+                "2",
+                "17",
+                "7"
+              ],
+              "resultTop3HorseNames": [
+                "ギリーズボール",
+                "サンアントワーヌ",
+                "アイニードユー"
+              ],
+              "snapshotHonmeiHorseId": "4",
+              "snapshotHonmeiHorseName": "ショウナンカリス",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "5",
+              "routineHonmeiHorseName": "テイエムスティール",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "14",
+              "valueHorseName": "コラルリーフ",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "ギリーズボールは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、近走の能力水準がこの相手では上位だった、人気以上に能力を出せる下地があった。"
+            }
+          ],
+          "disagreementCases": [
+            {
+              "raceId": "202609010711",
+              "courseId": "hanshin-dirt-1400-202609010711",
+              "label": "コーラルステークス",
+              "date": "2026-03-13",
+              "category": "disagreement",
+              "resultTop3HorseIds": [
+                "11",
+                "14",
+                "4"
+              ],
+              "resultTop3HorseNames": [
+                "ジャスティンアース",
+                "ビダーヤ",
+                "キタノズエッジ"
+              ],
+              "snapshotHonmeiHorseId": "4",
+              "snapshotHonmeiHorseName": "キタノズエッジ",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "14",
+              "routineHonmeiHorseName": "ビダーヤ",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "4",
+              "valueHorseName": "キタノズエッジ",
+              "valuePlaced": true,
+              "valueReturnRate": 170,
+              "reviewSummary": "ジャスティンアースは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。"
+            },
+            {
+              "raceId": "202607010211",
+              "courseId": "chukyo-turf-2000-202607010211",
+              "label": "金鯱賞",
+              "date": "2026-03-13",
+              "category": "disagreement",
+              "resultTop3HorseIds": [
+                "9",
+                "3",
+                "12"
+              ],
+              "resultTop3HorseNames": [
+                "シェイクユアハート",
+                "ジョバンニ",
+                "クイーンズウォーク"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "シェイクユアハート",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "12",
+              "routineHonmeiHorseName": "クイーンズウォーク",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "5",
+              "valueHorseName": "ディマイザキッド",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "シェイクユアハートは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
+            },
+            {
+              "raceId": "202609020211",
+              "courseId": "hanshin-turf-1600-202609020211",
+              "label": "六甲Ｓ",
+              "date": "2026-03-28",
+              "category": "disagreement",
+              "resultTop3HorseIds": [
+                "6",
+                "7",
+                "1"
+              ],
+              "resultTop3HorseNames": [
+                "ベラジオボンド",
+                "クランフォード",
+                "メイショウチタン"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "ブルーミンデザイン",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "6",
+              "routineHonmeiHorseName": "ベラジオボンド",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "4",
+              "valueHorseName": "アクートゥス",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "ベラジオボンドは条件が噛み合って突き抜けた。近走内容の良さがそのまま結果につながった。"
+            }
+          ],
+          "valueHits": [
+            {
+              "raceId": "202606020610",
+              "courseId": "nakayama-turf-1600-202606020610",
+              "label": "東風Ｓ",
+              "date": "2026-03-13",
+              "category": "value_hit",
+              "resultTop3HorseIds": [
+                "3",
+                "6",
+                "16"
+              ],
+              "resultTop3HorseNames": [
+                "ヴァルキリーバース",
+                "ジョイフルニュース",
+                "レガーロデルシエロ"
+              ],
+              "snapshotHonmeiHorseId": "12",
+              "snapshotHonmeiHorseName": "フロムダスク",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "14",
+              "routineHonmeiHorseName": "ランスオブカオス",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "16",
+              "valueHorseName": "レガーロデルシエロ",
+              "valuePlaced": true,
+              "valueReturnRate": 560,
+              "reviewSummary": "ヴァルキリーバースは条件が噛み合って突き抜けた。相対的に軽い斤量が効いた、先行力を生かしやすい舞台だった、内目の枠からロスなく運べた。"
+            },
+            {
+              "raceId": "202609010711",
+              "courseId": "hanshin-dirt-1400-202609010711",
+              "label": "コーラルステークス",
+              "date": "2026-03-13",
+              "category": "value_hit",
+              "resultTop3HorseIds": [
+                "11",
+                "14",
+                "4"
+              ],
+              "resultTop3HorseNames": [
+                "ジャスティンアース",
+                "ビダーヤ",
+                "キタノズエッジ"
+              ],
+              "snapshotHonmeiHorseId": "4",
+              "snapshotHonmeiHorseName": "キタノズエッジ",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "14",
+              "routineHonmeiHorseName": "ビダーヤ",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "4",
+              "valueHorseName": "キタノズエッジ",
+              "valuePlaced": true,
+              "valueReturnRate": 170,
+              "reviewSummary": "ジャスティンアースは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。"
+            }
+          ]
+        },
+        "signals": {
+          "snapshotHonmeiUnderperformsRoutineHonmei": true,
+          "secondRankOutperformsFirstRank": true,
+          "thirdRankOutperformsFirstRank": false,
+          "valueCandidateWorksBetterInLongshots": true,
+          "agreementImprovesPlaceRate": false,
+          "disagreementFavoursRoutine": true,
+          "disagreementFavoursSnapshot": false
+        },
+        "evaluation": {
+          "primaryKpis": {
+            "tanpukuHonmeiPlaceHitRate": 50,
+            "tanpukuHonmeiPlaceRoi": 76.875
+          },
+          "secondaryKpis": {
+            "sim1VsSim2PlaceGap": 25,
+            "honmeiValueDivergenceRate": 75,
+            "missPatternCounts": {
+              "rankError": 9,
+              "top3TotalMiss": 1,
+              "valueRescueHit": 1,
+              "honmeiAndValueMiss": 7
+            }
+          }
+        },
+        "recommendations": [
+          {
+            "id": "routine_honmei_over_snapshot_honmei",
+            "category": "place_core",
+            "targetStyle": "place_hit_rate",
+            "priority": "high",
+            "title": "Snapshot本命を勝率寄りに押しすぎている可能性",
+            "summary": "現状は Snapshot本命より単複本命の方が複勝軸として安定している可能性があります。",
+            "evidence": {
+              "snapshotPlaceRate": 37.5,
+              "routinePlaceRate": 50,
+              "rateGap": 12.5,
+              "snapshotRaceCount": 16,
+              "routineRaceCount": 16
+            },
+            "metricSignals": [
+              "snapshotHonmeiUnderperformsRoutineHonmei"
+            ]
+          },
+          {
+            "id": "second_rank_as_place_axis",
+            "category": "ranking",
+            "targetStyle": "place_hit_rate",
+            "priority": "high",
+            "title": "2番手を複勝軸として再評価すべき可能性",
+            "summary": "Snapshot1番手より2番手の方が複勝率で上回っており、軸の置き方を見直す余地があります。",
+            "evidence": {
+              "firstRankPlaceRate": 37.5,
+              "secondRankPlaceRate": 62.5,
+              "firstRankRaceCount": 16,
+              "secondRankRaceCount": 16
+            },
+            "metricSignals": [
+              "secondRankOutperformsFirstRank"
+            ]
+          },
+          {
+            "id": "prefer_routine_when_disagreement",
+            "category": "agreement",
+            "targetStyle": "place_hit_rate",
+            "priority": "high",
+            "title": "不一致時は単複本命を優先した方がよい可能性",
+            "summary": "本命不一致レースでは Snapshot本命より単複本命の方が複勝圏に届きやすい傾向があります。",
+            "evidence": {
+              "disagreementRaceCount": 12,
+              "disagreementSnapshotPlaceRate": 33.33333333333333,
+              "disagreementRoutinePlaceRate": 50,
+              "routineOnlyPlaceCount": 4
+            },
+            "metricSignals": [
+              "disagreementFavoursRoutine"
+            ]
+          },
+          {
+            "id": "place_axis_style_current_strength",
+            "category": "place_core",
+            "targetStyle": "place_hit_rate",
+            "priority": "medium",
+            "title": "現状は妙味より複勝軸型を重視した方がよい可能性",
+            "summary": "妙味候補の回収寄り運用より、単複本命を軸にした複勝重視の使い方が安定しやすい週です。",
+            "evidence": {
+              "routinePlaceRate": 50,
+              "routinePlaceReturnRate": 76.875,
+              "valuePlaceRate": 12.5,
+              "valuePlaceReturnRate": 45.625
+            },
+            "metricSignals": []
+          }
+        ]
+      }
+    },
+    {
+      "storeKey": "2026-03-05_to_2026-03-28__all__tanpuku-baseline-v1__sim-page-v1__c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+      "weekKey": "2026-03-05_to_2026-03-28",
+      "aggregationScope": "all",
+      "scoringVersion": "tanpuku-baseline-v1",
+      "modelVersion": "sim-page-v1",
+      "scoringConfigHash": "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+      "savedAt": "2026-03-30T10:11:48.845Z",
+      "diagnostics": {
+        "meta": {
+          "weekKey": "2026-03-05_to_2026-03-28",
+          "generatedAt": "2026-03-30T10:11:48.842Z",
+          "aggregationScope": "all",
+          "scoringVersion": "tanpuku-baseline-v1",
+          "modelVersion": "sim-page-v1",
+          "scoringConfigHash": "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+          "scoringVersions": [
+            "tanpuku-baseline-v1"
+          ],
+          "modelVersions": [
+            "sim-page-v1"
+          ],
+          "scoringConfigHashes": [
+            "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9"
+          ],
+          "raceCount": 16,
+          "settledRaceCount": 16,
+          "dateRange": {
+            "start": "2026-03-05",
+            "end": "2026-03-28"
+          }
+        },
+        "placeCore": {
+          "snapshotHonmei": {
+            "raceCount": 16,
+            "placeHitCount": 6,
+            "placeRate": 37.5
+          },
+          "routineHonmei": {
+            "raceCount": 16,
+            "placeHitCount": 9,
+            "placeRate": 56.25,
+            "placeReturnRate": 98.125
+          },
+          "snapshotRanks": [
+            {
+              "rank": 1,
+              "raceCount": 16,
+              "placeHitCount": 6,
+              "placeRate": 37.5
+            },
+            {
+              "rank": 2,
+              "raceCount": 16,
+              "placeHitCount": 10,
+              "placeRate": 62.5
+            },
+            {
+              "rank": 3,
+              "raceCount": 16,
+              "placeHitCount": 5,
+              "placeRate": 31.25
+            }
+          ]
+        },
+        "valueCore": {
+          "raceCount": 16,
+          "placeHitCount": 0,
+          "placeRate": 0,
+          "placeReturnRate": 0,
+          "popularityBands": [
+            {
+              "band": "top3",
+              "raceCount": 0,
+              "placeHitCount": 0,
+              "placeRate": 0,
+              "placeReturnRate": 0
+            },
+            {
+              "band": "mid",
+              "raceCount": 0,
+              "placeHitCount": 0,
+              "placeRate": 0,
+              "placeReturnRate": 0
+            },
+            {
+              "band": "longshot",
+              "raceCount": 16,
+              "placeHitCount": 0,
+              "placeRate": 0,
+              "placeReturnRate": 0
+            }
+          ],
+          "longshot": {
+            "raceCount": 16,
+            "placeHitCount": 0,
+            "placeRate": 0,
+            "placeReturnRate": 0
+          }
+        },
+        "agreement": {
+          "raceCount": 16,
+          "sameHonmeiCount": 7,
+          "agreementRate": 43.75,
+          "samePlaceRate": 57.14285714285714,
+          "disagreementSnapshotPlaceRate": 22.22222222222222,
+          "disagreementRoutinePlaceRate": 55.55555555555556
+        },
+        "disagreement": {
+          "raceCount": 9,
+          "snapshotPlaceRate": 22.22222222222222,
+          "routinePlaceRate": 55.55555555555556,
+          "valuePlaceCount": 0,
+          "snapshotOnlyPlaceCount": 1,
+          "routineOnlyPlaceCount": 4
+        },
+        "representativeRaces": {
+          "bestHits": [
+            {
+              "raceId": "202609020111",
+              "courseId": "hanshin-turf-1800-202609020111",
+              "label": "毎日杯",
+              "date": "2026-03-27",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "4",
+                "3",
+                "2"
+              ],
+              "resultTop3HorseNames": [
+                "アルトラムス",
+                "ローベルクランツ",
+                "カフジエメンタール"
+              ],
+              "snapshotHonmeiHorseId": "4",
+              "snapshotHonmeiHorseName": "アルトラムス",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "4",
+              "routineHonmeiHorseName": "アルトラムス",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "1",
+              "valueHorseName": "フレイムスター",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "アルトラムスは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
+            },
+            {
+              "raceId": "202607010211",
+              "courseId": "chukyo-turf-2000-202607010211",
+              "label": "金鯱賞",
+              "date": "2026-03-13",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "9",
+                "3",
+                "12"
+              ],
+              "resultTop3HorseNames": [
+                "シェイクユアハート",
+                "ジョバンニ",
+                "クイーンズウォーク"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "シェイクユアハート",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "12",
+              "routineHonmeiHorseName": "クイーンズウォーク",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "11",
+              "valueHorseName": "キングズパレス",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "シェイクユアハートは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
+            },
+            {
+              "raceId": "202607010611",
+              "courseId": "chukyo-turf-1200-202607010611",
+              "label": "高松宮記念",
+              "date": "2026-03-28",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "9",
+                "6",
+                "8"
+              ],
+              "resultTop3HorseNames": [
+                "サトノレーヴ",
+                "レッドモンレーヴ",
+                "ウインカーネリアン"
+              ],
+              "snapshotHonmeiHorseId": "13",
+              "snapshotHonmeiHorseName": "ナムラクレア",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "9",
+              "routineHonmeiHorseName": "サトノレーヴ",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "16",
+              "valueHorseName": "フィオライア",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "サトノレーヴは能力上位で押し切った。近走の能力水準がこの相手では上位だった。"
+            }
+          ],
+          "worstMisses": [
+            {
+              "raceId": "202609020211",
+              "courseId": "hanshin-turf-1600-202609020211",
+              "label": "六甲Ｓ",
+              "date": "2026-03-28",
+              "category": "worst_miss",
+              "resultTop3HorseIds": [
+                "6",
+                "7",
+                "1"
+              ],
+              "resultTop3HorseNames": [
+                "ベラジオボンド",
+                "クランフォード",
+                "メイショウチタン"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "ブルーミンデザイン",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "9",
+              "routineHonmeiHorseName": "ブルーミンデザイン",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "11",
+              "valueHorseName": "アサヒ",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "ベラジオボンドは条件が噛み合って突き抜けた。近走内容の良さがそのまま結果につながった。"
+            },
+            {
+              "raceId": "202606030211",
+              "courseId": "nakayama-dirt-1800-202606030211",
+              "label": "マーチＳ",
+              "date": "2026-03-28",
+              "category": "worst_miss",
+              "resultTop3HorseIds": [
+                "15",
+                "7",
+                "4"
+              ],
+              "resultTop3HorseNames": [
+                "サンデーファンデー",
+                "アクションプラン",
+                "ブレイクフォース"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "オメガギネス",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "9",
+              "routineHonmeiHorseName": "オメガギネス",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "3",
+              "valueHorseName": "ショウナンライシン",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "サンデーファンデーは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった、人気以上に能力を出せる下地があった。"
+            },
             {
               "raceId": "202609010511",
               "courseId": "hanshin-turf-1400-202609010511",
@@ -163,26 +1631,612 @@
               "routineHonmeiHorseId": "4",
               "routineHonmeiHorseName": "ショウナンカリス",
               "routineHonmeiPlaced": false,
-              "valueHorseId": "14",
-              "valueHorseName": "コラルリーフ",
+              "valueHorseId": "9",
+              "valueHorseName": "タイセイフレッサ",
               "valuePlaced": false,
               "valueReturnRate": null,
               "reviewSummary": "ギリーズボールは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、近走の能力水準がこの相手では上位だった、人気以上に能力を出せる下地があった。"
             }
           ],
-          "disagreementCases": [],
+          "disagreementCases": [
+            {
+              "raceId": "202607010211",
+              "courseId": "chukyo-turf-2000-202607010211",
+              "label": "金鯱賞",
+              "date": "2026-03-13",
+              "category": "disagreement",
+              "resultTop3HorseIds": [
+                "9",
+                "3",
+                "12"
+              ],
+              "resultTop3HorseNames": [
+                "シェイクユアハート",
+                "ジョバンニ",
+                "クイーンズウォーク"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "シェイクユアハート",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "12",
+              "routineHonmeiHorseName": "クイーンズウォーク",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "11",
+              "valueHorseName": "キングズパレス",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "シェイクユアハートは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
+            },
+            {
+              "raceId": "202607010611",
+              "courseId": "chukyo-turf-1200-202607010611",
+              "label": "高松宮記念",
+              "date": "2026-03-28",
+              "category": "disagreement",
+              "resultTop3HorseIds": [
+                "9",
+                "6",
+                "8"
+              ],
+              "resultTop3HorseNames": [
+                "サトノレーヴ",
+                "レッドモンレーヴ",
+                "ウインカーネリアン"
+              ],
+              "snapshotHonmeiHorseId": "13",
+              "snapshotHonmeiHorseName": "ナムラクレア",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "9",
+              "routineHonmeiHorseName": "サトノレーヴ",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "16",
+              "valueHorseName": "フィオライア",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "サトノレーヴは能力上位で押し切った。近走の能力水準がこの相手では上位だった。"
+            },
+            {
+              "raceId": "202606030110",
+              "courseId": "nakayama-dirt-1800-202606030110",
+              "label": "伏竜Ｓ",
+              "date": "2026-03-27",
+              "category": "disagreement",
+              "resultTop3HorseIds": [
+                "5",
+                "1",
+                "8"
+              ],
+              "resultTop3HorseNames": [
+                "ダノンバーボン",
+                "ドンエレクトス",
+                "チャーリー"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "ラッキーキッド",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "5",
+              "routineHonmeiHorseName": "ダノンバーボン",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "4",
+              "valueHorseName": "サンダーヴィント",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "ダノンバーボンは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった、近走内容の良さがそのまま結果につながった。"
+            }
+          ],
           "valueHits": []
         },
         "signals": {
-          "snapshotHonmeiUnderperformsRoutineHonmei": false,
-          "secondRankOutperformsFirstRank": false,
+          "snapshotHonmeiUnderperformsRoutineHonmei": true,
+          "secondRankOutperformsFirstRank": true,
           "thirdRankOutperformsFirstRank": false,
           "valueCandidateWorksBetterInLongshots": false,
+          "agreementImprovesPlaceRate": true,
+          "disagreementFavoursRoutine": true,
+          "disagreementFavoursSnapshot": false
+        },
+        "evaluation": {
+          "primaryKpis": {
+            "tanpukuHonmeiPlaceHitRate": 56.25,
+            "tanpukuHonmeiPlaceRoi": 98.125
+          },
+          "secondaryKpis": {
+            "sim1VsSim2PlaceGap": 25,
+            "honmeiValueDivergenceRate": 100,
+            "missPatternCounts": {
+              "rankError": 9,
+              "top3TotalMiss": 1,
+              "valueRescueHit": 0,
+              "honmeiAndValueMiss": 7
+            }
+          }
+        },
+        "recommendations": [
+          {
+            "id": "routine_honmei_over_snapshot_honmei",
+            "category": "place_core",
+            "targetStyle": "place_hit_rate",
+            "priority": "high",
+            "title": "Snapshot本命を勝率寄りに押しすぎている可能性",
+            "summary": "現状は Snapshot本命より単複本命の方が複勝軸として安定している可能性があります。",
+            "evidence": {
+              "snapshotPlaceRate": 37.5,
+              "routinePlaceRate": 56.25,
+              "rateGap": 18.75,
+              "snapshotRaceCount": 16,
+              "routineRaceCount": 16
+            },
+            "metricSignals": [
+              "snapshotHonmeiUnderperformsRoutineHonmei"
+            ]
+          },
+          {
+            "id": "second_rank_as_place_axis",
+            "category": "ranking",
+            "targetStyle": "place_hit_rate",
+            "priority": "high",
+            "title": "2番手を複勝軸として再評価すべき可能性",
+            "summary": "Snapshot1番手より2番手の方が複勝率で上回っており、軸の置き方を見直す余地があります。",
+            "evidence": {
+              "firstRankPlaceRate": 37.5,
+              "secondRankPlaceRate": 62.5,
+              "firstRankRaceCount": 16,
+              "secondRankRaceCount": 16
+            },
+            "metricSignals": [
+              "secondRankOutperformsFirstRank"
+            ]
+          },
+          {
+            "id": "agreement_is_place_stability_filter",
+            "category": "agreement",
+            "targetStyle": "place_hit_rate",
+            "priority": "medium",
+            "title": "本命一致時の方が複勝率が安定している可能性",
+            "summary": "Snapshot本命と単複本命が一致したレースをフィルタとして使うと、複勝軸の安定性が上がる可能性があります。",
+            "evidence": {
+              "agreementRate": 43.75,
+              "samePlaceRate": 57.14285714285714,
+              "disagreementSnapshotPlaceRate": 22.22222222222222,
+              "disagreementRoutinePlaceRate": 55.55555555555556,
+              "sameHonmeiCount": 7
+            },
+            "metricSignals": [
+              "agreementImprovesPlaceRate"
+            ]
+          },
+          {
+            "id": "prefer_routine_when_disagreement",
+            "category": "agreement",
+            "targetStyle": "place_hit_rate",
+            "priority": "high",
+            "title": "不一致時は単複本命を優先した方がよい可能性",
+            "summary": "本命不一致レースでは Snapshot本命より単複本命の方が複勝圏に届きやすい傾向があります。",
+            "evidence": {
+              "disagreementRaceCount": 9,
+              "disagreementSnapshotPlaceRate": 22.22222222222222,
+              "disagreementRoutinePlaceRate": 55.55555555555556,
+              "routineOnlyPlaceCount": 4
+            },
+            "metricSignals": [
+              "disagreementFavoursRoutine"
+            ]
+          },
+          {
+            "id": "place_axis_style_current_strength",
+            "category": "place_core",
+            "targetStyle": "place_hit_rate",
+            "priority": "medium",
+            "title": "現状は妙味より複勝軸型を重視した方がよい可能性",
+            "summary": "妙味候補の回収寄り運用より、単複本命を軸にした複勝重視の使い方が安定しやすい週です。",
+            "evidence": {
+              "routinePlaceRate": 56.25,
+              "routinePlaceReturnRate": 98.125,
+              "valuePlaceRate": 0,
+              "valuePlaceReturnRate": 0
+            },
+            "metricSignals": []
+          }
+        ]
+      }
+    },
+    {
+      "storeKey": "2026-03-05_to_2026-03-28__sim-page-v1__c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+      "weekKey": "2026-03-05_to_2026-03-28",
+      "modelVersion": "sim-page-v1",
+      "scoringConfigHash": "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+      "savedAt": "2026-03-29T23:19:46.415Z",
+      "diagnostics": {
+        "meta": {
+          "weekKey": "2026-03-05_to_2026-03-28",
+          "generatedAt": "2026-03-29T23:19:46.412Z",
+          "modelVersion": "sim-page-v1",
+          "scoringConfigHash": "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
+          "modelVersions": [
+            "sim-page-v1"
+          ],
+          "scoringConfigHashes": [
+            "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9"
+          ],
+          "raceCount": 16,
+          "settledRaceCount": 16,
+          "dateRange": {
+            "start": "2026-03-05",
+            "end": "2026-03-28"
+          }
+        },
+        "placeCore": {
+          "snapshotHonmei": {
+            "raceCount": 16,
+            "placeHitCount": 6,
+            "placeRate": 37.5
+          },
+          "routineHonmei": {
+            "raceCount": 16,
+            "placeHitCount": 6,
+            "placeRate": 37.5,
+            "placeReturnRate": 70
+          },
+          "snapshotRanks": [
+            {
+              "rank": 1,
+              "raceCount": 16,
+              "placeHitCount": 6,
+              "placeRate": 37.5
+            },
+            {
+              "rank": 2,
+              "raceCount": 16,
+              "placeHitCount": 10,
+              "placeRate": 62.5
+            },
+            {
+              "rank": 3,
+              "raceCount": 16,
+              "placeHitCount": 5,
+              "placeRate": 31.25
+            }
+          ]
+        },
+        "valueCore": {
+          "raceCount": 16,
+          "placeHitCount": 6,
+          "placeRate": 37.5,
+          "placeReturnRate": 105.62499999999999,
+          "popularityBands": [
+            {
+              "band": "top3",
+              "raceCount": 4,
+              "placeHitCount": 3,
+              "placeRate": 75,
+              "placeReturnRate": 140
+            },
+            {
+              "band": "mid",
+              "raceCount": 4,
+              "placeHitCount": 1,
+              "placeRate": 25,
+              "placeReturnRate": 45
+            },
+            {
+              "band": "longshot",
+              "raceCount": 8,
+              "placeHitCount": 2,
+              "placeRate": 25,
+              "placeReturnRate": 118.75
+            }
+          ],
+          "longshot": {
+            "raceCount": 8,
+            "placeHitCount": 2,
+            "placeRate": 25,
+            "placeReturnRate": 118.75
+          }
+        },
+        "agreement": {
+          "raceCount": 16,
+          "sameHonmeiCount": 16,
+          "agreementRate": 100,
+          "samePlaceRate": 37.5,
+          "disagreementSnapshotPlaceRate": 0,
+          "disagreementRoutinePlaceRate": 0
+        },
+        "disagreement": {
+          "raceCount": 0,
+          "snapshotPlaceRate": 0,
+          "routinePlaceRate": 0,
+          "valuePlaceCount": 0,
+          "snapshotOnlyPlaceCount": 0,
+          "routineOnlyPlaceCount": 0
+        },
+        "representativeRaces": {
+          "bestHits": [
+            {
+              "raceId": "202609020111",
+              "courseId": "hanshin-turf-1800-202609020111",
+              "label": "毎日杯",
+              "date": "2026-03-27",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "4",
+                "3",
+                "2"
+              ],
+              "resultTop3HorseNames": [
+                "アルトラムス",
+                "ローベルクランツ",
+                "カフジエメンタール"
+              ],
+              "snapshotHonmeiHorseId": "4",
+              "snapshotHonmeiHorseName": "アルトラムス",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "4",
+              "routineHonmeiHorseName": "アルトラムス",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "5",
+              "valueHorseName": "ブリガンティン",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "アルトラムスは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
+            },
+            {
+              "raceId": "202607010211",
+              "courseId": "chukyo-turf-2000-202607010211",
+              "label": "金鯱賞",
+              "date": "2026-03-13",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "9",
+                "3",
+                "12"
+              ],
+              "resultTop3HorseNames": [
+                "シェイクユアハート",
+                "ジョバンニ",
+                "クイーンズウォーク"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "シェイクユアハート",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "9",
+              "routineHonmeiHorseName": "シェイクユアハート",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "6",
+              "valueHorseName": "ヴィレム",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "シェイクユアハートは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
+            },
+            {
+              "raceId": "202606020511",
+              "courseId": "nakayama-turf-1600-202606020511",
+              "label": "アネモネステークス",
+              "date": "2026-03-13",
+              "category": "best_hit",
+              "resultTop3HorseIds": [
+                "4",
+                "16",
+                "2"
+              ],
+              "resultTop3HorseNames": [
+                "ディアダイヤモンド",
+                "ルールザウェイヴ",
+                "バルボアパーク"
+              ],
+              "snapshotHonmeiHorseId": "2",
+              "snapshotHonmeiHorseName": "バルボアパーク",
+              "snapshotHonmeiPlaced": true,
+              "routineHonmeiHorseId": "2",
+              "routineHonmeiHorseName": "バルボアパーク",
+              "routineHonmeiPlaced": true,
+              "valueHorseId": "12",
+              "valueHorseName": "メイショウハッケイ",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "ディアダイヤモンドは能力と条件が噛み合って押し切った。内目の枠からロスなく運べた、近走の能力水準がこの相手では上位だった。"
+            }
+          ],
+          "worstMisses": [
+            {
+              "raceId": "202609020211",
+              "courseId": "hanshin-turf-1600-202609020211",
+              "label": "六甲Ｓ",
+              "date": "2026-03-28",
+              "category": "worst_miss",
+              "resultTop3HorseIds": [
+                "6",
+                "7",
+                "1"
+              ],
+              "resultTop3HorseNames": [
+                "ベラジオボンド",
+                "クランフォード",
+                "メイショウチタン"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "ブルーミンデザイン",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "9",
+              "routineHonmeiHorseName": "ブルーミンデザイン",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "6",
+              "valueHorseName": "ベラジオボンド",
+              "valuePlaced": true,
+              "valueReturnRate": 140,
+              "reviewSummary": "ベラジオボンドは条件が噛み合って突き抜けた。近走内容の良さがそのまま結果につながった。"
+            },
+            {
+              "raceId": "202606030211",
+              "courseId": "nakayama-dirt-1800-202606030211",
+              "label": "マーチＳ",
+              "date": "2026-03-28",
+              "category": "worst_miss",
+              "resultTop3HorseIds": [
+                "15",
+                "7",
+                "4"
+              ],
+              "resultTop3HorseNames": [
+                "サンデーファンデー",
+                "アクションプラン",
+                "ブレイクフォース"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "オメガギネス",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "9",
+              "routineHonmeiHorseName": "オメガギネス",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "4",
+              "valueHorseName": "ブレイクフォース",
+              "valuePlaced": true,
+              "valueReturnRate": 390,
+              "reviewSummary": "サンデーファンデーは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった、人気以上に能力を出せる下地があった。"
+            },
+            {
+              "raceId": "202607010611",
+              "courseId": "chukyo-turf-1200-202607010611",
+              "label": "高松宮記念",
+              "date": "2026-03-28",
+              "category": "worst_miss",
+              "resultTop3HorseIds": [
+                "9",
+                "6",
+                "8"
+              ],
+              "resultTop3HorseNames": [
+                "サトノレーヴ",
+                "レッドモンレーヴ",
+                "ウインカーネリアン"
+              ],
+              "snapshotHonmeiHorseId": "13",
+              "snapshotHonmeiHorseName": "ナムラクレア",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "13",
+              "routineHonmeiHorseName": "ナムラクレア",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "7",
+              "valueHorseName": "ヨシノイースター",
+              "valuePlaced": false,
+              "valueReturnRate": null,
+              "reviewSummary": "サトノレーヴは能力上位で押し切った。近走の能力水準がこの相手では上位だった。"
+            }
+          ],
+          "disagreementCases": [],
+          "valueHits": [
+            {
+              "raceId": "202606020610",
+              "courseId": "nakayama-turf-1600-202606020610",
+              "label": "東風Ｓ",
+              "date": "2026-03-13",
+              "category": "value_hit",
+              "resultTop3HorseIds": [
+                "3",
+                "6",
+                "16"
+              ],
+              "resultTop3HorseNames": [
+                "ヴァルキリーバース",
+                "ジョイフルニュース",
+                "レガーロデルシエロ"
+              ],
+              "snapshotHonmeiHorseId": "12",
+              "snapshotHonmeiHorseName": "フロムダスク",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "12",
+              "routineHonmeiHorseName": "フロムダスク",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "16",
+              "valueHorseName": "レガーロデルシエロ",
+              "valuePlaced": true,
+              "valueReturnRate": 560,
+              "reviewSummary": "ヴァルキリーバースは条件が噛み合って突き抜けた。相対的に軽い斤量が効いた、先行力を生かしやすい舞台だった、内目の枠からロスなく運べた。"
+            },
+            {
+              "raceId": "202606030211",
+              "courseId": "nakayama-dirt-1800-202606030211",
+              "label": "マーチＳ",
+              "date": "2026-03-28",
+              "category": "value_hit",
+              "resultTop3HorseIds": [
+                "15",
+                "7",
+                "4"
+              ],
+              "resultTop3HorseNames": [
+                "サンデーファンデー",
+                "アクションプラン",
+                "ブレイクフォース"
+              ],
+              "snapshotHonmeiHorseId": "9",
+              "snapshotHonmeiHorseName": "オメガギネス",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "9",
+              "routineHonmeiHorseName": "オメガギネス",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "4",
+              "valueHorseName": "ブレイクフォース",
+              "valuePlaced": true,
+              "valueReturnRate": 390,
+              "reviewSummary": "サンデーファンデーは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった、人気以上に能力を出せる下地があった。"
+            },
+            {
+              "raceId": "202609010811",
+              "courseId": "hanshin-turf-1200-202609010811",
+              "label": "米子城Ｓ",
+              "date": "2026-03-13",
+              "category": "value_hit",
+              "resultTop3HorseIds": [
+                "10",
+                "12",
+                "1"
+              ],
+              "resultTop3HorseNames": [
+                "タマモブラックタイ",
+                "プルパレイ",
+                "アスクワンタイム"
+              ],
+              "snapshotHonmeiHorseId": "2",
+              "snapshotHonmeiHorseName": "イフェイオン",
+              "snapshotHonmeiPlaced": false,
+              "routineHonmeiHorseId": "2",
+              "routineHonmeiHorseName": "イフェイオン",
+              "routineHonmeiPlaced": false,
+              "valueHorseId": "1",
+              "valueHorseName": "アスクワンタイム",
+              "valuePlaced": true,
+              "valueReturnRate": 240,
+              "reviewSummary": "タマモブラックタイは条件が噛み合って突き抜けた。。"
+            }
+          ]
+        },
+        "signals": {
+          "snapshotHonmeiUnderperformsRoutineHonmei": false,
+          "secondRankOutperformsFirstRank": true,
+          "thirdRankOutperformsFirstRank": false,
+          "valueCandidateWorksBetterInLongshots": true,
           "agreementImprovesPlaceRate": true,
           "disagreementFavoursRoutine": false,
           "disagreementFavoursSnapshot": false
         },
         "recommendations": [
+          {
+            "id": "second_rank_as_place_axis",
+            "category": "ranking",
+            "targetStyle": "place_hit_rate",
+            "priority": "high",
+            "title": "2番手を複勝軸として再評価すべき可能性",
+            "summary": "Snapshot1番手より2番手の方が複勝率で上回っており、軸の置き方を見直す余地があります。",
+            "evidence": {
+              "firstRankPlaceRate": 37.5,
+              "secondRankPlaceRate": 62.5,
+              "firstRankRaceCount": 16,
+              "secondRankRaceCount": 16
+            },
+            "metricSignals": [
+              "secondRankOutperformsFirstRank"
+            ]
+          },
           {
             "id": "agreement_is_place_stability_filter",
             "category": "agreement",
@@ -192,17 +2246,19 @@
             "summary": "Snapshot本命と単複本命が一致したレースをフィルタとして使うと、複勝軸の安定性が上がる可能性があります。",
             "evidence": {
               "agreementRate": 100,
-              "samePlaceRate": 50,
+              "samePlaceRate": 37.5,
               "disagreementSnapshotPlaceRate": 0,
               "disagreementRoutinePlaceRate": 0,
-              "sameHonmeiCount": 2
+              "sameHonmeiCount": 16
             },
             "metricSignals": [
               "agreementImprovesPlaceRate"
             ]
           }
         ]
-      }
+      },
+      "aggregationScope": "all",
+      "scoringVersion": null
     },
     {
       "storeKey": "2026-03-05_to_2026-03-13__none__none",
@@ -325,7 +2381,9 @@
           "disagreementFavoursSnapshot": false
         },
         "recommendations": []
-      }
+      },
+      "aggregationScope": "all",
+      "scoringVersion": null
     }
   ]
 }

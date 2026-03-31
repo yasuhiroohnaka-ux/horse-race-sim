@@ -13,6 +13,8 @@ import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
 import { buildPredictionSnapshot } from "@/lib/predictionSnapshots";
 import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
 import { calculateOdds, runMonteCarlo } from "@/lib/simulation";
+import { pickTanpukuPair } from "@/lib/tanpukuSelection.mjs";
+import { buildPickExplanations, formatOverbetLabel } from "@/lib/pickExplanations";
 import { Course, Horse, RaceCondition } from "@/lib/types";
 
 const groundLabels: Record<RaceCondition["groundCondition"], string> = {
@@ -202,6 +204,8 @@ function SimulatorContent() {
   const [condition, setCondition] = useState<RaceCondition>(createDefaultCondition(initialCourseId ?? ""));
   const [horses, setHorses] = useState<Horse[]>(initialCourseId ? buildInitialHorses(initialCourseId) : []);
   const [results, setResults] = useState<{ horseId: string; winCount: number; bestTime: number }[] | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [tanpukuPair, setTanpukuPair] = useState<any>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [liveConditionSummary, setLiveConditionSummary] = useState("");
   const [oddsLastFetchedAt, setOddsLastFetchedAt] = useState("");
@@ -227,7 +231,7 @@ function SimulatorContent() {
   const handleCourseChange = (courseId: string) => {
     setCondition(createDefaultCondition(courseId));
     setHorses(buildInitialHorses(courseId));
-    setResults(null);
+    setResults(null); setTanpukuPair(null);
     setLiveConditionSummary("");
     setOddsLastFetchedAt("");
     setOddsRefreshError("");
@@ -478,6 +482,23 @@ function SimulatorContent() {
     window.setTimeout(() => {
       const simulationResults = runMonteCarlo(horses, selectedCourse, condition, 100);
       setResults(simulationResults);
+
+      // Compute tanpuku pair from scored horses
+      try {
+        const raceForTanpuku = {
+          courseId: selectedCourse.id,
+          label: selectedCourse.name,
+          distance: selectedCourse.distance,
+          straightLength: selectedCourse.straightLength,
+          trackBias: { innerOuter: 0, frontBack: 0 },
+          horses: horses.map((h) => ({ ...h })),
+        };
+        const pair = pickTanpukuPair(raceForTanpuku, false, true);
+        setTanpukuPair(pair);
+      } catch {
+        setTanpukuPair(null);
+      }
+
       setIsRunning(false);
 
       void (async () => {
@@ -620,7 +641,7 @@ function SimulatorContent() {
             onCourseChange={handleCourseChange}
             onConditionChange={(nextCondition) => {
               setCondition(nextCondition);
-              setResults(null);
+              setResults(null); setTanpukuPair(null);
             }}
             liveConditionSummary={liveConditionSummary}
             oddsRefreshSummary={buildOddsRefreshSummary(oddsLastFetchedAt, selectedCourse)}
@@ -638,7 +659,7 @@ function SimulatorContent() {
             condition={condition}
             onHorsesChange={(nextHorses) => {
               setHorses(nextHorses);
-              setResults(null);
+              setResults(null); setTanpukuPair(null);
             }}
             hashtag={selectedCourse.hashtag}
           />
@@ -656,18 +677,90 @@ function SimulatorContent() {
           )}
 
           {results && (
-            <SimulationResults
-              results={results}
-              horses={horses}
-              course={selectedCourse}
-              condition={condition}
-              onReset={() => setResults(null)}
-              onPostToMarketFocusToX={handlePostToMarketFocusToX}
-              onPostToRecommendedPairToX={handlePostRecommendedPairToX}
-              onPostToX={handlePostToX}
-              onRunAgain={handleRunSimulation}
-              isRunning={isRunning}
-            />
+            <>
+              <SimulationResults
+                results={results}
+                horses={horses}
+                course={selectedCourse}
+                condition={condition}
+                onReset={() => { setResults(null); setTanpukuPair(null); }}
+                onPostToMarketFocusToX={handlePostToMarketFocusToX}
+                onPostToRecommendedPairToX={handlePostRecommendedPairToX}
+                onPostToX={handlePostToX}
+                onRunAgain={handleRunSimulation}
+                isRunning={isRunning}
+              />
+              {tanpukuPair && (() => {
+                const rows = buildRaceAnalysisRows(results, horses, selectedCourse, condition);
+                const simHonmei = rows[0] ?? null;
+                const winPick = tanpukuPair.winPick;
+                const valuePick = tanpukuPair.valuePick;
+                const simHorseId = simHonmei?.horseId ?? null;
+                const agreementStatus: "agree" | "disagree" | "unknown" =
+                  simHorseId && winPick ? (simHorseId === winPick.horse.id ? "agree" : "disagree") : "unknown";
+                const simEntry = simHorseId ? tanpukuPair.scored.find((e: { horse: { id: string } }) => e.horse.id === simHorseId) : null;
+                const explanations = buildPickExplanations({ agreementStatus, simEntry, winEntry: winPick, valueEntry: valuePick });
+
+                return (
+                  <div className="mt-4 rounded-2xl border border-violet-200 bg-white p-5 shadow-sm">
+                    <h3 className="text-base font-bold text-violet-900">単複推奨パネル</h3>
+                    <p className="mt-1 text-xs text-violet-600">v{tanpukuPair.scoringVersion}</p>
+
+                    <div className="mt-4 flex items-center gap-2">
+                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${agreementStatus === "agree" ? "bg-emerald-100 text-emerald-800" : agreementStatus === "disagree" ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-600"}`}>
+                        {agreementStatus === "agree" ? "一致" : agreementStatus === "disagree" ? "不一致" : "比較不可"}
+                      </span>
+                      <span className="text-xs text-slate-600">{explanations.agreement}</span>
+                    </div>
+
+                    <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                      {/* シミュ本命 */}
+                      <div className="rounded-lg border border-sky-200 bg-sky-50 px-4 py-3">
+                        <p className="text-xs font-semibold text-sky-800">シミュ本命</p>
+                        <p className="mt-1 text-sm font-bold text-slate-800">{simHonmei?.name ?? "-"}</p>
+                        {simEntry && (
+                          <p className="mt-1 text-[11px] text-slate-500">
+                            winProb {(simEntry.winProb * 100).toFixed(0)}% / placeScore {simEntry.placeScore.toFixed(3)}
+                          </p>
+                        )}
+                        <p className="mt-2 text-xs leading-relaxed text-sky-700">{explanations.simHonmei}</p>
+                      </div>
+
+                      {/* 単複本命 */}
+                      <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
+                        <p className="text-xs font-semibold text-amber-800">単複本命</p>
+                        <p className="mt-1 text-sm font-bold text-slate-800">{winPick?.horse?.name ?? "-"}</p>
+                        {winPick && (
+                          <div className="mt-1 space-y-0.5 text-[11px] text-slate-500">
+                            <p>placeScore {winPick.placeScore.toFixed(3)} / scoreGap {winPick.scoreGap.toFixed(3)}</p>
+                            <p>placeProb {(winPick.placeProb * 100).toFixed(0)}% / top3安定 {(winPick.top3Stability * 100).toFixed(0)}%</p>
+                            {winPick.overbetLabel && <span className="inline-block rounded-full bg-red-100 px-2 py-0.5 text-red-700">{winPick.overbetLabel}</span>}
+                          </div>
+                        )}
+                        <p className="mt-2 text-xs leading-relaxed text-amber-700">{explanations.tanpukuHonmei}</p>
+                      </div>
+
+                      {/* 妙味候補 */}
+                      <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
+                        <p className="text-xs font-semibold text-emerald-800">妙味候補</p>
+                        {valuePick ? (
+                          <>
+                            <p className="mt-1 text-sm font-bold text-slate-800">{valuePick.horse.name}</p>
+                            <div className="mt-1 space-y-0.5 text-[11px] text-slate-500">
+                              <p>valueScore {valuePick.valueScore.toFixed(3)} / {Number(valuePick.horse.realOdds).toFixed(1)}倍</p>
+                              <p>複回収期待 {valuePick.fukuRoi.toFixed(0)}% / scoreGap {valuePick.scoreGap.toFixed(3)}</p>
+                            </div>
+                            <p className="mt-2 text-xs leading-relaxed text-emerald-700">{explanations.valueCandidate}</p>
+                          </>
+                        ) : (
+                          <p className="mt-1 text-sm text-slate-500">該当なし</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </>
           )}
         </div>
 

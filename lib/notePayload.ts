@@ -270,6 +270,7 @@ function buildSummaryBlocks(
       key: "value_core",
       title: "妙味複勝候補はどうだったか",
       points: [
+        `妙味候補あり率 ${formatRate(diagnostics.valueCore.candidateRate)} (${diagnostics.valueCore.raceCount}R / skip ${diagnostics.valueCore.skippedCount}R)`,
         `妙味候補 複勝率 ${formatRate(diagnostics.valueCore.placeRate)}`,
         `妙味候補 複回収率 ${formatReturnRate(diagnostics.valueCore.placeReturnRate)}`,
         `人気薄帯 複回収率 ${formatReturnRate(diagnostics.valueCore.longshot.placeReturnRate)}`,
@@ -289,6 +290,26 @@ function buildSummaryBlocks(
         const label = band.band === "top3" ? "1〜3番人気" : band.band === "mid" ? "4〜6番人気" : "7番人気以下";
         return `${label} 複勝率 ${formatRate(band.placeRate)} / 複回収率 ${formatReturnRate(band.placeReturnRate)}`;
       }),
+    },
+    {
+      key: "market_heat",
+      title: "市場過熱シグナル",
+      points: (() => {
+        const heat = diagnostics.evaluation.secondaryKpis.marketHeatCounts;
+        if (!heat || heat.honmeiOverbetCount + heat.honmeiNonOverbetCount === 0) {
+          return ["過熱データなし"];
+        }
+        const overbetRate = heat.honmeiOverbetCount > 0
+          ? ((heat.honmeiOverbetPlaceHitCount / heat.honmeiOverbetCount) * 100).toFixed(1)
+          : "-";
+        const nonOverbetRate = heat.honmeiNonOverbetCount > 0
+          ? ((heat.honmeiNonOverbetPlaceHitCount / heat.honmeiNonOverbetCount) * 100).toFixed(1)
+          : "-";
+        return [
+          `過熱本命 ${heat.honmeiOverbetCount}R → 複勝率 ${overbetRate}%`,
+          `非過熱本命 ${heat.honmeiNonOverbetCount}R → 複勝率 ${nonOverbetRate}%`,
+        ];
+      })(),
     },
     {
       key: "disagreement_review",

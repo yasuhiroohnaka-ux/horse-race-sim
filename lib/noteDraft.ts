@@ -99,6 +99,11 @@ export function buildWeeklyNoteDraft(payload: WeeklyNotePayload): WeeklyNoteDraf
       title: "人気帯別の傾向",
       points: [],
     }),
+    buildSummaryBlockSection(payload.summaryBlocks.find((block) => block.key === "market_heat") ?? {
+      key: "market_heat",
+      title: "市場過熱シグナル",
+      points: [],
+    }),
     buildSummaryBlockSection(payload.summaryBlocks.find((block) => block.key === "disagreement_review") ?? {
       key: "disagreement_review",
       title: "本命不一致レースの振り返り",

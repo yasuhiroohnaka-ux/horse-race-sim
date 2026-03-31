@@ -42,6 +42,8 @@ function compareEntryTime(a: WeeklyDiagnosticsStoreEntry, b: WeeklyDiagnosticsSt
 export function buildWeeklyDiagnosticsStoreKey(diagnostics: WeeklyDiagnostics) {
   return [
     diagnostics.meta.weekKey,
+    normalizeString(diagnostics.meta.aggregationScope),
+    normalizeString(diagnostics.meta.scoringVersion),
     normalizeString(diagnostics.meta.modelVersion),
     normalizeString(diagnostics.meta.scoringConfigHash),
   ].join("__");
@@ -53,16 +55,22 @@ export async function loadWeeklyDiagnosticsStore(): Promise<WeeklyDiagnosticsSto
     const parsed = JSON.parse(raw.replace(/^\uFEFF/, ""));
     if (parsed && typeof parsed === "object" && Array.isArray((parsed as WeeklyDiagnosticsStore).entries)) {
       return {
-        entries: (parsed as WeeklyDiagnosticsStore).entries.filter(
-          (entry): entry is WeeklyDiagnosticsStoreEntry =>
-            Boolean(
-              entry &&
-                typeof entry === "object" &&
-                typeof entry.storeKey === "string" &&
-                typeof entry.weekKey === "string" &&
-                "diagnostics" in entry
-            )
-        ),
+        entries: (parsed as WeeklyDiagnosticsStore).entries
+          .filter(
+            (entry): entry is WeeklyDiagnosticsStoreEntry =>
+              Boolean(
+                entry &&
+                  typeof entry === "object" &&
+                  typeof entry.storeKey === "string" &&
+                  typeof entry.weekKey === "string" &&
+                  "diagnostics" in entry
+              )
+          )
+          .map((entry) => ({
+            ...entry,
+            aggregationScope: entry.aggregationScope ?? entry.diagnostics?.meta?.aggregationScope ?? "all",
+            scoringVersion: entry.scoringVersion ?? entry.diagnostics?.meta?.scoringVersion ?? null,
+          })),
       };
     }
     return { entries: [] };
@@ -81,19 +89,46 @@ export async function saveWeeklyDiagnosticsStore(store: WeeklyDiagnosticsStore) 
 export async function ensureWeeklyDiagnosticsStored(diagnostics: WeeklyDiagnostics): Promise<UpsertResult> {
   const store = await loadWeeklyDiagnosticsStore();
   const storeKey = buildWeeklyDiagnosticsStoreKey(diagnostics);
-  const existing = store.entries.find((entry) => entry.storeKey === storeKey);
+  const existingIndex = store.entries.findIndex((entry) => entry.storeKey === storeKey);
+  const existing = existingIndex >= 0 ? store.entries[existingIndex] : null;
   if (existing) {
+    if (JSON.stringify(existing.diagnostics) === JSON.stringify(diagnostics)) {
+      return {
+        saved: false,
+        storeKey,
+        entry: existing,
+        store,
+      };
+    }
+
+    const entry: WeeklyDiagnosticsStoreEntry = {
+      ...existing,
+      aggregationScope: diagnostics.meta.aggregationScope,
+      scoringVersion: diagnostics.meta.scoringVersion,
+      modelVersion: diagnostics.meta.modelVersion,
+      scoringConfigHash: diagnostics.meta.scoringConfigHash,
+      savedAt: new Date().toISOString(),
+      diagnostics,
+    };
+    const nextEntries = [...store.entries];
+    nextEntries[existingIndex] = entry;
+    const nextStore: WeeklyDiagnosticsStore = {
+      entries: nextEntries.sort(compareEntryTime),
+    };
+    await saveWeeklyDiagnosticsStore(nextStore);
     return {
-      saved: false,
+      saved: true,
       storeKey,
-      entry: existing,
-      store,
+      entry,
+      store: nextStore,
     };
   }
 
   const entry: WeeklyDiagnosticsStoreEntry = {
     storeKey,
     weekKey: diagnostics.meta.weekKey,
+    aggregationScope: diagnostics.meta.aggregationScope,
+    scoringVersion: diagnostics.meta.scoringVersion,
     modelVersion: diagnostics.meta.modelVersion,
     scoringConfigHash: diagnostics.meta.scoringConfigHash,
     savedAt: new Date().toISOString(),
@@ -121,6 +156,8 @@ export function buildWeeklyDiagnosticsComparison(
     .filter(
       (entry) =>
         entry.storeKey !== currentEntry.storeKey &&
+        entry.aggregationScope === currentEntry.aggregationScope &&
+        entry.scoringVersion === currentEntry.scoringVersion &&
         entry.modelVersion === currentEntry.modelVersion &&
         entry.scoringConfigHash === currentEntry.scoringConfigHash
     )
@@ -132,11 +169,15 @@ export function buildWeeklyDiagnosticsComparison(
   return {
     current: {
       weekKey: currentEntry.weekKey,
+      aggregationScope: currentEntry.aggregationScope,
+      scoringVersion: currentEntry.scoringVersion,
       modelVersion: currentEntry.modelVersion,
       scoringConfigHash: currentEntry.scoringConfigHash,
     },
     previous: {
       weekKey: previous.weekKey,
+      aggregationScope: previous.aggregationScope,
+      scoringVersion: previous.scoringVersion,
       modelVersion: previous.modelVersion,
       scoringConfigHash: previous.scoringConfigHash,
     },
@@ -164,6 +205,8 @@ export function toAvailableWeeklyDiagnosticsEntries(store: WeeklyDiagnosticsStor
     .map((entry) => ({
       storeKey: entry.storeKey,
       weekKey: entry.weekKey,
+      aggregationScope: entry.aggregationScope,
+      scoringVersion: entry.scoringVersion,
       modelVersion: entry.modelVersion,
       scoringConfigHash: entry.scoringConfigHash,
       savedAt: entry.savedAt,
