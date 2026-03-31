@@ -14,7 +14,8 @@ import { buildPredictionSnapshot } from "@/lib/predictionSnapshots";
 import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
 import { calculateOdds, runMonteCarlo } from "@/lib/simulation";
 import { pickTanpukuPair } from "@/lib/tanpukuSelection.mjs";
-import { buildPickExplanations, formatOverbetLabel } from "@/lib/pickExplanations";
+import { buildPickExplanations, buildDisagreementExplanation, formatOverbetLabel } from "@/lib/pickExplanations";
+import { buildManualPreRacePayload } from "@/lib/xPostPayload.mjs";
 import { Course, Horse, RaceCondition } from "@/lib/types";
 
 const groundLabels: Record<RaceCondition["groundCondition"], string> = {
@@ -531,28 +532,44 @@ function SimulatorContent() {
     }, 250);
   };
 
-  const handlePostToX = () => {
+  // --- structured X post handler (Issue 8: unified builder) ---
+
+  const handlePostPreRaceToX = () => {
     if (!results || !selectedCourse) return;
 
+    // tanpukuPair-based structured posting (builder priority)
+    if (tanpukuPair?.winPick) {
+      const rows = buildRaceAnalysisRows(results, horses, selectedCourse, condition);
+      const simBest = rows[0] ?? null;
+      const simHorseId = simBest?.horseId ?? null;
+      const agreementStatus: "agree" | "disagree" | "unknown" =
+        simHorseId && tanpukuPair.winPick
+          ? simHorseId === tanpukuPair.winPick.horse.id ? "agree" : "disagree"
+          : "unknown";
+      const simEntry = simHorseId
+        ? tanpukuPair.scored.find((e: { horse: { id: string } }) => e.horse.id === simHorseId) ?? null
+        : null;
+      const selectionComment = buildDisagreementExplanation(agreementStatus, simEntry, tanpukuPair.winPick) ?? "";
+
+      const payload = buildManualPreRacePayload({
+        raceName: selectedCourse.name,
+        hashtag: selectedCourse.hashtag,
+        tanpukuPair,
+        simBest: simBest ? { horseId: simBest.horseId, horseName: simBest.name, winProb: simBest.simWinRate / 100 } : null,
+        selectionComment,
+      });
+
+      console.log("[Issue8] pre_race payload", payload);
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(payload.text)}`, "_blank");
+      return;
+    }
+
+    // Fallback: legacy format when tanpukuPair not available
     const rows = buildRaceAnalysisRows(results, horses, selectedCourse, condition);
     const strongest = rows[0];
-    const riskyFavorite = [...rows]
-      .filter((row) => row.officialRank <= Math.min(4, rows.length))
-      .sort((a, b) => (b.officialImplied - b.simWinRate) - (a.officialImplied - a.simWinRate))[0];
-    const valueHorse = [...rows].sort(
-      (a, b) =>
-        (b.simWinRate - b.officialImplied + Math.max(0, b.marketExpertGap) * 0.6)
-        - (a.simWinRate - a.officialImplied + Math.max(0, a.marketExpertGap) * 0.6)
-    )[0];
-    const disagreement = [...rows].sort((a, b) => Math.abs(b.marketExpertGap) - Math.abs(a.marketExpertGap))[0];
-
     const text = [
       `${selectedCourse.name} 100回シミュレーション`,
-      `軸候補 ${strongest?.name ?? "-"} 勝率${strongest?.simWinRate?.toFixed(1) ?? "-"}% / フェア${strongest?.fairOdds?.toFixed(1) ?? "-"}倍`,
-      `${riskyFavorite?.signalDetailLabel ?? "市場過熱"}: ${riskyFavorite?.name ?? "-"} 公式${riskyFavorite?.officialImplied?.toFixed(1) ?? "-"}% > 試走${riskyFavorite?.simWinRate?.toFixed(1) ?? "-"}%`,
-      `妙味候補 ${valueHorse?.name ?? "-"} 公式${valueHorse?.officialOdds?.toFixed(1) ?? "-"}倍 / ガチ勢${valueHorse?.expertOdds?.toFixed(1) ?? "-"}倍`,
-      `市場vsガチ勢: ${disagreement?.name ?? "-"} 差${disagreement?.marketExpertGap?.toFixed(1) ?? "-"}pt`,
-      `条件: ${groundLabels[condition.groundCondition]} / ${weatherLabels[condition.weather]} / ${windLabels[condition.windDirection]}${condition.windSpeed}m / ${paceLabels[condition.paceScenario]}`,
+      `軸候補 ${strongest?.name ?? "-"} 勝率${strongest?.simWinRate?.toFixed(1) ?? "-"}%`,
       selectedCourse.hashtag,
     ].join("\n");
 
@@ -579,33 +596,6 @@ function SimulatorContent() {
       `条件: ${groundLabels[condition.groundCondition]} / ${weatherLabels[condition.weather]} / ${windLabels[condition.windDirection]}${condition.windSpeed}m / ${paceLabels[condition.paceScenario]}`,
       selectedCourse.hashtag,
     ].filter(Boolean).join("\n");
-
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
-  };
-
-  const handlePostRecommendedPairToX = () => {
-    if (!results || !selectedCourse) return;
-
-    const rows = buildRaceAnalysisRows(results, horses, selectedCourse, condition);
-    const strongest = rows[0];
-    const valueHorse = [...rows].sort(
-      (a, b) =>
-        (b.simWinRate - b.officialImplied + Math.max(0, b.marketExpertGap) * 0.6)
-        - (a.simWinRate - a.officialImplied + Math.max(0, a.marketExpertGap) * 0.6)
-    )[0];
-
-    if (!strongest || !valueHorse) return;
-
-    const hasSamePick = strongest.horseId === valueHorse.horseId;
-    const text = [
-      `${selectedCourse.name} 推奨2頭`,
-      `的中率なら ${strongest.name} 試走${strongest.simWinRate.toFixed(1)}% / フェア${strongest.fairOdds?.toFixed(1) ?? "-"}倍`,
-      hasSamePick
-        ? `回収率も同馬 ${valueHorse.name} 公式${valueHorse.officialOdds?.toFixed(1) ?? "-"}倍 / ガチ勢${valueHorse.expertOdds?.toFixed(1) ?? "-"}倍`
-        : `回収率なら ${valueHorse.name} 公式${valueHorse.officialOdds?.toFixed(1) ?? "-"}倍 / ガチ勢${valueHorse.expertOdds?.toFixed(1) ?? "-"}倍`,
-      `条件: ${groundLabels[condition.groundCondition]} / ${weatherLabels[condition.weather]} / ${windLabels[condition.windDirection]}${condition.windSpeed}m / ${paceLabels[condition.paceScenario]}`,
-      selectedCourse.hashtag,
-    ].join("\n");
 
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
   };
@@ -685,8 +675,7 @@ function SimulatorContent() {
                 condition={condition}
                 onReset={() => { setResults(null); setTanpukuPair(null); }}
                 onPostToMarketFocusToX={handlePostToMarketFocusToX}
-                onPostToRecommendedPairToX={handlePostRecommendedPairToX}
-                onPostToX={handlePostToX}
+                onPostPreRaceToX={handlePostPreRaceToX}
                 onRunAgain={handleRunSimulation}
                 isRunning={isRunning}
               />

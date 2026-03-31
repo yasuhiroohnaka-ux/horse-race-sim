@@ -12,10 +12,12 @@ import { ARCHIVED_RACES as LEGACY_ARCHIVED_RACES, type ArchivedRace as LegacyArc
 import type { PredictionSnapshot, RaceCommentaryPayload } from "@/lib/types";
 import {
   buildPickExplanations,
+  buildDisagreementExplanation,
   formatOverbetLabel,
   type AgreementStatus,
   type PickExplanationEntry,
 } from "@/lib/pickExplanations";
+import { buildManualReviewPayload } from "@/lib/xPostPayload.mjs";
 
 type ReviewCard = GeneratedReviewRace & { archived?: boolean };
 
@@ -183,6 +185,47 @@ function formatPayoutSource(source: PayoutSource) {
 function openReviewPost(text: string) {
   if (!text) return;
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
+}
+
+function buildAndOpenReviewPost(
+  race: ReviewCard,
+  snapshot: PredictionSnapshot | undefined,
+  settlement: RecommendationSettlementBundle | null
+) {
+  // Builder priority: use structured builder when settlement data exists
+  if (settlement?.win || snapshot) {
+    const snapshotHorseId = snapshot?.honmeiHorseId ?? null;
+    const routineHorseId = settlement?.win?.horseId ?? null;
+    const agreementStatus: AgreementStatus =
+      snapshotHorseId && routineHorseId
+        ? snapshotHorseId === routineHorseId ? "agree" : "disagree"
+        : "unknown";
+
+    const simEntry = buildArchiveSimEntry(snapshot, snapshotHorseId);
+    const winEntry = buildArchiveRecommendationEntry(settlement?.win);
+    const disagreementExplanation = buildDisagreementExplanation(agreementStatus, simEntry, winEntry);
+    const explanations = buildPickExplanations({ agreementStatus, simEntry, winEntry, valueEntry: buildArchiveRecommendationEntry(settlement?.value) });
+
+    const payload = buildManualReviewPayload({
+      raceName: race.label,
+      race,
+      settlement,
+      snapshot: snapshot ?? null,
+      agreementExplanation: explanations.agreement,
+      disagreementExplanation,
+    });
+
+    if (payload) {
+      console.log("[Issue8] review payload", payload);
+      openReviewPost(payload.text);
+      return;
+    }
+  }
+
+  // Fallback: legacy xPostText
+  if (race.review?.xPostText) {
+    openReviewPost(race.review.xPostText);
+  }
 }
 
 function getRaceKey(race: ReviewCard): { raceId: string | null; courseId: string } {
@@ -933,10 +976,10 @@ function renderReviewCard(
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {race.review?.xPostText ? (
+          {(settlement?.win || snapshot || race.review?.xPostText) ? (
             <button
               type="button"
-              onClick={() => openReviewPost(race.review?.xPostText ?? "")}
+              onClick={() => buildAndOpenReviewPost(race, snapshot, settlement)}
               className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
             >
               Xに投稿

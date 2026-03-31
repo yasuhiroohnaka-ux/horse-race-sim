@@ -27,8 +27,7 @@ interface SimulationResultsProps {
   condition: RaceCondition;
   onReset: () => void;
   onPostToMarketFocusToX: () => void;
-  onPostToRecommendedPairToX: () => void;
-  onPostToX: () => void;
+  onPostPreRaceToX: () => void;
   onRunAgain: () => void;
   isRunning: boolean;
 }
@@ -76,8 +75,7 @@ export function SimulationResults({
   condition,
   onReset,
   onPostToMarketFocusToX,
-  onPostToRecommendedPairToX,
-  onPostToX,
+  onPostPreRaceToX,
   onRunAgain,
   isRunning,
 }: SimulationResultsProps) {
@@ -309,22 +307,16 @@ export function SimulationResults({
           {isRunning ? "再試走中..." : "もう一度100回試走"}
         </button>
         <button
+          onClick={onPostPreRaceToX}
+          className="rounded-full bg-black px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+        >
+          単複予想をX投稿
+        </button>
+        <button
           onClick={onPostToMarketFocusToX}
           className="rounded-full border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-700 transition hover:bg-amber-50"
         >
           市場注目馬をX投稿
-        </button>
-        <button
-          onClick={onPostToRecommendedPairToX}
-          className="rounded-full bg-black px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-        >
-          {"\u63a8\u59682\u982d\u3092X\u6295\u7a3f"}
-        </button>
-        <button
-          onClick={onPostToX}
-          className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-        >
-          {"\u5206\u6790\u3092X\u306b\u6295\u7a3f"}
         </button>
       </div>
     </div>
