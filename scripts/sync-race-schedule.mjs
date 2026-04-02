@@ -65,7 +65,7 @@ function mapRaceMeta(race) {
     courseId: String(race.courseId),
     raceId: String(race.raceId ?? ""),
     label: String(race.label ?? race.courseId),
-    grade: String(race.grade ?? "G3"),
+    grade: String(race.grade ?? "OTHER"),
     day: String(race.day ?? "Sat"),
     raceNumber: Number(race.raceNumber ?? flags.raceNumber ?? 0),
     isSpecialRace: Boolean(race.isSpecialRace ?? flags.isSpecialRace),

@@ -192,7 +192,7 @@ function parseRaceMeta(raceId, shutubaHtml, dayLabel) {
     .replace(/\((?:G[123]|L|OP)\)/gi, "")
     .replace(/\s*出馬表\s*$/i, "")
     .trim();
-  const grade = parseGrade(shutubaHtml);
+  const rawGrade = parseGrade(shutubaHtml);
   if (!cleanedLabel) return null;
 
   const raceData = normalizeSpace(shutubaHtml.match(/class="RaceData01"[^>]*>([\s\S]*?)<\/div>/i)?.[1] ?? "");
@@ -204,7 +204,7 @@ function parseRaceMeta(raceId, shutubaHtml, dayLabel) {
     {
       raceId,
       label: cleanedLabel,
-      grade,
+      grade: rawGrade,
       raceNumber: raceNo,
       surface,
       surfaceLabel,
@@ -223,7 +223,7 @@ function parseRaceMeta(raceId, shutubaHtml, dayLabel) {
     courseId,
     raceId,
     label: cleanedLabel,
-    grade,
+    grade: rawGrade ?? "OTHER",
     day: dayLabel,
     raceNumber: raceNo,
     isSpecialRace: targetFlags.isSpecialRace,
