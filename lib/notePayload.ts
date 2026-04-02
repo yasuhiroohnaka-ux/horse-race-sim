@@ -11,6 +11,7 @@ import type {
   WeeklyNotePayload,
   WeeklyNoteSummaryBlock,
 } from "@/lib/types";
+import { getRaceTargetFlags } from "@/lib/raceSegmentation.mjs";
 import { buildWeeklyDiagnostics, loadWeeklyDiagnosticsContext } from "@/lib/weeklyDiagnostics";
 import {
   buildWeeklyDiagnosticsComparison,
@@ -171,8 +172,10 @@ function buildMarketSignals(snapshotTop3: RaceCommentarySimHorse[], actualTop3Id
 function buildRaceCommentaryPayload(
   race: Awaited<ReturnType<typeof loadWeeklyDiagnosticsContext>>["races"][number],
   snapshot: PredictionSnapshot | undefined,
-  payouts: RaceCommentaryPayouts | null
+  payouts: RaceCommentaryPayouts | null,
+  raceMiss: WeeklyDiagnostics["missDiagnostics"]["races"][number] | null
 ): RaceCommentaryPayload {
+  const targetFlags = getRaceTargetFlags(race);
   const snapshotTop3: RaceCommentarySimHorse[] = (snapshot?.rankedRows ?? [])
     .slice()
     .sort((a, b) => a.rank - b.rank)
@@ -214,6 +217,11 @@ function buildRaceCommentaryPayload(
     raceId: String(race.raceId ?? ""),
     courseId: race.courseId,
     raceLabel: race.label,
+    raceNumber: targetFlags.raceNumber,
+    isSpecialRace: targetFlags.isSpecialRace,
+    isFinalRace: targetFlags.isFinalRace,
+    isJumpRace: targetFlags.isJumpRace,
+    raceSegment: targetFlags.raceSegment,
     simHonmeiHorseId,
     simSecondHorseId,
     simThirdHorseId,
@@ -228,6 +236,9 @@ function buildRaceCommentaryPayload(
       anyTop3Placed,
       valuePlaced,
     }),
+    primaryMissTag: raceMiss?.primaryMissTag ?? null,
+    missTags: raceMiss?.missTags ?? [],
+    missTagDetails: raceMiss?.missTagDetails ?? [],
     marketFadeCandidate: marketSignals.marketFadeCandidate,
     marketGapComment: marketSignals.marketGapComment,
     marketOverbetSignal: marketSignals.marketOverbetSignal,
@@ -246,6 +257,26 @@ function buildSummaryBlocks(
   diagnostics: WeeklyDiagnostics,
   comparison: WeeklyDiagnosticsComparisonSummary | null
 ): WeeklyNoteSummaryBlock[] {
+  const segmentPoints = ([
+    ["special_only", diagnostics.segments.special_only],
+    ["final12_only", diagnostics.segments.final12_only],
+    ["all_expanded", diagnostics.segments.all_expanded],
+  ] as const).map(([label, segment]) => {
+    if (segment.settledRaceCount === 0) {
+      return `${label}: 0 settled races`;
+    }
+    const primaryMiss = segment.missDiagnostics.primary.find((entry) => entry.raceCount > 0);
+    return [
+      `${label}: ${segment.settledRaceCount}R settled`,
+      `routine ${formatRate(segment.placeCore.routineHonmei.placeRate)}`,
+      `fukuROI ${formatReturnRate(segment.placeCore.routineHonmei.placeReturnRate)}`,
+      `value ${formatRate(segment.valueCore.placeRate)}`,
+      primaryMiss ? `miss ${primaryMiss.tag} ${formatRate(primaryMiss.rate)}` : "",
+    ]
+      .filter(Boolean)
+      .join(" / ");
+  });
+
   return [
     {
       key: "weekly_overview",
@@ -264,6 +295,25 @@ function buildSummaryBlocks(
         `単複本命 複勝率 ${formatRate(diagnostics.placeCore.routineHonmei.placeRate)} / 複回収率 ${formatReturnRate(
           diagnostics.placeCore.routineHonmei.placeReturnRate
         )}`,
+      ],
+    },
+    {
+      key: "segments",
+      title: "Segment Comparison",
+      points: segmentPoints,
+    },
+    {
+      key: "miss_tags",
+      title: "外れタグ集計",
+      points: [
+        `負けレース ${diagnostics.missDiagnostics.missRaceCount}R`,
+        ...diagnostics.missDiagnostics.primary
+          .filter((item) => item.raceCount > 0)
+          .map((item) => `primary ${item.tag}: ${item.raceCount}R (${formatRate(item.rate)})`),
+        ...diagnostics.missDiagnostics.all
+          .filter((item) => item.raceCount > 0)
+          .slice(0, 4)
+          .map((item) => `all ${item.tag}: ${item.raceCount}R (${formatRate(item.rate)})`),
       ],
     },
     {
@@ -358,6 +408,7 @@ export async function getWeeklyNotePayload(): Promise<WeeklyNotePayload> {
   const { entry, store } = await ensureWeeklyDiagnosticsStored(diagnostics);
   const comparison = buildWeeklyDiagnosticsComparison(entry, store);
   const payoutsByRaceId = await loadRacePayoutsByRaceId();
+  const missByRaceId = new Map(entry.diagnostics.missDiagnostics.races.map((item) => [item.raceId, item] as const));
 
   const commentaryByRaceId = new Map(
     context.races.map((race) => {
@@ -365,7 +416,8 @@ export async function getWeeklyNotePayload(): Promise<WeeklyNotePayload> {
       const commentary = buildRaceCommentaryPayload(
         race,
         context.snapshotsByRaceId[raceId],
-        payoutsByRaceId[raceId] ?? null
+        payoutsByRaceId[raceId] ?? null,
+        missByRaceId.get(raceId) ?? null
       );
       return [raceId, commentary] as const;
     })

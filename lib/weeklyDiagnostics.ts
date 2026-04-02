@@ -5,6 +5,11 @@ import {
   GENERATED_COMPLETED_RACES,
   type GeneratedReviewRace,
 } from "@/lib/generatedRaceSchedule";
+import {
+  RACE_DIAGNOSTIC_SEGMENTS,
+  getRaceTargetFlags,
+  matchesRaceDiagnosticSegment,
+} from "@/lib/raceSegmentation.mjs";
 import { buildDiagnosticRecommendations } from "@/lib/diagnosticRecommendations";
 import {
   DEFAULT_PREDICTION_ORIGIN,
@@ -16,11 +21,17 @@ import type {
   DiagnosticsAggregationScope,
   PredictionOrigin,
   PredictionSnapshot,
+  RaceDiagnosticsSegmentKey,
   WeeklyDiagnostics,
   WeeklyDiagnosticsEvaluation,
+  WeeklyDiagnosticsMissTag,
+  WeeklyDiagnosticsMissTagCount,
+  WeeklyDiagnosticsMissTagDetail,
   WeeklyDiagnosticsMissPatternCounts,
   WeeklyDiagnosticsPopularityBand,
+  WeeklyDiagnosticsRaceMiss,
   WeeklyDiagnosticsRepresentativeRace,
+  WeeklyDiagnosticsSegmentSummary,
 } from "@/lib/types";
 
 const ROOT = process.cwd();
@@ -56,6 +67,18 @@ type RecommendationRecord = {
   fukuPayoutSource?: unknown;
   actualWinnerHorseId?: unknown;
   actualTop3HorseIds?: unknown;
+  realOdds?: unknown;
+  placeOdds?: unknown;
+  winProb?: unknown;
+  placeProb?: unknown;
+  placeScore?: unknown;
+  valueScore?: unknown;
+  selectionReason?: unknown;
+  scoreGap?: unknown;
+  runnerUpHorseId?: unknown;
+  runnerUpHorseName?: unknown;
+  runnerUpPlaceScore?: unknown;
+  runnerUpPlaceProb?: unknown;
   overbetLabel?: unknown;
 };
 
@@ -79,6 +102,18 @@ type RecommendationSettlement = {
   fukuPayoutSource: PayoutSource;
   actualWinnerHorseId: string | null;
   actualTop3HorseIds: string[];
+  realOdds: number;
+  placeOdds: number;
+  winProb: number;
+  placeProb: number;
+  placeScore: number;
+  valueScore: number;
+  selectionReason: string | null;
+  scoreGap: number;
+  runnerUpHorseId: string | null;
+  runnerUpHorseName: string | null;
+  runnerUpPlaceScore: number;
+  runnerUpPlaceProb: number;
   overbetLabel: string | null;
 };
 
@@ -104,6 +139,16 @@ type DiagnosticsContext = {
   snapshotsByRaceId: Record<string, PredictionSnapshot>;
   settlementsByRaceId: Record<string, RecommendationSettlementBundle>;
   reviewsByRaceId: Record<string, GeneratedReviewRecord>;
+};
+
+type WeeklyDiagnosticsCore = Omit<WeeklyDiagnostics, "meta" | "segments" | "recommendations">;
+
+const SEGMENT_LABELS: Record<RaceDiagnosticsSegmentKey, string> = {
+  special_only: "special_only",
+  final12_only: "final12_only",
+  all_expanded: "all_expanded",
+  special_non_final: "special_non_final",
+  special_final12: "special_final12",
 };
 
 function normalizeString(value: unknown): string | null {
@@ -215,6 +260,18 @@ function normalizeRecommendation(value: unknown): RecommendationSettlement | nul
     actualTop3HorseIds: Array.isArray(record.actualTop3HorseIds)
       ? record.actualTop3HorseIds.map((id) => String(id ?? "").trim()).filter(Boolean)
       : [],
+    realOdds: normalizeNumber(record.realOdds),
+    placeOdds: normalizeNumber(record.placeOdds),
+    winProb: normalizeNumber(record.winProb),
+    placeProb: normalizeNumber(record.placeProb),
+    placeScore: normalizeNumber(record.placeScore),
+    valueScore: normalizeNumber(record.valueScore),
+    selectionReason: normalizeString(record.selectionReason),
+    scoreGap: normalizeNumber(record.scoreGap),
+    runnerUpHorseId: normalizeString(record.runnerUpHorseId),
+    runnerUpHorseName: normalizeString(record.runnerUpHorseName),
+    runnerUpPlaceScore: normalizeNumber(record.runnerUpPlaceScore),
+    runnerUpPlaceProb: normalizeNumber(record.runnerUpPlaceProb),
     overbetLabel: typeof record.overbetLabel === "string" ? record.overbetLabel : null,
   };
 }
@@ -374,13 +431,305 @@ function getHorseName(snapshot: PredictionSnapshot | undefined, horseId: string 
   return snapshot.rankedRows.find((row) => row.horseId === horseId)?.horseName ?? null;
 }
 
+const MISS_TAG_ORDER: WeeklyDiagnosticsMissTag[] = [
+  "top3_total_miss",
+  "rank_error",
+  "market_overfade",
+  "place_prob_overestimate",
+  "longshot_overreach",
+  "value_misallocation",
+  "data_insufficient",
+];
+
+const PLACE_PROB_OVER_ESTIMATE_THRESHOLD = 0.55;
+const PLACE_PROB_OVER_ESTIMATE_HIGH_THRESHOLD = 0.75;
+const PLACE_PROB_OVER_ESTIMATE_CEILING = 0.85;
+const LONGSHOT_ODDS_THRESHOLD = 20;
+const LONGSHOT_POPULARITY_THRESHOLD = 8;
+
+function getSnapshotRankRow(snapshot: PredictionSnapshot | undefined, rank: 1 | 2 | 3) {
+  return snapshot?.rankedRows.find((row) => row.rank === rank) ?? null;
+}
+
+function getSnapshotTopRows(snapshot: PredictionSnapshot | undefined) {
+  return [1, 2, 3]
+    .map((rank) => getSnapshotRankRow(snapshot, rank as 1 | 2 | 3))
+    .filter((row): row is NonNullable<typeof row> => Boolean(row));
+}
+
+function addMissTag(
+  details: WeeklyDiagnosticsMissTagDetail[],
+  tag: WeeklyDiagnosticsMissTag,
+  reason: string,
+  evidence: Record<string, number | string | boolean | null>
+) {
+  if (details.some((detail) => detail.tag === tag)) return;
+  details.push({ tag, reason, evidence });
+}
+
+function getPrimaryMissTag(details: WeeklyDiagnosticsMissTagDetail[]): WeeklyDiagnosticsMissTag | null {
+  for (const tag of MISS_TAG_ORDER) {
+    if (details.some((detail) => detail.tag === tag)) return tag;
+  }
+  return null;
+}
+
+function buildMissTagCounts(
+  raceMisses: WeeklyDiagnosticsRaceMiss[],
+  mode: "primary" | "all"
+): WeeklyDiagnosticsMissTagCount[] {
+  const counts = new Map<WeeklyDiagnosticsMissTag, number>(MISS_TAG_ORDER.map((tag) => [tag, 0]));
+  for (const miss of raceMisses) {
+    const tags = mode === "primary" ? (miss.primaryMissTag ? [miss.primaryMissTag] : []) : miss.missTags;
+    for (const tag of tags) {
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+  }
+
+  return MISS_TAG_ORDER.map((tag) => {
+    const raceCount = counts.get(tag) ?? 0;
+    return {
+      tag,
+      raceCount,
+      rate: raceMisses.length > 0 ? round2((raceCount / raceMisses.length) * 100) : 0,
+    };
+  });
+}
+
+function getStrongMarketFinisher(
+  race: GeneratedReviewRace,
+  excludedHorseIds: Set<string>
+): { horseId: string; horseName: string; popularityRank: number } | null {
+  const finishers = race.result?.finishers
+    ?.slice()
+    .sort((left, right) => left.position - right.position)
+    .slice(0, 3) ?? [];
+
+  for (const finisher of finishers) {
+    const horseId = normalizeString(finisher.horseId);
+    if (!horseId || excludedHorseIds.has(horseId)) continue;
+    const popularityRank = Number.isFinite(Number(finisher.popularity))
+      ? Number(finisher.popularity)
+      : getHorsePopularityRank(race, horseId);
+    if (!popularityRank || popularityRank > 3) continue;
+    return {
+      horseId,
+      horseName: finisher.name,
+      popularityRank,
+    };
+  }
+
+  return null;
+}
+
+function buildRaceMissDiagnostics(
+  race: GeneratedReviewRace,
+  snapshot: PredictionSnapshot | undefined,
+  settlement: RecommendationSettlementBundle | undefined
+): WeeklyDiagnosticsRaceMiss | null {
+  const targetFlags = getRaceTargetFlags(race);
+  const raceId = String(race.raceId ?? "");
+  const top3HorseIds = race.result?.top3HorseIds.map((id) => String(id)) ?? [];
+  const snapshotPlaced = snapshot?.honmeiHorseId ? top3HorseIds.includes(snapshot.honmeiHorseId) : false;
+  const routineSettled = settlement?.win?.settlementStatus === "settled";
+  const routinePlaced = routineSettled ? settlement?.win?.fukuOutcome === "hit" : false;
+  const valueSettled = settlement?.value?.settlementStatus === "settled";
+  const valuePlaced = valueSettled ? settlement?.value?.fukuOutcome === "hit" : false;
+  const missRace = routineSettled ? !routinePlaced : snapshot?.honmeiHorseId ? !snapshotPlaced : false;
+
+  if (!missRace) return null;
+
+  const snapshotTopRows = getSnapshotTopRows(snapshot);
+  const sim2 = getSnapshotRankRow(snapshot, 2);
+  const sim3 = getSnapshotRankRow(snapshot, 3);
+  const sim2Placed = Boolean(sim2 && top3HorseIds.includes(String(sim2.horseId)));
+  const sim3Placed = Boolean(sim3 && top3HorseIds.includes(String(sim3.horseId)));
+  const simTop3PlacedCount = snapshotTopRows.filter((row) => top3HorseIds.includes(String(row.horseId))).length;
+  const runnerUpHit = Boolean(settlement?.win?.runnerUpHorseId && top3HorseIds.includes(settlement.win.runnerUpHorseId));
+  const details: WeeklyDiagnosticsMissTagDetail[] = [];
+
+  if (!snapshot && !routineSettled && !valueSettled) {
+    addMissTag(details, "data_insufficient", "missing_snapshot_and_settlement_context", {
+      hasSnapshot: false,
+      hasRoutineSettlement: false,
+      hasValueSettlement: false,
+    });
+  }
+
+  if (runnerUpHit) {
+    addMissTag(details, "rank_error", "runner_up_hit_after_honmei_miss", {
+      honmeiHorseId: settlement?.win?.horseId ?? snapshot?.honmeiHorseId ?? null,
+      runnerUpHorseId: settlement?.win?.runnerUpHorseId ?? null,
+      runnerUpPlaceProb: settlement?.win?.runnerUpPlaceProb ?? null,
+      runnerUpPlaceScore: settlement?.win?.runnerUpPlaceScore ?? null,
+    });
+  } else if (!snapshotPlaced && sim2Placed) {
+    addMissTag(details, "rank_error", "sim1_out_but_sim2_hit", {
+      sim1HorseId: snapshot?.honmeiHorseId ?? null,
+      sim2HorseId: sim2?.horseId ?? null,
+      sim2WinProb: sim2?.winProb ?? null,
+    });
+  } else if (!snapshotPlaced && sim3Placed) {
+    addMissTag(details, "rank_error", "sim1_out_but_sim3_hit", {
+      sim1HorseId: snapshot?.honmeiHorseId ?? null,
+      sim3HorseId: sim3?.horseId ?? null,
+      sim3WinProb: sim3?.winProb ?? null,
+    });
+  }
+
+  const fadeExcludedHorseIds = new Set(
+    [
+      settlement?.win?.horseId,
+      settlement?.value?.horseId,
+      ...snapshotTopRows.map((row) => String(row.horseId)),
+    ].filter((horseId): horseId is string => Boolean(horseId))
+  );
+  const strongMarketFinisher = getStrongMarketFinisher(race, fadeExcludedHorseIds);
+  if (strongMarketFinisher) {
+    addMissTag(
+      details,
+      "market_overfade",
+      strongMarketFinisher.popularityRank === 1 ? "market_favorite_hit_after_fade" : "market_top3_hit_after_fade",
+      {
+        horseId: strongMarketFinisher.horseId,
+        horseName: strongMarketFinisher.horseName,
+        popularityRank: strongMarketFinisher.popularityRank,
+        routineHorseId: settlement?.win?.horseId ?? null,
+        valueHorseId: settlement?.value?.horseId ?? null,
+      }
+    );
+  }
+
+  if (routineSettled && settlement?.win && settlement.win.fukuOutcome === "miss" && settlement.win.placeProb >= PLACE_PROB_OVER_ESTIMATE_THRESHOLD) {
+    const reason =
+      settlement.win.placeProb >= PLACE_PROB_OVER_ESTIMATE_CEILING
+        ? "placeProb_ceiling_and_out"
+        : settlement.win.placeProb >= PLACE_PROB_OVER_ESTIMATE_HIGH_THRESHOLD
+          ? "placeProb>=0.75_and_out"
+          : "placeProb>=0.55_and_out";
+    addMissTag(details, "place_prob_overestimate", reason, {
+      horseId: settlement.win.horseId,
+      horseName: settlement.win.horseName,
+      placeProb: settlement.win.placeProb,
+      placeScore: settlement.win.placeScore,
+      overbetLabel: settlement.win.overbetLabel,
+    });
+  }
+
+  if (valueSettled && settlement?.value && settlement.value.fukuOutcome === "miss") {
+    const valuePopularityRank = getHorsePopularityRank(race, settlement.value.horseId);
+    const isLongshot =
+      settlement.value.realOdds >= LONGSHOT_ODDS_THRESHOLD ||
+      (valuePopularityRank !== null && valuePopularityRank >= LONGSHOT_POPULARITY_THRESHOLD);
+
+    if (isLongshot && settlement.value.placeProb >= 0.25) {
+      addMissTag(details, "longshot_overreach", "value_longshot_gate_passed_but_out", {
+        horseId: settlement.value.horseId,
+        horseName: settlement.value.horseName,
+        realOdds: settlement.value.realOdds,
+        popularityRank: valuePopularityRank,
+        placeProb: settlement.value.placeProb,
+        valueScore: settlement.value.valueScore,
+      });
+    }
+
+    const valueAltReason:
+      | { reason: string; evidence: Record<string, string | number | boolean | null> }
+      | null = strongMarketFinisher && strongMarketFinisher.horseId !== settlement.value.horseId
+      ? {
+          reason: "value_miss_but_market_hit",
+          evidence: {
+            valueHorseId: settlement.value.horseId,
+            marketHorseId: strongMarketFinisher.horseId,
+            marketPopularityRank: strongMarketFinisher.popularityRank,
+            valueScoreGap: settlement.value.scoreGap,
+          },
+        }
+      : runnerUpHit && settlement.win?.runnerUpHorseId !== settlement.value.horseId
+        ? {
+            reason: "value_miss_but_runner_up_hit",
+            evidence: {
+              valueHorseId: settlement.value.horseId,
+              runnerUpHorseId: settlement.win?.runnerUpHorseId ?? null,
+              runnerUpPlaceProb: settlement.win?.runnerUpPlaceProb ?? null,
+              valueScoreGap: settlement.value.scoreGap,
+            },
+          }
+        : sim2Placed && sim2?.horseId !== settlement.value.horseId
+          ? {
+              reason: "value_miss_but_sim2_hit",
+              evidence: {
+                valueHorseId: settlement.value.horseId,
+                sim2HorseId: sim2?.horseId ?? null,
+                valueScoreGap: settlement.value.scoreGap,
+              },
+            }
+          : sim3Placed && sim3?.horseId !== settlement.value.horseId
+            ? {
+                reason: "value_miss_but_sim3_hit",
+                evidence: {
+                  valueHorseId: settlement.value.horseId,
+                  sim3HorseId: sim3?.horseId ?? null,
+                  valueScoreGap: settlement.value.scoreGap,
+                },
+              }
+            : null;
+
+    if (valueAltReason) {
+      addMissTag(details, "value_misallocation", valueAltReason.reason, {
+        horseId: settlement.value.horseId,
+        horseName: settlement.value.horseName,
+        realOdds: settlement.value.realOdds,
+        placeProb: settlement.value.placeProb,
+        valueScore: settlement.value.valueScore,
+        scoreGap: settlement.value.scoreGap,
+        ...valueAltReason.evidence,
+      });
+    }
+  }
+
+  if (snapshot && simTop3PlacedCount === 0 && !valuePlaced) {
+    addMissTag(details, "top3_total_miss", "sim_top3_all_out_and_value_out", {
+      simTop3PlacedCount,
+      hasValueCandidate: valueSettled,
+      valueHorseId: settlement?.value?.horseId ?? snapshot.valueHorseId ?? null,
+    });
+  }
+
+  if (details.length === 0) {
+    addMissTag(details, "data_insufficient", "miss_without_clear_rule_match", {
+      hasSnapshot: Boolean(snapshot),
+      hasRoutineSettlement: routineSettled,
+      hasValueSettlement: valueSettled,
+      snapshotTop3PlacedCount: snapshot ? simTop3PlacedCount : null,
+    });
+  }
+
+  return {
+    raceId,
+    courseId: race.courseId,
+    label: race.label,
+    date: race.date,
+    raceNumber: targetFlags.raceNumber,
+    isSpecialRace: targetFlags.isSpecialRace,
+    isFinalRace: targetFlags.isFinalRace,
+    isJumpRace: targetFlags.isJumpRace,
+    raceSegment: targetFlags.raceSegment,
+    primaryMissTag: getPrimaryMissTag(details),
+    missTags: details.map((detail) => detail.tag),
+    missTagDetails: details,
+  };
+}
+
 function toRepresentativeRace(
   race: GeneratedReviewRace,
   snapshot: PredictionSnapshot | undefined,
   settlement: RecommendationSettlementBundle | undefined,
   reviewsByRaceId: Record<string, GeneratedReviewRecord>,
-  category: WeeklyDiagnosticsRepresentativeRace["category"]
+  category: WeeklyDiagnosticsRepresentativeRace["category"],
+  raceMiss: WeeklyDiagnosticsRaceMiss | null = null
 ): WeeklyDiagnosticsRepresentativeRace {
+  const targetFlags = getRaceTargetFlags(race);
   const top3HorseIds = race.result?.top3HorseIds.map((id) => String(id)) ?? [];
   const raceReview = reviewsByRaceId[String(race.raceId ?? "")];
   const snapshotHonmeiHorseId = snapshot?.honmeiHorseId ?? null;
@@ -392,6 +741,11 @@ function toRepresentativeRace(
     courseId: race.courseId,
     label: race.label,
     date: race.date,
+    raceNumber: targetFlags.raceNumber,
+    isSpecialRace: targetFlags.isSpecialRace,
+    isFinalRace: targetFlags.isFinalRace,
+    isJumpRace: targetFlags.isJumpRace,
+    raceSegment: targetFlags.raceSegment,
     category,
     resultTop3HorseIds: top3HorseIds,
     resultTop3HorseNames: race.result?.top3HorseNames ?? [],
@@ -405,6 +759,9 @@ function toRepresentativeRace(
     valueHorseName: settlement?.value?.horseName ?? getHorseName(snapshot, valueHorseId),
     valuePlaced: valueHorseId ? top3HorseIds.includes(valueHorseId) : null,
     valueReturnRate: settlement?.value?.fukuPayout ? settlement.value.fukuPayout : null,
+    primaryMissTag: raceMiss?.primaryMissTag ?? null,
+    missTags: raceMiss?.missTags ?? [],
+    missTagDetails: raceMiss?.missTagDetails ?? [],
     reviewSummary: raceReview?.summary ?? race.review?.summary ?? null,
   };
 }
@@ -426,7 +783,7 @@ export async function loadWeeklyDiagnosticsContext(scope: DiagnosticsAggregation
   };
 }
 
-export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagnostics {
+function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDiagnostics, "segments"> {
   const confirmedRaces = context.races.filter(hasConfirmedResult);
   const dateRange = getDateRange(context.races);
   const weekKey = buildWeekKey(context.races);
@@ -524,6 +881,7 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
   const worstMissCandidates: Array<{ score: number; race: WeeklyDiagnosticsRepresentativeRace }> = [];
   const disagreementCandidates: Array<{ score: number; race: WeeklyDiagnosticsRepresentativeRace }> = [];
   const valueHitCandidates: Array<{ score: number; race: WeeklyDiagnosticsRepresentativeRace }> = [];
+  const raceMisses: WeeklyDiagnosticsRaceMiss[] = [];
 
   for (const race of confirmedRaces) {
     const raceId = String(race.raceId ?? "");
@@ -531,6 +889,11 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
     const settlement = context.settlementsByRaceId[raceId];
     const top3HorseIds = race.result?.top3HorseIds.map((id) => String(id)) ?? [];
     const winnerHorseId = String(race.result?.winnerHorseId ?? "");
+    const raceMiss = buildRaceMissDiagnostics(race, snapshot, settlement);
+
+    if (raceMiss) {
+      raceMisses.push(raceMiss);
+    }
 
     if (snapshot?.honmeiHorseId) {
       placeCore.snapshotHonmei.raceCount += 1;
@@ -604,7 +967,14 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
         }
         disagreementCandidates.push({
           score: (snapshotPlaced ? 1 : 0) + (routinePlaced ? 1 : 0) + (settlement.value?.fukuPayout ?? 0) / 1000,
-          race: toRepresentativeRace(race, snapshot, settlement, context.reviewsByRaceId, "disagreement"),
+          race: toRepresentativeRace(
+            race,
+            snapshot,
+            settlement,
+            context.reviewsByRaceId,
+            "disagreement",
+            raceMiss ?? null
+          ),
         });
       }
     }
@@ -640,7 +1010,14 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
           (snapshotPlaced ? 2 : 0) +
           (routinePlaced ? 2 : 0) +
           (valuePlaced ? 1 : 0),
-        race: toRepresentativeRace(race, snapshot, settlement, context.reviewsByRaceId, "best_hit"),
+        race: toRepresentativeRace(
+          race,
+          snapshot,
+          settlement,
+          context.reviewsByRaceId,
+          "best_hit",
+          raceMiss ?? null
+        ),
       });
     }
 
@@ -648,14 +1025,28 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
       const snapshotTopRow = snapshot.rankedRows.find((row) => row.rank === 1);
       worstMissCandidates.push({
         score: Number(snapshotTopRow?.winProb ?? 0) + Number(snapshotTopRow?.realOdds ? 100 / snapshotTopRow.realOdds : 0),
-        race: toRepresentativeRace(race, snapshot, settlement, context.reviewsByRaceId, "worst_miss"),
+        race: toRepresentativeRace(
+          race,
+          snapshot,
+          settlement,
+          context.reviewsByRaceId,
+          "worst_miss",
+          raceMiss ?? null
+        ),
       });
     }
 
     if (settlement?.value?.settlementStatus === "settled" && settlement.value.fukuOutcome === "hit") {
       valueHitCandidates.push({
         score: settlement.value.fukuPayout + (valuePlaced ? 50 : 0),
-        race: toRepresentativeRace(race, snapshot, settlement, context.reviewsByRaceId, "value_hit"),
+        race: toRepresentativeRace(
+          race,
+          snapshot,
+          settlement,
+          context.reviewsByRaceId,
+          "value_hit",
+          raceMiss ?? null
+        ),
       });
     }
   }
@@ -705,6 +1096,13 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
 
   disagreement.snapshotPlaceRate = percentage(disagreement.snapshotPlaceRate, disagreement.raceCount);
   disagreement.routinePlaceRate = percentage(disagreement.routinePlaceRate, disagreement.raceCount);
+
+  const missDiagnostics = {
+    missRaceCount: raceMisses.length,
+    primary: buildMissTagCounts(raceMisses, "primary"),
+    all: buildMissTagCounts(raceMisses, "all"),
+    races: [...raceMisses].sort((left, right) => right.date.localeCompare(left.date) || left.label.localeCompare(right.label)),
+  };
 
   const representativeRaces = {
     bestHits: bestHitCandidates
@@ -790,6 +1188,7 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
     agreement,
     disagreement,
     representativeRaces,
+    missDiagnostics,
     signals,
     evaluation,
   };
@@ -797,6 +1196,41 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
   return {
     ...diagnosticsBase,
     recommendations: buildDiagnosticRecommendations(diagnosticsBase),
+  };
+}
+
+function buildSegmentSummary(
+  context: DiagnosticsContext,
+  segmentKey: RaceDiagnosticsSegmentKey
+): WeeklyDiagnosticsSegmentSummary {
+  const segmentRaces = context.races.filter((race) => matchesRaceDiagnosticSegment(race, segmentKey));
+  const segmentDiagnostics = buildWeeklyDiagnosticsBase({
+    ...context,
+    races: segmentRaces,
+  });
+
+  return {
+    key: segmentKey,
+    label: SEGMENT_LABELS[segmentKey],
+    raceCount: segmentRaces.length,
+    settledRaceCount: segmentRaces.filter(hasConfirmedResult).length,
+    placeCore: segmentDiagnostics.placeCore,
+    valueCore: segmentDiagnostics.valueCore,
+    agreement: segmentDiagnostics.agreement,
+    disagreement: segmentDiagnostics.disagreement,
+    missDiagnostics: segmentDiagnostics.missDiagnostics,
+  };
+}
+
+export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagnostics {
+  const diagnostics = buildWeeklyDiagnosticsBase(context);
+  const segments = Object.fromEntries(
+    RACE_DIAGNOSTIC_SEGMENTS.map((segmentKey) => [segmentKey, buildSegmentSummary(context, segmentKey)])
+  ) as Record<RaceDiagnosticsSegmentKey, WeeklyDiagnosticsSegmentSummary>;
+
+  return {
+    ...diagnostics,
+    segments,
   };
 }
 

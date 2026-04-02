@@ -1,4 +1,10 @@
-import type { WeeklyDiagnosticRecommendation, WeeklyDiagnostics } from "@/lib/types";
+import type {
+  WeeklyDiagnosticRecommendation,
+  WeeklyDiagnostics,
+  WeeklyDiagnosticsMissTag,
+} from "@/lib/types";
+
+type RecommendationDiagnosticsInput = Omit<WeeklyDiagnostics, "recommendations"> | Omit<WeeklyDiagnostics, "recommendations" | "segments">;
 
 const PLACE_RATE_GAP_THRESHOLD = 5;
 const PLACE_RATE_STRONG = 45;
@@ -9,6 +15,8 @@ const ROI_WEAK = 95;
 const ROI_GAP_THRESHOLD = 15;
 const MIN_SAMPLE_SMALL = 2;
 const MIN_SAMPLE_MEDIUM = 3;
+const MIN_MISS_TAG_COUNT = 2;
+const MISS_TAG_RATE_THRESHOLD = 25;
 
 function addRecommendation(
   target: WeeklyDiagnosticRecommendation[],
@@ -17,8 +25,21 @@ function addRecommendation(
   if (recommendation) target.push(recommendation);
 }
 
+function getMissTagCount(
+  diagnostics: RecommendationDiagnosticsInput,
+  tag: WeeklyDiagnosticsMissTag,
+  mode: "all" | "primary" = "all"
+) {
+  return diagnostics.missDiagnostics[mode].find((entry) => entry.tag === tag) ?? null;
+}
+
+function isMeaningfulMissTag(count: number, rate: number, missRaceCount: number) {
+  if (missRaceCount < MIN_SAMPLE_SMALL) return false;
+  return count >= MIN_MISS_TAG_COUNT || rate >= MISS_TAG_RATE_THRESHOLD;
+}
+
 export function buildDiagnosticRecommendations(
-  diagnostics: Omit<WeeklyDiagnostics, "recommendations">
+  diagnostics: RecommendationDiagnosticsInput
 ): WeeklyDiagnosticRecommendation[] {
   const recommendations: WeeklyDiagnosticRecommendation[] = [];
   const firstRank = diagnostics.placeCore.snapshotRanks.find((item) => item.rank === 1);
@@ -256,6 +277,142 @@ export function buildDiagnosticRecommendations(
         metricSignals: ["marketHeatCounts"],
       });
     }
+  }
+
+  const missRaceCount = diagnostics.missDiagnostics.missRaceCount;
+  const rankError = getMissTagCount(diagnostics, "rank_error");
+  const marketOverfade = getMissTagCount(diagnostics, "market_overfade");
+  const placeProbOverestimate = getMissTagCount(diagnostics, "place_prob_overestimate");
+  const longshotOverreach = getMissTagCount(diagnostics, "longshot_overreach");
+  const valueMisallocation = getMissTagCount(diagnostics, "value_misallocation");
+  const top3TotalMiss = getMissTagCount(diagnostics, "top3_total_miss");
+
+  if (
+    rankError &&
+    isMeaningfulMissTag(rankError.raceCount, rankError.rate, missRaceCount)
+  ) {
+    addRecommendation(recommendations, {
+      id: "miss_tag_rank_error_recheck",
+      category: "ranking",
+      targetStyle: "place_hit_rate",
+      priority: rankError.rate >= 40 ? "high" : "medium",
+      title: "本命順位付けを再点検",
+      summary: "候補抽出よりも1頭目の順位付けで取り逃している負けが目立つ。sim2/sim3やrunner-upが拾えているかを見直したい。",
+      evidence: {
+        missRaceCount,
+        rankErrorCount: rankError.raceCount,
+        rankErrorRate: rankError.rate,
+        primaryRankErrorCount: getMissTagCount(diagnostics, "rank_error", "primary")?.raceCount ?? 0,
+      },
+      metricSignals: ["missDiagnostics.rank_error"],
+    });
+  }
+
+  if (
+    marketOverfade &&
+    isMeaningfulMissTag(marketOverfade.raceCount, marketOverfade.rate, missRaceCount)
+  ) {
+    addRecommendation(recommendations, {
+      id: "miss_tag_market_overfade_rebalance",
+      category: "place_core",
+      targetStyle: "balanced",
+      priority: marketOverfade.rate >= 35 ? "high" : "medium",
+      title: "市場過熱減点の強さを見直す",
+      summary: "市場支持の強い馬を切りすぎて負けるケースが積み上がっている。market fade の減点や採用条件を少し戻したい。",
+      evidence: {
+        missRaceCount,
+        marketOverfadeCount: marketOverfade.raceCount,
+        marketOverfadeRate: marketOverfade.rate,
+        primaryMarketOverfadeCount: getMissTagCount(diagnostics, "market_overfade", "primary")?.raceCount ?? 0,
+      },
+      metricSignals: ["missDiagnostics.market_overfade"],
+    });
+  }
+
+  if (
+    placeProbOverestimate &&
+    isMeaningfulMissTag(placeProbOverestimate.raceCount, placeProbOverestimate.rate, missRaceCount)
+  ) {
+    addRecommendation(recommendations, {
+      id: "miss_tag_place_prob_overestimate_recalibrate",
+      category: "place_core",
+      targetStyle: "place_hit_rate",
+      priority: placeProbOverestimate.rate >= 35 ? "high" : "medium",
+      title: "placeProb の定義を再調整",
+      summary: "高い複勝確率を付けた本命が圏外に沈む負けが多い。placeProb の上限・市場混合率・安定度寄与を再点検したい。",
+      evidence: {
+        missRaceCount,
+        placeProbOverestimateCount: placeProbOverestimate.raceCount,
+        placeProbOverestimateRate: placeProbOverestimate.rate,
+        primaryPlaceProbOverestimateCount:
+          getMissTagCount(diagnostics, "place_prob_overestimate", "primary")?.raceCount ?? 0,
+      },
+      metricSignals: ["missDiagnostics.place_prob_overestimate"],
+    });
+  }
+
+  if (
+    longshotOverreach &&
+    isMeaningfulMissTag(longshotOverreach.raceCount, longshotOverreach.rate, missRaceCount)
+  ) {
+    addRecommendation(recommendations, {
+      id: "miss_tag_longshot_overreach_restrict",
+      category: "longshot",
+      targetStyle: "balanced",
+      priority: longshotOverreach.rate >= 35 ? "high" : "medium",
+      title: "妙味候補の longshot gate を引き締める",
+      summary: "妙味候補が高オッズ寄りに伸びすぎている。quality gate の最低 placeProb や人気薄ボーナスの効かせ方を見直したい。",
+      evidence: {
+        missRaceCount,
+        longshotOverreachCount: longshotOverreach.raceCount,
+        longshotOverreachRate: longshotOverreach.rate,
+        primaryLongshotOverreachCount: getMissTagCount(diagnostics, "longshot_overreach", "primary")?.raceCount ?? 0,
+      },
+      metricSignals: ["missDiagnostics.longshot_overreach"],
+    });
+  }
+
+  if (
+    valueMisallocation &&
+    isMeaningfulMissTag(valueMisallocation.raceCount, valueMisallocation.rate, missRaceCount)
+  ) {
+    addRecommendation(recommendations, {
+      id: "miss_tag_value_misallocation_rebalance",
+      category: "value_core",
+      targetStyle: "place_return_rate",
+      priority: valueMisallocation.rate >= 35 ? "high" : "medium",
+      title: "妙味候補の期待値配分を再点検",
+      summary: "妙味候補は出せているが、上位候補や市場上位に対する配分がずれている。valueScore と tie-break の再配分が必要。",
+      evidence: {
+        missRaceCount,
+        valueMisallocationCount: valueMisallocation.raceCount,
+        valueMisallocationRate: valueMisallocation.rate,
+        primaryValueMisallocationCount:
+          getMissTagCount(diagnostics, "value_misallocation", "primary")?.raceCount ?? 0,
+      },
+      metricSignals: ["missDiagnostics.value_misallocation"],
+    });
+  }
+
+  if (
+    top3TotalMiss &&
+    isMeaningfulMissTag(top3TotalMiss.raceCount, top3TotalMiss.rate, missRaceCount)
+  ) {
+    addRecommendation(recommendations, {
+      id: "miss_tag_top3_total_miss_reset",
+      category: "ranking",
+      targetStyle: "balanced",
+      priority: top3TotalMiss.rate >= 35 ? "high" : "medium",
+      title: "上位想定の総崩れ区間を分離して点検",
+      summary: "本命・妙味・sim上位がまとめて外れるレースが多い。対象拡張前に、総崩れ区間の共通条件を切り出して見る価値がある。",
+      evidence: {
+        missRaceCount,
+        top3TotalMissCount: top3TotalMiss.raceCount,
+        top3TotalMissRate: top3TotalMiss.rate,
+        primaryTop3TotalMissCount: getMissTagCount(diagnostics, "top3_total_miss", "primary")?.raceCount ?? 0,
+      },
+      metricSignals: ["missDiagnostics.top3_total_miss"],
+    });
   }
 
   return recommendations;

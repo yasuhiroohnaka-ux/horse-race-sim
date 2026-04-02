@@ -12,7 +12,9 @@ import {
   normalizePredictionOrigin,
   normalizeScoringVersion,
 } from "@/lib/predictionSnapshots";
-import type { DiagnosticsAggregationScope, PredictionOrigin, PredictionSnapshot } from "@/lib/types";
+import { buildWeeklyDiagnostics, loadWeeklyDiagnosticsContext } from "@/lib/weeklyDiagnostics";
+import { RACE_DIAGNOSTIC_SEGMENTS, matchesRaceDiagnosticSegment } from "@/lib/raceSegmentation.mjs";
+import type { DiagnosticsAggregationScope, PredictionOrigin, PredictionSnapshot, RaceDiagnosticsSegmentKey } from "@/lib/types";
 
 const ROOT = process.cwd();
 const STATE_PATH = path.join(ROOT, "data", "routine-state.json");
@@ -182,6 +184,19 @@ type AggregateSummary = {
   };
   snapshotRanks: SnapshotRankSummary[];
   disagreementDetail: DisagreementDetailSummary;
+};
+
+type AggregateSegmentSummary = {
+  key: RaceDiagnosticsSegmentKey;
+  label: string;
+  raceCount: number;
+  settledRaceCount: number;
+  summary: AggregateSummary;
+  missDiagnostics: {
+    missRaceCount: number;
+    primary: { tag: string; raceCount: number; rate: number }[];
+    all: { tag: string; raceCount: number; rate: number }[];
+  };
 };
 
 function createPopularityBandSummary(): PopularityBandSummary {
@@ -567,13 +582,49 @@ function buildAggregateSummary(
   return summary;
 }
 
+function buildSegmentedAggregateSummary(
+  races: GeneratedReviewRace[],
+  snapshotsByRaceId: Record<string, PredictionSnapshot>,
+  settlementsByRaceId: Record<string, RecommendationSettlementBundle>,
+  diagnostics: ReturnType<typeof buildWeeklyDiagnostics>
+) {
+  return Object.fromEntries(
+    RACE_DIAGNOSTIC_SEGMENTS.map((segmentKey) => {
+      const segmentRaces = races.filter((race) => matchesRaceDiagnosticSegment(race, segmentKey));
+      const segmentDiagnostics = diagnostics.segments[segmentKey];
+      const segmentSummary: AggregateSegmentSummary = {
+        key: segmentKey,
+        label: segmentKey,
+        raceCount: segmentRaces.length,
+        settledRaceCount: segmentRaces.filter(hasConfirmedResult).length,
+        summary: buildAggregateSummary(segmentRaces, snapshotsByRaceId, settlementsByRaceId),
+        missDiagnostics: {
+          missRaceCount: segmentDiagnostics.missDiagnostics.missRaceCount,
+          primary: segmentDiagnostics.missDiagnostics.primary.map((entry) => ({
+            tag: entry.tag,
+            raceCount: entry.raceCount,
+            rate: entry.rate,
+          })),
+          all: segmentDiagnostics.missDiagnostics.all.map((entry) => ({
+            tag: entry.tag,
+            raceCount: entry.raceCount,
+            rate: entry.rate,
+          })),
+        },
+      };
+      return [segmentKey, segmentSummary];
+    })
+  ) as Record<RaceDiagnosticsSegmentKey, AggregateSegmentSummary>;
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const scope = normalizeAggregationScope(searchParams.get("scope"));
-    const [stateRaw, snapshotsByRaceId] = await Promise.all([
+    const [stateRaw, snapshotsByRaceId, diagnosticsContext] = await Promise.all([
       fs.readFile(STATE_PATH, "utf8"),
       loadLatestSnapshotsByRaceId(scope),
+      loadWeeklyDiagnosticsContext(scope),
     ]);
     const state = JSON.parse(stateRaw.replace(/^\uFEFF/, ""));
 
@@ -610,6 +661,13 @@ export async function GET(request: Request) {
 
     const races = [...GENERATED_COMPLETED_RACES, ...GENERATED_ARCHIVED_RACES];
     const summary = buildAggregateSummary(races, snapshotsByRaceId, settlementsByRaceId);
+    const diagnostics = buildWeeklyDiagnostics(diagnosticsContext);
+    const segmentedSummary = buildSegmentedAggregateSummary(
+      races,
+      snapshotsByRaceId,
+      settlementsByRaceId,
+      diagnostics
+    );
 
     return NextResponse.json({
       scope,
@@ -618,6 +676,8 @@ export async function GET(request: Request) {
       settlementsByCourseId,
       settlementsByRaceId,
       summary,
+      segmentedSummary,
+      diagnostics,
     });
   } catch {
     return NextResponse.json({
@@ -627,6 +687,8 @@ export async function GET(request: Request) {
       settlementsByCourseId: {},
       settlementsByRaceId: {},
       summary: createEmptySummary(),
+      segmentedSummary: {},
+      diagnostics: null,
     });
   }
 }
