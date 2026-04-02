@@ -27,12 +27,14 @@ export function WeeklyRaceBrowser({ courses }: WeeklyRaceBrowserProps) {
         <div>
           <p className="text-xs font-semibold tracking-[0.2em] text-slate-400">THIS WEEK</p>
           <h2 className="mt-1 text-2xl font-bold text-slate-900">今週の対象レース</h2>
-          <p className="mt-2 text-sm text-slate-500">G1からOPまで、見たいグレードだけに絞ってレースを選べます。</p>
+          <p className="mt-2 text-sm text-slate-500">
+            重賞、L、OPに加え、特別戦や最終12Rまで含めて、今週シミュレーションできるレースを一覧化しています。
+          </p>
         </div>
         <div className="flex items-center gap-3">
-          <p className="text-sm text-slate-500">{filteredCourses.length}件表示</p>
+          <p className="text-sm text-slate-500">{filteredCourses.length}レース表示</p>
           <Link href="/sim" className="text-sm font-semibold text-blue-600 hover:underline">
-            分析画面へ
+            シミュレーション画面へ
           </Link>
         </div>
       </div>
@@ -40,12 +42,7 @@ export function WeeklyRaceBrowser({ courses }: WeeklyRaceBrowserProps) {
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="mb-2 text-xs font-semibold tracking-[0.16em] text-slate-400">GRADE FILTER</p>
-          <GradeFilterChips
-            value={gradeFilter}
-            onChange={setGradeFilter}
-            counts={counts}
-            totalCount={courses.length}
-          />
+          <GradeFilterChips value={gradeFilter} onChange={setGradeFilter} counts={counts} totalCount={courses.length} />
         </div>
       </div>
 
@@ -61,12 +58,10 @@ export function WeeklyRaceBrowser({ courses }: WeeklyRaceBrowserProps) {
                 <span className="rounded-full bg-slate-900 px-2.5 py-1 text-[11px] font-bold text-white">
                   {courseBadgeLabel(course)}
                 </span>
-                {dayLabel(course.day) ? (
-                  <span className="text-xs text-slate-400">{dayLabel(course.day)}</span>
-                ) : null}
+                {dayLabel(course.day) ? <span className="text-xs text-slate-400">{dayLabel(course.day)}</span> : null}
               </div>
               <p className="mt-3 text-lg font-bold text-slate-900">{course.displayName ?? course.name}</p>
-              <p className="mt-2 text-sm text-slate-500">{course.shortComment ?? "コース形状と市場乖離をすぐ確認できます。"}</p>
+              <p className="mt-2 text-sm text-slate-500">{course.shortComment ?? "コース形状と市場とのズレをすぐ確認できます。"}</p>
             </Link>
           ))}
         </div>

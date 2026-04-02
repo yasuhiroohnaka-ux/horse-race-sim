@@ -9,6 +9,7 @@ import {
   type GeneratedReviewRace,
 } from "@/lib/generatedRaceSchedule";
 import { ARCHIVED_RACES as LEGACY_ARCHIVED_RACES, type ArchivedRace as LegacyArchivedRace } from "@/lib/raceData";
+import { getRaceTargetFlags } from "@/lib/raceSegmentation.mjs";
 import type { PredictionSnapshot, RaceCommentaryPayload } from "@/lib/types";
 import {
   buildPickExplanations,
@@ -190,7 +191,8 @@ function openReviewPost(text: string) {
 function buildAndOpenReviewPost(
   race: ReviewCard,
   snapshot: PredictionSnapshot | undefined,
-  settlement: RecommendationSettlementBundle | null
+  settlement: RecommendationSettlementBundle | null,
+  commentary?: RaceCommentaryPayload
 ) {
   // Builder priority: use structured builder when settlement data exists
   if (settlement?.win || snapshot) {
@@ -213,6 +215,13 @@ function buildAndOpenReviewPost(
       snapshot: snapshot ?? null,
       agreementExplanation: explanations.agreement,
       disagreementExplanation,
+      raceSegment: commentary?.raceSegment ?? null,
+      missTags: commentary?.missTags ?? [],
+      primaryMissTag: commentary?.primaryMissTag ?? null,
+    } as Parameters<typeof buildManualReviewPayload>[0] & {
+      raceSegment: string | null;
+      missTags: string[];
+      primaryMissTag: string | null;
     });
 
     if (payload) {
@@ -331,13 +340,30 @@ function buildLegacyReviewCards(): ReviewCard[] {
   return LEGACY_ARCHIVED_RACES.map((race) => {
     const course = ARCHIVED_COURSES.find((entry) => entry.id === race.courseId);
     const raceDate = new Date(`${race.date}T00:00:00+09:00`);
+    const targetFlags = getRaceTargetFlags({
+      raceId: race.raceId ?? buildLegacyRaceId(race.courseId, race.date),
+      courseId: race.courseId,
+      label: race.label,
+      grade: String(course?.grade ?? "legacy"),
+      raceNumber: course?.raceNumber ?? null,
+      surface: course?.surface ?? "Turf",
+      isSpecialRace: course?.isSpecialRace ?? null,
+      isFinalRace: course?.isFinalRace ?? null,
+      isJumpRace: course?.isJumpRace ?? null,
+      raceSegment: course?.raceSegment ?? null,
+    });
 
-      return {
-        courseId: race.courseId,
-        raceId: race.raceId ?? buildLegacyRaceId(race.courseId, race.date),
+    return {
+      courseId: race.courseId,
+      raceId: race.raceId ?? buildLegacyRaceId(race.courseId, race.date),
       label: race.label,
       grade: String(course?.grade ?? "legacy"),
       day: raceDate.getDay() === 0 ? "Sun" : "Sat",
+      raceNumber: targetFlags.raceNumber ?? course?.raceNumber ?? 0,
+      isSpecialRace: targetFlags.isSpecialRace,
+      isFinalRace: targetFlags.isFinalRace,
+      isJumpRace: targetFlags.isJumpRace,
+      raceSegment: targetFlags.raceSegment,
       venue: String(course?.venue ?? ""),
       venueKey: String(race.courseId.split("-")[0] ?? ""),
       surface: course?.surface ?? "Turf",
@@ -979,7 +1005,7 @@ function renderReviewCard(
           {(settlement?.win || snapshot || race.review?.xPostText) ? (
             <button
               type="button"
-              onClick={() => buildAndOpenReviewPost(race, snapshot, settlement)}
+              onClick={() => buildAndOpenReviewPost(race, snapshot, settlement, commentary)}
               className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
             >
               Xに投稿

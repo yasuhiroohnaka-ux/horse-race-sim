@@ -121,6 +121,11 @@ function buildGeneratedCourse(race: {
   label: string;
   grade: string;
   day: string;
+  raceNumber: number;
+  isSpecialRace: boolean;
+  isFinalRace: boolean;
+  isJumpRace: boolean;
+  raceSegment: Course["raceSegment"];
   venue: string;
   venueKey: string;
   surface: "Turf" | "Dirt";
@@ -148,10 +153,15 @@ function buildGeneratedCourse(race: {
     venue: race.venue,
     day: race.day,
     grade: race.grade,
+    raceNumber: race.raceNumber,
     distance: race.distance,
     surface: race.surface,
     straightLength: race.straightLength,
     hashtag: race.hashtag,
+    isSpecialRace: race.isSpecialRace,
+    isFinalRace: race.isFinalRace,
+    isJumpRace: race.isJumpRace,
+    raceSegment: race.raceSegment,
     archived,
     defaultBias: {
       innerOuter: INNER_OUTER_BY_TRACK[race.venueKey] ?? 0,

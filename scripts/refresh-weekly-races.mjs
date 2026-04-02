@@ -1,5 +1,10 @@
 ﻿import fs from "node:fs/promises";
 import path from "node:path";
+import {
+  TARGET_RACE_CONFIG,
+  getRaceTargetFlags,
+  isExpandedTargetRace
+} from "../lib/raceSegmentation.mjs";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -46,7 +51,6 @@ const GRADE_MAP = {
   L: "L"
 };
 
-const TARGET_GRADES = new Set(["G1", "G2", "G3", "L", "OP"]);
 const MOBILE_RACE_LIST_UA =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
 
@@ -188,15 +192,28 @@ function parseRaceMeta(raceId, shutubaHtml, dayLabel) {
     .replace(/\((?:G[123]|L|OP)\)/gi, "")
     .replace(/\s*出馬表\s*$/i, "")
     .trim();
-  const grade = parseGrade(shutubaHtml);
-  if (!cleanedLabel || !grade || !TARGET_GRADES.has(grade)) return null;
+  const rawGrade = parseGrade(shutubaHtml);
+  if (!cleanedLabel) return null;
 
   const raceData = normalizeSpace(shutubaHtml.match(/class="RaceData01"[^>]*>([\s\S]*?)<\/div>/i)?.[1] ?? "");
   const raceNo = Number.parseInt(raceId.slice(-2), 10);
   const surfaceLabel = raceData.match(/(芝|ダート|ダ)\s*(\d{3,4})m/i)?.[1] ?? "";
   const distance = Number.parseInt(raceData.match(/(?:芝|ダート|ダ)\s*(\d{3,4})m/i)?.[1] ?? "", 10);
   const surface = SURFACE_LABEL_TO_KEY[surfaceLabel] ?? null;
-  if (!(distance > 0) || !surface) return null;
+  const targetFlags = getRaceTargetFlags(
+    {
+      raceId,
+      label: cleanedLabel,
+      grade: rawGrade,
+      raceNumber: raceNo,
+      surface,
+      surfaceLabel,
+      raceData,
+      title: label
+    },
+    TARGET_RACE_CONFIG
+  );
+  if (!(distance > 0) || !surface || !isExpandedTargetRace(targetFlags, TARGET_RACE_CONFIG)) return null;
 
   const straightLength = STRAIGHT_LENGTH_BY_TRACK[venue.key]?.[surface] ?? 360;
   const hashtag = `#${cleanedLabel.replace(/\s+/g, "")}`;
@@ -206,9 +223,13 @@ function parseRaceMeta(raceId, shutubaHtml, dayLabel) {
     courseId,
     raceId,
     label: cleanedLabel,
-    grade,
+    grade: rawGrade ?? "OTHER",
     day: dayLabel,
     raceNumber: raceNo,
+    isSpecialRace: targetFlags.isSpecialRace,
+    isFinalRace: targetFlags.isFinalRace,
+    isJumpRace: targetFlags.isJumpRace,
+    raceSegment: targetFlags.raceSegment,
     venue: venue.label,
     venueKey: venue.key,
     surface,

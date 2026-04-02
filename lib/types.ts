@@ -6,6 +6,13 @@ export type WindDirection = "Headwind" | "Tailwind" | "Crosswind";
 export type PaceScenario = "Slow" | "Average" | "Fast";
 export type PredictionOrigin = "saved_live" | "saved_manual" | "backfill";
 export type DiagnosticsAggregationScope = "all" | "saved_only";
+export type RaceSegment = "special" | "special_final12" | "final12" | "other";
+export type RaceDiagnosticsSegmentKey =
+  | "special_only"
+  | "final12_only"
+  | "all_expanded"
+  | "special_non_final"
+  | "special_final12";
 
 export interface Horse {
   id: string;
@@ -60,11 +67,16 @@ export interface Course {
   venue?: string;
   day?: string;
   grade?: string;
+  raceNumber?: number;
   distance: number;
   surface: "Turf" | "Dirt";
   segments: CourseSegment[];
   straightLength: number;
   hashtag: string;
+  isSpecialRace?: boolean;
+  isFinalRace?: boolean;
+  isJumpRace?: boolean;
+  raceSegment?: RaceSegment;
   archived?: boolean;
   defaultBias?: TrackBias;
 }
@@ -226,11 +238,78 @@ export interface WeeklyDiagnosticsAgreement {
   disagreementRoutinePlaceRate: number;
 }
 
+export type WeeklyDiagnosticsMissTag =
+  | "rank_error"
+  | "market_overfade"
+  | "place_prob_overestimate"
+  | "longshot_overreach"
+  | "value_misallocation"
+  | "top3_total_miss"
+  | "data_insufficient";
+
+export interface WeeklyDiagnosticsMissTagDetail {
+  tag: WeeklyDiagnosticsMissTag;
+  reason: string;
+  evidence: Record<string, number | string | boolean | null>;
+}
+
+export interface WeeklyDiagnosticsRaceMiss {
+  raceId: string;
+  courseId: string;
+  label: string;
+  date: string;
+  raceNumber: number | null;
+  isSpecialRace: boolean;
+  isFinalRace: boolean;
+  isJumpRace: boolean;
+  raceSegment: RaceSegment;
+  primaryMissTag: WeeklyDiagnosticsMissTag | null;
+  missTags: WeeklyDiagnosticsMissTag[];
+  missTagDetails: WeeklyDiagnosticsMissTagDetail[];
+}
+
+export interface WeeklyDiagnosticsMissTagCount {
+  tag: WeeklyDiagnosticsMissTag;
+  raceCount: number;
+  rate: number;
+}
+
+export interface WeeklyDiagnosticsMissTagSummary {
+  missRaceCount: number;
+  primary: WeeklyDiagnosticsMissTagCount[];
+  all: WeeklyDiagnosticsMissTagCount[];
+  races: WeeklyDiagnosticsRaceMiss[];
+}
+
+export interface WeeklyDiagnosticsSegmentSummary {
+  key: RaceDiagnosticsSegmentKey;
+  label: string;
+  raceCount: number;
+  settledRaceCount: number;
+  placeCore: WeeklyDiagnosticsPlaceCore;
+  valueCore: WeeklyDiagnosticsValueCore;
+  agreement: WeeklyDiagnosticsAgreement;
+  disagreement: {
+    raceCount: number;
+    snapshotPlaceRate: number;
+    routinePlaceRate: number;
+    valuePlaceCount: number;
+    snapshotOnlyPlaceCount: number;
+    routineOnlyPlaceCount: number;
+  };
+  missDiagnostics: WeeklyDiagnosticsMissTagSummary;
+}
+
 export interface WeeklyDiagnosticsRepresentativeRace {
   raceId: string;
   courseId: string;
   label: string;
   date: string;
+  raceNumber: number | null;
+  isSpecialRace: boolean;
+  isFinalRace: boolean;
+  isJumpRace: boolean;
+  raceSegment: RaceSegment;
   category: "best_hit" | "worst_miss" | "disagreement" | "value_hit";
   resultTop3HorseIds: string[];
   resultTop3HorseNames: string[];
@@ -244,6 +323,9 @@ export interface WeeklyDiagnosticsRepresentativeRace {
   valueHorseName: string | null;
   valuePlaced: boolean | null;
   valueReturnRate: number | null;
+  primaryMissTag: WeeklyDiagnosticsMissTag | null;
+  missTags: WeeklyDiagnosticsMissTag[];
+  missTagDetails: WeeklyDiagnosticsMissTagDetail[];
   reviewSummary: string | null;
 }
 
@@ -366,6 +448,8 @@ export interface WeeklyDiagnostics {
     disagreementCases: WeeklyDiagnosticsRepresentativeRace[];
     valueHits: WeeklyDiagnosticsRepresentativeRace[];
   };
+  missDiagnostics: WeeklyDiagnosticsMissTagSummary;
+  segments: Record<RaceDiagnosticsSegmentKey, WeeklyDiagnosticsSegmentSummary>;
   signals: WeeklyDiagnosticsSignals;
   evaluation: WeeklyDiagnosticsEvaluation;
   recommendations: WeeklyDiagnosticRecommendation[];
@@ -402,6 +486,11 @@ export interface RaceCommentaryPayload {
   raceId: string;
   courseId: string;
   raceLabel: string;
+  raceNumber: number | null;
+  isSpecialRace: boolean;
+  isFinalRace: boolean;
+  isJumpRace: boolean;
+  raceSegment: RaceSegment;
   simHonmeiHorseId: string | null;
   simSecondHorseId: string | null;
   simThirdHorseId: string | null;
@@ -409,6 +498,9 @@ export interface RaceCommentaryPayload {
   actualTop3: RaceCommentaryActualHorse[];
   payouts: RaceCommentaryPayouts | null;
   resultPattern: string;
+  primaryMissTag: WeeklyDiagnosticsMissTag | null;
+  missTags: WeeklyDiagnosticsMissTag[];
+  missTagDetails: WeeklyDiagnosticsMissTagDetail[];
   marketFadeCandidate: {
     horseId: string | null;
     reason: string | null;
@@ -422,7 +514,9 @@ export interface WeeklyNoteSummaryBlock {
   key:
     | "weekly_overview"
     | "place_core"
+    | "segments"
     | "value_core"
+    | "miss_tags"
     | "snapshot_ranks"
     | "popularity_trends"
     | "market_heat"

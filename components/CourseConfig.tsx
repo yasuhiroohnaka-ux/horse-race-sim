@@ -55,10 +55,10 @@ export function CourseConfig({
   isRefreshingOdds,
   onRefreshOdds,
 }: CourseConfigProps) {
-  const [gradeFilter, setGradeFilter] = useState<CourseGradeFilter>(getCourseGrade(selectedCourse) ?? "ALL");
+  const [gradeFilter, setGradeFilter] = useState<CourseGradeFilter>(getCourseGrade(selectedCourse));
 
   useEffect(() => {
-    setGradeFilter(getCourseGrade(selectedCourse) ?? "ALL");
+    setGradeFilter(getCourseGrade(selectedCourse));
   }, [selectedCourse.id, selectedCourse.grade]);
 
   const updateBias = (key: "innerOuter" | "frontBack", value: number) => {
@@ -74,6 +74,8 @@ export function CourseConfig({
   const allCourses = [...ACTIVE_COURSES, ...ARCHIVED_COURSES];
   const counts = countCoursesByGrade(allCourses);
   const activeCourses = filterCoursesByGrade(ACTIVE_COURSES, gradeFilter);
+  const activeSpecialCourses = activeCourses.filter((course) => getCourseGrade(course) !== "OTHER");
+  const activeOtherCourses = activeCourses.filter((course) => getCourseGrade(course) === "OTHER");
   const archivedCourses = filterCoursesByGrade(ARCHIVED_COURSES, gradeFilter);
 
   const handleGradeFilterChange = (nextFilter: CourseGradeFilter) => {
@@ -93,7 +95,7 @@ export function CourseConfig({
           <p className="text-xs font-semibold tracking-[0.2em] text-slate-400">RACE SCENARIO</p>
           <h2 className="text-lg font-bold text-slate-900">レース条件</h2>
           <p className="mt-1 text-xs text-slate-500">
-            公式オッズと市場オッズの差を見ながら、馬場、風、展開バイアスをその場で調整できます。
+            公式オッズと市場オッズの差を見ながら、馬場、風、ペース、バイアスをその場で調整できます。
           </p>
           {liveConditionSummary ? (
             <p className="mt-2 text-xs font-medium text-sky-600">{liveConditionSummary}</p>
@@ -137,13 +139,24 @@ export function CourseConfig({
             value={selectedCourse.id}
             onChange={(event) => onCourseChange(event.target.value)}
           >
-            <optgroup label="今週の対象レース">
-              {activeCourses.map((course) => (
-                <option key={course.id} value={course.id}>
-                  {course.displayName ?? course.name}
-                </option>
-              ))}
-            </optgroup>
+            {activeSpecialCourses.length > 0 && (
+              <optgroup label="今週の対象レース">
+                {activeSpecialCourses.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.displayName ?? course.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
+            {activeOtherCourses.length > 0 && (
+              <optgroup label="その他のレース">
+                {activeOtherCourses.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.displayName ?? course.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
             {archivedCourses.length > 0 && (
               <optgroup label="アーカイブ">
                 {archivedCourses.map((course) => (
@@ -305,7 +318,9 @@ export function CourseConfig({
       <div className="mt-4 flex flex-wrap gap-2 text-xs">
         <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">馬場: {groundLabels[condition.groundCondition]}</span>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">天気: {weatherLabels[condition.weather]}</span>
-        <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">風: {windLabels[condition.windDirection]} {condition.windSpeed}m/s</span>
+        <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+          風: {windLabels[condition.windDirection]} {condition.windSpeed}m/s
+        </span>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">ペース: {paceLabels[condition.paceScenario]}</span>
       </div>
     </div>

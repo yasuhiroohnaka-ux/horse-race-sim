@@ -611,7 +611,7 @@ function SimulatorContent() {
           <h1 className="text-4xl font-black tracking-[0.12em] text-white md:text-6xl">KEIBA GAP LAB</h1>
           <p className="mt-3 text-sm font-semibold tracking-[0.2em] text-slate-300 md:text-base">能力値と市場価格のズレを並べて見る</p>
           <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-300">
-            今週のG1-G3・リステッド・オープン特別を対象に、能力、血統、適性、馬場、風、ペースを調整しながら100回シミュレーションします。
+            今週の重賞、L、OPに加えて、特別戦と最終12Rまで対象を広げ、能力、血統、適性、馬場、風、ペースを調整しながら100回シミュレーションします。
             その上で、公式オッズ、一般オッズ、プロ勢オッズのズレを並べて、人気と期待値の差を見つけます。
           </p>
           {isArchive && (

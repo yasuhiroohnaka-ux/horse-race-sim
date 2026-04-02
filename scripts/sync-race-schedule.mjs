@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { getRaceTargetFlags } from "../lib/raceSegmentation.mjs";
 
 const ROOT = process.cwd();
 const GENERATED_REVIEWS_PATH = path.join(ROOT, "data", "generated-reviews.json");
@@ -59,12 +60,18 @@ function mapHorseSeed(h, race) {
 }
 
 function mapRaceMeta(race) {
+  const flags = getRaceTargetFlags(race);
   return {
     courseId: String(race.courseId),
     raceId: String(race.raceId ?? ""),
     label: String(race.label ?? race.courseId),
-    grade: String(race.grade ?? "G3"),
+    grade: String(race.grade ?? "OTHER"),
     day: String(race.day ?? "Sat"),
+    raceNumber: Number(race.raceNumber ?? flags.raceNumber ?? 0),
+    isSpecialRace: Boolean(race.isSpecialRace ?? flags.isSpecialRace),
+    isFinalRace: Boolean(race.isFinalRace ?? flags.isFinalRace),
+    isJumpRace: Boolean(race.isJumpRace ?? flags.isJumpRace),
+    raceSegment: String(race.raceSegment ?? flags.raceSegment ?? "other"),
     venue: String(race.venue ?? ""),
     venueKey: String(race.venueKey ?? ""),
     surface: String(race.surface ?? "Turf"),
@@ -247,6 +254,11 @@ export interface GeneratedRaceMeta {
   label: string;
   grade: string;
   day: string;
+  raceNumber: number;
+  isSpecialRace: boolean;
+  isFinalRace: boolean;
+  isJumpRace: boolean;
+  raceSegment: "special" | "special_final12" | "final12" | "other";
   venue: string;
   venueKey: string;
   surface: "Turf" | "Dirt";
