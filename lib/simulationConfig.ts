@@ -1,0 +1,2 @@
+export const MONTE_CARLO_RUNS = 1000;
+export const MONTE_CARLO_RUNS_LABEL = `${MONTE_CARLO_RUNS}回`;

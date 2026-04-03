@@ -1,6 +1,8 @@
+import { MONTE_CARLO_RUNS_LABEL } from "./simulationConfig";
+
 export const SUMMARY_CARD_DESCRIPTIONS = {
   strongest:
-    "100回試走で最も勝率が高かった馬です。能力、適性、馬場、風、展開の条件をまとめて反映した総合1位です。",
+    `${MONTE_CARLO_RUNS_LABEL}試走で最も勝率が高かった馬です。能力、適性、馬場、風、展開の条件をまとめて反映した総合1位です。`,
   marketWatch:
     "一般市場の上位人気の中から、試走が最も弱気だった馬です。市場先行、能力漏れ、条件替わりのどれで人気しているかを見極める対象です。",
   valueHorse:
@@ -12,7 +14,7 @@ export const SUMMARY_CARD_DESCRIPTIONS = {
 export const TABLE_HEADER_DESCRIPTIONS = {
   abilityScore:
     "能力4値に騎手、厩舎、追切、近走を加え、当日の馬場と展開適性も織り込んだシナリオ能力指数です。",
-  simWinRate: "100回試走での1着率です。連対率ではなく勝ち切る確率だけを見ています。",
+  simWinRate: `${MONTE_CARLO_RUNS_LABEL}試走での1着率です。連対率ではなく勝ち切る確率だけを見ています。`,
   fairOdds: "試走勝率から逆算した理論オッズです。100÷試走勝率で計算します。",
   officialMarket:
     "実オッズから逆算した一般市場の勝率イメージです。人気順と市場期待の基準になります。",

@@ -12,6 +12,7 @@ import { dedupeHorses, findHorseDuplicates } from "@/lib/horseIntegrity";
 import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
 import { buildPredictionSnapshot } from "@/lib/predictionSnapshots";
 import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
+import { MONTE_CARLO_RUNS, MONTE_CARLO_RUNS_LABEL } from "@/lib/simulationConfig";
 import { calculateOdds, runMonteCarlo } from "@/lib/simulation";
 import { pickTanpukuPair } from "@/lib/tanpukuSelection.mjs";
 import { buildPickExplanations, buildDisagreementExplanation, formatOverbetLabel } from "@/lib/pickExplanations";
@@ -481,7 +482,7 @@ function SimulatorContent() {
     if (!selectedCourse) return;
     setIsRunning(true);
     window.setTimeout(() => {
-      const simulationResults = runMonteCarlo(horses, selectedCourse, condition, 100);
+      const simulationResults = runMonteCarlo(horses, selectedCourse, condition, MONTE_CARLO_RUNS);
       setResults(simulationResults);
 
       // Compute tanpuku pair from scored horses
@@ -509,7 +510,7 @@ function SimulatorContent() {
             horses,
             course: selectedCourse,
             condition,
-            simulationCount: 100,
+            simulationCount: MONTE_CARLO_RUNS,
             oddsFetchedAt: oddsLastFetchedAt || null,
             oddsSource: horses.find((horse) => String(horse.oddsSource ?? "").trim())?.oddsSource ?? null,
           });
@@ -568,7 +569,7 @@ function SimulatorContent() {
     const rows = buildRaceAnalysisRows(results, horses, selectedCourse, condition);
     const strongest = rows[0];
     const text = [
-      `${selectedCourse.name} 100回シミュレーション`,
+      `${selectedCourse.name} ${MONTE_CARLO_RUNS_LABEL}シミュレーション`,
       `軸候補 ${strongest?.name ?? "-"} 勝率${strongest?.simWinRate?.toFixed(1) ?? "-"}%`,
       selectedCourse.hashtag,
     ].join("\n");
@@ -611,7 +612,7 @@ function SimulatorContent() {
           <h1 className="text-4xl font-black tracking-[0.12em] text-white md:text-6xl">KEIBA GAP LAB</h1>
           <p className="mt-3 text-sm font-semibold tracking-[0.2em] text-slate-300 md:text-base">能力値と市場価格のズレを並べて見る</p>
           <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-300">
-            今週の重賞、L、OPに加えて、特別戦と最終12Rまで対象を広げ、能力、血統、適性、馬場、風、ペースを調整しながら100回シミュレーションします。
+            今週の重賞、L、OPに加えて、特別戦と最終12Rまで対象を広げ、能力、血統、適性、馬場、風、ペースを調整しながら{MONTE_CARLO_RUNS_LABEL}シミュレーションします。
             その上で、公式オッズ、一般オッズ、プロ勢オッズのズレを並べて、人気と期待値の差を見つけます。
           </p>
           {isArchive && (
@@ -661,7 +662,7 @@ function SimulatorContent() {
                 disabled={isRunning}
                 className="rounded-full bg-blue-600 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {isRunning ? "シミュレーション中..." : "100回シミュレーションして期待値を見る"}
+                {isRunning ? "シミュレーション中..." : `${MONTE_CARLO_RUNS_LABEL}シミュレーションして期待値を見る`}
               </button>
             </div>
           )}
