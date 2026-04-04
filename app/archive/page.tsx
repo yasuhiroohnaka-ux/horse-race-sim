@@ -10,7 +10,12 @@ import {
 } from "@/lib/generatedRaceSchedule";
 import { ARCHIVED_RACES as LEGACY_ARCHIVED_RACES, type ArchivedRace as LegacyArchivedRace } from "@/lib/raceData";
 import { getRaceTargetFlags } from "@/lib/raceSegmentation.mjs";
-import type { PredictionSnapshot, RaceCommentaryPayload, WeeklyDiagnosticsWideStats } from "@/lib/types";
+import type {
+  PredictionSnapshot,
+  RaceCommentaryPayload,
+  WeeklyDiagnosticsWidePendingDetail,
+  WeeklyDiagnosticsWideStats,
+} from "@/lib/types";
 import {
   buildPickExplanations,
   buildDisagreementExplanation,
@@ -592,6 +597,54 @@ function renderAggregateSummary(summary: AggregateSummary | null) {
   );
 }
 
+function WidePendingDetails({
+  tone,
+  pendingDetails,
+}: {
+  tone: "cyan" | "fuchsia";
+  pendingDetails: WeeklyDiagnosticsWidePendingDetail[];
+}) {
+  if (pendingDetails.length === 0) return null;
+
+  const tones =
+    tone === "cyan"
+      ? {
+          border: "border-cyan-200",
+          bg: "bg-white/70",
+          text: "text-cyan-950",
+          summary: "text-cyan-900",
+        }
+      : {
+          border: "border-fuchsia-200",
+          bg: "bg-white/70",
+          text: "text-fuchsia-950",
+          summary: "text-fuchsia-900",
+        };
+
+  return (
+    <details className={`mt-3 rounded-md border ${tones.border} ${tones.bg} px-3 py-2 text-xs ${tones.text}`}>
+      <summary className={`cursor-pointer font-semibold ${tones.summary}`}>
+        pending 詳細 {pendingDetails.length}件
+      </summary>
+      <div className="mt-3 space-y-2">
+        {pendingDetails.map((detail, index) => (
+          <div key={`${detail.strategyKey}-${detail.raceKey}-${index}`} className={`rounded-md border ${tones.border} px-3 py-2`}>
+            <p className="font-semibold">{detail.raceKey}</p>
+            <p className="mt-1">reason: {detail.pendingReason}</p>
+            <p className="mt-1">
+              missingTargetFields: {detail.missingTargetFields.length > 0 ? detail.missingTargetFields.join(", ") : "-"}
+            </p>
+            <p className="mt-1">
+              missingFinisherFields:{" "}
+              {detail.missingFinisherFields.length > 0 ? detail.missingFinisherFields.join(", ") : "-"}
+            </p>
+          </div>
+        ))}
+      </div>
+    </details>
+  );
+}
+
 function renderWideStatsSummary(wideStats: WeeklyDiagnosticsWideStats | null) {
   if (!wideStats) return null;
 
@@ -644,6 +697,58 @@ function renderWideStatsSummary(wideStats: WeeklyDiagnosticsWideStats | null) {
 
 function formatScore(value?: number | null) {
   return typeof value === "number" && Number.isFinite(value) ? value.toFixed(3) : "-";
+}
+
+function renderWideStatsSummaryV2(wideStats: WeeklyDiagnosticsWideStats | null) {
+  if (!wideStats) return null;
+
+  const pair = wideStats.tanpukuHonmeiValueCandidate;
+  const box = wideStats.simHonmeiTanpukuHonmeiValueCandidateBox;
+
+  return (
+    <section className="mt-6 space-y-4">
+      <div>
+        <h2 className="text-lg font-bold text-slate-900">wide 統計</h2>
+        <p className="mt-1 text-sm text-slate-500">
+          A系統はロジック相性の確認、B系統は3頭ワイドボックスの買い方シミュレーションとして分けて表示しています。
+        </p>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <SummaryCard title="A. 単複本命 × 妙味候補" tone="border-cyan-200 bg-cyan-50 text-cyan-900">
+          <SummaryMetric label="対象レース数" value={`${pair.targetRaceCount}R`} />
+          <SummaryMetric label="妙味候補ありレース数" value={`${pair.valueCandidateRaceCount}R`} />
+          <SummaryMetric label="集計済みレース数" value={`${pair.settledRaceCount}R`} />
+          <SummaryMetric label="pending レース数" value={`${pair.pendingRaceCount}R`} />
+          <SummaryMetric label="的中レース数" value={`${pair.hitCount}`} />
+          <SummaryMetric label="的中率" value={formatRate(pair.hitRate)} />
+          <SummaryMetric label="総投資" value={`${pair.totalStake}円`} />
+          <SummaryMetric label="総払戻" value={`${Math.round(pair.totalPayout)}円`} />
+          <SummaryMetric label="回収率" value={formatRate(pair.returnRate)} />
+          <SummaryMetric label="平均払戻" value={`${Math.round(pair.averagePayout)}円`} />
+          <p className="mt-3 text-xs text-cyan-900/80">投資ルール: 1レース1点買い / 100円</p>
+          <WidePendingDetails tone="cyan" pendingDetails={pair.pendingDetails} />
+        </SummaryCard>
+
+        <SummaryCard
+          title="B. シミュ本命 / 単複本命 / 妙味候補 ワイドBOX"
+          tone="border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900"
+        >
+          <SummaryMetric label="対象レース数" value={`${box.targetRaceCount}R`} />
+          <SummaryMetric label="集計済みレース数" value={`${box.settledRaceCount}R`} />
+          <SummaryMetric label="pending レース数" value={`${box.pendingRaceCount}R`} />
+          <SummaryMetric label="的中レース数" value={`${box.hitRaceCount}`} />
+          <SummaryMetric label="的中率" value={formatRate(box.hitRate)} />
+          <SummaryMetric label="総投資" value={`${box.totalStake}円`} />
+          <SummaryMetric label="総払戻" value={`${Math.round(box.totalPayout)}円`} />
+          <SummaryMetric label="回収率" value={formatRate(box.returnRate)} />
+          <SummaryMetric label="平均払戻" value={`${Math.round(box.averagePayout)}円`} />
+          <p className="mt-3 text-xs text-fuchsia-900/80">投資ルール: 1レース3点買い / 300円</p>
+          <WidePendingDetails tone="fuchsia" pendingDetails={box.pendingDetails} />
+        </SummaryCard>
+      </div>
+    </section>
+  );
 }
 
 function formatPercent(value?: number | null) {
@@ -1168,7 +1273,7 @@ export default function ArchivePage() {
         </div>
 
         {renderAggregateSummary(aggregateSummary)}
-        {renderWideStatsSummary(wideStats)}
+          {renderWideStatsSummaryV2(wideStats)}
 
         <section className="mt-10 space-y-6">
           <div>

@@ -14,12 +14,16 @@ type RawWeeklyRaceRecord = {
   courseId?: unknown;
   horses?: Array<{
     id?: unknown;
+    externalHorseId?: unknown;
     name?: unknown;
+    gateNumber?: unknown;
   }>;
   result?: {
     finishers?: Array<{
       horseId?: unknown;
+      externalHorseId?: unknown;
       horseNumber?: unknown;
+      gateNumber?: unknown;
       name?: unknown;
     }>;
     payouts?: {
@@ -47,6 +51,12 @@ export type RaceWidePayouts = {
 };
 
 export type RaceHorseNumbers = Record<string, number>;
+export type RaceHorseLookup = {
+  horseNumbersById: Record<string, number>;
+  horseNumbersByName: Record<string, number>;
+  availableHorseNumbers: number[];
+};
+type RawRaceHorse = NonNullable<RawWeeklyRaceRecord["horses"]>[number];
 
 function normalizeRaceId(value: unknown, courseId: unknown): string | null {
   const raceId = String(value ?? "").trim();
@@ -55,12 +65,12 @@ function normalizeRaceId(value: unknown, courseId: unknown): string | null {
   return match?.[1] ?? null;
 }
 
-function normalizeName(value: unknown) {
+export function normalizeHorseName(value: unknown) {
   return String(value ?? "")
+    .normalize("NFKC")
     .trim()
     .toLowerCase()
-    .replace(/\s+/g, "")
-    .replace(/[・･\-_.]/g, "");
+    .replace(/\s+/g, " ");
 }
 
 function normalizePair(value: unknown): [number, number] | null {
@@ -117,6 +127,61 @@ function getWeeklyRaceRecords(file: RawWeeklyRacesFile): RawWeeklyRaceRecord[] {
   return [...currentWeekRaces, ...archiveRaces];
 }
 
+function deriveHorseNumberFromEntry(horse: RawRaceHorse) {
+  const horseNumber = Number(horse?.id);
+  if (Number.isFinite(horseNumber) && horseNumber > 0) return horseNumber;
+  const gateNumber = Number(horse?.gateNumber);
+  return Number.isFinite(gateNumber) && gateNumber > 0 ? gateNumber : null;
+}
+
+function buildRaceHorseLookup(race: RawWeeklyRaceRecord): RaceHorseLookup {
+  const horseNumbersById: Record<string, number> = {};
+  const horseNumbersByName: Record<string, number> = {};
+  const availableHorseNumbers = new Set<number>();
+
+  for (const horse of Array.isArray(race.horses) ? race.horses : []) {
+    const horseNumber = deriveHorseNumberFromEntry(horse);
+    if (!(horseNumber && horseNumber > 0)) continue;
+
+    availableHorseNumbers.add(horseNumber);
+
+    for (const key of [horse.id, horse.externalHorseId].map((value) => String(value ?? "").trim()).filter(Boolean)) {
+      if (!horseNumbersById[key]) {
+        horseNumbersById[key] = horseNumber;
+      }
+    }
+
+    const normalizedName = normalizeHorseName(horse.name);
+    if (normalizedName && !horseNumbersByName[normalizedName]) {
+      horseNumbersByName[normalizedName] = horseNumber;
+    }
+  }
+
+  for (const finisher of Array.isArray(race.result?.finishers) ? race.result.finishers : []) {
+    const horseNumber = Number(finisher.horseNumber);
+    if (!(Number.isFinite(horseNumber) && horseNumber > 0)) continue;
+
+    availableHorseNumbers.add(horseNumber);
+
+    for (const key of [finisher.horseId, finisher.externalHorseId]
+      .map((value) => String(value ?? "").trim())
+      .filter(Boolean)) {
+      horseNumbersById[key] = horseNumber;
+    }
+
+    const normalizedName = normalizeHorseName(finisher.name);
+    if (normalizedName) {
+      horseNumbersByName[normalizedName] = horseNumber;
+    }
+  }
+
+  return {
+    horseNumbersById,
+    horseNumbersByName,
+    availableHorseNumbers: [...availableHorseNumbers].sort((left, right) => left - right),
+  };
+}
+
 export function hasWidePayoutTable(table: RaceWidePayouts | null | undefined) {
   return Boolean(table?.pairs.length);
 }
@@ -155,47 +220,37 @@ export async function loadWidePayoutsByRaceId(): Promise<Record<string, RaceWide
   }
 }
 
-export async function loadHorseNumbersByRaceId(): Promise<Record<string, RaceHorseNumbers>> {
+export async function loadHorseLookupsByRaceId(): Promise<Record<string, RaceHorseLookup>> {
   try {
     const raw = await fs.readFile(WEEKLY_RACES_PATH, "utf8");
     const parsed = JSON.parse(raw.replace(/^\uFEFF/, "")) as RawWeeklyRacesFile;
-    const horseNumbersByRaceId: Record<string, RaceHorseNumbers> = {};
+    const horseLookupsByRaceId: Record<string, RaceHorseLookup> = {};
 
     for (const race of getWeeklyRaceRecords(parsed)) {
       const raceId = normalizeRaceId(race.raceId, race.courseId);
       if (!raceId) continue;
-      const finishers = Array.isArray(race.result?.finishers) ? race.result.finishers : [];
-      const horseIdByName = new Map(
-        (Array.isArray(race.horses) ? race.horses : [])
-          .map((horse) => {
-            const horseId = String(horse.id ?? "").trim();
-            const normalizedName = normalizeName(horse.name);
-            if (!horseId || !normalizedName) return null;
-            return [normalizedName, horseId] as const;
-          })
-          .filter((entry): entry is readonly [string, string] => Boolean(entry))
-      );
-      const horseNumbers = Object.fromEntries(
-        finishers
-          .map((finisher) => {
-            const horseId =
-              String(finisher.horseId ?? "").trim() || horseIdByName.get(normalizeName(finisher.name)) || "";
-            const horseNumber = Number(finisher.horseNumber);
-            if (!horseId || !Number.isFinite(horseNumber) || horseNumber <= 0) return null;
-            return [horseId, horseNumber] as const;
-          })
-          .filter((entry): entry is readonly [string, number] => Boolean(entry))
-      );
 
-      if (Object.keys(horseNumbers).length > 0) {
-        horseNumbersByRaceId[raceId] = horseNumbers;
+      const horseLookup = buildRaceHorseLookup(race);
+      if (
+        Object.keys(horseLookup.horseNumbersById).length > 0 ||
+        Object.keys(horseLookup.horseNumbersByName).length > 0 ||
+        horseLookup.availableHorseNumbers.length > 0
+      ) {
+        horseLookupsByRaceId[raceId] = horseLookup;
       }
     }
 
-    return horseNumbersByRaceId;
+    return horseLookupsByRaceId;
   } catch (error) {
     const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";
     if (code === "ENOENT") return {};
     throw error;
   }
+}
+
+export async function loadHorseNumbersByRaceId(): Promise<Record<string, RaceHorseNumbers>> {
+  const horseLookupsByRaceId = await loadHorseLookupsByRaceId();
+  return Object.fromEntries(
+    Object.entries(horseLookupsByRaceId).map(([raceId, horseLookup]) => [raceId, horseLookup.horseNumbersById])
+  );
 }

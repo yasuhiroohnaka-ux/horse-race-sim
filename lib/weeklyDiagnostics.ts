@@ -20,9 +20,10 @@ import {
 import {
   getWidePayoutByHorseNumbers,
   hasWidePayoutTable,
-  loadHorseNumbersByRaceId,
+  loadHorseLookupsByRaceId,
+  normalizeHorseName,
   loadWidePayoutsByRaceId,
-  type RaceHorseNumbers,
+  type RaceHorseLookup,
   type RaceWidePayouts,
 } from "@/lib/widePayouts";
 import type {
@@ -41,7 +42,9 @@ import type {
   WeeklyDiagnosticsRepresentativeRace,
   WeeklyDiagnosticsSegmentSummary,
   WeeklyDiagnosticsWideBoxStats,
+  WeeklyDiagnosticsWidePendingDetail,
   WeeklyDiagnosticsWidePairStats,
+  WeeklyDiagnosticsWideStrategyKey,
   WeeklyDiagnosticsWideStats,
 } from "@/lib/types";
 
@@ -151,10 +154,22 @@ type DiagnosticsContext = {
   settlementsByRaceId: Record<string, RecommendationSettlementBundle>;
   reviewsByRaceId: Record<string, GeneratedReviewRecord>;
   widePayoutsByRaceId: Record<string, RaceWidePayouts>;
-  horseNumbersByRaceId: Record<string, RaceHorseNumbers>;
+  horseLookupsByRaceId: Record<string, RaceHorseLookup>;
 };
 
 type WeeklyDiagnosticsCore = Omit<WeeklyDiagnostics, "meta" | "segments" | "recommendations">;
+type ResolvableWideHorseTarget = {
+  label: "simHonmei" | "tanpukuHonmei" | "valueCandidate";
+  horseId: string | null | undefined;
+  horseName: string | null | undefined;
+  horseNumber?: number | null | undefined;
+};
+type WideHorseResolution = {
+  horseNumber: number | null;
+  matchedBy: "horseId" | "horseNumber" | "horseName" | null;
+  missingTargetFields: string[];
+  missingFinisherFields: string[];
+};
 
 const SEGMENT_LABELS: Record<RaceDiagnosticsSegmentKey, string> = {
   special_only: "special_only",
@@ -437,6 +452,7 @@ function createWidePairStats(): WeeklyDiagnosticsWidePairStats {
     totalPayout: 0,
     returnRate: 0,
     averagePayout: 0,
+    pendingDetails: [],
   };
 }
 
@@ -451,21 +467,124 @@ function createWideBoxStats(): WeeklyDiagnosticsWideBoxStats {
     totalPayout: 0,
     returnRate: 0,
     averagePayout: 0,
+    pendingDetails: [],
   };
 }
 
-function getHorseNumberByHorseId(
-  race: GeneratedReviewRace,
-  horseNumbersByRaceId: Record<string, RaceHorseNumbers>,
-  horseId: string | null | undefined
-): number | null {
-  if (!horseId) return null;
-  const raceId = String(race.raceId ?? "");
-  const mappedHorseNumber = Number(horseNumbersByRaceId[raceId]?.[horseId]);
-  if (Number.isFinite(mappedHorseNumber) && mappedHorseNumber > 0) return mappedHorseNumber;
-  const finisher = race.result?.finishers?.find((entry) => String(entry.horseId ?? "") === String(horseId));
-  const horseNumber = Number(finisher?.horseNumber);
-  return Number.isFinite(horseNumber) && horseNumber > 0 ? horseNumber : null;
+function collectMissingTargetFields(target: ResolvableWideHorseTarget) {
+  const missingFields: string[] = [];
+  if (!normalizeString(target.horseId)) missingFields.push(`${target.label}.horseId`);
+  if (!(Number(target.horseNumber) > 0)) missingFields.push(`${target.label}.horseNumber`);
+  if (!normalizeHorseName(target.horseName)) missingFields.push(`${target.label}.horseName`);
+  return missingFields;
+}
+
+function resolveWideHorseNumber(
+  horseLookupsByRaceId: Record<string, RaceHorseLookup>,
+  raceId: string,
+  target: ResolvableWideHorseTarget
+): WideHorseResolution {
+  const missingTargetFields = collectMissingTargetFields(target);
+  const horseLookup = horseLookupsByRaceId[raceId];
+
+  if (!horseLookup) {
+    return {
+      horseNumber: null,
+      matchedBy: null,
+      missingTargetFields,
+      missingFinisherFields: ["race.horses", "result.finishers"],
+    };
+  }
+
+  const targetHorseId = normalizeString(target.horseId);
+  if (targetHorseId) {
+    const horseNumber = Number(horseLookup.horseNumbersById[targetHorseId]);
+    if (Number.isFinite(horseNumber) && horseNumber > 0) {
+      return {
+        horseNumber,
+        matchedBy: "horseId",
+        missingTargetFields,
+        missingFinisherFields: [],
+      };
+    }
+  }
+
+  const targetHorseNumber = Number(target.horseNumber);
+  if (Number.isFinite(targetHorseNumber) && targetHorseNumber > 0) {
+    if (horseLookup.availableHorseNumbers.includes(targetHorseNumber)) {
+      return {
+        horseNumber: targetHorseNumber,
+        matchedBy: "horseNumber",
+        missingTargetFields,
+        missingFinisherFields: [],
+      };
+    }
+  }
+
+  const normalizedHorseName = normalizeHorseName(target.horseName);
+  if (normalizedHorseName) {
+    const horseNumber = Number(horseLookup.horseNumbersByName[normalizedHorseName]);
+    if (Number.isFinite(horseNumber) && horseNumber > 0) {
+      return {
+        horseNumber,
+        matchedBy: "horseName",
+        missingTargetFields,
+        missingFinisherFields: [],
+      };
+    }
+  }
+
+  const missingFinisherFields: string[] = [];
+  if (Object.keys(horseLookup.horseNumbersById).length === 0) {
+    missingFinisherFields.push("horseId");
+  }
+  if (horseLookup.availableHorseNumbers.length === 0) {
+    missingFinisherFields.push("horseNumber");
+  }
+  if (Object.keys(horseLookup.horseNumbersByName).length === 0) {
+    missingFinisherFields.push("horseName");
+  }
+
+  return {
+    horseNumber: null,
+    matchedBy: null,
+    missingTargetFields,
+    missingFinisherFields,
+  };
+}
+
+function appendWidePendingDetail(
+  target: WeeklyDiagnosticsWidePairStats | WeeklyDiagnosticsWideBoxStats,
+  detail: WeeklyDiagnosticsWidePendingDetail
+) {
+  target.pendingRaceCount += 1;
+  target.pendingDetails.push(detail);
+}
+
+function buildWidePendingDetail(args: {
+  raceKey: string;
+  strategyKey: WeeklyDiagnosticsWideStrategyKey;
+  pendingReason: string;
+  resolutions: WideHorseResolution[];
+  hasWideTable: boolean;
+}): WeeklyDiagnosticsWidePendingDetail {
+  const missingTargetFields = Array.from(
+    new Set(args.resolutions.flatMap((resolution) => (resolution.horseNumber ? [] : resolution.missingTargetFields)))
+  );
+  const missingFinisherFields = Array.from(
+    new Set([
+      ...(args.hasWideTable ? [] : ["result.payouts.wide"]),
+      ...args.resolutions.flatMap((resolution) => (resolution.horseNumber ? [] : resolution.missingFinisherFields)),
+    ])
+  );
+
+  return {
+    raceKey: args.raceKey,
+    strategyKey: args.strategyKey,
+    pendingReason: args.pendingReason,
+    missingTargetFields,
+    missingFinisherFields,
+  };
 }
 
 function finalizeWidePairStats(stats: WeeklyDiagnosticsWidePairStats) {
@@ -840,12 +959,12 @@ function toRepresentativeRace(
 
 export async function loadWeeklyDiagnosticsContext(scope: DiagnosticsAggregationScope = "all"): Promise<DiagnosticsContext> {
   const normalizedScope = normalizeAggregationScope(scope);
-  const [snapshotsByRaceId, settlementsByRaceId, reviewsByRaceId, widePayoutsByRaceId, horseNumbersByRaceId] = await Promise.all([
+  const [snapshotsByRaceId, settlementsByRaceId, reviewsByRaceId, widePayoutsByRaceId, horseLookupsByRaceId] = await Promise.all([
     loadLatestSnapshotsByRaceId(normalizedScope),
     loadSettlementsByRaceId(normalizedScope),
     loadGeneratedReviewsByRaceId(),
     loadWidePayoutsByRaceId(),
-    loadHorseNumbersByRaceId(),
+    loadHorseLookupsByRaceId(),
   ]);
 
   return {
@@ -855,7 +974,7 @@ export async function loadWeeklyDiagnosticsContext(scope: DiagnosticsAggregation
     settlementsByRaceId,
     reviewsByRaceId,
     widePayoutsByRaceId,
-    horseNumbersByRaceId,
+    horseLookupsByRaceId,
   };
 }
 
@@ -986,23 +1105,49 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
 
       if (pairHorseIds.length === 2) {
         wideStats.tanpukuHonmeiValueCandidate.valueCandidateRaceCount += 1;
-        const firstHorseNumber = getHorseNumberByHorseId(race, context.horseNumbersByRaceId, settlement.win.horseId);
-        const secondHorseNumber = getHorseNumberByHorseId(race, context.horseNumbersByRaceId, valueCandidate?.horseId);
+        const winResolution = resolveWideHorseNumber(context.horseLookupsByRaceId, raceId, {
+          label: "tanpukuHonmei",
+          horseId: settlement.win.horseId,
+          horseName: settlement.win.horseName,
+        });
+        const valueResolution = resolveWideHorseNumber(context.horseLookupsByRaceId, raceId, {
+          label: "valueCandidate",
+          horseId: valueCandidate?.horseId,
+          horseName: valueCandidate?.horseName,
+        });
         const hasWideTable = hasWidePayoutTable(widePayouts);
 
-        if (hasWideTable && firstHorseNumber && secondHorseNumber) {
+        if (hasWideTable && winResolution.horseNumber && valueResolution.horseNumber) {
           const pairPayout =
-            getWidePayoutByHorseNumbers(widePayouts, [firstHorseNumber, secondHorseNumber]) ?? null;
+            getWidePayoutByHorseNumbers(widePayouts, [winResolution.horseNumber, valueResolution.horseNumber]) ?? null;
           if (pairPayout !== null) {
             wideStats.tanpukuHonmeiValueCandidate.settledRaceCount += 1;
             wideStats.tanpukuHonmeiValueCandidate.totalStake += 100;
             wideStats.tanpukuHonmeiValueCandidate.totalPayout += pairPayout;
             if (pairPayout > 0) wideStats.tanpukuHonmeiValueCandidate.hitCount += 1;
           } else {
-            wideStats.tanpukuHonmeiValueCandidate.pendingRaceCount += 1;
+            appendWidePendingDetail(
+              wideStats.tanpukuHonmeiValueCandidate,
+              buildWidePendingDetail({
+                raceKey: raceId,
+                strategyKey: "tanpukuHonmeiValueCandidate",
+                pendingReason: "wide_pair_payout_lookup_failed",
+                resolutions: [winResolution, valueResolution],
+                hasWideTable,
+              })
+            );
           }
         } else {
-          wideStats.tanpukuHonmeiValueCandidate.pendingRaceCount += 1;
+          appendWidePendingDetail(
+            wideStats.tanpukuHonmeiValueCandidate,
+            buildWidePendingDetail({
+              raceKey: raceId,
+              strategyKey: "tanpukuHonmeiValueCandidate",
+              pendingReason: hasWideTable ? "wide_pair_target_unresolved" : "missing_wide_payout_table",
+              resolutions: [winResolution, valueResolution],
+              hasWideTable,
+            })
+          );
         }
       }
     }
@@ -1017,8 +1162,25 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
     if (boxIsEligible) {
       wideStats.simHonmeiTanpukuHonmeiValueCandidateBox.targetRaceCount += 1;
 
-      const boxHorseNumbers = boxHorseIds
-        .map((horseId) => getHorseNumberByHorseId(race, context.horseNumbersByRaceId, horseId))
+      const boxResolutions = [
+        resolveWideHorseNumber(context.horseLookupsByRaceId, raceId, {
+          label: "simHonmei",
+          horseId: snapshot?.honmeiHorseId,
+          horseName: getHorseName(snapshot, snapshot?.honmeiHorseId ?? null),
+        }),
+        resolveWideHorseNumber(context.horseLookupsByRaceId, raceId, {
+          label: "tanpukuHonmei",
+          horseId: settlement?.win?.horseId,
+          horseName: settlement?.win?.horseName ?? null,
+        }),
+        resolveWideHorseNumber(context.horseLookupsByRaceId, raceId, {
+          label: "valueCandidate",
+          horseId: settlement?.value?.horseId,
+          horseName: settlement?.value?.horseName ?? null,
+        }),
+      ];
+      const boxHorseNumbers = boxResolutions
+        .map((resolution) => resolution.horseNumber)
         .filter((horseNumber): horseNumber is number => Boolean(horseNumber));
       const hasWideTable = hasWidePayoutTable(widePayouts);
 
@@ -1036,10 +1198,28 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
           wideStats.simHonmeiTanpukuHonmeiValueCandidateBox.totalPayout += racePayout;
           if (racePayout > 0) wideStats.simHonmeiTanpukuHonmeiValueCandidateBox.hitRaceCount += 1;
         } else {
-          wideStats.simHonmeiTanpukuHonmeiValueCandidateBox.pendingRaceCount += 1;
+          appendWidePendingDetail(
+            wideStats.simHonmeiTanpukuHonmeiValueCandidateBox,
+            buildWidePendingDetail({
+              raceKey: raceId,
+              strategyKey: "simHonmeiTanpukuHonmeiValueCandidateBox",
+              pendingReason: "wide_box_payout_lookup_failed",
+              resolutions: boxResolutions,
+              hasWideTable,
+            })
+          );
         }
       } else {
-        wideStats.simHonmeiTanpukuHonmeiValueCandidateBox.pendingRaceCount += 1;
+        appendWidePendingDetail(
+          wideStats.simHonmeiTanpukuHonmeiValueCandidateBox,
+          buildWidePendingDetail({
+            raceKey: raceId,
+            strategyKey: "simHonmeiTanpukuHonmeiValueCandidateBox",
+            pendingReason: hasWideTable ? "wide_box_target_unresolved" : "missing_wide_payout_table",
+            resolutions: boxResolutions,
+            hasWideTable,
+          })
+        );
       }
     }
 

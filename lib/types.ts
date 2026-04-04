@@ -249,6 +249,7 @@ export interface WeeklyDiagnosticsWidePairStats {
   totalPayout: number;
   returnRate: number;
   averagePayout: number;
+  pendingDetails: WeeklyDiagnosticsWidePendingDetail[];
 }
 
 export interface WeeklyDiagnosticsWideBoxStats {
@@ -261,6 +262,19 @@ export interface WeeklyDiagnosticsWideBoxStats {
   totalPayout: number;
   returnRate: number;
   averagePayout: number;
+  pendingDetails: WeeklyDiagnosticsWidePendingDetail[];
+}
+
+export type WeeklyDiagnosticsWideStrategyKey =
+  | "tanpukuHonmeiValueCandidate"
+  | "simHonmeiTanpukuHonmeiValueCandidateBox";
+
+export interface WeeklyDiagnosticsWidePendingDetail {
+  raceKey: string;
+  strategyKey: WeeklyDiagnosticsWideStrategyKey;
+  pendingReason: string;
+  missingTargetFields: string[];
+  missingFinisherFields: string[];
 }
 
 export interface WeeklyDiagnosticsWideStats {
