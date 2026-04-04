@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PerformancePanel } from "@/components/PerformancePanel";
 import { WeeklyRaceBrowser } from "@/components/WeeklyRaceBrowser";
 import { ACTIVE_COURSES } from "@/lib/courses";
+import { MONTE_CARLO_RUNS_LABEL } from "@/lib/simulationConfig";
 
 export default function Home() {
   return (
@@ -18,7 +19,7 @@ export default function Home() {
               </p>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
                 このアプリがやることは単純です。血統、コース、馬場、天候、風、展開を条件として固定し、
-                各馬を100回試走させた勝ちやすさを出す。その結果を、公式オッズと俺プロ由来のガチ勢オッズ、
+                各馬を{MONTE_CARLO_RUNS_LABEL}試走させた勝ちやすさを出す。その結果を、公式オッズと俺プロ由来のガチ勢オッズ、
                 さらに評判指数と並べて、人気先行と市場の盲点を見ます。
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
@@ -45,7 +46,7 @@ export default function Home() {
               </div>
               <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm">
                 <p className="text-[11px] font-semibold tracking-[0.2em] text-slate-300">STEP 2</p>
-                <p className="mt-2 text-lg font-bold">100回試走</p>
+                <p className="mt-2 text-lg font-bold">{MONTE_CARLO_RUNS_LABEL}試走</p>
                 <p className="mt-1 text-sm text-slate-300">馬場、天候、風向き、風速、展開を固定して勝率とフェアオッズを算出。</p>
               </div>
               <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm">
@@ -107,7 +108,7 @@ export default function Home() {
                 <span className="font-bold text-slate-900">3.</span> 公式オッズとガチ勢オッズのズレを見る
               </li>
               <li>
-                <span className="font-bold text-slate-900">4.</span> 100回試走して市場注目馬と妙味候補を確認する
+                <span className="font-bold text-slate-900">4.</span> {MONTE_CARLO_RUNS_LABEL}試走して市場注目馬と妙味候補を確認する
               </li>
             </ol>
           </div>

@@ -7,11 +7,11 @@
       "scoringVersion": "tanpuku-place-v2.2",
       "modelVersion": "sim-page-v1",
       "scoringConfigHash": "c180926d5ba68b6cfc6113f90ade642d2921a3e9df2bad7515c09f9edee643f9",
-      "savedAt": "2026-03-31T23:01:30.501Z",
+      "savedAt": "2026-04-04T03:17:14.228Z",
       "diagnostics": {
         "meta": {
           "weekKey": "2026-03-06_to_2026-03-29",
-          "generatedAt": "2026-03-31T23:01:30.496Z",
+          "generatedAt": "2026-04-04T03:17:14.212Z",
           "aggregationScope": "all",
           "scoringVersion": "tanpuku-place-v2.2",
           "modelVersion": "sim-page-v1",
@@ -102,6 +102,31 @@
             "placeReturnRate": 0
           }
         },
+        "wideStats": {
+          "tanpukuHonmeiValueCandidate": {
+            "targetRaceCount": 23,
+            "valueCandidateRaceCount": 23,
+            "settledRaceCount": 21,
+            "pendingRaceCount": 2,
+            "hitCount": 2,
+            "hitRate": 9.523809523809524,
+            "totalStake": 2100,
+            "totalPayout": 1230,
+            "returnRate": 58.57142857142858,
+            "averagePayout": 615
+          },
+          "simHonmeiTanpukuHonmeiValueCandidateBox": {
+            "targetRaceCount": 14,
+            "settledRaceCount": 13,
+            "pendingRaceCount": 1,
+            "hitRaceCount": 2,
+            "hitRate": 15.384615384615385,
+            "totalStake": 3900,
+            "totalPayout": 1100,
+            "returnRate": 28.205128205128204,
+            "averagePayout": 550
+          }
+        },
         "agreement": {
           "raceCount": 23,
           "sameHonmeiCount": 5,
@@ -125,6 +150,11 @@
               "courseId": "hanshin-turf-1800-202609020111",
               "label": "毎日杯",
               "date": "2026-03-28",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
               "category": "best_hit",
               "resultTop3HorseIds": [
                 "4",
@@ -146,6 +176,9 @@
               "valueHorseName": "シーズザスローン",
               "valuePlaced": false,
               "valueReturnRate": null,
+              "primaryMissTag": null,
+              "missTags": [],
+              "missTagDetails": [],
               "reviewSummary": "アルトラムスは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
             },
             {
@@ -153,6 +186,11 @@
               "courseId": "nakayama-turf-1800-202606020711",
               "label": "フラワーＣ",
               "date": "2026-03-21",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
               "category": "best_hit",
               "resultTop3HorseIds": [
                 "10",
@@ -174,13 +212,21 @@
               "valueHorseName": "スマートプリエール",
               "valuePlaced": true,
               "valueReturnRate": 290,
-              "reviewSummary": null
+              "primaryMissTag": null,
+              "missTags": [],
+              "missTagDetails": [],
+              "reviewSummary": "スマートプリエールは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。"
             },
             {
               "raceId": "202607010211",
               "courseId": "chukyo-turf-2000-202607010211",
               "label": "金鯱賞",
               "date": "2026-03-14",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
               "category": "best_hit",
               "resultTop3HorseIds": [
                 "9",
@@ -202,6 +248,9 @@
               "valueHorseName": "ドゥラドーレス",
               "valuePlaced": false,
               "valueReturnRate": null,
+              "primaryMissTag": null,
+              "missTags": [],
+              "missTagDetails": [],
               "reviewSummary": "シェイクユアハートは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
             }
           ],
@@ -211,6 +260,11 @@
               "courseId": "nakayama-dirt-1800-202606030211",
               "label": "マーチＳ",
               "date": "2026-03-29",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
               "category": "worst_miss",
               "resultTop3HorseIds": [
                 "15",
@@ -232,6 +286,33 @@
               "valueHorseName": "アクションプラン",
               "valuePlaced": true,
               "valueReturnRate": 280,
+              "primaryMissTag": "rank_error",
+              "missTags": [
+                "rank_error",
+                "place_prob_overestimate"
+              ],
+              "missTagDetails": [
+                {
+                  "tag": "rank_error",
+                  "reason": "sim1_out_but_sim2_hit",
+                  "evidence": {
+                    "sim1HorseId": "9",
+                    "sim2HorseId": "4",
+                    "sim2WinProb": 8.6
+                  }
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "reason": "placeProb>=0.55_and_out",
+                  "evidence": {
+                    "horseId": "9",
+                    "horseName": "オメガギネス",
+                    "placeProb": 0.686,
+                    "placeScore": 0.569,
+                    "overbetLabel": null
+                  }
+                }
+              ],
               "reviewSummary": "サンデーファンデーは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった、人気以上に能力を出せる下地があった。"
             },
             {
@@ -239,6 +320,11 @@
               "courseId": "hanshin-turf-1400-202609010511",
               "label": "フィリーズレビュー 出馬表",
               "date": "2026-03-06",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
               "category": "worst_miss",
               "resultTop3HorseIds": [
                 "2",
@@ -260,6 +346,62 @@
               "valueHorseName": "デアヴェローチェ",
               "valuePlaced": false,
               "valueReturnRate": null,
+              "primaryMissTag": "rank_error",
+              "missTags": [
+                "rank_error",
+                "market_overfade",
+                "place_prob_overestimate",
+                "value_misallocation"
+              ],
+              "missTagDetails": [
+                {
+                  "tag": "rank_error",
+                  "reason": "sim1_out_but_sim2_hit",
+                  "evidence": {
+                    "sim1HorseId": "4",
+                    "sim2HorseId": "7",
+                    "sim2WinProb": 19.2
+                  }
+                },
+                {
+                  "tag": "market_overfade",
+                  "reason": "market_top3_hit_after_fade",
+                  "evidence": {
+                    "horseId": "17",
+                    "horseName": "サンアントワーヌ",
+                    "popularityRank": 2,
+                    "routineHorseId": "4",
+                    "valueHorseId": "13"
+                  }
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "reason": "placeProb>=0.55_and_out",
+                  "evidence": {
+                    "horseId": "4",
+                    "horseName": "ショウナンカリス",
+                    "placeProb": 0.683,
+                    "placeScore": 0.559,
+                    "overbetLabel": null
+                  }
+                },
+                {
+                  "tag": "value_misallocation",
+                  "reason": "value_miss_but_market_hit",
+                  "evidence": {
+                    "horseId": "13",
+                    "horseName": "デアヴェローチェ",
+                    "realOdds": 8.8,
+                    "placeProb": 0.629,
+                    "valueScore": 0.725,
+                    "scoreGap": 0.021,
+                    "valueHorseId": "13",
+                    "marketHorseId": "17",
+                    "marketPopularityRank": 2,
+                    "valueScoreGap": 0.021
+                  }
+                }
+              ],
               "reviewSummary": "ギリーズボールは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、近走の能力水準がこの相手では上位だった、人気以上に能力を出せる下地があった。"
             },
             {
@@ -267,6 +409,11 @@
               "courseId": "chukyo-turf-1400-202607010411",
               "label": "愛知杯",
               "date": "2026-03-21",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
               "category": "worst_miss",
               "resultTop3HorseIds": [
                 "18",
@@ -288,7 +435,34 @@
               "valueHorseName": "ドロップオブライト",
               "valuePlaced": false,
               "valueReturnRate": null,
-              "reviewSummary": null
+              "primaryMissTag": "top3_total_miss",
+              "missTags": [
+                "place_prob_overestimate",
+                "top3_total_miss"
+              ],
+              "missTagDetails": [
+                {
+                  "tag": "place_prob_overestimate",
+                  "reason": "placeProb>=0.55_and_out",
+                  "evidence": {
+                    "horseId": "5",
+                    "horseName": "ウイントワイライト",
+                    "placeProb": 0.616,
+                    "placeScore": 0.506,
+                    "overbetLabel": null
+                  }
+                },
+                {
+                  "tag": "top3_total_miss",
+                  "reason": "sim_top3_all_out_and_value_out",
+                  "evidence": {
+                    "simTop3PlacedCount": 0,
+                    "hasValueCandidate": true,
+                    "valueHorseId": "16"
+                  }
+                }
+              ],
+              "reviewSummary": "アイサンサンは条件が噛み合って突き抜けた。直線で末脚を生かせる条件だった、近走内容の良さがそのまま結果につながった。"
             }
           ],
           "disagreementCases": [
@@ -297,6 +471,11 @@
               "courseId": "nakayama-turf-1800-202606020711",
               "label": "フラワーＣ",
               "date": "2026-03-21",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
               "category": "disagreement",
               "resultTop3HorseIds": [
                 "10",
@@ -318,13 +497,21 @@
               "valueHorseName": "スマートプリエール",
               "valuePlaced": true,
               "valueReturnRate": 290,
-              "reviewSummary": null
+              "primaryMissTag": null,
+              "missTags": [],
+              "missTagDetails": [],
+              "reviewSummary": "スマートプリエールは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。"
             },
             {
               "raceId": "202609011010",
               "courseId": "hanshin-dirt-1800-202609011010",
               "label": "レグルスＳ",
               "date": "2026-03-22",
+              "raceNumber": 10,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
               "category": "disagreement",
               "resultTop3HorseIds": [
                 "4",
@@ -346,13 +533,21 @@
               "valueHorseName": "メイショウズイウン",
               "valuePlaced": false,
               "valueReturnRate": null,
-              "reviewSummary": null
+              "primaryMissTag": null,
+              "missTags": [],
+              "missTagDetails": [],
+              "reviewSummary": "テーオーグランビルは能力と条件が噛み合って押し切った。先行力を生かしやすい舞台だった、内目の枠からロスなく運べた、近走の能力水準がこの相手では上位だった。"
             },
             {
               "raceId": "202607010211",
               "courseId": "chukyo-turf-2000-202607010211",
               "label": "金鯱賞",
               "date": "2026-03-14",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
               "category": "disagreement",
               "resultTop3HorseIds": [
                 "9",
@@ -374,6 +569,9 @@
               "valueHorseName": "ドゥラドーレス",
               "valuePlaced": false,
               "valueReturnRate": null,
+              "primaryMissTag": null,
+              "missTags": [],
+              "missTagDetails": [],
               "reviewSummary": "シェイクユアハートは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。"
             }
           ],
@@ -383,6 +581,11 @@
               "courseId": "nakayama-turf-1800-202606020711",
               "label": "フラワーＣ",
               "date": "2026-03-21",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
               "category": "value_hit",
               "resultTop3HorseIds": [
                 "10",
@@ -404,13 +607,21 @@
               "valueHorseName": "スマートプリエール",
               "valuePlaced": true,
               "valueReturnRate": 290,
-              "reviewSummary": null
+              "primaryMissTag": null,
+              "missTags": [],
+              "missTagDetails": [],
+              "reviewSummary": "スマートプリエールは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。"
             },
             {
               "raceId": "202606030211",
               "courseId": "nakayama-dirt-1800-202606030211",
               "label": "マーチＳ",
               "date": "2026-03-29",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
               "category": "value_hit",
               "resultTop3HorseIds": [
                 "15",
@@ -432,6 +643,33 @@
               "valueHorseName": "アクションプラン",
               "valuePlaced": true,
               "valueReturnRate": 280,
+              "primaryMissTag": "rank_error",
+              "missTags": [
+                "rank_error",
+                "place_prob_overestimate"
+              ],
+              "missTagDetails": [
+                {
+                  "tag": "rank_error",
+                  "reason": "sim1_out_but_sim2_hit",
+                  "evidence": {
+                    "sim1HorseId": "9",
+                    "sim2HorseId": "4",
+                    "sim2WinProb": 8.6
+                  }
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "reason": "placeProb>=0.55_and_out",
+                  "evidence": {
+                    "horseId": "9",
+                    "horseName": "オメガギネス",
+                    "placeProb": 0.686,
+                    "placeScore": 0.569,
+                    "overbetLabel": null
+                  }
+                }
+              ],
               "reviewSummary": "サンデーファンデーは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった、人気以上に能力を出せる下地があった。"
             },
             {
@@ -439,6 +677,11 @@
               "courseId": "nakayama-dirt-1800-202606030110",
               "label": "伏竜Ｓ",
               "date": "2026-03-28",
+              "raceNumber": 10,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
               "category": "value_hit",
               "resultTop3HorseIds": [
                 "5",
@@ -460,7 +703,495 @@
               "valueHorseName": "ドンエレクトス",
               "valuePlaced": true,
               "valueReturnRate": 180,
+              "primaryMissTag": null,
+              "missTags": [],
+              "missTagDetails": [],
               "reviewSummary": "ダノンバーボンは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった、近走内容の良さがそのまま結果につながった。"
+            }
+          ]
+        },
+        "missDiagnostics": {
+          "missRaceCount": 8,
+          "primary": [
+            {
+              "tag": "top3_total_miss",
+              "raceCount": 2,
+              "rate": 25
+            },
+            {
+              "tag": "rank_error",
+              "raceCount": 5,
+              "rate": 62.5
+            },
+            {
+              "tag": "market_overfade",
+              "raceCount": 0,
+              "rate": 0
+            },
+            {
+              "tag": "place_prob_overestimate",
+              "raceCount": 1,
+              "rate": 12.5
+            },
+            {
+              "tag": "longshot_overreach",
+              "raceCount": 0,
+              "rate": 0
+            },
+            {
+              "tag": "value_misallocation",
+              "raceCount": 0,
+              "rate": 0
+            },
+            {
+              "tag": "data_insufficient",
+              "raceCount": 0,
+              "rate": 0
+            }
+          ],
+          "all": [
+            {
+              "tag": "top3_total_miss",
+              "raceCount": 2,
+              "rate": 25
+            },
+            {
+              "tag": "rank_error",
+              "raceCount": 6,
+              "rate": 75
+            },
+            {
+              "tag": "market_overfade",
+              "raceCount": 4,
+              "rate": 50
+            },
+            {
+              "tag": "place_prob_overestimate",
+              "raceCount": 8,
+              "rate": 100
+            },
+            {
+              "tag": "longshot_overreach",
+              "raceCount": 0,
+              "rate": 0
+            },
+            {
+              "tag": "value_misallocation",
+              "raceCount": 3,
+              "rate": 37.5
+            },
+            {
+              "tag": "data_insufficient",
+              "raceCount": 0,
+              "rate": 0
+            }
+          ],
+          "races": [
+            {
+              "raceId": "202606030211",
+              "courseId": "nakayama-dirt-1800-202606030211",
+              "label": "マーチＳ",
+              "date": "2026-03-29",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
+              "primaryMissTag": "rank_error",
+              "missTags": [
+                "rank_error",
+                "place_prob_overestimate"
+              ],
+              "missTagDetails": [
+                {
+                  "tag": "rank_error",
+                  "reason": "sim1_out_but_sim2_hit",
+                  "evidence": {
+                    "sim1HorseId": "9",
+                    "sim2HorseId": "4",
+                    "sim2WinProb": 8.6
+                  }
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "reason": "placeProb>=0.55_and_out",
+                  "evidence": {
+                    "horseId": "9",
+                    "horseName": "オメガギネス",
+                    "placeProb": 0.686,
+                    "placeScore": 0.569,
+                    "overbetLabel": null
+                  }
+                }
+              ]
+            },
+            {
+              "raceId": "202606030111",
+              "courseId": "nakayama-turf-2500-202606030111",
+              "label": "日経賞",
+              "date": "2026-03-28",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
+              "primaryMissTag": "top3_total_miss",
+              "missTags": [
+                "rank_error",
+                "market_overfade",
+                "place_prob_overestimate",
+                "value_misallocation",
+                "top3_total_miss"
+              ],
+              "missTagDetails": [
+                {
+                  "tag": "rank_error",
+                  "reason": "runner_up_hit_after_honmei_miss",
+                  "evidence": {
+                    "honmeiHorseId": "7",
+                    "runnerUpHorseId": "1",
+                    "runnerUpPlaceProb": 0.678,
+                    "runnerUpPlaceScore": 0.59
+                  }
+                },
+                {
+                  "tag": "market_overfade",
+                  "reason": "market_top3_hit_after_fade",
+                  "evidence": {
+                    "horseId": "1",
+                    "horseName": "ミクニインスパイア",
+                    "popularityRank": 2,
+                    "routineHorseId": "7",
+                    "valueHorseId": "10"
+                  }
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "reason": "placeProb>=0.75_and_out",
+                  "evidence": {
+                    "horseId": "7",
+                    "horseName": "コスモキュランダ",
+                    "placeProb": 0.754,
+                    "placeScore": 0.656,
+                    "overbetLabel": null
+                  }
+                },
+                {
+                  "tag": "value_misallocation",
+                  "reason": "value_miss_but_market_hit",
+                  "evidence": {
+                    "horseId": "10",
+                    "horseName": "シャイニングソード",
+                    "realOdds": 12.4,
+                    "placeProb": 0.584,
+                    "valueScore": 0.673,
+                    "scoreGap": 0.006,
+                    "valueHorseId": "10",
+                    "marketHorseId": "1",
+                    "marketPopularityRank": 2,
+                    "valueScoreGap": 0.006
+                  }
+                },
+                {
+                  "tag": "top3_total_miss",
+                  "reason": "sim_top3_all_out_and_value_out",
+                  "evidence": {
+                    "simTop3PlacedCount": 0,
+                    "hasValueCandidate": true,
+                    "valueHorseId": "10"
+                  }
+                }
+              ]
+            },
+            {
+              "raceId": "202607010411",
+              "courseId": "chukyo-turf-1400-202607010411",
+              "label": "愛知杯",
+              "date": "2026-03-21",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
+              "primaryMissTag": "top3_total_miss",
+              "missTags": [
+                "place_prob_overestimate",
+                "top3_total_miss"
+              ],
+              "missTagDetails": [
+                {
+                  "tag": "place_prob_overestimate",
+                  "reason": "placeProb>=0.55_and_out",
+                  "evidence": {
+                    "horseId": "5",
+                    "horseName": "ウイントワイライト",
+                    "placeProb": 0.616,
+                    "placeScore": 0.506,
+                    "overbetLabel": null
+                  }
+                },
+                {
+                  "tag": "top3_total_miss",
+                  "reason": "sim_top3_all_out_and_value_out",
+                  "evidence": {
+                    "simTop3PlacedCount": 0,
+                    "hasValueCandidate": true,
+                    "valueHorseId": "16"
+                  }
+                }
+              ]
+            },
+            {
+              "raceId": "202609010711",
+              "courseId": "hanshin-dirt-1400-202609010711",
+              "label": "コーラルステークス",
+              "date": "2026-03-14",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
+              "primaryMissTag": "rank_error",
+              "missTags": [
+                "rank_error",
+                "market_overfade",
+                "place_prob_overestimate"
+              ],
+              "missTagDetails": [
+                {
+                  "tag": "rank_error",
+                  "reason": "runner_up_hit_after_honmei_miss",
+                  "evidence": {
+                    "honmeiHorseId": "1",
+                    "runnerUpHorseId": "14",
+                    "runnerUpPlaceProb": 0.728,
+                    "runnerUpPlaceScore": 0.643
+                  }
+                },
+                {
+                  "tag": "market_overfade",
+                  "reason": "market_top3_hit_after_fade",
+                  "evidence": {
+                    "horseId": "11",
+                    "horseName": "ジャスティンアース",
+                    "popularityRank": 2,
+                    "routineHorseId": "1",
+                    "valueHorseId": "4"
+                  }
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "reason": "placeProb>=0.55_and_out",
+                  "evidence": {
+                    "horseId": "1",
+                    "horseName": "ビダーヤ",
+                    "placeProb": 0.729,
+                    "placeScore": 0.644,
+                    "overbetLabel": null
+                  }
+                }
+              ]
+            },
+            {
+              "raceId": "202606020611",
+              "courseId": "nakayama-turf-1800-202606020611",
+              "label": "スプリングＳ",
+              "date": "2026-03-14",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
+              "primaryMissTag": "rank_error",
+              "missTags": [
+                "rank_error",
+                "place_prob_overestimate"
+              ],
+              "missTagDetails": [
+                {
+                  "tag": "rank_error",
+                  "reason": "runner_up_hit_after_honmei_miss",
+                  "evidence": {
+                    "honmeiHorseId": "12",
+                    "runnerUpHorseId": "2",
+                    "runnerUpPlaceProb": 0.66,
+                    "runnerUpPlaceScore": 0.549
+                  }
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "reason": "placeProb_ceiling_and_out",
+                  "evidence": {
+                    "horseId": "12",
+                    "horseName": "クレパスキュラー",
+                    "placeProb": 0.88,
+                    "placeScore": 0.769,
+                    "overbetLabel": "overbet_high"
+                  }
+                }
+              ]
+            },
+            {
+              "raceId": "202606020610",
+              "courseId": "nakayama-turf-1600-202606020610",
+              "label": "東風Ｓ",
+              "date": "2026-03-14",
+              "raceNumber": 10,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
+              "primaryMissTag": "rank_error",
+              "missTags": [
+                "rank_error",
+                "market_overfade",
+                "place_prob_overestimate",
+                "value_misallocation"
+              ],
+              "missTagDetails": [
+                {
+                  "tag": "rank_error",
+                  "reason": "sim1_out_but_sim2_hit",
+                  "evidence": {
+                    "sim1HorseId": "12",
+                    "sim2HorseId": "16",
+                    "sim2WinProb": 9.3
+                  }
+                },
+                {
+                  "tag": "market_overfade",
+                  "reason": "market_favorite_hit_after_fade",
+                  "evidence": {
+                    "horseId": "6",
+                    "horseName": "ジョイフルニュース",
+                    "popularityRank": 1,
+                    "routineHorseId": "14",
+                    "valueHorseId": "5"
+                  }
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "reason": "placeProb>=0.55_and_out",
+                  "evidence": {
+                    "horseId": "14",
+                    "horseName": "ランスオブカオス",
+                    "placeProb": 0.738,
+                    "placeScore": 0.676,
+                    "overbetLabel": null
+                  }
+                },
+                {
+                  "tag": "value_misallocation",
+                  "reason": "value_miss_but_market_hit",
+                  "evidence": {
+                    "horseId": "5",
+                    "horseName": "エンペラーズソード",
+                    "realOdds": 11.3,
+                    "placeProb": 0.547,
+                    "valueScore": 0.657,
+                    "scoreGap": 0.069,
+                    "valueHorseId": "5",
+                    "marketHorseId": "6",
+                    "marketPopularityRank": 1,
+                    "valueScoreGap": 0.069
+                  }
+                }
+              ]
+            },
+            {
+              "raceId": "202609010511",
+              "courseId": "hanshin-turf-1400-202609010511",
+              "label": "フィリーズレビュー 出馬表",
+              "date": "2026-03-06",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
+              "primaryMissTag": "rank_error",
+              "missTags": [
+                "rank_error",
+                "market_overfade",
+                "place_prob_overestimate",
+                "value_misallocation"
+              ],
+              "missTagDetails": [
+                {
+                  "tag": "rank_error",
+                  "reason": "sim1_out_but_sim2_hit",
+                  "evidence": {
+                    "sim1HorseId": "4",
+                    "sim2HorseId": "7",
+                    "sim2WinProb": 19.2
+                  }
+                },
+                {
+                  "tag": "market_overfade",
+                  "reason": "market_top3_hit_after_fade",
+                  "evidence": {
+                    "horseId": "17",
+                    "horseName": "サンアントワーヌ",
+                    "popularityRank": 2,
+                    "routineHorseId": "4",
+                    "valueHorseId": "13"
+                  }
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "reason": "placeProb>=0.55_and_out",
+                  "evidence": {
+                    "horseId": "4",
+                    "horseName": "ショウナンカリス",
+                    "placeProb": 0.683,
+                    "placeScore": 0.559,
+                    "overbetLabel": null
+                  }
+                },
+                {
+                  "tag": "value_misallocation",
+                  "reason": "value_miss_but_market_hit",
+                  "evidence": {
+                    "horseId": "13",
+                    "horseName": "デアヴェローチェ",
+                    "realOdds": 8.8,
+                    "placeProb": 0.629,
+                    "valueScore": 0.725,
+                    "scoreGap": 0.021,
+                    "valueHorseId": "13",
+                    "marketHorseId": "17",
+                    "marketPopularityRank": 2,
+                    "valueScoreGap": 0.021
+                  }
+                }
+              ]
+            },
+            {
+              "raceId": "202606020311",
+              "courseId": "nakayama-turf-1800-202606020311",
+              "label": "中山牝馬Ｓ 出馬表",
+              "date": "2026-03-06",
+              "raceNumber": 11,
+              "isSpecialRace": true,
+              "isFinalRace": false,
+              "isJumpRace": false,
+              "raceSegment": "special",
+              "primaryMissTag": "place_prob_overestimate",
+              "missTags": [
+                "place_prob_overestimate"
+              ],
+              "missTagDetails": [
+                {
+                  "tag": "place_prob_overestimate",
+                  "reason": "placeProb>=0.55_and_out",
+                  "evidence": {
+                    "horseId": "10",
+                    "horseName": "アンゴラブラック",
+                    "placeProb": 0.698,
+                    "placeScore": 0.597,
+                    "overbetLabel": null
+                  }
+                }
+              ]
             }
           ]
         },
@@ -562,8 +1293,2291 @@
               "valuePlaceReturnRate": 47.82608695652174
             },
             "metricSignals": []
+          },
+          {
+            "id": "miss_tag_rank_error_recheck",
+            "category": "ranking",
+            "targetStyle": "place_hit_rate",
+            "priority": "high",
+            "title": "本命順位付けを再点検",
+            "summary": "候補抽出よりも1頭目の順位付けで取り逃している負けが目立つ。sim2/sim3やrunner-upが拾えているかを見直したい。",
+            "evidence": {
+              "missRaceCount": 8,
+              "rankErrorCount": 6,
+              "rankErrorRate": 75,
+              "primaryRankErrorCount": 5
+            },
+            "metricSignals": [
+              "missDiagnostics.rank_error"
+            ]
+          },
+          {
+            "id": "miss_tag_market_overfade_rebalance",
+            "category": "place_core",
+            "targetStyle": "balanced",
+            "priority": "high",
+            "title": "市場過熱減点の強さを見直す",
+            "summary": "市場支持の強い馬を切りすぎて負けるケースが積み上がっている。market fade の減点や採用条件を少し戻したい。",
+            "evidence": {
+              "missRaceCount": 8,
+              "marketOverfadeCount": 4,
+              "marketOverfadeRate": 50,
+              "primaryMarketOverfadeCount": 0
+            },
+            "metricSignals": [
+              "missDiagnostics.market_overfade"
+            ]
+          },
+          {
+            "id": "miss_tag_place_prob_overestimate_recalibrate",
+            "category": "place_core",
+            "targetStyle": "place_hit_rate",
+            "priority": "high",
+            "title": "placeProb の定義を再調整",
+            "summary": "高い複勝確率を付けた本命が圏外に沈む負けが多い。placeProb の上限・市場混合率・安定度寄与を再点検したい。",
+            "evidence": {
+              "missRaceCount": 8,
+              "placeProbOverestimateCount": 8,
+              "placeProbOverestimateRate": 100,
+              "primaryPlaceProbOverestimateCount": 1
+            },
+            "metricSignals": [
+              "missDiagnostics.place_prob_overestimate"
+            ]
+          },
+          {
+            "id": "miss_tag_value_misallocation_rebalance",
+            "category": "value_core",
+            "targetStyle": "place_return_rate",
+            "priority": "high",
+            "title": "妙味候補の期待値配分を再点検",
+            "summary": "妙味候補は出せているが、上位候補や市場上位に対する配分がずれている。valueScore と tie-break の再配分が必要。",
+            "evidence": {
+              "missRaceCount": 8,
+              "valueMisallocationCount": 3,
+              "valueMisallocationRate": 37.5,
+              "primaryValueMisallocationCount": 0
+            },
+            "metricSignals": [
+              "missDiagnostics.value_misallocation"
+            ]
+          },
+          {
+            "id": "miss_tag_top3_total_miss_reset",
+            "category": "ranking",
+            "targetStyle": "balanced",
+            "priority": "medium",
+            "title": "上位想定の総崩れ区間を分離して点検",
+            "summary": "本命・妙味・sim上位がまとめて外れるレースが多い。対象拡張前に、総崩れ区間の共通条件を切り出して見る価値がある。",
+            "evidence": {
+              "missRaceCount": 8,
+              "top3TotalMissCount": 2,
+              "top3TotalMissRate": 25,
+              "primaryTop3TotalMissCount": 2
+            },
+            "metricSignals": [
+              "missDiagnostics.top3_total_miss"
+            ]
           }
-        ]
+        ],
+        "segments": {
+          "special_only": {
+            "key": "special_only",
+            "label": "special_only",
+            "raceCount": 23,
+            "settledRaceCount": 23,
+            "placeCore": {
+              "snapshotHonmei": {
+                "raceCount": 23,
+                "placeHitCount": 8,
+                "placeRate": 34.78260869565217
+              },
+              "routineHonmei": {
+                "raceCount": 23,
+                "placeHitCount": 15,
+                "placeRate": 65.21739130434783,
+                "placeReturnRate": 100.8695652173913
+              },
+              "snapshotRanks": [
+                {
+                  "rank": 1,
+                  "raceCount": 23,
+                  "placeHitCount": 8,
+                  "placeRate": 34.78260869565217
+                },
+                {
+                  "rank": 2,
+                  "raceCount": 23,
+                  "placeHitCount": 13,
+                  "placeRate": 56.52173913043478
+                },
+                {
+                  "rank": 3,
+                  "raceCount": 23,
+                  "placeHitCount": 8,
+                  "placeRate": 34.78260869565217
+                }
+              ]
+            },
+            "valueCore": {
+              "raceCount": 23,
+              "skippedCount": 0,
+              "placeHitCount": 5,
+              "placeRate": 21.73913043478261,
+              "placeReturnRate": 47.82608695652174,
+              "candidateRate": 100,
+              "popularityBands": [
+                {
+                  "band": "top3",
+                  "raceCount": 5,
+                  "placeHitCount": 1,
+                  "placeRate": 20,
+                  "placeReturnRate": 36
+                },
+                {
+                  "band": "mid",
+                  "raceCount": 17,
+                  "placeHitCount": 4,
+                  "placeRate": 23.52941176470588,
+                  "placeReturnRate": 54.11764705882353
+                },
+                {
+                  "band": "longshot",
+                  "raceCount": 1,
+                  "placeHitCount": 0,
+                  "placeRate": 0,
+                  "placeReturnRate": 0
+                }
+              ],
+              "longshot": {
+                "raceCount": 1,
+                "placeHitCount": 0,
+                "placeRate": 0,
+                "placeReturnRate": 0
+              }
+            },
+            "wideStats": {
+              "tanpukuHonmeiValueCandidate": {
+                "targetRaceCount": 23,
+                "valueCandidateRaceCount": 23,
+                "settledRaceCount": 21,
+                "pendingRaceCount": 2,
+                "hitCount": 2,
+                "hitRate": 9.523809523809524,
+                "totalStake": 2100,
+                "totalPayout": 1230,
+                "returnRate": 58.57142857142858,
+                "averagePayout": 615
+              },
+              "simHonmeiTanpukuHonmeiValueCandidateBox": {
+                "targetRaceCount": 14,
+                "settledRaceCount": 13,
+                "pendingRaceCount": 1,
+                "hitRaceCount": 2,
+                "hitRate": 15.384615384615385,
+                "totalStake": 3900,
+                "totalPayout": 1100,
+                "returnRate": 28.205128205128204,
+                "averagePayout": 550
+              }
+            },
+            "agreement": {
+              "raceCount": 23,
+              "sameHonmeiCount": 5,
+              "agreementRate": 21.73913043478261,
+              "samePlaceRate": 60,
+              "disagreementSnapshotPlaceRate": 27.77777777777778,
+              "disagreementRoutinePlaceRate": 66.66666666666666
+            },
+            "disagreement": {
+              "raceCount": 18,
+              "snapshotPlaceRate": 27.77777777777778,
+              "routinePlaceRate": 66.66666666666666,
+              "valuePlaceCount": 4,
+              "snapshotOnlyPlaceCount": 2,
+              "routineOnlyPlaceCount": 9
+            },
+            "missDiagnostics": {
+              "missRaceCount": 8,
+              "primary": [
+                {
+                  "tag": "top3_total_miss",
+                  "raceCount": 2,
+                  "rate": 25
+                },
+                {
+                  "tag": "rank_error",
+                  "raceCount": 5,
+                  "rate": 62.5
+                },
+                {
+                  "tag": "market_overfade",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "raceCount": 1,
+                  "rate": 12.5
+                },
+                {
+                  "tag": "longshot_overreach",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "value_misallocation",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "data_insufficient",
+                  "raceCount": 0,
+                  "rate": 0
+                }
+              ],
+              "all": [
+                {
+                  "tag": "top3_total_miss",
+                  "raceCount": 2,
+                  "rate": 25
+                },
+                {
+                  "tag": "rank_error",
+                  "raceCount": 6,
+                  "rate": 75
+                },
+                {
+                  "tag": "market_overfade",
+                  "raceCount": 4,
+                  "rate": 50
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "raceCount": 8,
+                  "rate": 100
+                },
+                {
+                  "tag": "longshot_overreach",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "value_misallocation",
+                  "raceCount": 3,
+                  "rate": 37.5
+                },
+                {
+                  "tag": "data_insufficient",
+                  "raceCount": 0,
+                  "rate": 0
+                }
+              ],
+              "races": [
+                {
+                  "raceId": "202606030211",
+                  "courseId": "nakayama-dirt-1800-202606030211",
+                  "label": "マーチＳ",
+                  "date": "2026-03-29",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "place_prob_overestimate"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "sim1_out_but_sim2_hit",
+                      "evidence": {
+                        "sim1HorseId": "9",
+                        "sim2HorseId": "4",
+                        "sim2WinProb": 8.6
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "9",
+                        "horseName": "オメガギネス",
+                        "placeProb": 0.686,
+                        "placeScore": 0.569,
+                        "overbetLabel": null
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202606030111",
+                  "courseId": "nakayama-turf-2500-202606030111",
+                  "label": "日経賞",
+                  "date": "2026-03-28",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "top3_total_miss",
+                  "missTags": [
+                    "rank_error",
+                    "market_overfade",
+                    "place_prob_overestimate",
+                    "value_misallocation",
+                    "top3_total_miss"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "runner_up_hit_after_honmei_miss",
+                      "evidence": {
+                        "honmeiHorseId": "7",
+                        "runnerUpHorseId": "1",
+                        "runnerUpPlaceProb": 0.678,
+                        "runnerUpPlaceScore": 0.59
+                      }
+                    },
+                    {
+                      "tag": "market_overfade",
+                      "reason": "market_top3_hit_after_fade",
+                      "evidence": {
+                        "horseId": "1",
+                        "horseName": "ミクニインスパイア",
+                        "popularityRank": 2,
+                        "routineHorseId": "7",
+                        "valueHorseId": "10"
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.75_and_out",
+                      "evidence": {
+                        "horseId": "7",
+                        "horseName": "コスモキュランダ",
+                        "placeProb": 0.754,
+                        "placeScore": 0.656,
+                        "overbetLabel": null
+                      }
+                    },
+                    {
+                      "tag": "value_misallocation",
+                      "reason": "value_miss_but_market_hit",
+                      "evidence": {
+                        "horseId": "10",
+                        "horseName": "シャイニングソード",
+                        "realOdds": 12.4,
+                        "placeProb": 0.584,
+                        "valueScore": 0.673,
+                        "scoreGap": 0.006,
+                        "valueHorseId": "10",
+                        "marketHorseId": "1",
+                        "marketPopularityRank": 2,
+                        "valueScoreGap": 0.006
+                      }
+                    },
+                    {
+                      "tag": "top3_total_miss",
+                      "reason": "sim_top3_all_out_and_value_out",
+                      "evidence": {
+                        "simTop3PlacedCount": 0,
+                        "hasValueCandidate": true,
+                        "valueHorseId": "10"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202607010411",
+                  "courseId": "chukyo-turf-1400-202607010411",
+                  "label": "愛知杯",
+                  "date": "2026-03-21",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "top3_total_miss",
+                  "missTags": [
+                    "place_prob_overestimate",
+                    "top3_total_miss"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "5",
+                        "horseName": "ウイントワイライト",
+                        "placeProb": 0.616,
+                        "placeScore": 0.506,
+                        "overbetLabel": null
+                      }
+                    },
+                    {
+                      "tag": "top3_total_miss",
+                      "reason": "sim_top3_all_out_and_value_out",
+                      "evidence": {
+                        "simTop3PlacedCount": 0,
+                        "hasValueCandidate": true,
+                        "valueHorseId": "16"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202609010711",
+                  "courseId": "hanshin-dirt-1400-202609010711",
+                  "label": "コーラルステークス",
+                  "date": "2026-03-14",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "market_overfade",
+                    "place_prob_overestimate"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "runner_up_hit_after_honmei_miss",
+                      "evidence": {
+                        "honmeiHorseId": "1",
+                        "runnerUpHorseId": "14",
+                        "runnerUpPlaceProb": 0.728,
+                        "runnerUpPlaceScore": 0.643
+                      }
+                    },
+                    {
+                      "tag": "market_overfade",
+                      "reason": "market_top3_hit_after_fade",
+                      "evidence": {
+                        "horseId": "11",
+                        "horseName": "ジャスティンアース",
+                        "popularityRank": 2,
+                        "routineHorseId": "1",
+                        "valueHorseId": "4"
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "1",
+                        "horseName": "ビダーヤ",
+                        "placeProb": 0.729,
+                        "placeScore": 0.644,
+                        "overbetLabel": null
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202606020611",
+                  "courseId": "nakayama-turf-1800-202606020611",
+                  "label": "スプリングＳ",
+                  "date": "2026-03-14",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "place_prob_overestimate"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "runner_up_hit_after_honmei_miss",
+                      "evidence": {
+                        "honmeiHorseId": "12",
+                        "runnerUpHorseId": "2",
+                        "runnerUpPlaceProb": 0.66,
+                        "runnerUpPlaceScore": 0.549
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb_ceiling_and_out",
+                      "evidence": {
+                        "horseId": "12",
+                        "horseName": "クレパスキュラー",
+                        "placeProb": 0.88,
+                        "placeScore": 0.769,
+                        "overbetLabel": "overbet_high"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202606020610",
+                  "courseId": "nakayama-turf-1600-202606020610",
+                  "label": "東風Ｓ",
+                  "date": "2026-03-14",
+                  "raceNumber": 10,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "market_overfade",
+                    "place_prob_overestimate",
+                    "value_misallocation"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "sim1_out_but_sim2_hit",
+                      "evidence": {
+                        "sim1HorseId": "12",
+                        "sim2HorseId": "16",
+                        "sim2WinProb": 9.3
+                      }
+                    },
+                    {
+                      "tag": "market_overfade",
+                      "reason": "market_favorite_hit_after_fade",
+                      "evidence": {
+                        "horseId": "6",
+                        "horseName": "ジョイフルニュース",
+                        "popularityRank": 1,
+                        "routineHorseId": "14",
+                        "valueHorseId": "5"
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "14",
+                        "horseName": "ランスオブカオス",
+                        "placeProb": 0.738,
+                        "placeScore": 0.676,
+                        "overbetLabel": null
+                      }
+                    },
+                    {
+                      "tag": "value_misallocation",
+                      "reason": "value_miss_but_market_hit",
+                      "evidence": {
+                        "horseId": "5",
+                        "horseName": "エンペラーズソード",
+                        "realOdds": 11.3,
+                        "placeProb": 0.547,
+                        "valueScore": 0.657,
+                        "scoreGap": 0.069,
+                        "valueHorseId": "5",
+                        "marketHorseId": "6",
+                        "marketPopularityRank": 1,
+                        "valueScoreGap": 0.069
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202609010511",
+                  "courseId": "hanshin-turf-1400-202609010511",
+                  "label": "フィリーズレビュー 出馬表",
+                  "date": "2026-03-06",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "market_overfade",
+                    "place_prob_overestimate",
+                    "value_misallocation"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "sim1_out_but_sim2_hit",
+                      "evidence": {
+                        "sim1HorseId": "4",
+                        "sim2HorseId": "7",
+                        "sim2WinProb": 19.2
+                      }
+                    },
+                    {
+                      "tag": "market_overfade",
+                      "reason": "market_top3_hit_after_fade",
+                      "evidence": {
+                        "horseId": "17",
+                        "horseName": "サンアントワーヌ",
+                        "popularityRank": 2,
+                        "routineHorseId": "4",
+                        "valueHorseId": "13"
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "4",
+                        "horseName": "ショウナンカリス",
+                        "placeProb": 0.683,
+                        "placeScore": 0.559,
+                        "overbetLabel": null
+                      }
+                    },
+                    {
+                      "tag": "value_misallocation",
+                      "reason": "value_miss_but_market_hit",
+                      "evidence": {
+                        "horseId": "13",
+                        "horseName": "デアヴェローチェ",
+                        "realOdds": 8.8,
+                        "placeProb": 0.629,
+                        "valueScore": 0.725,
+                        "scoreGap": 0.021,
+                        "valueHorseId": "13",
+                        "marketHorseId": "17",
+                        "marketPopularityRank": 2,
+                        "valueScoreGap": 0.021
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202606020311",
+                  "courseId": "nakayama-turf-1800-202606020311",
+                  "label": "中山牝馬Ｓ 出馬表",
+                  "date": "2026-03-06",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "place_prob_overestimate",
+                  "missTags": [
+                    "place_prob_overestimate"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "10",
+                        "horseName": "アンゴラブラック",
+                        "placeProb": 0.698,
+                        "placeScore": 0.597,
+                        "overbetLabel": null
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "final12_only": {
+            "key": "final12_only",
+            "label": "final12_only",
+            "raceCount": 0,
+            "settledRaceCount": 0,
+            "placeCore": {
+              "snapshotHonmei": {
+                "raceCount": 0,
+                "placeHitCount": 0,
+                "placeRate": 0
+              },
+              "routineHonmei": {
+                "raceCount": 0,
+                "placeHitCount": 0,
+                "placeRate": 0,
+                "placeReturnRate": 0
+              },
+              "snapshotRanks": [
+                {
+                  "rank": 1,
+                  "raceCount": 0,
+                  "placeHitCount": 0,
+                  "placeRate": 0
+                },
+                {
+                  "rank": 2,
+                  "raceCount": 0,
+                  "placeHitCount": 0,
+                  "placeRate": 0
+                },
+                {
+                  "rank": 3,
+                  "raceCount": 0,
+                  "placeHitCount": 0,
+                  "placeRate": 0
+                }
+              ]
+            },
+            "valueCore": {
+              "raceCount": 0,
+              "skippedCount": 0,
+              "placeHitCount": 0,
+              "placeRate": 0,
+              "placeReturnRate": 0,
+              "candidateRate": 0,
+              "popularityBands": [
+                {
+                  "band": "top3",
+                  "raceCount": 0,
+                  "placeHitCount": 0,
+                  "placeRate": 0,
+                  "placeReturnRate": 0
+                },
+                {
+                  "band": "mid",
+                  "raceCount": 0,
+                  "placeHitCount": 0,
+                  "placeRate": 0,
+                  "placeReturnRate": 0
+                },
+                {
+                  "band": "longshot",
+                  "raceCount": 0,
+                  "placeHitCount": 0,
+                  "placeRate": 0,
+                  "placeReturnRate": 0
+                }
+              ],
+              "longshot": {
+                "raceCount": 0,
+                "placeHitCount": 0,
+                "placeRate": 0,
+                "placeReturnRate": 0
+              }
+            },
+            "wideStats": {
+              "tanpukuHonmeiValueCandidate": {
+                "targetRaceCount": 0,
+                "valueCandidateRaceCount": 0,
+                "settledRaceCount": 0,
+                "pendingRaceCount": 0,
+                "hitCount": 0,
+                "hitRate": 0,
+                "totalStake": 0,
+                "totalPayout": 0,
+                "returnRate": 0,
+                "averagePayout": 0
+              },
+              "simHonmeiTanpukuHonmeiValueCandidateBox": {
+                "targetRaceCount": 0,
+                "settledRaceCount": 0,
+                "pendingRaceCount": 0,
+                "hitRaceCount": 0,
+                "hitRate": 0,
+                "totalStake": 0,
+                "totalPayout": 0,
+                "returnRate": 0,
+                "averagePayout": 0
+              }
+            },
+            "agreement": {
+              "raceCount": 0,
+              "sameHonmeiCount": 0,
+              "agreementRate": 0,
+              "samePlaceRate": 0,
+              "disagreementSnapshotPlaceRate": 0,
+              "disagreementRoutinePlaceRate": 0
+            },
+            "disagreement": {
+              "raceCount": 0,
+              "snapshotPlaceRate": 0,
+              "routinePlaceRate": 0,
+              "valuePlaceCount": 0,
+              "snapshotOnlyPlaceCount": 0,
+              "routineOnlyPlaceCount": 0
+            },
+            "missDiagnostics": {
+              "missRaceCount": 0,
+              "primary": [
+                {
+                  "tag": "top3_total_miss",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "rank_error",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "market_overfade",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "longshot_overreach",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "value_misallocation",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "data_insufficient",
+                  "raceCount": 0,
+                  "rate": 0
+                }
+              ],
+              "all": [
+                {
+                  "tag": "top3_total_miss",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "rank_error",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "market_overfade",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "longshot_overreach",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "value_misallocation",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "data_insufficient",
+                  "raceCount": 0,
+                  "rate": 0
+                }
+              ],
+              "races": []
+            }
+          },
+          "all_expanded": {
+            "key": "all_expanded",
+            "label": "all_expanded",
+            "raceCount": 23,
+            "settledRaceCount": 23,
+            "placeCore": {
+              "snapshotHonmei": {
+                "raceCount": 23,
+                "placeHitCount": 8,
+                "placeRate": 34.78260869565217
+              },
+              "routineHonmei": {
+                "raceCount": 23,
+                "placeHitCount": 15,
+                "placeRate": 65.21739130434783,
+                "placeReturnRate": 100.8695652173913
+              },
+              "snapshotRanks": [
+                {
+                  "rank": 1,
+                  "raceCount": 23,
+                  "placeHitCount": 8,
+                  "placeRate": 34.78260869565217
+                },
+                {
+                  "rank": 2,
+                  "raceCount": 23,
+                  "placeHitCount": 13,
+                  "placeRate": 56.52173913043478
+                },
+                {
+                  "rank": 3,
+                  "raceCount": 23,
+                  "placeHitCount": 8,
+                  "placeRate": 34.78260869565217
+                }
+              ]
+            },
+            "valueCore": {
+              "raceCount": 23,
+              "skippedCount": 0,
+              "placeHitCount": 5,
+              "placeRate": 21.73913043478261,
+              "placeReturnRate": 47.82608695652174,
+              "candidateRate": 100,
+              "popularityBands": [
+                {
+                  "band": "top3",
+                  "raceCount": 5,
+                  "placeHitCount": 1,
+                  "placeRate": 20,
+                  "placeReturnRate": 36
+                },
+                {
+                  "band": "mid",
+                  "raceCount": 17,
+                  "placeHitCount": 4,
+                  "placeRate": 23.52941176470588,
+                  "placeReturnRate": 54.11764705882353
+                },
+                {
+                  "band": "longshot",
+                  "raceCount": 1,
+                  "placeHitCount": 0,
+                  "placeRate": 0,
+                  "placeReturnRate": 0
+                }
+              ],
+              "longshot": {
+                "raceCount": 1,
+                "placeHitCount": 0,
+                "placeRate": 0,
+                "placeReturnRate": 0
+              }
+            },
+            "wideStats": {
+              "tanpukuHonmeiValueCandidate": {
+                "targetRaceCount": 23,
+                "valueCandidateRaceCount": 23,
+                "settledRaceCount": 21,
+                "pendingRaceCount": 2,
+                "hitCount": 2,
+                "hitRate": 9.523809523809524,
+                "totalStake": 2100,
+                "totalPayout": 1230,
+                "returnRate": 58.57142857142858,
+                "averagePayout": 615
+              },
+              "simHonmeiTanpukuHonmeiValueCandidateBox": {
+                "targetRaceCount": 14,
+                "settledRaceCount": 13,
+                "pendingRaceCount": 1,
+                "hitRaceCount": 2,
+                "hitRate": 15.384615384615385,
+                "totalStake": 3900,
+                "totalPayout": 1100,
+                "returnRate": 28.205128205128204,
+                "averagePayout": 550
+              }
+            },
+            "agreement": {
+              "raceCount": 23,
+              "sameHonmeiCount": 5,
+              "agreementRate": 21.73913043478261,
+              "samePlaceRate": 60,
+              "disagreementSnapshotPlaceRate": 27.77777777777778,
+              "disagreementRoutinePlaceRate": 66.66666666666666
+            },
+            "disagreement": {
+              "raceCount": 18,
+              "snapshotPlaceRate": 27.77777777777778,
+              "routinePlaceRate": 66.66666666666666,
+              "valuePlaceCount": 4,
+              "snapshotOnlyPlaceCount": 2,
+              "routineOnlyPlaceCount": 9
+            },
+            "missDiagnostics": {
+              "missRaceCount": 8,
+              "primary": [
+                {
+                  "tag": "top3_total_miss",
+                  "raceCount": 2,
+                  "rate": 25
+                },
+                {
+                  "tag": "rank_error",
+                  "raceCount": 5,
+                  "rate": 62.5
+                },
+                {
+                  "tag": "market_overfade",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "raceCount": 1,
+                  "rate": 12.5
+                },
+                {
+                  "tag": "longshot_overreach",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "value_misallocation",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "data_insufficient",
+                  "raceCount": 0,
+                  "rate": 0
+                }
+              ],
+              "all": [
+                {
+                  "tag": "top3_total_miss",
+                  "raceCount": 2,
+                  "rate": 25
+                },
+                {
+                  "tag": "rank_error",
+                  "raceCount": 6,
+                  "rate": 75
+                },
+                {
+                  "tag": "market_overfade",
+                  "raceCount": 4,
+                  "rate": 50
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "raceCount": 8,
+                  "rate": 100
+                },
+                {
+                  "tag": "longshot_overreach",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "value_misallocation",
+                  "raceCount": 3,
+                  "rate": 37.5
+                },
+                {
+                  "tag": "data_insufficient",
+                  "raceCount": 0,
+                  "rate": 0
+                }
+              ],
+              "races": [
+                {
+                  "raceId": "202606030211",
+                  "courseId": "nakayama-dirt-1800-202606030211",
+                  "label": "マーチＳ",
+                  "date": "2026-03-29",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "place_prob_overestimate"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "sim1_out_but_sim2_hit",
+                      "evidence": {
+                        "sim1HorseId": "9",
+                        "sim2HorseId": "4",
+                        "sim2WinProb": 8.6
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "9",
+                        "horseName": "オメガギネス",
+                        "placeProb": 0.686,
+                        "placeScore": 0.569,
+                        "overbetLabel": null
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202606030111",
+                  "courseId": "nakayama-turf-2500-202606030111",
+                  "label": "日経賞",
+                  "date": "2026-03-28",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "top3_total_miss",
+                  "missTags": [
+                    "rank_error",
+                    "market_overfade",
+                    "place_prob_overestimate",
+                    "value_misallocation",
+                    "top3_total_miss"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "runner_up_hit_after_honmei_miss",
+                      "evidence": {
+                        "honmeiHorseId": "7",
+                        "runnerUpHorseId": "1",
+                        "runnerUpPlaceProb": 0.678,
+                        "runnerUpPlaceScore": 0.59
+                      }
+                    },
+                    {
+                      "tag": "market_overfade",
+                      "reason": "market_top3_hit_after_fade",
+                      "evidence": {
+                        "horseId": "1",
+                        "horseName": "ミクニインスパイア",
+                        "popularityRank": 2,
+                        "routineHorseId": "7",
+                        "valueHorseId": "10"
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.75_and_out",
+                      "evidence": {
+                        "horseId": "7",
+                        "horseName": "コスモキュランダ",
+                        "placeProb": 0.754,
+                        "placeScore": 0.656,
+                        "overbetLabel": null
+                      }
+                    },
+                    {
+                      "tag": "value_misallocation",
+                      "reason": "value_miss_but_market_hit",
+                      "evidence": {
+                        "horseId": "10",
+                        "horseName": "シャイニングソード",
+                        "realOdds": 12.4,
+                        "placeProb": 0.584,
+                        "valueScore": 0.673,
+                        "scoreGap": 0.006,
+                        "valueHorseId": "10",
+                        "marketHorseId": "1",
+                        "marketPopularityRank": 2,
+                        "valueScoreGap": 0.006
+                      }
+                    },
+                    {
+                      "tag": "top3_total_miss",
+                      "reason": "sim_top3_all_out_and_value_out",
+                      "evidence": {
+                        "simTop3PlacedCount": 0,
+                        "hasValueCandidate": true,
+                        "valueHorseId": "10"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202607010411",
+                  "courseId": "chukyo-turf-1400-202607010411",
+                  "label": "愛知杯",
+                  "date": "2026-03-21",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "top3_total_miss",
+                  "missTags": [
+                    "place_prob_overestimate",
+                    "top3_total_miss"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "5",
+                        "horseName": "ウイントワイライト",
+                        "placeProb": 0.616,
+                        "placeScore": 0.506,
+                        "overbetLabel": null
+                      }
+                    },
+                    {
+                      "tag": "top3_total_miss",
+                      "reason": "sim_top3_all_out_and_value_out",
+                      "evidence": {
+                        "simTop3PlacedCount": 0,
+                        "hasValueCandidate": true,
+                        "valueHorseId": "16"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202609010711",
+                  "courseId": "hanshin-dirt-1400-202609010711",
+                  "label": "コーラルステークス",
+                  "date": "2026-03-14",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "market_overfade",
+                    "place_prob_overestimate"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "runner_up_hit_after_honmei_miss",
+                      "evidence": {
+                        "honmeiHorseId": "1",
+                        "runnerUpHorseId": "14",
+                        "runnerUpPlaceProb": 0.728,
+                        "runnerUpPlaceScore": 0.643
+                      }
+                    },
+                    {
+                      "tag": "market_overfade",
+                      "reason": "market_top3_hit_after_fade",
+                      "evidence": {
+                        "horseId": "11",
+                        "horseName": "ジャスティンアース",
+                        "popularityRank": 2,
+                        "routineHorseId": "1",
+                        "valueHorseId": "4"
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "1",
+                        "horseName": "ビダーヤ",
+                        "placeProb": 0.729,
+                        "placeScore": 0.644,
+                        "overbetLabel": null
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202606020611",
+                  "courseId": "nakayama-turf-1800-202606020611",
+                  "label": "スプリングＳ",
+                  "date": "2026-03-14",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "place_prob_overestimate"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "runner_up_hit_after_honmei_miss",
+                      "evidence": {
+                        "honmeiHorseId": "12",
+                        "runnerUpHorseId": "2",
+                        "runnerUpPlaceProb": 0.66,
+                        "runnerUpPlaceScore": 0.549
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb_ceiling_and_out",
+                      "evidence": {
+                        "horseId": "12",
+                        "horseName": "クレパスキュラー",
+                        "placeProb": 0.88,
+                        "placeScore": 0.769,
+                        "overbetLabel": "overbet_high"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202606020610",
+                  "courseId": "nakayama-turf-1600-202606020610",
+                  "label": "東風Ｓ",
+                  "date": "2026-03-14",
+                  "raceNumber": 10,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "market_overfade",
+                    "place_prob_overestimate",
+                    "value_misallocation"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "sim1_out_but_sim2_hit",
+                      "evidence": {
+                        "sim1HorseId": "12",
+                        "sim2HorseId": "16",
+                        "sim2WinProb": 9.3
+                      }
+                    },
+                    {
+                      "tag": "market_overfade",
+                      "reason": "market_favorite_hit_after_fade",
+                      "evidence": {
+                        "horseId": "6",
+                        "horseName": "ジョイフルニュース",
+                        "popularityRank": 1,
+                        "routineHorseId": "14",
+                        "valueHorseId": "5"
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "14",
+                        "horseName": "ランスオブカオス",
+                        "placeProb": 0.738,
+                        "placeScore": 0.676,
+                        "overbetLabel": null
+                      }
+                    },
+                    {
+                      "tag": "value_misallocation",
+                      "reason": "value_miss_but_market_hit",
+                      "evidence": {
+                        "horseId": "5",
+                        "horseName": "エンペラーズソード",
+                        "realOdds": 11.3,
+                        "placeProb": 0.547,
+                        "valueScore": 0.657,
+                        "scoreGap": 0.069,
+                        "valueHorseId": "5",
+                        "marketHorseId": "6",
+                        "marketPopularityRank": 1,
+                        "valueScoreGap": 0.069
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202609010511",
+                  "courseId": "hanshin-turf-1400-202609010511",
+                  "label": "フィリーズレビュー 出馬表",
+                  "date": "2026-03-06",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "market_overfade",
+                    "place_prob_overestimate",
+                    "value_misallocation"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "sim1_out_but_sim2_hit",
+                      "evidence": {
+                        "sim1HorseId": "4",
+                        "sim2HorseId": "7",
+                        "sim2WinProb": 19.2
+                      }
+                    },
+                    {
+                      "tag": "market_overfade",
+                      "reason": "market_top3_hit_after_fade",
+                      "evidence": {
+                        "horseId": "17",
+                        "horseName": "サンアントワーヌ",
+                        "popularityRank": 2,
+                        "routineHorseId": "4",
+                        "valueHorseId": "13"
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "4",
+                        "horseName": "ショウナンカリス",
+                        "placeProb": 0.683,
+                        "placeScore": 0.559,
+                        "overbetLabel": null
+                      }
+                    },
+                    {
+                      "tag": "value_misallocation",
+                      "reason": "value_miss_but_market_hit",
+                      "evidence": {
+                        "horseId": "13",
+                        "horseName": "デアヴェローチェ",
+                        "realOdds": 8.8,
+                        "placeProb": 0.629,
+                        "valueScore": 0.725,
+                        "scoreGap": 0.021,
+                        "valueHorseId": "13",
+                        "marketHorseId": "17",
+                        "marketPopularityRank": 2,
+                        "valueScoreGap": 0.021
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202606020311",
+                  "courseId": "nakayama-turf-1800-202606020311",
+                  "label": "中山牝馬Ｓ 出馬表",
+                  "date": "2026-03-06",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "place_prob_overestimate",
+                  "missTags": [
+                    "place_prob_overestimate"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "10",
+                        "horseName": "アンゴラブラック",
+                        "placeProb": 0.698,
+                        "placeScore": 0.597,
+                        "overbetLabel": null
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "special_non_final": {
+            "key": "special_non_final",
+            "label": "special_non_final",
+            "raceCount": 23,
+            "settledRaceCount": 23,
+            "placeCore": {
+              "snapshotHonmei": {
+                "raceCount": 23,
+                "placeHitCount": 8,
+                "placeRate": 34.78260869565217
+              },
+              "routineHonmei": {
+                "raceCount": 23,
+                "placeHitCount": 15,
+                "placeRate": 65.21739130434783,
+                "placeReturnRate": 100.8695652173913
+              },
+              "snapshotRanks": [
+                {
+                  "rank": 1,
+                  "raceCount": 23,
+                  "placeHitCount": 8,
+                  "placeRate": 34.78260869565217
+                },
+                {
+                  "rank": 2,
+                  "raceCount": 23,
+                  "placeHitCount": 13,
+                  "placeRate": 56.52173913043478
+                },
+                {
+                  "rank": 3,
+                  "raceCount": 23,
+                  "placeHitCount": 8,
+                  "placeRate": 34.78260869565217
+                }
+              ]
+            },
+            "valueCore": {
+              "raceCount": 23,
+              "skippedCount": 0,
+              "placeHitCount": 5,
+              "placeRate": 21.73913043478261,
+              "placeReturnRate": 47.82608695652174,
+              "candidateRate": 100,
+              "popularityBands": [
+                {
+                  "band": "top3",
+                  "raceCount": 5,
+                  "placeHitCount": 1,
+                  "placeRate": 20,
+                  "placeReturnRate": 36
+                },
+                {
+                  "band": "mid",
+                  "raceCount": 17,
+                  "placeHitCount": 4,
+                  "placeRate": 23.52941176470588,
+                  "placeReturnRate": 54.11764705882353
+                },
+                {
+                  "band": "longshot",
+                  "raceCount": 1,
+                  "placeHitCount": 0,
+                  "placeRate": 0,
+                  "placeReturnRate": 0
+                }
+              ],
+              "longshot": {
+                "raceCount": 1,
+                "placeHitCount": 0,
+                "placeRate": 0,
+                "placeReturnRate": 0
+              }
+            },
+            "wideStats": {
+              "tanpukuHonmeiValueCandidate": {
+                "targetRaceCount": 23,
+                "valueCandidateRaceCount": 23,
+                "settledRaceCount": 21,
+                "pendingRaceCount": 2,
+                "hitCount": 2,
+                "hitRate": 9.523809523809524,
+                "totalStake": 2100,
+                "totalPayout": 1230,
+                "returnRate": 58.57142857142858,
+                "averagePayout": 615
+              },
+              "simHonmeiTanpukuHonmeiValueCandidateBox": {
+                "targetRaceCount": 14,
+                "settledRaceCount": 13,
+                "pendingRaceCount": 1,
+                "hitRaceCount": 2,
+                "hitRate": 15.384615384615385,
+                "totalStake": 3900,
+                "totalPayout": 1100,
+                "returnRate": 28.205128205128204,
+                "averagePayout": 550
+              }
+            },
+            "agreement": {
+              "raceCount": 23,
+              "sameHonmeiCount": 5,
+              "agreementRate": 21.73913043478261,
+              "samePlaceRate": 60,
+              "disagreementSnapshotPlaceRate": 27.77777777777778,
+              "disagreementRoutinePlaceRate": 66.66666666666666
+            },
+            "disagreement": {
+              "raceCount": 18,
+              "snapshotPlaceRate": 27.77777777777778,
+              "routinePlaceRate": 66.66666666666666,
+              "valuePlaceCount": 4,
+              "snapshotOnlyPlaceCount": 2,
+              "routineOnlyPlaceCount": 9
+            },
+            "missDiagnostics": {
+              "missRaceCount": 8,
+              "primary": [
+                {
+                  "tag": "top3_total_miss",
+                  "raceCount": 2,
+                  "rate": 25
+                },
+                {
+                  "tag": "rank_error",
+                  "raceCount": 5,
+                  "rate": 62.5
+                },
+                {
+                  "tag": "market_overfade",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "raceCount": 1,
+                  "rate": 12.5
+                },
+                {
+                  "tag": "longshot_overreach",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "value_misallocation",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "data_insufficient",
+                  "raceCount": 0,
+                  "rate": 0
+                }
+              ],
+              "all": [
+                {
+                  "tag": "top3_total_miss",
+                  "raceCount": 2,
+                  "rate": 25
+                },
+                {
+                  "tag": "rank_error",
+                  "raceCount": 6,
+                  "rate": 75
+                },
+                {
+                  "tag": "market_overfade",
+                  "raceCount": 4,
+                  "rate": 50
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "raceCount": 8,
+                  "rate": 100
+                },
+                {
+                  "tag": "longshot_overreach",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "value_misallocation",
+                  "raceCount": 3,
+                  "rate": 37.5
+                },
+                {
+                  "tag": "data_insufficient",
+                  "raceCount": 0,
+                  "rate": 0
+                }
+              ],
+              "races": [
+                {
+                  "raceId": "202606030211",
+                  "courseId": "nakayama-dirt-1800-202606030211",
+                  "label": "マーチＳ",
+                  "date": "2026-03-29",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "place_prob_overestimate"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "sim1_out_but_sim2_hit",
+                      "evidence": {
+                        "sim1HorseId": "9",
+                        "sim2HorseId": "4",
+                        "sim2WinProb": 8.6
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "9",
+                        "horseName": "オメガギネス",
+                        "placeProb": 0.686,
+                        "placeScore": 0.569,
+                        "overbetLabel": null
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202606030111",
+                  "courseId": "nakayama-turf-2500-202606030111",
+                  "label": "日経賞",
+                  "date": "2026-03-28",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "top3_total_miss",
+                  "missTags": [
+                    "rank_error",
+                    "market_overfade",
+                    "place_prob_overestimate",
+                    "value_misallocation",
+                    "top3_total_miss"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "runner_up_hit_after_honmei_miss",
+                      "evidence": {
+                        "honmeiHorseId": "7",
+                        "runnerUpHorseId": "1",
+                        "runnerUpPlaceProb": 0.678,
+                        "runnerUpPlaceScore": 0.59
+                      }
+                    },
+                    {
+                      "tag": "market_overfade",
+                      "reason": "market_top3_hit_after_fade",
+                      "evidence": {
+                        "horseId": "1",
+                        "horseName": "ミクニインスパイア",
+                        "popularityRank": 2,
+                        "routineHorseId": "7",
+                        "valueHorseId": "10"
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.75_and_out",
+                      "evidence": {
+                        "horseId": "7",
+                        "horseName": "コスモキュランダ",
+                        "placeProb": 0.754,
+                        "placeScore": 0.656,
+                        "overbetLabel": null
+                      }
+                    },
+                    {
+                      "tag": "value_misallocation",
+                      "reason": "value_miss_but_market_hit",
+                      "evidence": {
+                        "horseId": "10",
+                        "horseName": "シャイニングソード",
+                        "realOdds": 12.4,
+                        "placeProb": 0.584,
+                        "valueScore": 0.673,
+                        "scoreGap": 0.006,
+                        "valueHorseId": "10",
+                        "marketHorseId": "1",
+                        "marketPopularityRank": 2,
+                        "valueScoreGap": 0.006
+                      }
+                    },
+                    {
+                      "tag": "top3_total_miss",
+                      "reason": "sim_top3_all_out_and_value_out",
+                      "evidence": {
+                        "simTop3PlacedCount": 0,
+                        "hasValueCandidate": true,
+                        "valueHorseId": "10"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202607010411",
+                  "courseId": "chukyo-turf-1400-202607010411",
+                  "label": "愛知杯",
+                  "date": "2026-03-21",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "top3_total_miss",
+                  "missTags": [
+                    "place_prob_overestimate",
+                    "top3_total_miss"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "5",
+                        "horseName": "ウイントワイライト",
+                        "placeProb": 0.616,
+                        "placeScore": 0.506,
+                        "overbetLabel": null
+                      }
+                    },
+                    {
+                      "tag": "top3_total_miss",
+                      "reason": "sim_top3_all_out_and_value_out",
+                      "evidence": {
+                        "simTop3PlacedCount": 0,
+                        "hasValueCandidate": true,
+                        "valueHorseId": "16"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202609010711",
+                  "courseId": "hanshin-dirt-1400-202609010711",
+                  "label": "コーラルステークス",
+                  "date": "2026-03-14",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "market_overfade",
+                    "place_prob_overestimate"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "runner_up_hit_after_honmei_miss",
+                      "evidence": {
+                        "honmeiHorseId": "1",
+                        "runnerUpHorseId": "14",
+                        "runnerUpPlaceProb": 0.728,
+                        "runnerUpPlaceScore": 0.643
+                      }
+                    },
+                    {
+                      "tag": "market_overfade",
+                      "reason": "market_top3_hit_after_fade",
+                      "evidence": {
+                        "horseId": "11",
+                        "horseName": "ジャスティンアース",
+                        "popularityRank": 2,
+                        "routineHorseId": "1",
+                        "valueHorseId": "4"
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "1",
+                        "horseName": "ビダーヤ",
+                        "placeProb": 0.729,
+                        "placeScore": 0.644,
+                        "overbetLabel": null
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202606020611",
+                  "courseId": "nakayama-turf-1800-202606020611",
+                  "label": "スプリングＳ",
+                  "date": "2026-03-14",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "place_prob_overestimate"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "runner_up_hit_after_honmei_miss",
+                      "evidence": {
+                        "honmeiHorseId": "12",
+                        "runnerUpHorseId": "2",
+                        "runnerUpPlaceProb": 0.66,
+                        "runnerUpPlaceScore": 0.549
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb_ceiling_and_out",
+                      "evidence": {
+                        "horseId": "12",
+                        "horseName": "クレパスキュラー",
+                        "placeProb": 0.88,
+                        "placeScore": 0.769,
+                        "overbetLabel": "overbet_high"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202606020610",
+                  "courseId": "nakayama-turf-1600-202606020610",
+                  "label": "東風Ｓ",
+                  "date": "2026-03-14",
+                  "raceNumber": 10,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "market_overfade",
+                    "place_prob_overestimate",
+                    "value_misallocation"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "sim1_out_but_sim2_hit",
+                      "evidence": {
+                        "sim1HorseId": "12",
+                        "sim2HorseId": "16",
+                        "sim2WinProb": 9.3
+                      }
+                    },
+                    {
+                      "tag": "market_overfade",
+                      "reason": "market_favorite_hit_after_fade",
+                      "evidence": {
+                        "horseId": "6",
+                        "horseName": "ジョイフルニュース",
+                        "popularityRank": 1,
+                        "routineHorseId": "14",
+                        "valueHorseId": "5"
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "14",
+                        "horseName": "ランスオブカオス",
+                        "placeProb": 0.738,
+                        "placeScore": 0.676,
+                        "overbetLabel": null
+                      }
+                    },
+                    {
+                      "tag": "value_misallocation",
+                      "reason": "value_miss_but_market_hit",
+                      "evidence": {
+                        "horseId": "5",
+                        "horseName": "エンペラーズソード",
+                        "realOdds": 11.3,
+                        "placeProb": 0.547,
+                        "valueScore": 0.657,
+                        "scoreGap": 0.069,
+                        "valueHorseId": "5",
+                        "marketHorseId": "6",
+                        "marketPopularityRank": 1,
+                        "valueScoreGap": 0.069
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202609010511",
+                  "courseId": "hanshin-turf-1400-202609010511",
+                  "label": "フィリーズレビュー 出馬表",
+                  "date": "2026-03-06",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "rank_error",
+                  "missTags": [
+                    "rank_error",
+                    "market_overfade",
+                    "place_prob_overestimate",
+                    "value_misallocation"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "rank_error",
+                      "reason": "sim1_out_but_sim2_hit",
+                      "evidence": {
+                        "sim1HorseId": "4",
+                        "sim2HorseId": "7",
+                        "sim2WinProb": 19.2
+                      }
+                    },
+                    {
+                      "tag": "market_overfade",
+                      "reason": "market_top3_hit_after_fade",
+                      "evidence": {
+                        "horseId": "17",
+                        "horseName": "サンアントワーヌ",
+                        "popularityRank": 2,
+                        "routineHorseId": "4",
+                        "valueHorseId": "13"
+                      }
+                    },
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "4",
+                        "horseName": "ショウナンカリス",
+                        "placeProb": 0.683,
+                        "placeScore": 0.559,
+                        "overbetLabel": null
+                      }
+                    },
+                    {
+                      "tag": "value_misallocation",
+                      "reason": "value_miss_but_market_hit",
+                      "evidence": {
+                        "horseId": "13",
+                        "horseName": "デアヴェローチェ",
+                        "realOdds": 8.8,
+                        "placeProb": 0.629,
+                        "valueScore": 0.725,
+                        "scoreGap": 0.021,
+                        "valueHorseId": "13",
+                        "marketHorseId": "17",
+                        "marketPopularityRank": 2,
+                        "valueScoreGap": 0.021
+                      }
+                    }
+                  ]
+                },
+                {
+                  "raceId": "202606020311",
+                  "courseId": "nakayama-turf-1800-202606020311",
+                  "label": "中山牝馬Ｓ 出馬表",
+                  "date": "2026-03-06",
+                  "raceNumber": 11,
+                  "isSpecialRace": true,
+                  "isFinalRace": false,
+                  "isJumpRace": false,
+                  "raceSegment": "special",
+                  "primaryMissTag": "place_prob_overestimate",
+                  "missTags": [
+                    "place_prob_overestimate"
+                  ],
+                  "missTagDetails": [
+                    {
+                      "tag": "place_prob_overestimate",
+                      "reason": "placeProb>=0.55_and_out",
+                      "evidence": {
+                        "horseId": "10",
+                        "horseName": "アンゴラブラック",
+                        "placeProb": 0.698,
+                        "placeScore": 0.597,
+                        "overbetLabel": null
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "special_final12": {
+            "key": "special_final12",
+            "label": "special_final12",
+            "raceCount": 0,
+            "settledRaceCount": 0,
+            "placeCore": {
+              "snapshotHonmei": {
+                "raceCount": 0,
+                "placeHitCount": 0,
+                "placeRate": 0
+              },
+              "routineHonmei": {
+                "raceCount": 0,
+                "placeHitCount": 0,
+                "placeRate": 0,
+                "placeReturnRate": 0
+              },
+              "snapshotRanks": [
+                {
+                  "rank": 1,
+                  "raceCount": 0,
+                  "placeHitCount": 0,
+                  "placeRate": 0
+                },
+                {
+                  "rank": 2,
+                  "raceCount": 0,
+                  "placeHitCount": 0,
+                  "placeRate": 0
+                },
+                {
+                  "rank": 3,
+                  "raceCount": 0,
+                  "placeHitCount": 0,
+                  "placeRate": 0
+                }
+              ]
+            },
+            "valueCore": {
+              "raceCount": 0,
+              "skippedCount": 0,
+              "placeHitCount": 0,
+              "placeRate": 0,
+              "placeReturnRate": 0,
+              "candidateRate": 0,
+              "popularityBands": [
+                {
+                  "band": "top3",
+                  "raceCount": 0,
+                  "placeHitCount": 0,
+                  "placeRate": 0,
+                  "placeReturnRate": 0
+                },
+                {
+                  "band": "mid",
+                  "raceCount": 0,
+                  "placeHitCount": 0,
+                  "placeRate": 0,
+                  "placeReturnRate": 0
+                },
+                {
+                  "band": "longshot",
+                  "raceCount": 0,
+                  "placeHitCount": 0,
+                  "placeRate": 0,
+                  "placeReturnRate": 0
+                }
+              ],
+              "longshot": {
+                "raceCount": 0,
+                "placeHitCount": 0,
+                "placeRate": 0,
+                "placeReturnRate": 0
+              }
+            },
+            "wideStats": {
+              "tanpukuHonmeiValueCandidate": {
+                "targetRaceCount": 0,
+                "valueCandidateRaceCount": 0,
+                "settledRaceCount": 0,
+                "pendingRaceCount": 0,
+                "hitCount": 0,
+                "hitRate": 0,
+                "totalStake": 0,
+                "totalPayout": 0,
+                "returnRate": 0,
+                "averagePayout": 0
+              },
+              "simHonmeiTanpukuHonmeiValueCandidateBox": {
+                "targetRaceCount": 0,
+                "settledRaceCount": 0,
+                "pendingRaceCount": 0,
+                "hitRaceCount": 0,
+                "hitRate": 0,
+                "totalStake": 0,
+                "totalPayout": 0,
+                "returnRate": 0,
+                "averagePayout": 0
+              }
+            },
+            "agreement": {
+              "raceCount": 0,
+              "sameHonmeiCount": 0,
+              "agreementRate": 0,
+              "samePlaceRate": 0,
+              "disagreementSnapshotPlaceRate": 0,
+              "disagreementRoutinePlaceRate": 0
+            },
+            "disagreement": {
+              "raceCount": 0,
+              "snapshotPlaceRate": 0,
+              "routinePlaceRate": 0,
+              "valuePlaceCount": 0,
+              "snapshotOnlyPlaceCount": 0,
+              "routineOnlyPlaceCount": 0
+            },
+            "missDiagnostics": {
+              "missRaceCount": 0,
+              "primary": [
+                {
+                  "tag": "top3_total_miss",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "rank_error",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "market_overfade",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "longshot_overreach",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "value_misallocation",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "data_insufficient",
+                  "raceCount": 0,
+                  "rate": 0
+                }
+              ],
+              "all": [
+                {
+                  "tag": "top3_total_miss",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "rank_error",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "market_overfade",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "place_prob_overestimate",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "longshot_overreach",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "value_misallocation",
+                  "raceCount": 0,
+                  "rate": 0
+                },
+                {
+                  "tag": "data_insufficient",
+                  "raceCount": 0,
+                  "rate": 0
+                }
+              ],
+              "races": []
+            }
+          }
+        }
       }
     },
     {

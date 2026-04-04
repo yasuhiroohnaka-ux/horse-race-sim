@@ -10,7 +10,7 @@ import {
 } from "@/lib/generatedRaceSchedule";
 import { ARCHIVED_RACES as LEGACY_ARCHIVED_RACES, type ArchivedRace as LegacyArchivedRace } from "@/lib/raceData";
 import { getRaceTargetFlags } from "@/lib/raceSegmentation.mjs";
-import type { PredictionSnapshot, RaceCommentaryPayload } from "@/lib/types";
+import type { PredictionSnapshot, RaceCommentaryPayload, WeeklyDiagnosticsWideStats } from "@/lib/types";
 import {
   buildPickExplanations,
   buildDisagreementExplanation,
@@ -130,6 +130,9 @@ type PerformanceLookupResponse = {
   settlementsByCourseId: Record<string, RecommendationSettlementBundle>;
   settlementsByRaceId: Record<string, RecommendationSettlementBundle>;
   summary: AggregateSummary | null;
+  diagnostics?: {
+    wideStats: WeeklyDiagnosticsWideStats;
+  } | null;
 };
 
 type NotePayloadResponse = {
@@ -584,6 +587,56 @@ function renderAggregateSummary(summary: AggregateSummary | null) {
             value={`${summary.disagreementDetail.routineMissSnapshotPlaceCount}`}
           />
         </div>
+      </div>
+    </section>
+  );
+}
+
+function renderWideStatsSummary(wideStats: WeeklyDiagnosticsWideStats | null) {
+  if (!wideStats) return null;
+
+  const pair = wideStats.tanpukuHonmeiValueCandidate;
+  const box = wideStats.simHonmeiTanpukuHonmeiValueCandidateBox;
+
+  return (
+    <section className="mt-6 space-y-4">
+      <div>
+        <h2 className="text-lg font-bold text-slate-900">wide 統計</h2>
+        <p className="mt-1 text-sm text-slate-500">
+          A系統はロジック相性の確認、B系統は3頭ワイドボックスの買い方シミュレーションとして分離しています。
+        </p>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <SummaryCard title="A. 単複本命 × 妙味候補" tone="border-cyan-200 bg-cyan-50 text-cyan-900">
+          <SummaryMetric label="対象レース数" value={`${pair.targetRaceCount}R`} />
+          <SummaryMetric label="妙味候補ありレース数" value={`${pair.valueCandidateRaceCount}R`} />
+          <SummaryMetric label="集計済みレース数" value={`${pair.settledRaceCount}R`} />
+          <SummaryMetric label="未精算レース数" value={`${pair.pendingRaceCount}R`} />
+          <SummaryMetric label="的中数" value={`${pair.hitCount}`} />
+          <SummaryMetric label="的中率" value={formatRate(pair.hitRate)} />
+          <SummaryMetric label="総投資" value={`${pair.totalStake}円`} />
+          <SummaryMetric label="総払戻" value={`${Math.round(pair.totalPayout)}円`} />
+          <SummaryMetric label="回収率" value={formatRate(pair.returnRate)} />
+          <SummaryMetric label="平均払戻" value={`${Math.round(pair.averagePayout)}円`} />
+          <p className="mt-3 text-xs text-cyan-900/80">投資ルール: 1レース1点買い、100円。</p>
+        </SummaryCard>
+
+        <SummaryCard
+          title="B. シミュ本命 / 単複本命 / 妙味候補 ワイドBOX"
+          tone="border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900"
+        >
+          <SummaryMetric label="対象レース数" value={`${box.targetRaceCount}R`} />
+          <SummaryMetric label="集計済みレース数" value={`${box.settledRaceCount}R`} />
+          <SummaryMetric label="未精算レース数" value={`${box.pendingRaceCount}R`} />
+          <SummaryMetric label="1点以上的中レース数" value={`${box.hitRaceCount}`} />
+          <SummaryMetric label="的中率" value={formatRate(box.hitRate)} />
+          <SummaryMetric label="総投資" value={`${box.totalStake}円`} />
+          <SummaryMetric label="総払戻" value={`${Math.round(box.totalPayout)}円`} />
+          <SummaryMetric label="回収率" value={formatRate(box.returnRate)} />
+          <SummaryMetric label="平均払戻" value={`${Math.round(box.averagePayout)}円`} />
+          <p className="mt-3 text-xs text-fuchsia-900/80">投資ルール: 1レース3点買い、300円。</p>
+        </SummaryCard>
       </div>
     </section>
   );
@@ -1057,6 +1110,7 @@ export default function ArchivePage() {
   const [settlementsByRaceId, setSettlementsByRaceId] = useState<Record<string, RecommendationSettlementBundle>>({});
   const [settlementsByCourseId, setSettlementsByCourseId] = useState<Record<string, RecommendationSettlementBundle>>({});
   const [aggregateSummary, setAggregateSummary] = useState<AggregateSummary | null>(null);
+  const [wideStats, setWideStats] = useState<WeeklyDiagnosticsWideStats | null>(null);
   const [commentariesByRaceId, setCommentariesByRaceId] = useState<Record<string, RaceCommentaryPayload>>({});
 
   useEffect(() => {
@@ -1079,6 +1133,7 @@ export default function ArchivePage() {
         setSettlementsByRaceId(performanceJson.settlementsByRaceId ?? {});
         setSettlementsByCourseId(performanceJson.settlementsByCourseId ?? {});
         setAggregateSummary(performanceJson.summary ?? null);
+        setWideStats(performanceJson.diagnostics?.wideStats ?? null);
         setCommentariesByRaceId(
           Object.fromEntries((notePayloadJson.payload?.raceCommentaries ?? []).map((item) => [item.raceId, item]))
         );
@@ -1113,6 +1168,7 @@ export default function ArchivePage() {
         </div>
 
         {renderAggregateSummary(aggregateSummary)}
+        {renderWideStatsSummary(wideStats)}
 
         <section className="mt-10 space-y-6">
           <div>

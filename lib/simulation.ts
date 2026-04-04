@@ -6,6 +6,7 @@ import {
   getScenarioProfile,
   round1,
 } from "./raceAnalysis";
+import { MONTE_CARLO_RUNS } from "./simulationConfig";
 
 export type { Horse, RunningStyle };
 export { calculateCrowdWinRate, calculateOdds };
@@ -270,7 +271,7 @@ export function runMonteCarlo(
   horses: Horse[],
   course: Course,
   condition: RaceCondition,
-  iterations = 100
+  iterations = MONTE_CARLO_RUNS
 ): { horseId: string; winCount: number; bestTime: number }[] {
   const stats = new Map<string, { wins: number; bestTime: number }>();
   horses.forEach((horse) => stats.set(horse.id, { wins: 0, bestTime: Number.POSITIVE_INFINITY }));

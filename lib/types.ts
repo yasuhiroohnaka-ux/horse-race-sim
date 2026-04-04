@@ -238,6 +238,36 @@ export interface WeeklyDiagnosticsAgreement {
   disagreementRoutinePlaceRate: number;
 }
 
+export interface WeeklyDiagnosticsWidePairStats {
+  targetRaceCount: number;
+  valueCandidateRaceCount: number;
+  settledRaceCount: number;
+  pendingRaceCount: number;
+  hitCount: number;
+  hitRate: number;
+  totalStake: number;
+  totalPayout: number;
+  returnRate: number;
+  averagePayout: number;
+}
+
+export interface WeeklyDiagnosticsWideBoxStats {
+  targetRaceCount: number;
+  settledRaceCount: number;
+  pendingRaceCount: number;
+  hitRaceCount: number;
+  hitRate: number;
+  totalStake: number;
+  totalPayout: number;
+  returnRate: number;
+  averagePayout: number;
+}
+
+export interface WeeklyDiagnosticsWideStats {
+  tanpukuHonmeiValueCandidate: WeeklyDiagnosticsWidePairStats;
+  simHonmeiTanpukuHonmeiValueCandidateBox: WeeklyDiagnosticsWideBoxStats;
+}
+
 export type WeeklyDiagnosticsMissTag =
   | "rank_error"
   | "market_overfade"
@@ -288,6 +318,7 @@ export interface WeeklyDiagnosticsSegmentSummary {
   settledRaceCount: number;
   placeCore: WeeklyDiagnosticsPlaceCore;
   valueCore: WeeklyDiagnosticsValueCore;
+  wideStats: WeeklyDiagnosticsWideStats;
   agreement: WeeklyDiagnosticsAgreement;
   disagreement: {
     raceCount: number;
@@ -433,6 +464,7 @@ export interface WeeklyDiagnostics {
   meta: WeeklyDiagnosticsMeta;
   placeCore: WeeklyDiagnosticsPlaceCore;
   valueCore: WeeklyDiagnosticsValueCore;
+  wideStats: WeeklyDiagnosticsWideStats;
   agreement: WeeklyDiagnosticsAgreement;
   disagreement: {
     raceCount: number;

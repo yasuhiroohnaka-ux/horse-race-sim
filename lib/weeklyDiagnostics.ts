@@ -17,6 +17,14 @@ import {
   normalizePredictionOrigin,
   normalizeScoringVersion,
 } from "@/lib/predictionSnapshots";
+import {
+  getWidePayoutByHorseNumbers,
+  hasWidePayoutTable,
+  loadHorseNumbersByRaceId,
+  loadWidePayoutsByRaceId,
+  type RaceHorseNumbers,
+  type RaceWidePayouts,
+} from "@/lib/widePayouts";
 import type {
   DiagnosticsAggregationScope,
   PredictionOrigin,
@@ -32,6 +40,9 @@ import type {
   WeeklyDiagnosticsRaceMiss,
   WeeklyDiagnosticsRepresentativeRace,
   WeeklyDiagnosticsSegmentSummary,
+  WeeklyDiagnosticsWideBoxStats,
+  WeeklyDiagnosticsWidePairStats,
+  WeeklyDiagnosticsWideStats,
 } from "@/lib/types";
 
 const ROOT = process.cwd();
@@ -139,6 +150,8 @@ type DiagnosticsContext = {
   snapshotsByRaceId: Record<string, PredictionSnapshot>;
   settlementsByRaceId: Record<string, RecommendationSettlementBundle>;
   reviewsByRaceId: Record<string, GeneratedReviewRecord>;
+  widePayoutsByRaceId: Record<string, RaceWidePayouts>;
+  horseNumbersByRaceId: Record<string, RaceHorseNumbers>;
 };
 
 type WeeklyDiagnosticsCore = Omit<WeeklyDiagnostics, "meta" | "segments" | "recommendations">;
@@ -207,6 +220,10 @@ function percentage(hit: number, total: number) {
 
 function roi(totalPayout: number, raceCount: number) {
   const totalStake = raceCount * 100;
+  return totalStake > 0 ? (totalPayout / totalStake) * 100 : 0;
+}
+
+function returnRate(totalPayout: number, totalStake: number) {
   return totalStake > 0 ? (totalPayout / totalStake) * 100 : 0;
 }
 
@@ -406,6 +423,61 @@ function createPopularityBandMap(): Record<PopularityBandKey, WeeklyDiagnosticsP
     mid: { band: "mid", raceCount: 0, placeHitCount: 0, placeRate: 0, placeReturnRate: 0 },
     longshot: { band: "longshot", raceCount: 0, placeHitCount: 0, placeRate: 0, placeReturnRate: 0 },
   };
+}
+
+function createWidePairStats(): WeeklyDiagnosticsWidePairStats {
+  return {
+    targetRaceCount: 0,
+    valueCandidateRaceCount: 0,
+    settledRaceCount: 0,
+    pendingRaceCount: 0,
+    hitCount: 0,
+    hitRate: 0,
+    totalStake: 0,
+    totalPayout: 0,
+    returnRate: 0,
+    averagePayout: 0,
+  };
+}
+
+function createWideBoxStats(): WeeklyDiagnosticsWideBoxStats {
+  return {
+    targetRaceCount: 0,
+    settledRaceCount: 0,
+    pendingRaceCount: 0,
+    hitRaceCount: 0,
+    hitRate: 0,
+    totalStake: 0,
+    totalPayout: 0,
+    returnRate: 0,
+    averagePayout: 0,
+  };
+}
+
+function getHorseNumberByHorseId(
+  race: GeneratedReviewRace,
+  horseNumbersByRaceId: Record<string, RaceHorseNumbers>,
+  horseId: string | null | undefined
+): number | null {
+  if (!horseId) return null;
+  const raceId = String(race.raceId ?? "");
+  const mappedHorseNumber = Number(horseNumbersByRaceId[raceId]?.[horseId]);
+  if (Number.isFinite(mappedHorseNumber) && mappedHorseNumber > 0) return mappedHorseNumber;
+  const finisher = race.result?.finishers?.find((entry) => String(entry.horseId ?? "") === String(horseId));
+  const horseNumber = Number(finisher?.horseNumber);
+  return Number.isFinite(horseNumber) && horseNumber > 0 ? horseNumber : null;
+}
+
+function finalizeWidePairStats(stats: WeeklyDiagnosticsWidePairStats) {
+  stats.hitRate = percentage(stats.hitCount, stats.settledRaceCount);
+  stats.returnRate = returnRate(stats.totalPayout, stats.totalStake);
+  stats.averagePayout = stats.hitCount > 0 ? round2(stats.totalPayout / stats.hitCount) : 0;
+}
+
+function finalizeWideBoxStats(stats: WeeklyDiagnosticsWideBoxStats) {
+  stats.hitRate = percentage(stats.hitRaceCount, stats.settledRaceCount);
+  stats.returnRate = returnRate(stats.totalPayout, stats.totalStake);
+  stats.averagePayout = stats.hitRaceCount > 0 ? round2(stats.totalPayout / stats.hitRaceCount) : 0;
 }
 
 function getDateRange(races: GeneratedReviewRace[]) {
@@ -768,10 +840,12 @@ function toRepresentativeRace(
 
 export async function loadWeeklyDiagnosticsContext(scope: DiagnosticsAggregationScope = "all"): Promise<DiagnosticsContext> {
   const normalizedScope = normalizeAggregationScope(scope);
-  const [snapshotsByRaceId, settlementsByRaceId, reviewsByRaceId] = await Promise.all([
+  const [snapshotsByRaceId, settlementsByRaceId, reviewsByRaceId, widePayoutsByRaceId, horseNumbersByRaceId] = await Promise.all([
     loadLatestSnapshotsByRaceId(normalizedScope),
     loadSettlementsByRaceId(normalizedScope),
     loadGeneratedReviewsByRaceId(),
+    loadWidePayoutsByRaceId(),
+    loadHorseNumbersByRaceId(),
   ]);
 
   return {
@@ -780,6 +854,8 @@ export async function loadWeeklyDiagnosticsContext(scope: DiagnosticsAggregation
     snapshotsByRaceId,
     settlementsByRaceId,
     reviewsByRaceId,
+    widePayoutsByRaceId,
+    horseNumbersByRaceId,
   };
 }
 
@@ -844,6 +920,11 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
     longshot: { raceCount: 0, placeHitCount: 0, placeRate: 0, placeReturnRate: 0 },
   };
 
+  const wideStats: WeeklyDiagnosticsWideStats = {
+    tanpukuHonmeiValueCandidate: createWidePairStats(),
+    simHonmeiTanpukuHonmeiValueCandidateBox: createWideBoxStats(),
+  };
+
   const agreement = {
     raceCount: 0,
     sameHonmeiCount: 0,
@@ -887,12 +968,79 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
     const raceId = String(race.raceId ?? "");
     const snapshot = context.snapshotsByRaceId[raceId];
     const settlement = context.settlementsByRaceId[raceId];
+    const widePayouts = context.widePayoutsByRaceId[raceId];
     const top3HorseIds = race.result?.top3HorseIds.map((id) => String(id)) ?? [];
     const winnerHorseId = String(race.result?.winnerHorseId ?? "");
     const raceMiss = buildRaceMissDiagnostics(race, snapshot, settlement);
 
     if (raceMiss) {
       raceMisses.push(raceMiss);
+    }
+
+    if (settlement?.win?.settlementStatus === "settled") {
+      wideStats.tanpukuHonmeiValueCandidate.targetRaceCount += 1;
+      const valueCandidate = settlement.value?.settlementStatus === "settled" ? settlement.value : null;
+      const pairHorseIds = valueCandidate
+        ? [...new Set([settlement.win.horseId, valueCandidate.horseId].filter(Boolean))]
+        : [];
+
+      if (pairHorseIds.length === 2) {
+        wideStats.tanpukuHonmeiValueCandidate.valueCandidateRaceCount += 1;
+        const firstHorseNumber = getHorseNumberByHorseId(race, context.horseNumbersByRaceId, settlement.win.horseId);
+        const secondHorseNumber = getHorseNumberByHorseId(race, context.horseNumbersByRaceId, valueCandidate?.horseId);
+        const hasWideTable = hasWidePayoutTable(widePayouts);
+
+        if (hasWideTable && firstHorseNumber && secondHorseNumber) {
+          const pairPayout =
+            getWidePayoutByHorseNumbers(widePayouts, [firstHorseNumber, secondHorseNumber]) ?? null;
+          if (pairPayout !== null) {
+            wideStats.tanpukuHonmeiValueCandidate.settledRaceCount += 1;
+            wideStats.tanpukuHonmeiValueCandidate.totalStake += 100;
+            wideStats.tanpukuHonmeiValueCandidate.totalPayout += pairPayout;
+            if (pairPayout > 0) wideStats.tanpukuHonmeiValueCandidate.hitCount += 1;
+          } else {
+            wideStats.tanpukuHonmeiValueCandidate.pendingRaceCount += 1;
+          }
+        } else {
+          wideStats.tanpukuHonmeiValueCandidate.pendingRaceCount += 1;
+        }
+      }
+    }
+
+    const boxHorseIds = [...new Set([snapshot?.honmeiHorseId, settlement?.win?.horseId, settlement?.value?.horseId].filter(Boolean))];
+    const boxIsEligible =
+      snapshot?.honmeiHorseId &&
+      settlement?.win?.settlementStatus === "settled" &&
+      settlement?.value?.settlementStatus === "settled" &&
+      boxHorseIds.length === 3;
+
+    if (boxIsEligible) {
+      wideStats.simHonmeiTanpukuHonmeiValueCandidateBox.targetRaceCount += 1;
+
+      const boxHorseNumbers = boxHorseIds
+        .map((horseId) => getHorseNumberByHorseId(race, context.horseNumbersByRaceId, horseId))
+        .filter((horseNumber): horseNumber is number => Boolean(horseNumber));
+      const hasWideTable = hasWidePayoutTable(widePayouts);
+
+      if (hasWideTable && boxHorseNumbers.length === 3) {
+        const pairPayouts = [
+          getWidePayoutByHorseNumbers(widePayouts, [boxHorseNumbers[0], boxHorseNumbers[1]]),
+          getWidePayoutByHorseNumbers(widePayouts, [boxHorseNumbers[0], boxHorseNumbers[2]]),
+          getWidePayoutByHorseNumbers(widePayouts, [boxHorseNumbers[1], boxHorseNumbers[2]]),
+        ];
+
+        if (pairPayouts.every((payout): payout is number => payout !== null)) {
+          const racePayout = pairPayouts.reduce((sum, payout) => sum + payout, 0);
+          wideStats.simHonmeiTanpukuHonmeiValueCandidateBox.settledRaceCount += 1;
+          wideStats.simHonmeiTanpukuHonmeiValueCandidateBox.totalStake += 300;
+          wideStats.simHonmeiTanpukuHonmeiValueCandidateBox.totalPayout += racePayout;
+          if (racePayout > 0) wideStats.simHonmeiTanpukuHonmeiValueCandidateBox.hitRaceCount += 1;
+        } else {
+          wideStats.simHonmeiTanpukuHonmeiValueCandidateBox.pendingRaceCount += 1;
+        }
+      } else {
+        wideStats.simHonmeiTanpukuHonmeiValueCandidateBox.pendingRaceCount += 1;
+      }
     }
 
     if (snapshot?.honmeiHorseId) {
@@ -1083,6 +1231,9 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
     placeReturnRate: valueBandMap.longshot.placeReturnRate,
   };
 
+  finalizeWidePairStats(wideStats.tanpukuHonmeiValueCandidate);
+  finalizeWideBoxStats(wideStats.simHonmeiTanpukuHonmeiValueCandidateBox);
+
   agreement.agreementRate = percentage(agreement.sameHonmeiCount, agreement.raceCount);
   agreement.samePlaceRate = percentage(agreement.samePlaceRate, agreement.sameHonmeiCount);
   agreement.disagreementSnapshotPlaceRate = percentage(
@@ -1185,6 +1336,7 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
     },
     placeCore,
     valueCore,
+    wideStats,
     agreement,
     disagreement,
     representativeRaces,
@@ -1216,6 +1368,7 @@ function buildSegmentSummary(
     settledRaceCount: segmentRaces.filter(hasConfirmedResult).length,
     placeCore: segmentDiagnostics.placeCore,
     valueCore: segmentDiagnostics.valueCore,
+    wideStats: segmentDiagnostics.wideStats,
     agreement: segmentDiagnostics.agreement,
     disagreement: segmentDiagnostics.disagreement,
     missDiagnostics: segmentDiagnostics.missDiagnostics,

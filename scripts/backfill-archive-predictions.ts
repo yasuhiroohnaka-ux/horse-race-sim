@@ -3,6 +3,7 @@ import path from "node:path";
 import { ARCHIVED_COURSES, COURSES } from "../lib/courses";
 import { buildPredictionSnapshot, DEFAULT_SCORING_VERSION } from "../lib/predictionSnapshots";
 import { ARCHIVED_RACES as LEGACY_ARCHIVED_RACES } from "../lib/raceData";
+import { MONTE_CARLO_RUNS } from "../lib/simulationConfig";
 import { runMonteCarlo } from "../lib/simulation";
 import { pickTanpukuPair as pickRoutineTanpukuPair } from "../lib/tanpukuSelection.mjs";
 import type { Course, Horse, PredictionOrigin, PredictionSnapshot, PredictionSnapshotRow, RaceCondition } from "../lib/types";
@@ -14,6 +15,11 @@ const SNAPSHOT_PATH = path.join(ROOT, "data", "prediction-snapshots.jsonl");
 
 type RacePayoutTable = {
   resultNumbers?: number[];
+  payouts?: number[];
+};
+
+type RacePairPayoutTable = {
+  resultNumbers?: number[][];
   payouts?: number[];
 };
 
@@ -32,6 +38,7 @@ type RaceResultRecord = {
   payouts?: {
     tansho?: RacePayoutTable;
     fukusho?: RacePayoutTable;
+    wide?: RacePairPayoutTable;
   };
 };
 
@@ -293,6 +300,27 @@ function parsePayoutRow(resultHtml: string, className: string): RacePayoutTable 
   const resultNumbers = [...row.matchAll(/<span>(\d+)<\/span>/g)]
     .map((match) => Number.parseInt(match[1], 10))
     .filter(Number.isFinite);
+  const payouts = [...row.matchAll(/<td class="Payout">[\s\S]*?<span>([\s\S]*?)<\/span>/gi)]
+    .flatMap((match) => normalizeSpace(match[1]).split(/\s+/))
+    .map((value) => parseNumber(value))
+    .filter((value): value is number => Number.isFinite(value));
+
+  if (resultNumbers.length === 0 && payouts.length === 0) return null;
+  return { resultNumbers, payouts };
+}
+
+function parsePairPayoutRow(resultHtml: string, className: string): RacePairPayoutTable | null {
+  const row = resultHtml.match(new RegExp(`<tr class="${className}">([\\s\\S]*?)<\\/tr>`, "i"))?.[1] ?? "";
+  if (!row) return null;
+
+  const resultNumbers = [...row.matchAll(/<ul>([\s\S]*?)<\/ul>/gi)]
+    .map((match) =>
+      [...match[1].matchAll(/<span>(\d+)<\/span>/g)]
+        .map((entry) => Number.parseInt(entry[1], 10))
+        .filter(Number.isFinite)
+        .slice(0, 2)
+    )
+    .filter((pair) => pair.length === 2);
   const payouts = [...row.matchAll(/<td class="Payout">[\s\S]*?<span>([\s\S]*?)<\/span>/gi)]
     .flatMap((match) => normalizeSpace(match[1]).split(/\s+/))
     .map((value) => parseNumber(value))
@@ -672,6 +700,7 @@ async function fetchLegacyRaceResult(raceId: string, horses: Horse[]): Promise<R
       payouts: {
         tansho: parsePayoutRow(resultHtml, "Tansho") ?? undefined,
         fukusho: parsePayoutRow(resultHtml, "Fukusho") ?? undefined,
+        wide: parsePairPayoutRow(resultHtml, "Wide") ?? undefined,
       },
     };
   } catch {
@@ -734,6 +763,7 @@ function buildLegacyResult(legacyRace: (typeof LEGACY_ARCHIVED_RACES)[number]): 
     payouts: {
       tansho: undefined,
       fukusho: undefined,
+      wide: undefined,
     },
     winnerHorseName: top3HorseNames[0],
     top3HorseNames,
@@ -757,6 +787,7 @@ function mergeLegacyPreferredResult(
     payouts: {
       tansho: scrapedResult.payouts?.tansho ?? fallbackResult.payouts?.tansho,
       fukusho: scrapedResult.payouts?.fukusho ?? fallbackResult.payouts?.fukusho,
+      wide: scrapedResult.payouts?.wide ?? fallbackResult.payouts?.wide,
     },
   };
 }
@@ -855,13 +886,13 @@ async function main() {
       const course = getArchivedCourse(race);
       const condition = createDefaultCondition(course);
       const horses = race.horses.map((horse) => ({ ...horse })) as Horse[];
-      const results = runMonteCarlo(horses, course, condition, 100);
+      const results = runMonteCarlo(horses, course, condition, MONTE_CARLO_RUNS);
       snapshot = await buildPredictionSnapshot({
         results,
         horses,
         course,
         condition,
-        simulationCount: 100,
+        simulationCount: MONTE_CARLO_RUNS,
         raceId,
         oddsFetchedAt: race.result?.updatedAt ?? null,
         oddsSource: race.oddsSource ?? "official",
