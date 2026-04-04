@@ -10,6 +10,7 @@ export interface ResolvedTraitScores {
 
 export interface ScenarioProfile {
   abilityScore: number;
+  displayAbilityScore: number;
   traitScores: ResolvedTraitScores;
   speedModifier: number;
   staminaModifier: number;
@@ -28,6 +29,7 @@ export interface RaceAnalysisRow {
   gateNumber: number;
   jockey: string;
   abilityScore: number;
+  displayAbilityScore: number;
   simWinRate: number;
   bestTime: number;
   fairOdds: number | null;
@@ -323,6 +325,10 @@ export function getResolvedTraitScores(
 }
 
 export function getBaseAbilityScore(horse: Horse): number {
+  return round1(clamp(getRawBaseAbilityScore(horse), 35, 99));
+}
+
+export function getRawBaseAbilityScore(horse: Horse): number {
   const averageFinish = Number.isFinite(horse.recentAverageFinish) && (horse.recentAverageFinish ?? 0) > 0
     ? clamp((8 - Number(horse.recentAverageFinish)) * 0.9, -6, 4.5)
     : 0;
@@ -340,7 +346,7 @@ export function getBaseAbilityScore(horse: Horse): number {
     ((horse.lastRaceGradeScore ?? 2) - 2) * 0.9 +
     averageFinish;
 
-  return round1(clamp(rawScore, 35, 99));
+  return round1(rawScore);
 }
 
 function getWindEffects(style: RunningStyle, condition: RaceCondition): { speed: number; stamina: number } {
@@ -385,6 +391,7 @@ function getPaceEffects(style: RunningStyle, condition: RaceCondition, paceFit: 
 export function getScenarioProfile(horse: Horse, course: Course, condition: RaceCondition): ScenarioProfile {
   const traitScores = getResolvedTraitScores(horse, course, condition);
   const baseAbility = getBaseAbilityScore(horse);
+  const rawBaseAbility = getRawBaseAbilityScore(horse);
   const groundSeverity = getGroundSeverity(condition);
   const weatherSeverity = getWeatherSeverity(condition);
   const windEffects = getWindEffects(horse.runningStyle, condition);
@@ -406,6 +413,7 @@ export function getScenarioProfile(horse: Horse, course: Course, condition: Race
 
   const speedModifier = clamp(1 + traitSpeedEdge + windEffects.speed + paceEffects.speed, 0.9, 1.13);
   const staminaModifier = clamp(1 + traitStaminaEdge + windEffects.stamina + paceEffects.stamina, 0.9, 1.16);
+  const rawScenarioAbility = round1(rawBaseAbility * ((speedModifier + staminaModifier) / 2));
   const scenarioAbility = round1(clamp(baseAbility * ((speedModifier + staminaModifier) / 2), 35, 99));
   const volatility = clamp(
     1.18 - ((horse.guts + traitScores.paceFit + Math.max(horse.trainingScore ?? 0, 0) * 5) / 220),
@@ -415,6 +423,7 @@ export function getScenarioProfile(horse: Horse, course: Course, condition: Race
 
   return {
     abilityScore: scenarioAbility,
+    displayAbilityScore: rawScenarioAbility,
     traitScores,
     speedModifier,
     staminaModifier,
@@ -635,6 +644,7 @@ export function buildRaceAnalysisRows(
         gateNumber: horse.gateNumber,
         jockey: horse.jockey,
         abilityScore: profile.abilityScore,
+        displayAbilityScore: profile.displayAbilityScore,
         simWinRate,
         bestTime: round1(result?.bestTime ?? 0),
         fairOdds,

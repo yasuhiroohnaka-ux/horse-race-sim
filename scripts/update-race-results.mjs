@@ -158,6 +158,27 @@ function parsePayoutRow(resultHtml, className) {
   return { resultNumbers, payouts };
 }
 
+function parsePairPayoutRow(resultHtml, className) {
+  const row = resultHtml.match(new RegExp(`<tr class="${className}">([\\s\\S]*?)<\\/tr>`, "i"))?.[1] ?? "";
+  if (!row) return null;
+
+  const resultNumbers = [...row.matchAll(/<ul>([\s\S]*?)<\/ul>/gi)]
+    .map((match) =>
+      [...match[1].matchAll(/<span>(\d+)<\/span>/g)]
+        .map((entry) => Number.parseInt(entry[1], 10))
+        .filter(Number.isFinite)
+        .slice(0, 2)
+    )
+    .filter((pair) => pair.length === 2);
+  const payouts = [...row.matchAll(/<td class="Payout">[\s\S]*?<span>([\s\S]*?)<\/span>/gi)]
+    .flatMap((match) => normalizeSpace(match[1]).split(/\s+/))
+    .map((value) => parseNumber(value))
+    .filter((value) => Number.isFinite(value));
+
+  if (resultNumbers.length === 0 && payouts.length === 0) return null;
+  return { resultNumbers, payouts };
+}
+
 function getCourseInnerTilt(race) {
   const id = String(race?.courseId ?? "").toLowerCase();
   if (id.includes("nakayama")) return 0.7;
@@ -277,6 +298,7 @@ function mergeRaceResult(race, resultHtml) {
   const payouts = {
     tansho: parsePayoutRow(resultHtml, "Tansho"),
     fukusho: parsePayoutRow(resultHtml, "Fukusho"),
+    wide: parsePairPayoutRow(resultHtml, "Wide"),
   };
 
   const nextResult = {

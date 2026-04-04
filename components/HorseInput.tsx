@@ -157,7 +157,7 @@ export function HorseInput({ horses, course, condition, onHorsesChange, hashtag 
         <div className="rounded-2xl bg-slate-50 p-3">
           <p className="text-[11px] font-semibold tracking-wide text-slate-400">能力トップ</p>
           <p className="mt-1 text-sm font-bold text-slate-900">{abilityLeader?.horse.name ?? "-"}</p>
-          <p className="mt-1 text-xs text-slate-500">能力指数 {abilityLeader?.profile.abilityScore?.toFixed(1) ?? "-"}</p>
+          <p className="mt-1 text-xs text-slate-500">能力指数 {abilityLeader?.profile.displayAbilityScore?.toFixed(1) ?? "-"}</p>
         </div>
         <div className="rounded-2xl bg-slate-50 p-3">
           <p className="text-[11px] font-semibold tracking-wide text-slate-400">一般市場先頭</p>
@@ -317,7 +317,7 @@ export function HorseInput({ horses, course, condition, onHorsesChange, hashtag 
                       className="w-12 rounded border border-slate-200 px-1 py-1 text-center font-medium text-indigo-700"
                     />
                   </td>
-                  <td className="px-2 py-2 text-right font-semibold text-slate-900">{profile.abilityScore.toFixed(1)}</td>
+                  <td className="px-2 py-2 text-right font-semibold text-slate-900">{profile.displayAbilityScore.toFixed(1)}</td>
                   <td className="px-2 py-2 text-right">
                     <input
                       type="number"
