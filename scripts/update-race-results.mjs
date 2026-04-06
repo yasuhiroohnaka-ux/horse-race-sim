@@ -333,12 +333,19 @@ async function updateRace(race) {
     return { race, reviewDraft: null };
   }
 
-  try {
-    const resultHtml = await fetchText(`https://race.netkeiba.com/race/result.html?race_id=${race.raceId}`);
-    return mergeRaceResult(race, resultHtml);
-  } catch {
-    return { race, reviewDraft: null };
+  const maxAttempts = 3;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const resultHtml = await fetchText(`https://race.netkeiba.com/race/result.html?race_id=${race.raceId}`);
+      return mergeRaceResult(race, resultHtml);
+    } catch (err) {
+      console.warn(`[update-race-results] fetch failed raceId=${race.raceId} attempt=${attempt}/${maxAttempts}: ${err.message}`);
+      if (attempt < maxAttempts) {
+        await new Promise((r) => setTimeout(r, 2000 * attempt));
+      }
+    }
   }
+  return { race, reviewDraft: null };
 }
 
 function updateGeneratedReviewEntry(generatedReviews, race, updatedRace, reviewDraft) {
