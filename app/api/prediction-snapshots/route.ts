@@ -7,6 +7,7 @@ import {
   normalizePredictionOrigin,
   normalizeScoringVersion,
 } from "@/lib/predictionSnapshots";
+import { loadReviewRecords } from "@/lib/reviewRecords";
 import type { PredictionSnapshot } from "@/lib/types";
 
 const ROOT = process.cwd();
@@ -48,13 +49,26 @@ function toIsoTime(value: string): number {
 
 export async function GET() {
   try {
-    const raw = await fs.readFile(SNAPSHOT_PATH, "utf8");
+    const [raw, reviewRecords] = await Promise.all([
+      fs.readFile(SNAPSHOT_PATH, "utf8").catch((error) => {
+        const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";
+        if (code === "ENOENT") return "";
+        throw error;
+      }),
+      loadReviewRecords(),
+    ]);
     const lines = raw
       .split(/\r?\n/)
       .map((line) => line.trim())
       .filter(Boolean);
 
     const latestByRaceId: Record<string, PredictionSnapshot> = {};
+    for (const [raceId, record] of Object.entries(reviewRecords)) {
+      if (record.snapshot) {
+        latestByRaceId[raceId] = toNormalizedSnapshot(record.snapshot);
+      }
+    }
+
     for (const line of lines) {
       let parsed;
       try {
@@ -69,6 +83,11 @@ export async function GET() {
       if (!raceId) continue;
 
       const existing = latestByRaceId[raceId];
+      const preferExistingPreRace = existing?.snapshotType === "pre_race_final";
+      if (preferExistingPreRace) {
+        continue;
+      }
+
       if (!existing || toIsoTime(normalized.capturedAt) >= toIsoTime(existing.capturedAt)) {
         latestByRaceId[raceId] = normalized;
       }

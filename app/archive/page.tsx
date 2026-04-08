@@ -2,28 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { ARCHIVED_COURSES } from "@/lib/courses";
 import {
   GENERATED_ARCHIVED_RACES,
   GENERATED_COMPLETED_RACES,
   type GeneratedReviewRace,
 } from "@/lib/generatedRaceSchedule";
-import { ARCHIVED_RACES as LEGACY_ARCHIVED_RACES, type ArchivedRace as LegacyArchivedRace } from "@/lib/raceData";
-import { getRaceTargetFlags } from "@/lib/raceSegmentation.mjs";
-import type {
-  PredictionSnapshot,
-  RaceCommentaryPayload,
-  WeeklyDiagnosticsWidePendingDetail,
-  WeeklyDiagnosticsWideStats,
-} from "@/lib/types";
-import {
-  buildPickExplanations,
-  buildDisagreementExplanation,
-  formatOverbetLabel,
-  type AgreementStatus,
-  type PickExplanationEntry,
-} from "@/lib/pickExplanations";
-import { buildManualReviewPayload } from "@/lib/xPostPayload.mjs";
+import type { PredictionSnapshot, WeeklyDiagnosticsWideStats } from "@/lib/types";
 
 type ReviewCard = GeneratedReviewRace & { archived?: boolean };
 
@@ -62,89 +46,34 @@ type RecommendationSettlement = {
   overbetLabel: string | null;
 };
 
+type AggregateSummary = {
+  counts: { targetRaceCount: number; readyCount: number; pendingCount: number; failedCount: number; legacyCount: number };
+  honmei: { raceCount: number; winCount: number; placeCount: number; winRate: number; placeRate: number; tanRoi: number; fukuRoi: number };
+  opponent: { raceCount: number; placeCount: number; placeRate: number; fukuRoi: number };
+  pair: {
+    raceCount: number;
+    wideHitCount: number;
+    wideHitRate: number;
+    wideReturnRate: number;
+    simultaneousPlaceCount: number;
+    simultaneousPlaceRate: number;
+  };
+  rankGapBuckets: Array<{ label: string; raceCount: number; opponentPlaceRate: number; wideHitCount: number; wideHitRate: number }>;
+  scoreGapBuckets: Array<{ label: string; raceCount: number; opponentPlaceRate: number; wideHitCount: number; wideHitRate: number }>;
+};
+
 type RecommendationSettlementBundle = {
   win: RecommendationSettlement | null;
-  value: RecommendationSettlement | null;
-};
-
-type PopularityBandSummary = {
-  raceCount: number;
-  placeCount: number;
-  placeRate: number;
-  fukuRoi: number;
-};
-
-type SnapshotRankSummary = {
-  rank: number;
-  raceCount: number;
-  placeCount: number;
-  placeRate: number;
-};
-
-type AggregateSummary = {
-  snapshotHonmei: {
-    raceCount: number;
-    firstCount: number;
-    placeCount: number;
-    winRate: number;
-    placeRate: number;
-  };
-  routineHonmei: {
-    raceCount: number;
-    tanHitCount: number;
-    fukuHitCount: number;
-    tanHitRate: number;
-    fukuHitRate: number;
-    tanRoi: number;
-    fukuRoi: number;
-    pendingCount: number;
-  };
-  valueCandidate: {
-    raceCount: number;
-    placeCount: number;
-    placeRate: number;
-    fukuRoi: number;
-    pendingCount: number;
-  };
-  agreement: {
-    raceCount: number;
-    samePickCount: number;
-    samePickRate: number;
-    samePickPlaceCount: number;
-    samePickPlaceRate: number;
-    differentPickCount: number;
-    snapshotPlaceRateWhenDifferent: number;
-    routinePlaceRateWhenDifferent: number;
-  };
-  popularityBands: {
-    routineHonmei: Record<"fav_1_3" | "fav_4_6" | "fav_7_plus", PopularityBandSummary>;
-    valueCandidate: Record<"fav_1_3" | "fav_4_6" | "fav_7_plus", PopularityBandSummary>;
-  };
-  snapshotRanks: SnapshotRankSummary[];
-  disagreementDetail: {
-    raceCount: number;
-    snapshotPlaceRate: number;
-    routinePlaceRate: number;
-    valuePlaceCount: number;
-    snapshotMissRoutinePlaceCount: number;
-    routineMissSnapshotPlaceCount: number;
-  };
+  opponent?: RecommendationSettlement | null;
+  value?: RecommendationSettlement | null;
+  meta?: { status?: string; reviewReady?: boolean; compatibilityMode?: "native_opponent" | "legacy_value_candidate" } | null;
 };
 
 type PerformanceLookupResponse = {
   settlementsByCourseId: Record<string, RecommendationSettlementBundle>;
   settlementsByRaceId: Record<string, RecommendationSettlementBundle>;
   summary: AggregateSummary | null;
-  diagnostics?: {
-    wideStats: WeeklyDiagnosticsWideStats;
-  } | null;
-};
-
-type NotePayloadResponse = {
-  ok: boolean;
-  payload: {
-    raceCommentaries: RaceCommentaryPayload[];
-  } | null;
+  diagnostics?: { wideStats: WeeklyDiagnosticsWideStats } | null;
 };
 
 function formatSurface(surface: "Turf" | "Dirt") {
@@ -159,13 +88,7 @@ function formatTimestamp(value?: string | null) {
   if (!value) return "-";
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return value;
-  return new Intl.DateTimeFormat("ja-JP", {
-    month: "numeric",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(parsed);
+  return new Intl.DateTimeFormat("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false }).format(parsed);
 }
 
 function formatSettlementStatus(status: SettlementStatus) {
@@ -177,9 +100,7 @@ function formatSettlementStatus(status: SettlementStatus) {
 function formatOutcome(outcome: BetOutcome, kind: "tan" | "fuku") {
   if (outcome === "hit") return kind === "tan" ? "単勝的中" : "複勝的中";
   if (outcome === "miss") return kind === "tan" ? "単勝不的中" : "複勝圏外";
-  if (outcome === "hit_missing_payout") {
-    return kind === "tan" ? "単勝的中(払戻未取得)" : "複勝的中(払戻未取得)";
-  }
+  if (outcome === "hit_missing_payout") return kind === "tan" ? "単勝的中(払戻未取得)" : "複勝的中(払戻未取得)";
   return "未精算";
 }
 
@@ -188,219 +109,15 @@ function formatPayout(value: number) {
 }
 
 function formatPayoutSource(source: PayoutSource) {
-  return source === "official" ? "公式払戻" : "払戻未取得";
+  return source === "official" ? "公式" : "未取得";
 }
 
-function openReviewPost(text: string) {
-  if (!text) return;
-  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
-}
-
-function buildAndOpenReviewPost(
-  race: ReviewCard,
-  snapshot: PredictionSnapshot | undefined,
-  settlement: RecommendationSettlementBundle | null,
-  commentary?: RaceCommentaryPayload
-) {
-  // Builder priority: use structured builder when settlement data exists
-  if (settlement?.win || snapshot) {
-    const snapshotHorseId = snapshot?.honmeiHorseId ?? null;
-    const routineHorseId = settlement?.win?.horseId ?? null;
-    const agreementStatus: AgreementStatus =
-      snapshotHorseId && routineHorseId
-        ? snapshotHorseId === routineHorseId ? "agree" : "disagree"
-        : "unknown";
-
-    const simEntry = buildArchiveSimEntry(snapshot, snapshotHorseId);
-    const winEntry = buildArchiveRecommendationEntry(settlement?.win);
-    const disagreementExplanation = buildDisagreementExplanation(agreementStatus, simEntry, winEntry);
-    const explanations = buildPickExplanations({ agreementStatus, simEntry, winEntry, valueEntry: buildArchiveRecommendationEntry(settlement?.value) });
-
-    const payload = buildManualReviewPayload({
-      raceName: race.label,
-      race,
-      settlement,
-      snapshot: snapshot ?? null,
-      agreementExplanation: explanations.agreement,
-      disagreementExplanation,
-      raceSegment: commentary?.raceSegment ?? null,
-      missTags: commentary?.missTags ?? [],
-      primaryMissTag: commentary?.primaryMissTag ?? null,
-    } as Parameters<typeof buildManualReviewPayload>[0] & {
-      raceSegment: string | null;
-      missTags: string[];
-      primaryMissTag: string | null;
-    });
-
-    if (payload) {
-      console.log("[Issue8] review payload", payload);
-      openReviewPost(payload.text);
-      return;
-    }
-  }
-
-  // Fallback: legacy xPostText
-  if (race.review?.xPostText) {
-    openReviewPost(race.review.xPostText);
-  }
-}
-
-function getRaceKey(race: ReviewCard): { raceId: string | null; courseId: string } {
+function getRaceKey(race: ReviewCard) {
   const raceId = String(race.raceId ?? "").trim();
   if (raceId) return { raceId, courseId: String(race.courseId ?? "") };
   const courseId = String(race.courseId ?? "");
   const match = courseId.match(/(\d{12})$/);
   return { raceId: match?.[1] ?? null, courseId };
-}
-
-function buildLegacyRaceId(courseId: string, date: string) {
-  return `legacy-${courseId}-${date.replace(/[^0-9]/g, "")}`;
-}
-
-function buildLegacyHorseSeeds(race: LegacyArchivedRace): GeneratedReviewRace["horses"] {
-  return race.horses.map((horse) => ({
-    id: String(horse.id),
-    name: String(horse.name),
-    jockey: String(horse.jockey ?? ""),
-    trainer: horse.trainer ? String(horse.trainer) : undefined,
-    runningStyle: horse.runningStyle,
-    gateNumber: Number(horse.gateNumber ?? 0),
-    sex: horse.sex ?? "M",
-    weight: Number(horse.weight ?? 57),
-    favoriteCount: Number(horse.favoriteCount ?? 0),
-    xBuzzScore: Number(horse.xBuzzScore ?? 0),
-    predictionCount: Number(horse.predictionCount ?? 0),
-    realOdds: Number(horse.realOdds ?? 0),
-    oddsSource: String(horse.oddsSource ?? "legacy"),
-    speed: Number(horse.speed ?? 80),
-    stamina: Number(horse.stamina ?? 80),
-    power: Number(horse.power ?? 80),
-    guts: Number(horse.guts ?? 80),
-    trainingScore: Number(horse.trainingScore ?? 0),
-    recentFormScore: Number(horse.recentFormScore ?? 0),
-    recentAverageFinish: Number(horse.recentAverageFinish ?? 0),
-    recentTimeIndex: Number(horse.recentTimeIndex ?? 0),
-    lastRaceGradeScore: Number(horse.lastRaceGradeScore ?? 2),
-    lastRaceGradeLabel: String(horse.lastRaceGradeLabel ?? "legacy"),
-    lastRaceDistance: Number(horse.lastRaceDistance ?? 0),
-    distanceChange: Number(horse.distanceChange ?? 0),
-    condition: Number(horse.condition ?? 5),
-  }));
-}
-
-function buildLegacyResult(race: LegacyArchivedRace): GeneratedReviewRace["result"] {
-  if (!race.result?.winnerHorseId || !Array.isArray(race.result.top3HorseIds)) return undefined;
-
-  const horseMap = new Map(race.horses.map((horse) => [String(horse.id), horse]));
-  const top3HorseIds = race.result.top3HorseIds.map((id) => String(id));
-  const top3HorseNames = top3HorseIds
-    .map((horseId) => horseMap.get(horseId)?.name ?? "")
-    .filter(Boolean);
-  const popularityMap = new Map(
-    [...race.horses]
-      .sort((left, right) => {
-        const leftOdds = Number(left.realOdds ?? Number.MAX_SAFE_INTEGER);
-        const rightOdds = Number(right.realOdds ?? Number.MAX_SAFE_INTEGER);
-        return leftOdds - rightOdds || String(left.id).localeCompare(String(right.id));
-      })
-      .map((horse, index) => [String(horse.id), index + 1] as const)
-  );
-  const explicitPositions = Array.isArray(race.result.positions) ? race.result.positions : [];
-  const mergedHorseIds = [
-    ...top3HorseIds,
-    ...explicitPositions.map((entry) => String(entry.horseId ?? "")),
-  ].filter(Boolean);
-
-  const finishers = [...new Set(mergedHorseIds)]
-    .map((horseId) => {
-      const horse = horseMap.get(horseId);
-      if (!horse) return null;
-      const explicit = explicitPositions.find((entry) => String(entry.horseId ?? "") === horseId)?.position;
-      const top3Index = top3HorseIds.findIndex((id) => id === horseId);
-      return {
-        position: top3Index >= 0 ? top3Index + 1 : Number(explicit ?? 99),
-        horseId,
-        gateNumber: Number(horse.gateNumber ?? 0),
-        horseNumber: Number(horse.gateNumber ?? 0),
-        name: horse.name,
-        jockey: String(horse.jockey ?? ""),
-        finishTime: "",
-        margin: "",
-        popularity: popularityMap.get(horseId) ?? 0,
-        odds: Number(horse.realOdds ?? 0),
-      };
-    })
-    .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
-    .sort((left, right) => left.position - right.position)
-    .slice(0, 3);
-
-  return {
-    updatedAt: new Date(`${race.date}T18:00:00+09:00`).toISOString(),
-    winnerHorseId: String(race.result.winnerHorseId),
-    winnerHorseName: horseMap.get(String(race.result.winnerHorseId))?.name ?? undefined,
-    top3HorseIds,
-    top3HorseNames,
-    finishers,
-  };
-}
-
-function buildLegacyReviewCards(): ReviewCard[] {
-  return LEGACY_ARCHIVED_RACES.map((race) => {
-    const course = ARCHIVED_COURSES.find((entry) => entry.id === race.courseId);
-    const raceDate = new Date(`${race.date}T00:00:00+09:00`);
-    const targetFlags = getRaceTargetFlags({
-      raceId: race.raceId ?? buildLegacyRaceId(race.courseId, race.date),
-      courseId: race.courseId,
-      label: race.label,
-      grade: String(course?.grade ?? "legacy"),
-      raceNumber: course?.raceNumber ?? null,
-      surface: course?.surface ?? "Turf",
-      isSpecialRace: course?.isSpecialRace ?? null,
-      isFinalRace: course?.isFinalRace ?? null,
-      isJumpRace: course?.isJumpRace ?? null,
-      raceSegment: course?.raceSegment ?? null,
-    });
-
-    return {
-      courseId: race.courseId,
-      raceId: race.raceId ?? buildLegacyRaceId(race.courseId, race.date),
-      label: race.label,
-      grade: String(course?.grade ?? "legacy"),
-      day: raceDate.getDay() === 0 ? "Sun" : "Sat",
-      raceNumber: targetFlags.raceNumber ?? course?.raceNumber ?? 0,
-      isSpecialRace: targetFlags.isSpecialRace,
-      isFinalRace: targetFlags.isFinalRace,
-      isJumpRace: targetFlags.isJumpRace,
-      raceSegment: targetFlags.raceSegment,
-      venue: String(course?.venue ?? ""),
-      venueKey: String(race.courseId.split("-")[0] ?? ""),
-      surface: course?.surface ?? "Turf",
-      distance: Number(course?.distance ?? 0),
-      straightLength: Number(course?.straightLength ?? 360),
-      hashtag: race.hashtag,
-      hasRace: true,
-      oddsSource: "legacy",
-      date: race.date,
-      archivedAt: race.date,
-      archived: true,
-      result: buildLegacyResult(race),
-      review: race.review
-        ? {
-            updatedAt: new Date(`${race.date}T18:00:00+09:00`).toISOString(),
-            summary: race.review.summary,
-            xPostText: race.review.xPostText,
-            reasons: [],
-          }
-        : undefined,
-      horses: buildLegacyHorseSeeds(race),
-    };
-  });
-}
-
-function getSimTopRows(snapshot: PredictionSnapshot) {
-  return [...snapshot.rankedRows]
-    .sort((left, right) => left.rank - right.rank)
-    .slice(0, 3);
 }
 
 function getHorseNameFromSnapshot(snapshot: PredictionSnapshot | undefined, horseId?: string | null) {
@@ -424,786 +141,149 @@ function getSnapshotFinishLabel(race: ReviewCard, horseId?: string | null) {
   return "圏外";
 }
 
-function getRecommendationFinishLabel(rec: RecommendationSettlement | null) {
-  if (!rec) return "データなし";
-  if (rec.tanOutcome === "hit" || rec.tanOutcome === "hit_missing_payout") return "単勝的中";
-  if (rec.fukuOutcome === "hit" || rec.fukuOutcome === "hit_missing_payout") return "複勝的中";
-  if (rec.fukuOutcome === "miss") return "複勝圏外";
-  return formatSettlementStatus(rec.settlementStatus);
-}
-
-function resultText(race: ReviewCard) {
-  const top3 = race.result?.top3HorseNames ?? [];
-  if (top3.length >= 3) return `1着 ${top3[0]} / 2着 ${top3[1]} / 3着 ${top3[2]}`;
-  if (top3.length === 2) return `1着 ${top3[0]} / 2着 ${top3[1]}`;
-  if (top3.length === 1) return `1着 ${top3[0]}`;
-  return "";
-}
-
 function SummaryMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between gap-3 text-sm">
-      <span className="text-slate-500">{label}</span>
-      <span className="font-semibold text-slate-800">{value}</span>
-    </div>
-  );
+  return <div className="flex items-center justify-between gap-3 text-sm"><span className="text-slate-500">{label}</span><span className="font-semibold text-slate-800">{value}</span></div>;
 }
 
-function SummaryCard({
-  title,
-  tone,
-  children,
-}: {
-  title: string;
-  tone: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className={`rounded-lg border px-4 py-4 ${tone}`}>
-      <p className="text-sm font-bold">{title}</p>
-      <div className="mt-3 space-y-2">{children}</div>
-    </div>
-  );
-}
-
-function PopularityBandSection({
-  title,
-  data,
-}: {
-  title: string;
-  data: Record<"fav_1_3" | "fav_4_6" | "fav_7_plus", PopularityBandSummary>;
-}) {
-  const labels: Array<[keyof typeof data, string]> = [
-    ["fav_1_3", "1〜3番人気"],
-    ["fav_4_6", "4〜6番人気"],
-    ["fav_7_plus", "7番人気以下"],
-  ];
-
-  return (
-    <div className="rounded-lg border border-slate-200 bg-white px-4 py-4">
-      <p className="text-sm font-bold text-slate-800">{title}</p>
-      <div className="mt-3 space-y-3">
-        {labels.map(([key, label]) => (
-          <div key={key} className="rounded-md border border-slate-100 bg-slate-50 px-3 py-3">
-            <p className="text-xs font-semibold text-slate-700">{label}</p>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2">
-              <SummaryMetric label="対象" value={`${data[key].raceCount}R`} />
-              <SummaryMetric label="複勝的中" value={`${data[key].placeCount}`} />
-              <SummaryMetric label="複勝率" value={formatRate(data[key].placeRate)} />
-              <SummaryMetric label="複回収率" value={formatRate(data[key].fukuRoi)} />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+function SummaryCard({ title, tone, children }: { title: string; tone: string; children: React.ReactNode }) {
+  return <div className={`rounded-lg border px-4 py-4 ${tone}`}><p className="text-sm font-bold">{title}</p><div className="mt-3 space-y-2">{children}</div></div>;
 }
 
 function renderAggregateSummary(summary: AggregateSummary | null) {
   if (!summary) return null;
-
   return (
     <section className="space-y-4">
       <div>
-        <h2 className="text-lg font-bold text-slate-900">単複派向けサマリー</h2>
-        <p className="mt-1 text-sm text-slate-500">
-          確定済みベースで、どの出力が単複向きかを横断で見られるようにしています。
-        </p>
+        <h2 className="text-lg font-bold text-slate-900">週次回顧サマリー</h2>
+        <p className="mt-1 text-sm text-slate-500">review_ready の review record だけを対象に、本命候補と相手候補の成績を確認します。</p>
       </div>
-
       <div className="grid gap-4 lg:grid-cols-2">
-        <SummaryCard title="シミュレーション本命" tone="border-sky-200 bg-sky-50 text-sky-800">
-          <SummaryMetric label="対象レース数" value={`${summary.snapshotHonmei.raceCount}R`} />
-          <SummaryMetric label="1着数" value={`${summary.snapshotHonmei.firstCount}`} />
-          <SummaryMetric label="3着内数" value={`${summary.snapshotHonmei.placeCount}`} />
-          <SummaryMetric label="単勝率" value={formatRate(summary.snapshotHonmei.winRate)} />
-          <SummaryMetric label="複勝率" value={formatRate(summary.snapshotHonmei.placeRate)} />
+        <SummaryCard title="処理状況" tone="border-slate-200 bg-white text-slate-800">
+          <SummaryMetric label="対象レース数" value={`${summary.counts.targetRaceCount}R`} />
+          <SummaryMetric label="ready件数" value={`${summary.counts.readyCount}R`} />
+          <SummaryMetric label="pending件数" value={`${summary.counts.pendingCount}R`} />
+          <SummaryMetric label="failed件数" value={`${summary.counts.failedCount}R`} />
         </SummaryCard>
-
-        <SummaryCard title="単複推奨の本命" tone="border-amber-200 bg-amber-50 text-amber-800">
-          <SummaryMetric label="対象レース数" value={`${summary.routineHonmei.raceCount}R`} />
-          <SummaryMetric label="単勝的中数" value={`${summary.routineHonmei.tanHitCount}`} />
-          <SummaryMetric label="複勝的中数" value={`${summary.routineHonmei.fukuHitCount}`} />
-          <SummaryMetric label="単勝率" value={formatRate(summary.routineHonmei.tanHitRate)} />
-          <SummaryMetric label="複勝率" value={formatRate(summary.routineHonmei.fukuHitRate)} />
-          <SummaryMetric label="単回収率" value={formatRate(summary.routineHonmei.tanRoi)} />
-          <SummaryMetric label="複回収率" value={formatRate(summary.routineHonmei.fukuRoi)} />
-          <SummaryMetric label="未精算除外" value={`${summary.routineHonmei.pendingCount}R`} />
+        <SummaryCard title="本命候補" tone="border-amber-200 bg-amber-50 text-amber-800">
+          <SummaryMetric label="単勝率" value={formatRate(summary.honmei.winRate)} />
+          <SummaryMetric label="複勝率" value={formatRate(summary.honmei.placeRate)} />
+          <SummaryMetric label="単回収率" value={formatRate(summary.honmei.tanRoi)} />
+          <SummaryMetric label="複回収率" value={formatRate(summary.honmei.fukuRoi)} />
         </SummaryCard>
-
-        <SummaryCard title="妙味候補" tone="border-emerald-200 bg-emerald-50 text-emerald-800">
-          <SummaryMetric label="対象レース数" value={`${summary.valueCandidate.raceCount}R`} />
-          <SummaryMetric label="3着内数" value={`${summary.valueCandidate.placeCount}`} />
-          <SummaryMetric label="複勝率" value={formatRate(summary.valueCandidate.placeRate)} />
-          <SummaryMetric label="複回収率" value={formatRate(summary.valueCandidate.fukuRoi)} />
-          <SummaryMetric label="未精算除外" value={`${summary.valueCandidate.pendingCount}R`} />
+        <SummaryCard title="相手候補" tone="border-emerald-200 bg-emerald-50 text-emerald-800">
+          <SummaryMetric label="対象レース数" value={`${summary.opponent.raceCount}R`} />
+          <SummaryMetric label="複勝率" value={formatRate(summary.opponent.placeRate)} />
+          <SummaryMetric label="複回収率" value={formatRate(summary.opponent.fukuRoi)} />
         </SummaryCard>
-
-        <SummaryCard title="一致 / 不一致" tone="border-violet-200 bg-violet-50 text-violet-800">
-          <SummaryMetric label="比較対象レース" value={`${summary.agreement.raceCount}R`} />
-          <SummaryMetric label="本命一致数" value={`${summary.agreement.samePickCount}`} />
-          <SummaryMetric label="一致率" value={formatRate(summary.agreement.samePickRate)} />
-          <SummaryMetric label="一致時の複勝率" value={formatRate(summary.agreement.samePickPlaceRate)} />
-          <SummaryMetric
-            label="不一致時 シミュ本命複勝率"
-            value={formatRate(summary.agreement.snapshotPlaceRateWhenDifferent)}
-          />
-          <SummaryMetric
-            label="不一致時 単複本命複勝率"
-            value={formatRate(summary.agreement.routinePlaceRateWhenDifferent)}
-          />
+        <SummaryCard title="本命-相手ペア" tone="border-violet-200 bg-violet-50 text-violet-800">
+          <SummaryMetric label="ワイド的中率" value={formatRate(summary.pair.wideHitRate)} />
+          <SummaryMetric label="ワイド回収率" value={formatRate(summary.pair.wideReturnRate)} />
+          <SummaryMetric label="同時好走率" value={formatRate(summary.pair.simultaneousPlaceRate)} />
         </SummaryCard>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-3">
-        <PopularityBandSection title="人気帯別の複勝成績: 単複本命" data={summary.popularityBands.routineHonmei} />
-        <PopularityBandSection title="人気帯別の複勝成績: 妙味候補" data={summary.popularityBands.valueCandidate} />
-
-        <div className="rounded-lg border border-slate-200 bg-white px-4 py-4">
-          <p className="text-sm font-bold text-slate-800">シミュレーション順位別の複勝率</p>
-          <div className="mt-3 space-y-3">
-            {summary.snapshotRanks.map((item) => (
-              <div key={item.rank} className="rounded-md border border-slate-100 bg-slate-50 px-3 py-3">
-                <p className="text-xs font-semibold text-slate-700">{item.rank}番手</p>
-                <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                  <SummaryMetric label="対象" value={`${item.raceCount}R`} />
-                  <SummaryMetric label="3着内数" value={`${item.placeCount}`} />
-                  <SummaryMetric label="複勝率" value={formatRate(item.placeRate)} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-4">
-        <p className="text-sm font-bold text-rose-800">不一致レース診断</p>
-        <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          <SummaryMetric label="不一致レース数" value={`${summary.disagreementDetail.raceCount}R`} />
-          <SummaryMetric label="シミュ本命複勝率" value={formatRate(summary.disagreementDetail.snapshotPlaceRate)} />
-          <SummaryMetric label="単複本命複勝率" value={formatRate(summary.disagreementDetail.routinePlaceRate)} />
-          <SummaryMetric label="妙味候補が3着内" value={`${summary.disagreementDetail.valuePlaceCount}`} />
-          <SummaryMetric
-            label="シミュ本命圏外 / 単複本命複勝"
-            value={`${summary.disagreementDetail.snapshotMissRoutinePlaceCount}`}
-          />
-          <SummaryMetric
-            label="単複本命圏外 / シミュ本命3着内"
-            value={`${summary.disagreementDetail.routineMissSnapshotPlaceCount}`}
-          />
-        </div>
       </div>
     </section>
-  );
-}
-
-function WidePendingDetails({
-  tone,
-  pendingDetails,
-}: {
-  tone: "cyan" | "fuchsia";
-  pendingDetails: WeeklyDiagnosticsWidePendingDetail[];
-}) {
-  if (pendingDetails.length === 0) return null;
-
-  const tones =
-    tone === "cyan"
-      ? {
-          border: "border-cyan-200",
-          bg: "bg-white/70",
-          text: "text-cyan-950",
-          summary: "text-cyan-900",
-        }
-      : {
-          border: "border-fuchsia-200",
-          bg: "bg-white/70",
-          text: "text-fuchsia-950",
-          summary: "text-fuchsia-900",
-        };
-
-  return (
-    <details className={`mt-3 rounded-md border ${tones.border} ${tones.bg} px-3 py-2 text-xs ${tones.text}`}>
-      <summary className={`cursor-pointer font-semibold ${tones.summary}`}>
-        pending 詳細 {pendingDetails.length}件
-      </summary>
-      <div className="mt-3 space-y-2">
-        {pendingDetails.map((detail, index) => (
-          <div key={`${detail.strategyKey}-${detail.raceKey}-${index}`} className={`rounded-md border ${tones.border} px-3 py-2`}>
-            <p className="font-semibold">{detail.raceKey}</p>
-            <p className="mt-1">reason: {detail.pendingReason}</p>
-            <p className="mt-1">
-              missingTargetFields: {detail.missingTargetFields.length > 0 ? detail.missingTargetFields.join(", ") : "-"}
-            </p>
-            <p className="mt-1">
-              missingFinisherFields:{" "}
-              {detail.missingFinisherFields.length > 0 ? detail.missingFinisherFields.join(", ") : "-"}
-            </p>
-          </div>
-        ))}
-      </div>
-    </details>
   );
 }
 
 function renderWideStatsSummary(wideStats: WeeklyDiagnosticsWideStats | null) {
   if (!wideStats) return null;
-
   const pair = wideStats.tanpukuHonmeiValueCandidate;
   const box = wideStats.simHonmeiTanpukuHonmeiValueCandidateBox;
-
   return (
     <section className="mt-6 space-y-4">
       <div>
-        <h2 className="text-lg font-bold text-slate-900">wide 統計</h2>
-        <p className="mt-1 text-sm text-slate-500">
-          A系統はロジック相性の確認、B系統は3頭ワイドボックスの買い方シミュレーションとして分離しています。
-        </p>
+        <h2 className="text-lg font-bold text-slate-900">ワイド検証</h2>
+        <p className="mt-1 text-sm text-slate-500">本命候補と相手候補のワイド成績を補助的に確認します。</p>
       </div>
-
       <div className="grid gap-4 lg:grid-cols-2">
-        <SummaryCard title="A. 単複本命 × 妙味候補" tone="border-cyan-200 bg-cyan-50 text-cyan-900">
+        <SummaryCard title="本命候補 × 相手候補" tone="border-cyan-200 bg-cyan-50 text-cyan-900">
           <SummaryMetric label="対象レース数" value={`${pair.targetRaceCount}R`} />
-          <SummaryMetric label="妙味候補ありレース数" value={`${pair.valueCandidateRaceCount}R`} />
-          <SummaryMetric label="集計済みレース数" value={`${pair.settledRaceCount}R`} />
-          <SummaryMetric label="未精算レース数" value={`${pair.pendingRaceCount}R`} />
-          <SummaryMetric label="的中数" value={`${pair.hitCount}`} />
+          <SummaryMetric label="相手候補あり" value={`${pair.valueCandidateRaceCount}R`} />
           <SummaryMetric label="的中率" value={formatRate(pair.hitRate)} />
-          <SummaryMetric label="総投資" value={`${pair.totalStake}円`} />
-          <SummaryMetric label="総払戻" value={`${Math.round(pair.totalPayout)}円`} />
           <SummaryMetric label="回収率" value={formatRate(pair.returnRate)} />
-          <SummaryMetric label="平均払戻" value={`${Math.round(pair.averagePayout)}円`} />
-          <p className="mt-3 text-xs text-cyan-900/80">投資ルール: 1レース1点買い、100円。</p>
         </SummaryCard>
-
-        <SummaryCard
-          title="B. シミュ本命 / 単複本命 / 妙味候補 ワイドBOX"
-          tone="border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900"
-        >
+        <SummaryCard title="シミュ本命 / 本命候補 / 相手候補 BOX" tone="border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900">
           <SummaryMetric label="対象レース数" value={`${box.targetRaceCount}R`} />
-          <SummaryMetric label="集計済みレース数" value={`${box.settledRaceCount}R`} />
-          <SummaryMetric label="未精算レース数" value={`${box.pendingRaceCount}R`} />
-          <SummaryMetric label="1点以上的中レース数" value={`${box.hitRaceCount}`} />
           <SummaryMetric label="的中率" value={formatRate(box.hitRate)} />
-          <SummaryMetric label="総投資" value={`${box.totalStake}円`} />
-          <SummaryMetric label="総払戻" value={`${Math.round(box.totalPayout)}円`} />
           <SummaryMetric label="回収率" value={formatRate(box.returnRate)} />
-          <SummaryMetric label="平均払戻" value={`${Math.round(box.averagePayout)}円`} />
-          <p className="mt-3 text-xs text-fuchsia-900/80">投資ルール: 1レース3点買い、300円。</p>
         </SummaryCard>
       </div>
     </section>
   );
 }
 
-function formatScore(value?: number | null) {
-  return typeof value === "number" && Number.isFinite(value) ? value.toFixed(3) : "-";
-}
-
-function renderWideStatsSummaryV2(wideStats: WeeklyDiagnosticsWideStats | null) {
-  if (!wideStats) return null;
-
-  const pair = wideStats.tanpukuHonmeiValueCandidate;
-  const box = wideStats.simHonmeiTanpukuHonmeiValueCandidateBox;
-
-  return (
-    <section className="mt-6 space-y-4">
-      <div>
-        <h2 className="text-lg font-bold text-slate-900">wide 統計</h2>
-        <p className="mt-1 text-sm text-slate-500">
-          A系統はロジック相性の確認、B系統は3頭ワイドボックスの買い方シミュレーションとして分けて表示しています。
-        </p>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <SummaryCard title="A. 単複本命 × 妙味候補" tone="border-cyan-200 bg-cyan-50 text-cyan-900">
-          <SummaryMetric label="対象レース数" value={`${pair.targetRaceCount}R`} />
-          <SummaryMetric label="妙味候補ありレース数" value={`${pair.valueCandidateRaceCount}R`} />
-          <SummaryMetric label="集計済みレース数" value={`${pair.settledRaceCount}R`} />
-          <SummaryMetric label="pending レース数" value={`${pair.pendingRaceCount}R`} />
-          <SummaryMetric label="的中レース数" value={`${pair.hitCount}`} />
-          <SummaryMetric label="的中率" value={formatRate(pair.hitRate)} />
-          <SummaryMetric label="総投資" value={`${pair.totalStake}円`} />
-          <SummaryMetric label="総払戻" value={`${Math.round(pair.totalPayout)}円`} />
-          <SummaryMetric label="回収率" value={formatRate(pair.returnRate)} />
-          <SummaryMetric label="平均払戻" value={`${Math.round(pair.averagePayout)}円`} />
-          <p className="mt-3 text-xs text-cyan-900/80">投資ルール: 1レース1点買い / 100円</p>
-          <WidePendingDetails tone="cyan" pendingDetails={pair.pendingDetails} />
-        </SummaryCard>
-
-        <SummaryCard
-          title="B. シミュ本命 / 単複本命 / 妙味候補 ワイドBOX"
-          tone="border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900"
-        >
-          <SummaryMetric label="対象レース数" value={`${box.targetRaceCount}R`} />
-          <SummaryMetric label="集計済みレース数" value={`${box.settledRaceCount}R`} />
-          <SummaryMetric label="pending レース数" value={`${box.pendingRaceCount}R`} />
-          <SummaryMetric label="的中レース数" value={`${box.hitRaceCount}`} />
-          <SummaryMetric label="的中率" value={formatRate(box.hitRate)} />
-          <SummaryMetric label="総投資" value={`${box.totalStake}円`} />
-          <SummaryMetric label="総払戻" value={`${Math.round(box.totalPayout)}円`} />
-          <SummaryMetric label="回収率" value={formatRate(box.returnRate)} />
-          <SummaryMetric label="平均払戻" value={`${Math.round(box.averagePayout)}円`} />
-          <p className="mt-3 text-xs text-fuchsia-900/80">投資ルール: 1レース3点買い / 300円</p>
-          <WidePendingDetails tone="fuchsia" pendingDetails={box.pendingDetails} />
-        </SummaryCard>
-      </div>
-    </section>
-  );
-}
-
-function formatPercent(value?: number | null) {
-  if (typeof value !== "number" || !Number.isFinite(value)) return "-";
-  const normalized = Math.abs(value) <= 1 ? value * 100 : value;
-  return `${normalized.toFixed(0)}%`;
-}
-
-function buildMetricChips(entry?: RecommendationSettlement | null, kind: "win" | "value" = "win") {
-  if (!entry) return [];
-  const chips = [
-    `placeScore ${formatScore(entry.placeScore)}`,
-    `valueScore ${formatScore(entry.valueScore)}`,
-    `scoreGap ${formatScore(entry.scoreGap)}`,
-    `placeProb ${formatPercent(entry.placeProb)}`,
-  ];
-  const overbet = formatOverbetLabel(entry.overbetLabel);
-  if (overbet) chips.push(overbet);
-  return chips;
-}
-
-function buildArchiveSimEntry(snapshot: PredictionSnapshot | undefined, horseId: string | null): PickExplanationEntry | null {
-  if (!snapshot || !horseId) return null;
-  const row = snapshot.rankedRows.find((r) => r.horseId === horseId);
-  if (!row) return null;
-
-  const winProb = row.winProb;
-  const officialImplied = row.realOdds && row.realOdds > 0 ? Math.min(1 / row.realOdds, 0.7) : 0;
-  const placeProb = Math.min(winProb * 0.95 + officialImplied * 0.35 + 0.15, 0.88);
-  const top3Stability = Math.min(placeProb * 0.45 + (placeProb - winProb) * 0.75, 1);
-  const marketSupport = Math.min(officialImplied * 2.25, 1);
-  const overbetRisk = Math.max((officialImplied - winProb) * 2.4, 0);
-  const placeScore = Math.max(0.55 * placeProb + 0.2 * top3Stability + 0.15 * marketSupport - 0.1 * overbetRisk, 0);
-
-  return {
-    horseId: row.horseId,
-    horseName: row.horseName,
-    winProb,
-    placeProb,
-    placeScore,
-    top3Stability,
-    marketSupport,
-    overbetRisk,
-    signalReason: snapshot.signalReasons?.[horseId]?.signalReason ?? null,
-    majorContributors: row.majorContributors.map((c: { label: string; value: number }) => ({ label: c.label, value: c.value })),
-  };
-}
-
-function buildArchiveRecommendationEntry(entry?: RecommendationSettlement | null): PickExplanationEntry | null {
-  if (!entry) return null;
-  return {
-    horseId: entry.horseId,
-    horseName: entry.horseName,
-    winProb: entry.winProb,
-    placeProb: entry.placeProb,
-    placeScore: entry.placeScore,
-    valueScore: entry.valueScore,
-    scoreGap: entry.scoreGap,
-    overbetLabel: entry.overbetLabel,
-    selectionReason: entry.selectionReason,
-  };
-}
-
-function renderPickVisibilityPanel(
-  race: ReviewCard,
-  snapshot?: PredictionSnapshot,
-  settlement?: RecommendationSettlementBundle | null
-) {
-  const snapshotHorseId = snapshot?.honmeiHorseId ?? null;
-  const routineHorseId = settlement?.win?.horseId ?? null;
-  const valueHorse = settlement?.value ?? null;
-  if (!snapshotHorseId && !routineHorseId && !valueHorse) return null;
-
-  const agreementStatus: AgreementStatus =
-    snapshotHorseId && routineHorseId
-      ? snapshotHorseId === routineHorseId
-        ? "agree"
-        : "disagree"
-      : "unknown";
-  const agreementLabel =
-    agreementStatus === "agree" ? "一致" : agreementStatus === "disagree" ? "不一致" : "片方のみ";
-  const simEntry = buildArchiveSimEntry(snapshot, snapshotHorseId);
-  const winEntry = buildArchiveRecommendationEntry(settlement?.win);
-  const valueEntry = buildArchiveRecommendationEntry(valueHorse);
-  const explanations = buildPickExplanations({ agreementStatus, simEntry, winEntry, valueEntry });
-
-  return (
-    <div className="mb-4 rounded-lg border border-violet-200 bg-violet-50 px-4 py-3">
-      <p className="text-sm font-bold text-violet-800">本命の可視化</p>
-      <p className="mt-2 text-xs leading-5 text-violet-700">
-        シミュ本命、単複本命、妙味候補を同じ場所に並べて、一致 / 不一致と選出理由を確認できます。
-      </p>
-
-      <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-violet-700">
-        <span className="rounded-full bg-sky-100 px-3 py-1">
-          シミュ本命 {getSnapshotHorseDisplay(snapshot, snapshotHorseId)}
-        </span>
-        <span className="rounded-full bg-amber-100 px-3 py-1">
-          単複本命 {settlement?.win ? `${settlement.win.horseName} (${settlement.win.horseId})` : "データなし"}
-        </span>
-        <span className="rounded-full bg-emerald-100 px-3 py-1">
-          妙味候補 {valueHorse ? `${valueHorse.horseName} (${valueHorse.horseId})` : "該当なし"}
-        </span>
-        <span
-          className={`rounded-full px-3 py-1 ${
-            agreementStatus === "agree"
-              ? "bg-green-100 text-green-800"
-              : agreementStatus === "disagree"
-                ? "bg-red-100 text-red-800"
-                : "bg-gray-100 text-gray-600"
-          }`}
-        >
-          一致判定 {agreementLabel}
-        </span>
-      </div>
-
-      <p className="mt-2 text-xs leading-5 text-slate-600">{explanations.agreement}</p>
-      {explanations.disagreement ? (
-        <p className="mt-2 rounded-md border border-amber-200 bg-white/80 px-3 py-2 text-xs leading-5 text-amber-900">
-          不一致理由: {explanations.disagreement}
-        </p>
-      ) : null}
-
-      <div className="mt-3 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-md border border-sky-200 bg-sky-50 px-3 py-2">
-          <p className="text-[11px] font-semibold text-sky-800">シミュ本命</p>
-          <p className="mt-1 text-xs font-semibold text-slate-700">
-            {snapshotHorseId ? getHorseNameFromSnapshot(snapshot, snapshotHorseId) || snapshotHorseId : "データなし"}
-          </p>
-          <div className="mt-1 flex flex-wrap gap-1 text-[11px] text-slate-500">
-            <span className="rounded-full bg-white/80 px-2 py-0.5">winProb {formatPercent(simEntry?.winProb)}</span>
-          </div>
-          <p className="mt-2 text-[11px] leading-5 text-slate-600">{explanations.simHonmei}</p>
-          <p className="mt-2 text-[11px] text-slate-500">結果: {getSnapshotFinishLabel(race, snapshotHorseId)}</p>
-        </div>
-
-        <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
-          <p className="text-[11px] font-semibold text-amber-800">単複本命</p>
-          <p className="mt-1 text-xs font-semibold text-slate-700">{settlement?.win?.horseName ?? "単複 recommendation なし"}</p>
-          <div className="mt-1 flex flex-wrap gap-1 text-[11px] text-slate-500">
-            {buildMetricChips(settlement?.win ?? null).map((chip) => (
-              <span key={chip} className="rounded-full bg-white/80 px-2 py-0.5">
-                {chip}
-              </span>
-            ))}
-          </div>
-          <p className="mt-2 text-[11px] leading-5 text-slate-600">{explanations.tanpukuHonmei}</p>
-          <p className="mt-2 text-[11px] text-slate-500">結果: {getRecommendationFinishLabel(settlement?.win ?? null)}</p>
-          {settlement?.win?.selectionReason ? (
-            <p className="mt-1 text-[11px] text-slate-500">selectionReason: {settlement.win.selectionReason}</p>
-          ) : null}
-        </div>
-
-        <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2">
-          <p className="text-[11px] font-semibold text-emerald-800">妙味候補</p>
-          <p className="mt-1 text-xs font-semibold text-slate-700">{valueHorse?.horseName ?? "該当なし"}</p>
-          <div className="mt-1 flex flex-wrap gap-1 text-[11px] text-slate-500">
-            {valueHorse ? (
-              buildMetricChips(valueHorse, "value").map((chip) => (
-                <span key={chip} className="rounded-full bg-white/80 px-2 py-0.5">
-                  {chip}
-                </span>
-              ))
-            ) : (
-              <span className="rounded-full bg-white/80 px-2 py-0.5">quality gate 未通過</span>
-            )}
-          </div>
-          <p className="mt-2 text-[11px] leading-5 text-slate-600">{explanations.valueCandidate}</p>
-          {valueHorse ? (
-            <p className="mt-2 text-[11px] text-slate-500">結果: {getRecommendationFinishLabel(valueHorse)}</p>
-          ) : null}
-          {valueHorse?.selectionReason ? (
-            <p className="mt-1 text-[11px] text-slate-500">selectionReason: {valueHorse.selectionReason}</p>
-          ) : null}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function renderSnapshotComparison(race: ReviewCard, snapshot?: PredictionSnapshot) {
-  if (!snapshot) {
-    return (
-      <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-        <p className="text-sm font-semibold text-slate-700">シミュレーション予想 vs 実結果</p>
-        <p className="mt-2 text-sm text-slate-500">
-          このレースに対応する prediction snapshot は見つかりませんでした。
-        </p>
-      </div>
-    );
-  }
-
-  const topRows = snapshot.rankedRows
-    .slice()
-    .sort((a, b) => a.rank - b.rank)
-    .slice(0, 3);
-  const finishers = race.result?.finishers?.slice(0, 3) ?? [];
-
-  return (
-    <div className="rounded-lg border border-slate-200 bg-white px-4 py-3">
-      <p className="text-sm font-semibold text-slate-800">シミュレーション予想 vs 実結果</p>
-      <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-slate-600">
-        <span className="rounded-full bg-slate-100 px-3 py-1">取得 {formatTimestamp(snapshot.capturedAt)}</span>
-        <span className="rounded-full bg-slate-100 px-3 py-1">family {snapshot.modelFamily}</span>
-        <span className="rounded-full bg-slate-100 px-3 py-1">version {snapshot.modelVersion}</span>
-        <span className="rounded-full bg-sky-100 px-3 py-1">
-          シミュ本命 {getSnapshotHorseDisplay(snapshot, snapshot.honmeiHorseId)}
-        </span>
-        <span className="rounded-full bg-emerald-100 px-3 py-1">
-          妙味候補 {getSnapshotHorseDisplay(snapshot, snapshot.valueHorseId)}
-        </span>
-        <span className="rounded-full bg-amber-100 px-3 py-1">
-          市場注目 {getSnapshotHorseDisplay(snapshot, snapshot.watchHorseId)}
-        </span>
-      </div>
-
-      <div className="mt-3 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-md border border-slate-100 bg-slate-50 px-3 py-3">
-          <p className="text-xs font-semibold text-slate-700">シミュレーション上位3頭</p>
-          <div className="mt-2 space-y-3">
-            {topRows.map((row) => (
-              <div key={`${row.rank}-${row.horseId}`} className="rounded-md border border-white bg-white px-3 py-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-semibold text-slate-800">
-                      {row.rank}位 {row.horseName}
-                    </p>
-                    <p className="text-xs text-slate-500">
-                      win {row.winProb.toFixed(1)}% / fair {row.fairOdds?.toFixed(1) ?? "-"} / real{" "}
-                      {row.realOdds?.toFixed(1) ?? "-"} / edge {row.edge.toFixed(1)}
-                    </p>
-                  </div>
-                  <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-600">
-                    {row.runningStyle}
-                  </span>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-slate-600">
-                  {row.majorContributors.map((contributor) => (
-                    <span key={contributor.key} className="rounded-full bg-slate-100 px-2 py-1">
-                      {contributor.label} {contributor.value.toFixed(1)}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-md border border-slate-100 bg-slate-50 px-3 py-3">
-          <p className="text-xs font-semibold text-slate-700">実結果</p>
-          <div className="mt-2 space-y-3">
-            {finishers.length > 0 ? (
-              finishers.map((finisher) => (
-                <div
-                  key={`${finisher.position}-${finisher.horseNumber}`}
-                  className="rounded-md border border-white bg-white px-3 py-3 text-sm text-slate-700"
-                >
-                  <p className="font-semibold text-slate-800">
-                    {finisher.position}着 {finisher.name}
-                  </p>
-                  <p className="text-xs text-slate-500">
-                    horseId {finisher.horseId ?? "-"} / 馬番 {finisher.horseNumber} / 人気 {finisher.popularity} / odds{" "}
-                    {Number(finisher.odds).toFixed(1)}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-slate-500">実結果はまだありません。</p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-3 rounded-md border border-slate-100 bg-slate-50 px-3 py-3 text-xs text-slate-700">
-        <p>シミュ本命: {getSnapshotFinishLabel(race, snapshot.honmeiHorseId)}</p>
-        <p>妙味候補: {getSnapshotFinishLabel(race, snapshot.valueHorseId)}</p>
-        <p>市場注目: {getSnapshotFinishLabel(race, snapshot.watchHorseId)}</p>
-      </div>
-    </div>
-  );
-}
-
-function renderSettlementComparison(settlement?: RecommendationSettlementBundle | null) {
-  if (!settlement?.win && !settlement?.value) {
-    return (
-      <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-        <p className="text-sm font-semibold text-slate-700">単複の検証</p>
-        <p className="mt-2 text-sm text-slate-500">このレースの単複推奨データはありません。</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="rounded-lg border border-slate-200 bg-white px-4 py-3">
-      <p className="text-sm font-semibold text-slate-800">単複の検証</p>
-      <div className="mt-3 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-md border border-amber-100 bg-amber-50 px-3 py-3">
-          <p className="text-xs font-semibold text-amber-800">単複本命</p>
-          {settlement?.win ? (
-            <div className="mt-2 space-y-2 text-sm text-slate-700">
-              <p className="font-semibold text-slate-800">
-                {settlement.win.horseName} ({settlement.win.horseId})
-              </p>
-              <SummaryMetric label="精算状態" value={formatSettlementStatus(settlement.win.settlementStatus)} />
-              <SummaryMetric label="単勝" value={formatOutcome(settlement.win.tanOutcome, "tan")} />
-              <SummaryMetric label="複勝" value={formatOutcome(settlement.win.fukuOutcome, "fuku")} />
-              <SummaryMetric label="単勝払戻" value={formatPayout(settlement.win.tanPayout)} />
-              <SummaryMetric label="複勝払戻" value={formatPayout(settlement.win.fukuPayout)} />
-              <SummaryMetric label="単勝払戻元" value={formatPayoutSource(settlement.win.tanPayoutSource)} />
-              <SummaryMetric label="複勝払戻元" value={formatPayoutSource(settlement.win.fukuPayoutSource)} />
-            </div>
-          ) : (
-            <p className="mt-2 text-sm text-slate-500">単複本命はありません。</p>
-          )}
-        </div>
-
-        <div className="rounded-md border border-emerald-100 bg-emerald-50 px-3 py-3">
-          <p className="text-xs font-semibold text-emerald-800">妙味候補</p>
-          {settlement?.value ? (
-            <div className="mt-2 space-y-2 text-sm text-slate-700">
-              <p className="font-semibold text-slate-800">
-                {settlement.value.horseName} ({settlement.value.horseId})
-              </p>
-              <SummaryMetric label="精算状態" value={formatSettlementStatus(settlement.value.settlementStatus)} />
-              <SummaryMetric label="複勝" value={formatOutcome(settlement.value.fukuOutcome, "fuku")} />
-              <SummaryMetric label="複勝払戻" value={formatPayout(settlement.value.fukuPayout)} />
-              <SummaryMetric label="複勝払戻元" value={formatPayoutSource(settlement.value.fukuPayoutSource)} />
-            </div>
-          ) : (
-            <p className="mt-2 text-sm text-slate-500">妙味候補はありません。</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function buildFallbackSummaryComment(
-  race: ReviewCard,
-  snapshot?: PredictionSnapshot,
-  settlement?: RecommendationSettlementBundle | null
-) {
-  const top3HorseIds = race.result?.top3HorseIds?.map((id) => String(id)) ?? [];
-  if (!snapshot) {
-    return settlement?.win
-      ? `単複本命は${getRecommendationFinishLabel(settlement.win)}。事前のシミュレーション予想は残っていないが、結果検証の材料は確保できている。`
-      : "このレースは結果だけ確認でき、事前予想データは残っていない。";
-  }
-
-  const topRows = getSimTopRows(snapshot);
-  const top1 = topRows[0];
-  const top2 = topRows[1];
-  const top3 = topRows[2];
-  const top1Placed = Boolean(top1 && top3HorseIds.includes(String(top1.horseId)));
-  const top2Placed = Boolean(top2 && top3HorseIds.includes(String(top2.horseId)));
-  const top3Placed = Boolean(top3 && top3HorseIds.includes(String(top3.horseId)));
-  const valuePlaced = Boolean(snapshot.valueHorseId && top3HorseIds.includes(String(snapshot.valueHorseId)));
-
-  if (top1 && String(race.result?.winnerHorseId ?? "") === String(top1.horseId)) {
-    return "シミュレーション本命が1着。上位想定は概ね機能した。";
-  }
-  if (top1Placed) {
-    return "シミュレーション本命は馬券内を確保。勝ち切れなかったが方向性は悪くない。";
-  }
-  if (top2Placed || top3Placed) {
-    return "本命は崩れたが、シミュレーション上位の相手候補は機能した。順位付けに課題がある。";
-  }
-  if (valuePlaced) {
-    return "シミュレーション上位は崩れたが、人気薄側の拾いは効いており、妙味の読み自体は悪くない。";
-  }
-  return "シミュレーション上位勢が総崩れ。条件評価か序列づけを見直したい。";
-}
-
-function buildFallbackMarketGapComment(race: ReviewCard, snapshot?: PredictionSnapshot) {
-  if (!snapshot) return null;
-  const top3HorseIds = race.result?.top3HorseIds?.map((id) => String(id)) ?? [];
-  const valuePlaced = Boolean(snapshot.valueHorseId && top3HorseIds.includes(String(snapshot.valueHorseId)));
-  const watchPlaced = Boolean(snapshot.watchHorseId && top3HorseIds.includes(String(snapshot.watchHorseId)));
-
-  if (valuePlaced && snapshot.valueHorseId) {
-    return "人気薄側の拾いは機能しており、オッズ差に着目する視点は維持したい。";
-  }
-  if (snapshot.watchHorseId && !watchPlaced) {
-    return "市場寄りに買われた馬は走り切れず、人気評価との差が出たレースだった。";
-  }
-  return null;
-}
-
-function renderReviewCard(
-  race: ReviewCard,
-  snapshot: PredictionSnapshot | undefined,
-  settlement: RecommendationSettlementBundle | null,
-  commentary?: RaceCommentaryPayload
-) {
-  const summaryText = race.review?.summary ?? "回顧テキストはまだありません。";
-  const reasons = race.review?.reasons ?? [];
-  const autoSummaryComment = commentary?.summaryComment ?? buildFallbackSummaryComment(race, snapshot, settlement);
-  const autoMarketGapComment = commentary?.marketGapComment ?? buildFallbackMarketGapComment(race, snapshot);
+function renderReviewCard(race: ReviewCard, snapshot: PredictionSnapshot | undefined, settlement: RecommendationSettlementBundle | null) {
+  const opponent = settlement?.opponent ?? settlement?.value ?? null;
+  const opponentHorseId = snapshot?.opponentHorseId ?? snapshot?.valueHorseId ?? null;
+  const topRows = snapshot ? [...snapshot.rankedRows].sort((a, b) => a.rank - b.rank).slice(0, 3) : [];
+  const resultText = race.result?.top3HorseNames?.length ? `1着 ${race.result?.top3HorseNames?.[0] ?? "-"} / 2着 ${race.result?.top3HorseNames?.[1] ?? "-"} / 3着 ${race.result?.top3HorseNames?.[2] ?? "-"}` : null;
 
   return (
     <article key={`${race.courseId}-${race.date}`} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-            {race.date} / {formatSurface(race.surface)} {race.distance}m / {race.grade}
-          </p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{race.date} / {formatSurface(race.surface)} {race.distance}m / {race.grade}</p>
           <h3 className="mt-1 text-xl font-bold text-slate-900">{race.label}</h3>
-          {resultText(race) ? <p className="mt-2 text-sm text-slate-600">結果: {resultText(race)}</p> : null}
+          {resultText ? <p className="mt-2 text-sm text-slate-600">結果: {resultText}</p> : null}
         </div>
-
-        <div className="flex flex-wrap gap-2">
-          {(settlement?.win || snapshot || race.review?.xPostText) ? (
-            <button
-              type="button"
-              onClick={() => buildAndOpenReviewPost(race, snapshot, settlement, commentary)}
-              className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
-            >
-              Xに投稿
-            </button>
-          ) : null}
-          <Link
-            href={`/sim?course=${encodeURIComponent(race.courseId)}`}
-            className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900"
-          >
-            Replay
-          </Link>
-        </div>
+        <Link href={`/sim?course=${encodeURIComponent(race.courseId)}`} className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900">Replay</Link>
       </div>
 
-      <div className="mt-4 rounded-lg border border-slate-100 bg-slate-50 px-4 py-3">
-        <p className="text-sm leading-7 text-slate-700">{summaryText}</p>
-        {reasons.length > 0 ? (
-          <ul className="mt-3 space-y-1 text-xs text-slate-600">
-            {reasons.map((reason) => (
-              <li key={reason}>・{reason}</li>
-            ))}
-          </ul>
-        ) : null}
-      </div>
-
-      {autoSummaryComment ? (
-        <div className="mt-4 rounded-lg border border-indigo-100 bg-indigo-50 px-4 py-3">
-          <p className="text-xs font-semibold text-indigo-800">自動短評</p>
-          <p className="mt-2 text-sm leading-6 text-slate-700">{autoSummaryComment}</p>
-          {autoMarketGapComment ? (
-            <p className="mt-2 text-xs text-slate-600">市場差分: {autoMarketGapComment}</p>
-          ) : null}
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+          <p className="text-sm font-semibold text-slate-800">snapshot</p>
+          {snapshot ? (
+            <>
+              <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-slate-600">
+                <span className="rounded-full bg-white px-3 py-1">取得 {formatTimestamp(snapshot.snapshotTakenAt ?? snapshot.capturedAt)}</span>
+                <span className="rounded-full bg-sky-100 px-3 py-1">本命 {getSnapshotHorseDisplay(snapshot, snapshot.honmeiHorseId)}</span>
+                <span className="rounded-full bg-emerald-100 px-3 py-1">相手 {getSnapshotHorseDisplay(snapshot, opponentHorseId)}</span>
+              </div>
+              <div className="mt-3 space-y-2">
+                {topRows.map((row) => (
+                  <div key={`${row.rank}-${row.horseId}`} className="rounded-md border border-white bg-white px-3 py-3">
+                    <p className="text-sm font-semibold text-slate-800">{row.rank}位 {row.horseName}</p>
+                    <p className="mt-1 text-xs text-slate-500">win {row.winProb.toFixed(1)}% / real {row.realOdds?.toFixed(1) ?? "-"} / edge {row.edge.toFixed(1)}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                <SummaryMetric label="本命結果" value={getSnapshotFinishLabel(race, snapshot.honmeiHorseId)} />
+                <SummaryMetric label="相手結果" value={getSnapshotFinishLabel(race, opponentHorseId)} />
+              </div>
+            </>
+          ) : <p className="mt-2 text-sm text-slate-500">このレースの snapshot はありません。</p>}
         </div>
-      ) : null}
 
-      <div className="mt-4">
-        {renderPickVisibilityPanel(race, snapshot, settlement)}
-        <div className="grid gap-4">
-          {renderSnapshotComparison(race, snapshot)}
-          {renderSettlementComparison(settlement)}
+        <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+          <p className="text-sm font-semibold text-slate-800">review record</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-md border border-amber-100 bg-amber-50 px-3 py-3">
+              <p className="text-xs font-semibold text-amber-800">本命候補</p>
+              {settlement?.win ? (
+                <div className="mt-2 space-y-2 text-sm text-slate-700">
+                  <p className="font-semibold text-slate-800">{settlement.win.horseName} ({settlement.win.horseId})</p>
+                  <SummaryMetric label="精算状態" value={formatSettlementStatus(settlement.win.settlementStatus)} />
+                  <SummaryMetric label="単勝" value={formatOutcome(settlement.win.tanOutcome, "tan")} />
+                  <SummaryMetric label="複勝" value={formatOutcome(settlement.win.fukuOutcome, "fuku")} />
+                  <SummaryMetric label="単勝払戻" value={formatPayout(settlement.win.tanPayout)} />
+                  <SummaryMetric label="複勝払戻" value={formatPayout(settlement.win.fukuPayout)} />
+                </div>
+              ) : <p className="mt-2 text-sm text-slate-500">本命候補は未取得です。</p>}
+            </div>
+            <div className="rounded-md border border-emerald-100 bg-emerald-50 px-3 py-3">
+              <p className="text-xs font-semibold text-emerald-800">相手候補</p>
+              {opponent ? (
+                <div className="mt-2 space-y-2 text-sm text-slate-700">
+                  <p className="font-semibold text-slate-800">{opponent.horseName} ({opponent.horseId})</p>
+                  <SummaryMetric label="精算状態" value={formatSettlementStatus(opponent.settlementStatus)} />
+                  <SummaryMetric label="複勝" value={formatOutcome(opponent.fukuOutcome, "fuku")} />
+                  <SummaryMetric label="複勝払戻" value={formatPayout(opponent.fukuPayout)} />
+                  <SummaryMetric label="複勝払戻元" value={formatPayoutSource(opponent.fukuPayoutSource)} />
+                </div>
+              ) : <p className="mt-2 text-sm text-slate-500">相手候補は未取得です。</p>}
+            </div>
+          </div>
         </div>
       </div>
     </article>
@@ -1216,106 +296,62 @@ export default function ArchivePage() {
   const [settlementsByCourseId, setSettlementsByCourseId] = useState<Record<string, RecommendationSettlementBundle>>({});
   const [aggregateSummary, setAggregateSummary] = useState<AggregateSummary | null>(null);
   const [wideStats, setWideStats] = useState<WeeklyDiagnosticsWideStats | null>(null);
-  const [commentariesByRaceId, setCommentariesByRaceId] = useState<Record<string, RaceCommentaryPayload>>({});
 
   useEffect(() => {
     let isMounted = true;
-
     async function load() {
       try {
-        const [snapshotRes, performanceRes, notePayloadRes] = await Promise.all([
-          fetch("/api/prediction-snapshots", { cache: "no-store" }),
-          fetch("/api/performance", { cache: "no-store" }),
-          fetch("/api/note-payload", { cache: "no-store" }),
-        ]);
-
+        const [snapshotRes, performanceRes] = await Promise.all([fetch("/api/prediction-snapshots", { cache: "no-store" }), fetch("/api/performance", { cache: "no-store" })]);
         const snapshotJson = (await snapshotRes.json()) as SnapshotLookupResponse;
         const performanceJson = (await performanceRes.json()) as PerformanceLookupResponse;
-        const notePayloadJson = (await notePayloadRes.json()) as NotePayloadResponse;
-
         if (!isMounted) return;
         setSnapshotsByRaceId(snapshotJson.snapshotsByRaceId ?? {});
         setSettlementsByRaceId(performanceJson.settlementsByRaceId ?? {});
         setSettlementsByCourseId(performanceJson.settlementsByCourseId ?? {});
         setAggregateSummary(performanceJson.summary ?? null);
         setWideStats(performanceJson.diagnostics?.wideStats ?? null);
-        setCommentariesByRaceId(
-          Object.fromEntries((notePayloadJson.payload?.raceCommentaries ?? []).map((item) => [item.raceId, item]))
-        );
       } catch (error) {
         console.warn("failed to load archive comparison data", error);
       }
     }
-
     void load();
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, []);
 
-  const generatedCards = useMemo<ReviewCard[]>(
-    () => [
-      ...GENERATED_COMPLETED_RACES.map((race) => ({ ...race, archived: false })),
-      ...GENERATED_ARCHIVED_RACES.map((race) => ({ ...race, archived: true })),
-    ],
-    []
-  );
-  const legacyCards = useMemo<ReviewCard[]>(() => buildLegacyReviewCards(), []);
+  const generatedCards = useMemo<ReviewCard[]>(() => [
+    ...GENERATED_COMPLETED_RACES.map((race) => ({ ...race, archived: false })),
+    ...GENERATED_ARCHIVED_RACES.map((race) => ({ ...race, archived: true })),
+  ], []);
 
   return (
     <main className="min-h-screen bg-slate-50 py-12">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">回顧アーカイブ</h1>
-          <p className="mt-2 text-sm text-slate-500">
-            snapshot、実結果、単複精算を同じ画面で見比べて、どの出力が単複向きかを確認できます。
-          </p>
+          <p className="mt-2 text-sm text-slate-500">保存済み snapshot と review record を並べて見比べ、本命候補と相手候補がどう機能したかを確認できます。</p>
         </div>
 
         {renderAggregateSummary(aggregateSummary)}
-          {renderWideStatsSummaryV2(wideStats)}
+        {renderWideStatsSummary(wideStats)}
 
         <section className="mt-10 space-y-6">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">生成回顧</h2>
-            <p className="mt-1 text-sm text-slate-500">
-              予想 snapshot と実結果、単複の検証をまとめて確認できます。
-            </p>
+            <h2 className="text-lg font-bold text-slate-900">現行データ回顧</h2>
+            <p className="mt-1 text-sm text-slate-500">保存済み snapshot と結果、review record をまとめて確認できます。</p>
           </div>
           <div className="space-y-6">
             {generatedCards.map((race) => {
               const { raceId, courseId } = getRaceKey(race);
               const snapshot = raceId ? snapshotsByRaceId[raceId] : undefined;
-              const settlement =
-                (raceId ? settlementsByRaceId[raceId] : null) ??
-                settlementsByCourseId[courseId] ??
-                null;
-              const commentary = raceId ? commentariesByRaceId[raceId] : undefined;
-              return renderReviewCard(race, snapshot, settlement, commentary);
+              const settlement = (raceId ? settlementsByRaceId[raceId] : null) ?? settlementsByCourseId[courseId] ?? null;
+              return renderReviewCard(race, snapshot, settlement);
             })}
           </div>
         </section>
 
-        {legacyCards.length > 0 ? (
-          <section className="mt-10 space-y-6">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900">旧アーカイブ</h2>
-              <p className="mt-1 text-sm text-slate-500">旧データ形式の回顧を、後追い snapshot と単複検証つきで再構築しています。</p>
-            </div>
-            <div className="space-y-6">
-              {legacyCards.map((race) => {
-                const { raceId, courseId } = getRaceKey(race);
-                const snapshot = raceId ? snapshotsByRaceId[raceId] : undefined;
-                const settlement =
-                  (raceId ? settlementsByRaceId[raceId] : null) ??
-                  settlementsByCourseId[courseId] ??
-                  null;
-                const commentary = raceId ? commentariesByRaceId[raceId] : undefined;
-                return renderReviewCard(race, snapshot, settlement, commentary);
-              })}
-            </div>
-          </section>
-        ) : null}
+        <section className="mt-10 rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
+          旧データ期間は互換表示を簡略化しています。新UIの主軸は、相手候補を持つ新しい review record です。
+        </section>
       </div>
     </main>
   );

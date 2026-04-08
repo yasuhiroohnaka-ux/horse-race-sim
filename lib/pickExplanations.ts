@@ -67,53 +67,53 @@ function getContributorLabels(entry?: PickExplanationEntry | null): string[] {
 }
 
 export function formatOverbetLabel(label?: string | null): string | null {
-  if (label === "overbet_high") return "市場過熱リスク高";
-  if (label === "overbet_moderate") return "市場過熱リスク注意";
+  if (label === "overbet_high") return "過剰人気リスク高";
+  if (label === "overbet_moderate") return "過剰人気リスク中";
   return null;
 }
 
 export function buildSimHonmeiExplanation(entry?: PickExplanationEntry | null): string {
   if (!entry) {
-    return "シミュ本命データがなく、根拠表示は最小限です。";
+    return "シミュ本命データがなく、根拠表示は未取得。";
   }
 
   const contributors = getContributorLabels(entry);
   const signalReason = normalizeText(entry.signalReason);
 
   if (isFiniteNumber(entry.winProb) && contributors.length > 0) {
-    return `winProb ${pct(entry.winProb)}で、${joinJapanese(contributors)}が支えたシミュレーション1位。`;
+    return `winProb ${pct(entry.winProb)}で、${joinJapanese(contributors)}が押し上げたシミュ本命。`;
   }
 
   if (isFiniteNumber(entry.winProb)) {
-    return `winProb ${pct(entry.winProb)}と能力評価が最上位で、勝ち切り期待はこの馬がもっとも高い。`;
+    return `winProb ${pct(entry.winProb)}を基準に、勝ち切り期待が最も高い馬として評価。`;
   }
 
   if (contributors.length > 0) {
-    return `${joinJapanese(contributors)}が上位で、シミュレーション順位1位になった。`;
+    return `${joinJapanese(contributors)}が優勢で、シミュレーション上位に入った。`;
   }
 
   if (signalReason) {
     return signalReason;
   }
 
-  return "能力評価と適性評価の合計が上位で、シミュレーション順位1位になった。";
+  return "総合評価の積み上がりでシミュ本命になった。";
 }
 
 export function buildTanpukuHonmeiExplanation(entry?: PickExplanationEntry | null): string {
   if (!entry) {
-    return "単複 recommendation がなく、単複本命は表示できません。";
+    return "本命候補データがなく、表示できません。";
   }
 
   if (isFiniteNumber(entry.placeScore) && isFiniteNumber(entry.top3Stability) && entry.top3Stability >= 0.55) {
-    return `placeScore ${r3(entry.placeScore)}が最上位で、3着内安定度${pct(entry.top3Stability)}を重視するとこの馬が軸候補。`;
+    return `placeScore ${r3(entry.placeScore)}が高く、3着内安定度${pct(entry.top3Stability)}を評価して本命候補に選出。`;
   }
 
   if (isFiniteNumber(entry.placeScore) && isFiniteNumber(entry.marketSupport) && entry.marketSupport >= 0.65) {
-    return `placeScore ${r3(entry.placeScore)}が最上位で、市場支持も踏まえた複勝軸評価ではこの馬を優先。`;
+    return `placeScore ${r3(entry.placeScore)}が高く、市場支持もある本命候補。`;
   }
 
   if (isFiniteNumber(entry.placeScore) && isFiniteNumber(entry.overbetRisk) && entry.overbetRisk <= 0.12) {
-    return `placeScore ${r3(entry.placeScore)}が上位で、市場過熱を避けつつ複勝軸としての安定感を優先した。`;
+    return `placeScore ${r3(entry.placeScore)}が高く、過剰人気リスクを抑えた本命候補。`;
   }
 
   const selectionReason = normalizeText(entry.selectionReason);
@@ -122,15 +122,15 @@ export function buildTanpukuHonmeiExplanation(entry?: PickExplanationEntry | nul
   }
 
   if (isFiniteNumber(entry.placeScore)) {
-    return `placeScore ${r3(entry.placeScore)}が上位で、複勝軸としてはこちらを優先した。`;
+    return `placeScore ${r3(entry.placeScore)}が上位で、本命候補として採用。`;
   }
 
-  return "複勝軸の安定度を優先して単複本命に選出した。";
+  return "複勝寄りの安定性を評価して本命候補に選出。";
 }
 
 export function buildValueCandidateExplanation(entry?: PickExplanationEntry | null): string {
   if (!entry) {
-    return "該当なし。quality gate を通る妙味候補はいなかった。";
+    return "相手候補は不在。相手候補として採用できる次点馬がいなかった。";
   }
 
   if (
@@ -139,11 +139,11 @@ export function buildValueCandidateExplanation(entry?: PickExplanationEntry | nu
     isFiniteNumber(entry.longshotBonus) &&
     entry.longshotBonus >= 0.1
   ) {
-    return `valueScore ${r3(entry.valueScore)}が最上位で、複勝期待値${pct(entry.placeReturnEdge)}と人気妙味のバランスで浮上。`;
+    return `valueScore ${r3(entry.valueScore)}が上位で、複勝期待値${pct(entry.placeReturnEdge)}と残りやすさを見て相手候補に選出。`;
   }
 
   if (isFiniteNumber(entry.valueScore) && isFiniteNumber(entry.placeReturnEdge)) {
-    return `valueScore ${r3(entry.valueScore)}が最上位で、複勝期待値${pct(entry.placeReturnEdge)}を評価して妙味候補に選出。`;
+    return `valueScore ${r3(entry.valueScore)}が上位で、複勝期待値${pct(entry.placeReturnEdge)}を踏まえて相手候補に選出。`;
   }
 
   const selectionReason = normalizeText(entry.selectionReason);
@@ -152,10 +152,10 @@ export function buildValueCandidateExplanation(entry?: PickExplanationEntry | nu
   }
 
   if (isFiniteNumber(entry.valueScore)) {
-    return `valueScore ${r3(entry.valueScore)}が上位で、回収期待のバランスから妙味候補に浮上した。`;
+    return `valueScore ${r3(entry.valueScore)}が上位で、本命と組み合わせやすい相手候補として選出。`;
   }
 
-  return "quality gate を満たした中で、回収期待を優先して妙味候補に選出した。";
+  return "残りやすさと本命との組み合わせを見て相手候補に選出。";
 }
 
 export function buildAgreementExplanation(
@@ -164,22 +164,22 @@ export function buildAgreementExplanation(
   winEntry?: PickExplanationEntry | null
 ): string {
   if (agreementStatus === "agree") {
-    return "シミュレーション1位と単複本命は一致。能力評価と複勝軸評価が同じ方向を向いている。";
+    return "シミュ本命と本命候補は一致。勝ち切り評価と安定評価が揃った。";
   }
 
   if (agreementStatus === "disagree") {
-    return "シミュレーション1位と単複本命は不一致。勝率評価と複勝軸評価を画面上で分けて表示している。";
+    return "シミュ本命と本命候補は不一致。勝ち切り評価と安定評価の差を分けて見ている。";
   }
 
   if (simEntry && !winEntry) {
-    return "シミュ本命のみ取得できたため、単複本命との比較はまだできない。";
+    return "シミュ本命のみ取得でき、本命候補との比較は未完了。";
   }
 
   if (!simEntry && winEntry) {
-    return "単複本命のみ取得できたため、シミュ本命との比較はまだできない。";
+    return "本命候補のみ取得でき、シミュ本命との比較は未完了。";
   }
 
-  return "シミュ本命と単複本命の比較データがありません。";
+  return "シミュ本命と本命候補の比較データがありません。";
 }
 
 export function buildDisagreementExplanation(
@@ -189,7 +189,7 @@ export function buildDisagreementExplanation(
 ): string | null {
   if (agreementStatus !== "disagree") return null;
   if (!simEntry || !winEntry) {
-    return "比較対象が片方のみのため、不一致理由は最小表示です。";
+    return "比較対象の片方しかないため、不一致理由は暫定表示です。";
   }
 
   if (
@@ -197,7 +197,7 @@ export function buildDisagreementExplanation(
     isFiniteNumber(winEntry.overbetRisk) &&
     simEntry.overbetRisk - winEntry.overbetRisk > 0.15
   ) {
-    return "シミュレーション1位は市場過熱リスクが高く、単複本命では別馬を優先した。";
+    return "シミュ本命は過剰人気リスクが高く、本命候補ではその点を嫌った。";
   }
 
   if (
@@ -205,7 +205,7 @@ export function buildDisagreementExplanation(
     isFiniteNumber(winEntry.top3Stability) &&
     winEntry.top3Stability - simEntry.top3Stability > 0.05
   ) {
-    return "シミュレーション1位は勝率寄りだが、単複本命は3着内安定度を重視して差し替えた。";
+    return "本命候補は3着内安定度をより強く評価して前に出た。";
   }
 
   if (
@@ -213,7 +213,7 @@ export function buildDisagreementExplanation(
     isFiniteNumber(winEntry.placeScore) &&
     winEntry.placeScore - simEntry.placeScore > 0.02
   ) {
-    return `単複本命は placeScore ${r3(winEntry.placeScore)}で上回り、複勝軸としてはこちらを優先した。`;
+    return `本命候補は placeScore ${r3(winEntry.placeScore)}で優位となり、安定評価で上回った。`;
   }
 
   if (
@@ -221,10 +221,10 @@ export function buildDisagreementExplanation(
     isFiniteNumber(winEntry.marketSupport) &&
     winEntry.marketSupport - simEntry.marketSupport > 0.1
   ) {
-    return "単複本命は市場支持と複勝軸評価のバランスで上回り、こちらを優先した。";
+    return "本命候補は市場支持とのバランスでも優位だった。";
   }
 
-  return "シミュレーション1位は勝率寄りだが、単複本命は複勝軸の安定度を重視して差し替えた。";
+  return "シミュ本命は勝ち切り寄り、本命候補は安定寄りの評価になった。";
 }
 
 export function buildPickExplanations(params: {

@@ -30,7 +30,7 @@ const SCORING_CONFIG_SOURCE = {
   winProbabilityField: "simWinRate",
   edgeField: "simWinRate - officialImplied",
   honmeiRule: "rows[0]",
-  valueRule: "simWinRate - officialImplied + max(0, marketExpertGap) * 0.6",
+  opponentRule: "rows[1]",
   watchRule: "official top4 sorted by officialImplied - simWinRate",
   contributors: [
     "abilityScore",
@@ -155,6 +155,13 @@ export async function buildPredictionSnapshot(params: {
   condition: RaceCondition;
   simulationCount: number;
   raceId?: string | null;
+  raceDate?: string | null;
+  raceName?: string | null;
+  venue?: string | null;
+  venueKey?: string | null;
+  raceNumber?: number | null;
+  scheduledStartTime?: string | null;
+  snapshotType?: "manual_snapshot" | "pre_race_final";
   oddsFetchedAt?: string | null;
   oddsSource?: string | null;
   predictionOrigin?: PredictionOrigin;
@@ -167,6 +174,13 @@ export async function buildPredictionSnapshot(params: {
     condition,
     simulationCount,
     raceId = null,
+    raceDate = null,
+    raceName = null,
+    venue = null,
+    venueKey = null,
+    raceNumber = null,
+    scheduledStartTime = null,
+    snapshotType = "manual_snapshot",
     oddsFetchedAt = null,
     oddsSource = null,
     predictionOrigin = DEFAULT_PREDICTION_ORIGIN,
@@ -176,18 +190,14 @@ export async function buildPredictionSnapshot(params: {
   const rows = buildRaceAnalysisRows(results, horses, course, condition);
   const scoringConfigHash = await getScoringConfigHash();
   const honmeiHorseId = rows[0]?.horseId ?? null;
+  const opponentRow = rows.find((row) => row.horseId !== honmeiHorseId) ?? null;
+  const opponentHorseId = opponentRow?.horseId ?? null;
   const watchHorseId =
     [...rows]
       .filter((row) => row.officialRank <= Math.min(4, rows.length))
       .sort((left, right) => (right.officialImplied - right.simWinRate) - (left.officialImplied - left.simWinRate))[0]
       ?.horseId ?? null;
-  const valueHorseId =
-    [...rows]
-      .sort(
-        (left, right) =>
-          (right.simWinRate - right.officialImplied + Math.max(0, right.marketExpertGap) * 0.6) -
-          (left.simWinRate - left.officialImplied + Math.max(0, left.marketExpertGap) * 0.6)
-      )[0]?.horseId ?? null;
+  const honmeiRow = rows.find((row) => row.horseId === honmeiHorseId) ?? null;
 
   const signalReasons = Object.fromEntries(
     rows.map((row) => [
@@ -231,6 +241,14 @@ export async function buildPredictionSnapshot(params: {
     raceId: raceId ? String(raceId) : extractRaceId(course.id),
     courseId: course.id,
     capturedAt: new Date().toISOString(),
+    snapshotTakenAt: new Date().toISOString(),
+    snapshotType,
+    raceDate,
+    raceName: raceName ?? course.displayName ?? course.name,
+    venue: venue ?? course.venue ?? null,
+    venueKey,
+    raceNumber: Number.isFinite(Number(raceNumber)) ? Number(raceNumber) : course.raceNumber ?? null,
+    scheduledStartTime,
     predictionOrigin,
     scoringVersion: normalizeScoringVersion(scoringVersion),
     modelFamily: PREDICTION_SNAPSHOT_MODEL_FAMILY,
@@ -240,7 +258,16 @@ export async function buildPredictionSnapshot(params: {
     condition,
     rankedRows,
     honmeiHorseId,
-    valueHorseId,
+    opponentHorseId,
+    opponentSelectionMethod: opponentHorseId ? "rank2" : undefined,
+    opponentScore: opponentRow ? round1(opponentRow.abilityScore) : null,
+    opponentRank: opponentRow ? rows.findIndex((row) => row.horseId === opponentRow.horseId) + 1 : null,
+    honmeiScore: honmeiRow ? round1(honmeiRow.abilityScore) : null,
+    honmeiRank: honmeiRow ? rows.findIndex((row) => row.horseId === honmeiRow.horseId) + 1 : null,
+    pairScoreGap:
+      honmeiRow && opponentRow ? round1(honmeiRow.abilityScore - opponentRow.abilityScore) : null,
+    pairRankGap: honmeiRow && opponentRow ? 1 : null,
+    valueHorseId: null,
     watchHorseId,
     signalReasons,
     marketMeta: {

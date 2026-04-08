@@ -196,6 +196,9 @@ function parseRaceMeta(raceId, shutubaHtml, dayLabel) {
   if (!cleanedLabel) return null;
 
   const raceData = normalizeSpace(shutubaHtml.match(/class="RaceData01"[^>]*>([\s\S]*?)<\/div>/i)?.[1] ?? "");
+  const scheduledStartTime = raceData.match(/(\d{1,2}):(\d{2})\s*発走/i)
+    ? `${String(raceData.match(/(\d{1,2}):(\d{2})\s*発走/i)?.[1] ?? "").padStart(2, "0")}:${raceData.match(/(\d{1,2}):(\d{2})\s*発走/i)?.[2] ?? "00"}`
+    : null;
   const raceNo = Number.parseInt(raceId.slice(-2), 10);
   const surfaceLabel = raceData.match(/(芝|ダート|ダ)\s*(\d{3,4})m/i)?.[1] ?? "";
   const distance = Number.parseInt(raceData.match(/(?:芝|ダート|ダ)\s*(\d{3,4})m/i)?.[1] ?? "", 10);
@@ -235,6 +238,7 @@ function parseRaceMeta(raceId, shutubaHtml, dayLabel) {
     surface,
     distance,
     straightLength,
+    scheduledStartTime,
     hashtag,
     hasRace: true
   };
@@ -703,6 +707,7 @@ async function buildRace(seed) {
   if (horses.length === 0) return null;
   return {
     ...meta,
+    raceDate: seed.dateIso,
     oddsSource: horses.some((horse) => horse.oddsSource === "official") ? "official" : "forecast",
     horses: horses.sort((a, b) => a.gateNumber - b.gateNumber)
   };

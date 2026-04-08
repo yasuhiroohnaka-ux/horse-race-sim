@@ -17,6 +17,7 @@ import {
   normalizePredictionOrigin,
   normalizeScoringVersion,
 } from "@/lib/predictionSnapshots";
+import { loadReviewRecords } from "@/lib/reviewRecords";
 import {
   getWidePayoutByHorseNumbers,
   hasWidePayoutTable,
@@ -49,7 +50,6 @@ import type {
 } from "@/lib/types";
 
 const ROOT = process.cwd();
-const STATE_PATH = path.join(ROOT, "data", "routine-state.json");
 const SNAPSHOT_PATH = path.join(ROOT, "data", "prediction-snapshots.jsonl");
 const GENERATED_REVIEWS_PATH = path.join(ROOT, "data", "generated-reviews.json");
 export const WEEKLY_DIAGNOSTICS_PATH = path.join(ROOT, "data", "weekly-diagnostics.json");
@@ -329,9 +329,15 @@ function toNormalizedSnapshot(snapshot: PredictionSnapshot): PredictionSnapshot 
 }
 
 async function loadLatestSnapshotsByRaceId(scope: DiagnosticsAggregationScope) {
+  const latestByRaceId: Record<string, PredictionSnapshot> = {};
+  const reviewRecords = await loadReviewRecords();
+  for (const [raceId, record] of Object.entries(reviewRecords)) {
+    if (!record.snapshot || !includePredictionOrigin(record.snapshot.predictionOrigin, scope)) continue;
+    latestByRaceId[raceId] = toNormalizedSnapshot(record.snapshot);
+  }
+
   try {
     const raw = await fs.readFile(SNAPSHOT_PATH, "utf8");
-    const latestByRaceId: Record<string, PredictionSnapshot> = {};
     for (const line of raw.split(/\r?\n/).map((entry) => entry.trim()).filter(Boolean)) {
       let parsed: unknown;
       try {
@@ -342,44 +348,116 @@ async function loadLatestSnapshotsByRaceId(scope: DiagnosticsAggregationScope) {
       if (!isPredictionSnapshot(parsed)) continue;
       const normalized = toNormalizedSnapshot(parsed);
       if (!normalized.raceId || !includePredictionOrigin(normalized.predictionOrigin, scope)) continue;
+      if (latestByRaceId[normalized.raceId]?.snapshotType === "pre_race_final") continue;
       const existing = latestByRaceId[normalized.raceId];
       if (!existing || toTimestamp(normalized.capturedAt) >= toTimestamp(existing.capturedAt)) {
         latestByRaceId[normalized.raceId] = normalized;
       }
     }
-    return latestByRaceId;
   } catch (error) {
     const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";
-    if (code === "ENOENT") return {};
-    throw error;
+    if (code !== "ENOENT") throw error;
   }
+
+  return latestByRaceId;
 }
 
 async function loadSettlementsByRaceId(scope: DiagnosticsAggregationScope) {
-  const raw = await fs.readFile(STATE_PATH, "utf8");
-  const state = JSON.parse(raw.replace(/^\uFEFF/, ""));
   const settlementsByCourseId: Record<string, RecommendationSettlementBundle> = {};
-  const rawRecommendations = Array.isArray(state.tanpukuRecommendations) ? state.tanpukuRecommendations : [];
+  const reviewRecords = await loadReviewRecords();
 
-  for (const rawRecommendation of rawRecommendations) {
-    const recommendation = normalizeRecommendation(rawRecommendation);
-    if (!recommendation) continue;
-    if (!includePredictionOrigin(recommendation.predictionOrigin, scope)) continue;
+  for (const record of Object.values(reviewRecords)) {
+    const snapshotOrigin = record.snapshot?.predictionOrigin ?? "saved_live";
+    if (!includePredictionOrigin(snapshotOrigin, scope)) continue;
 
-    const existing = settlementsByCourseId[recommendation.courseId] ?? {
-      courseId: recommendation.courseId,
-      raceId: recommendation.raceId,
-      raceLabel: recommendation.raceLabel,
+    const win = record.honmei
+      ? {
+          courseId: record.courseId,
+          raceId: record.raceId,
+          raceLabel: record.meta.raceName,
+          pickType: "win" as const,
+          predictionOrigin: normalizePredictionOrigin(snapshotOrigin, "saved_live"),
+          scoringVersion: normalizeScoringVersion(record.snapshot?.scoringVersion, DEFAULT_SCORING_VERSION),
+          horseId: record.honmei.horseId,
+          horseName: record.honmei.horseName ?? record.honmei.horseId,
+          postedAt: record.snapshotTakenAt,
+          settledAt: record.payoutFetchedAt ?? record.resultFetchedAt,
+          settlementStatus: record.honmei.settlementStatus ?? "pending_result",
+          tanOutcome: record.honmei.tanOutcome ?? "not_settled",
+          fukuOutcome: record.honmei.fukuOutcome ?? "not_settled",
+          tanPayout: Number(record.honmei.tanPayout ?? 0),
+          fukuPayout: Number(record.honmei.fukuPayout ?? 0),
+          tanPayoutSource: record.honmei.tanPayoutSource ?? "missing",
+          fukuPayoutSource: record.honmei.fukuPayoutSource ?? "missing",
+          actualWinnerHorseId: record.actualWinnerHorseId,
+          actualTop3HorseIds: record.actualTop3HorseIds,
+          realOdds: Number(record.honmei.realOdds ?? 0),
+          placeOdds: Number(record.honmei.placeOdds ?? 0),
+          winProb: Number(record.honmei.winProb ?? 0),
+          placeProb: Number(record.honmei.placeProb ?? 0),
+          placeScore: Number(record.honmei.placeScore ?? 0),
+          valueScore: Number(record.honmei.valueScore ?? 0),
+          selectionReason: record.honmei.selectionReason ?? null,
+          scoreGap: Number(record.honmei.scoreGap ?? 0),
+          runnerUpHorseId: record.honmei.runnerUpHorseId ?? null,
+          runnerUpHorseName: record.honmei.runnerUpHorseName ?? null,
+          runnerUpPlaceScore: Number(record.honmei.runnerUpPlaceScore ?? 0),
+          runnerUpPlaceProb: Number(record.honmei.runnerUpPlaceProb ?? 0),
+          overbetLabel: record.honmei.overbetLabel ?? null,
+        }
+      : null;
+
+    const value = record.opponent
+      ? {
+          courseId: record.courseId,
+          raceId: record.raceId,
+          raceLabel: record.meta.raceName,
+          pickType: "value" as const,
+          predictionOrigin: normalizePredictionOrigin(snapshotOrigin, "saved_live"),
+          scoringVersion: normalizeScoringVersion(record.snapshot?.scoringVersion, DEFAULT_SCORING_VERSION),
+          horseId: record.opponent.horseId,
+          horseName: record.opponent.horseName ?? record.opponent.horseId,
+          postedAt: record.snapshotTakenAt,
+          settledAt: record.payoutFetchedAt ?? record.resultFetchedAt,
+          settlementStatus: record.opponent.settlementStatus ?? "pending_result",
+          tanOutcome: record.opponent.tanOutcome ?? "not_settled",
+          fukuOutcome: record.opponent.fukuOutcome ?? "not_settled",
+          tanPayout: Number(record.opponent.tanPayout ?? 0),
+          fukuPayout: Number(record.opponent.fukuPayout ?? 0),
+          tanPayoutSource: record.opponent.tanPayoutSource ?? "missing",
+          fukuPayoutSource: record.opponent.fukuPayoutSource ?? "missing",
+          actualWinnerHorseId: record.actualWinnerHorseId,
+          actualTop3HorseIds: record.actualTop3HorseIds,
+          realOdds: Number(record.opponent.realOdds ?? 0),
+          placeOdds: Number(record.opponent.placeOdds ?? 0),
+          winProb: Number(record.opponent.winProb ?? 0),
+          placeProb: Number(record.opponent.placeProb ?? 0),
+          placeScore: Number(record.opponent.placeScore ?? 0),
+          valueScore: Number(record.opponent.valueScore ?? 0),
+          selectionReason: record.opponent.selectionReason ?? null,
+          scoreGap: Number(record.opponent.scoreGap ?? 0),
+          runnerUpHorseId: record.opponent.runnerUpHorseId ?? null,
+          runnerUpHorseName: record.opponent.runnerUpHorseName ?? null,
+          runnerUpPlaceScore: Number(record.opponent.runnerUpPlaceScore ?? 0),
+          runnerUpPlaceProb: Number(record.opponent.runnerUpPlaceProb ?? 0),
+          overbetLabel: record.opponent.overbetLabel ?? null,
+        }
+      : null;
+
+    const existing = settlementsByCourseId[record.courseId] ?? {
+      courseId: record.courseId,
+      raceId: record.raceId,
+      raceLabel: record.meta.raceName,
       win: null,
       value: null,
     };
 
-    settlementsByCourseId[recommendation.courseId] = {
+    settlementsByCourseId[record.courseId] = {
       ...existing,
-      raceId: existing.raceId ?? recommendation.raceId,
-      raceLabel: existing.raceLabel ?? recommendation.raceLabel,
-      win: recommendation.pickType === "win" ? compareRecommendations(existing.win, recommendation) : existing.win,
-      value: recommendation.pickType === "value" ? compareRecommendations(existing.value, recommendation) : existing.value,
+      raceId: existing.raceId ?? record.raceId,
+      raceLabel: existing.raceLabel ?? record.meta.raceName,
+      win: win ? compareRecommendations(existing.win, win) : existing.win,
+      value: value ? compareRecommendations(existing.value, value) : existing.value,
     };
   }
 

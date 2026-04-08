@@ -1,694 +1,361 @@
-import fs from "node:fs/promises";
-import path from "node:path";
 import { NextResponse } from "next/server";
-import {
-  GENERATED_ARCHIVED_RACES,
-  GENERATED_COMPLETED_RACES,
-  type GeneratedReviewRace,
-} from "@/lib/generatedRaceSchedule";
-import {
-  DEFAULT_PREDICTION_ORIGIN,
-  DEFAULT_SCORING_VERSION,
-  normalizePredictionOrigin,
-  normalizeScoringVersion,
-} from "@/lib/predictionSnapshots";
 import { buildWeeklyDiagnostics, loadWeeklyDiagnosticsContext } from "@/lib/weeklyDiagnostics";
-import { RACE_DIAGNOSTIC_SEGMENTS, matchesRaceDiagnosticSegment } from "@/lib/raceSegmentation.mjs";
-import type { DiagnosticsAggregationScope, PredictionOrigin, PredictionSnapshot, RaceDiagnosticsSegmentKey } from "@/lib/types";
+import { loadReviewRecords } from "@/lib/reviewRecords";
+import type { DiagnosticsAggregationScope, RaceReviewRecord, ReviewLegacyValueSelection, ReviewSelectionHorse } from "@/lib/types";
 
-const ROOT = process.cwd();
-const STATE_PATH = path.join(ROOT, "data", "routine-state.json");
-const SNAPSHOT_PATH = path.join(ROOT, "data", "prediction-snapshots.jsonl");
-
-type SettlementStatus = "pending_result" | "pending_payouts" | "settled";
-type BetOutcome = "not_settled" | "hit" | "miss" | "hit_missing_payout";
-type PayoutSource = "official" | "missing";
-type PickType = "win" | "value";
-type PopularityBandKey = "fav_1_3" | "fav_4_6" | "fav_7_plus";
-
-type RecommendationRecord = {
-  courseId?: unknown;
-  raceId?: unknown;
-  raceLabel?: unknown;
-  pickType?: unknown;
-  scoringVersion?: unknown;
-  predictionOrigin?: unknown;
-  source?: unknown;
-  horseId?: unknown;
-  horseName?: unknown;
-  postedAt?: unknown;
-  settledAt?: unknown;
-  settlementStatus?: unknown;
-  tanOutcome?: unknown;
-  fukuOutcome?: unknown;
-  tanPayout?: unknown;
-  fukuPayout?: unknown;
-  tanPayoutSource?: unknown;
-  fukuPayoutSource?: unknown;
-  actualWinnerHorseId?: unknown;
-  actualTop3HorseIds?: unknown;
-  realOdds?: unknown;
-  placeOdds?: unknown;
-  winProb?: unknown;
-  placeProb?: unknown;
-  placeScore?: unknown;
-  valueScore?: unknown;
-  selectionReason?: unknown;
-  scoreGap?: unknown;
-  runnerUpHorseId?: unknown;
-  runnerUpHorseName?: unknown;
-  runnerUpPlaceScore?: unknown;
-  runnerUpPlaceProb?: unknown;
-  overbetLabel?: unknown;
-};
-
-type RecommendationSettlement = {
-  courseId: string;
-  raceId: string | null;
-  raceLabel: string | null;
-  pickType: PickType;
-  predictionOrigin: PredictionOrigin;
-  scoringVersion: string;
-  horseId: string;
-  horseName: string;
-  postedAt: string | null;
-  settledAt: string | null;
-  settlementStatus: SettlementStatus;
-  tanOutcome: BetOutcome;
-  fukuOutcome: BetOutcome;
-  tanPayout: number;
-  fukuPayout: number;
-  tanPayoutSource: PayoutSource;
-  fukuPayoutSource: PayoutSource;
-  actualWinnerHorseId: string | null;
-  actualTop3HorseIds: string[];
-  realOdds: number;
-  placeOdds: number;
-  winProb: number;
-  placeProb: number;
-  placeScore: number;
-  valueScore: number;
-  selectionReason: string | null;
-  scoreGap: number;
-  runnerUpHorseId: string | null;
-  runnerUpHorseName: string | null;
-  runnerUpPlaceScore: number;
-  runnerUpPlaceProb: number;
-  overbetLabel: string | null;
-};
-
-type RecommendationSettlementBundle = {
-  courseId: string;
-  raceId: string | null;
-  raceLabel: string | null;
-  win: RecommendationSettlement | null;
-  value: RecommendationSettlement | null;
-};
-
-type BaseSummary = {
-  raceCount: number;
-  placeCount: number;
-  placeRate: number;
-};
-
-type SnapshotHonmeiSummary = BaseSummary & {
-  firstCount: number;
-  winRate: number;
-};
-
-type RoutineHonmeiSummary = {
-  raceCount: number;
-  tanHitCount: number;
-  fukuHitCount: number;
-  tanHitRate: number;
-  fukuHitRate: number;
-  tanRoi: number;
-  fukuRoi: number;
-  pendingCount: number;
-};
-
-type ValueCandidateSummary = {
-  raceCount: number;
-  skippedCount: number;
-  candidateRate: number;
-  placeCount: number;
-  placeRate: number;
-  fukuRoi: number;
-  pendingCount: number;
-};
-
-type AgreementSummary = {
-  raceCount: number;
-  samePickCount: number;
-  samePickRate: number;
-  samePickPlaceCount: number;
-  samePickPlaceRate: number;
-  differentPickCount: number;
-  snapshotPlaceCountWhenDifferent: number;
-  snapshotPlaceRateWhenDifferent: number;
-  routinePlaceCountWhenDifferent: number;
-  routinePlaceRateWhenDifferent: number;
-};
-
-type PopularityBandSummary = {
-  raceCount: number;
-  placeCount: number;
-  placeRate: number;
-  fukuRoi: number;
-};
-
-type SnapshotRankSummary = {
-  rank: number;
-  raceCount: number;
-  placeCount: number;
-  placeRate: number;
-};
-
-type DisagreementDetailSummary = {
-  raceCount: number;
-  snapshotPlaceRate: number;
-  routinePlaceRate: number;
-  valuePlaceCount: number;
-  snapshotMissRoutinePlaceCount: number;
-  routineMissSnapshotPlaceCount: number;
-};
-
-type AggregateSummary = {
-  snapshotHonmei: SnapshotHonmeiSummary;
-  routineHonmei: RoutineHonmeiSummary;
-  valueCandidate: ValueCandidateSummary;
-  agreement: AgreementSummary;
-  popularityBands: {
-    routineHonmei: Record<PopularityBandKey, PopularityBandSummary>;
-    valueCandidate: Record<PopularityBandKey, PopularityBandSummary>;
-  };
-  snapshotRanks: SnapshotRankSummary[];
-  disagreementDetail: DisagreementDetailSummary;
-};
-
-type AggregateSegmentSummary = {
-  key: RaceDiagnosticsSegmentKey;
+type GapBucket = {
   label: string;
   raceCount: number;
-  settledRaceCount: number;
-  summary: AggregateSummary;
-  missDiagnostics: {
-    missRaceCount: number;
-    primary: { tag: string; raceCount: number; rate: number }[];
-    all: { tag: string; raceCount: number; rate: number }[];
-  };
+  opponentPlaceCount: number;
+  opponentPlaceRate: number;
+  wideHitCount: number;
+  wideHitRate: number;
 };
 
-function createPopularityBandSummary(): PopularityBandSummary {
-  return { raceCount: 0, placeCount: 0, placeRate: 0, fukuRoi: 0 };
-}
-
-function createEmptySummary(): AggregateSummary {
-  return {
-    snapshotHonmei: { raceCount: 0, firstCount: 0, placeCount: 0, winRate: 0, placeRate: 0 },
-    routineHonmei: { raceCount: 0, tanHitCount: 0, fukuHitCount: 0, tanHitRate: 0, fukuHitRate: 0, tanRoi: 0, fukuRoi: 0, pendingCount: 0 },
-    valueCandidate: { raceCount: 0, skippedCount: 0, candidateRate: 0, placeCount: 0, placeRate: 0, fukuRoi: 0, pendingCount: 0 },
-    agreement: {
-      raceCount: 0,
-      samePickCount: 0,
-      samePickRate: 0,
-      samePickPlaceCount: 0,
-      samePickPlaceRate: 0,
-      differentPickCount: 0,
-      snapshotPlaceCountWhenDifferent: 0,
-      snapshotPlaceRateWhenDifferent: 0,
-      routinePlaceCountWhenDifferent: 0,
-      routinePlaceRateWhenDifferent: 0,
-    },
-    popularityBands: {
-      routineHonmei: {
-        fav_1_3: createPopularityBandSummary(),
-        fav_4_6: createPopularityBandSummary(),
-        fav_7_plus: createPopularityBandSummary(),
-      },
-      valueCandidate: {
-        fav_1_3: createPopularityBandSummary(),
-        fav_4_6: createPopularityBandSummary(),
-        fav_7_plus: createPopularityBandSummary(),
-      },
-    },
-    snapshotRanks: [
-      { rank: 1, raceCount: 0, placeCount: 0, placeRate: 0 },
-      { rank: 2, raceCount: 0, placeCount: 0, placeRate: 0 },
-      { rank: 3, raceCount: 0, placeCount: 0, placeRate: 0 },
-    ],
-    disagreementDetail: {
-      raceCount: 0,
-      snapshotPlaceRate: 0,
-      routinePlaceRate: 0,
-      valuePlaceCount: 0,
-      snapshotMissRoutinePlaceCount: 0,
-      routineMissSnapshotPlaceCount: 0,
-    },
+type SummaryPayload = {
+  counts: {
+    targetRaceCount: number;
+    readyCount: number;
+    pendingCount: number;
+    failedCount: number;
+    legacyCount: number;
   };
-}
+  honmei: {
+    raceCount: number;
+    winCount: number;
+    placeCount: number;
+    winRate: number;
+    placeRate: number;
+    tanRoi: number;
+    fukuRoi: number;
+  };
+  opponent: {
+    raceCount: number;
+    placeCount: number;
+    placeRate: number;
+    fukuRoi: number;
+  };
+  pair: {
+    raceCount: number;
+    wideHitCount: number;
+    wideHitRate: number;
+    wideReturnRate: number;
+    simultaneousPlaceCount: number;
+    simultaneousPlaceRate: number;
+  };
+  rankGapBuckets: GapBucket[];
+  scoreGapBuckets: GapBucket[];
+};
 
-function normalizeString(value: unknown): string | null {
-  const normalized = String(value ?? "").trim();
-  return normalized ? normalized : null;
-}
-
-function normalizeNumber(value: unknown): number {
-  const normalized = Number(value);
-  return Number.isFinite(normalized) ? normalized : 0;
-}
-
-function normalizeSettlementStatus(value: unknown): SettlementStatus {
-  return value === "pending_payouts" || value === "settled" ? value : "pending_result";
-}
-
-function normalizeBetOutcome(value: unknown): BetOutcome {
-  return value === "hit" || value === "miss" || value === "hit_missing_payout" ? value : "not_settled";
-}
-
-function normalizePayoutSource(value: unknown): PayoutSource {
-  return value === "official" ? "official" : "missing";
-}
-
-function normalizeAggregationScope(value: string | null | undefined): DiagnosticsAggregationScope {
+function normalizeScope(value: string | null | undefined): DiagnosticsAggregationScope {
   return value === "saved_only" ? "saved_only" : "all";
 }
 
-function inferRecommendationOrigin(record: RecommendationRecord): PredictionOrigin {
-  if (record.source === "backfill") return "backfill";
-  if (typeof record.source === "string" && String(record.source).includes("backfill")) return "backfill";
-  return normalizePredictionOrigin(record.predictionOrigin, "saved_live");
-}
-
-function includePredictionOrigin(origin: PredictionOrigin, scope: DiagnosticsAggregationScope) {
-  return scope === "all" || origin !== "backfill";
-}
-
-function extractRaceId(courseId: string): string | null {
-  const match = courseId.match(/(\d{12})$/);
-  return match?.[1] ?? null;
-}
-
-function isRecommendationPickType(value: unknown): value is PickType {
-  return value === "win" || value === "value";
-}
-
-function toTimestamp(value: string | null | undefined): number {
-  const parsed = Date.parse(String(value ?? ""));
-  return Number.isFinite(parsed) ? parsed : 0;
-}
-
-function percentage(hit: number, total: number) {
+function pct(hit: number, total: number) {
   return total > 0 ? (hit / total) * 100 : 0;
 }
 
-function roi(payout: number, raceCount: number) {
-  const stake = raceCount * 100;
-  return stake > 0 ? (payout / stake) * 100 : 0;
+function roi(totalPayout: number, raceCount: number) {
+  return raceCount > 0 ? (totalPayout / (raceCount * 100)) * 100 : 0;
 }
 
-function compareRecommendations(a: RecommendationSettlement | null, b: RecommendationSettlement): RecommendationSettlement {
-  if (!a) return b;
-  const aStatus = a.settlementStatus === "settled" ? 2 : a.settlementStatus === "pending_payouts" ? 1 : 0;
-  const bStatus = b.settlementStatus === "settled" ? 2 : b.settlementStatus === "pending_payouts" ? 1 : 0;
-  if (aStatus !== bStatus) return bStatus > aStatus ? b : a;
-  const aPosted = toTimestamp(a.postedAt);
-  const bPosted = toTimestamp(b.postedAt);
-  if (aPosted !== bPosted) return bPosted > aPosted ? b : a;
-  return toTimestamp(b.settledAt) >= toTimestamp(a.settledAt) ? b : a;
+function buildGapBuckets(labels: string[]) {
+  return labels.map((label) => ({
+    label,
+    raceCount: 0,
+    opponentPlaceCount: 0,
+    opponentPlaceRate: 0,
+    wideHitCount: 0,
+    wideHitRate: 0,
+  }));
 }
 
-function getBundleTimestamp(bundle: RecommendationSettlementBundle) {
-  return Math.max(
-    toTimestamp(bundle.win?.settledAt ?? bundle.win?.postedAt),
-    toTimestamp(bundle.value?.settledAt ?? bundle.value?.postedAt)
-  );
+function classifyRankGap(rankGap: number | null | undefined) {
+  if (!Number.isFinite(Number(rankGap))) return "unknown";
+  if (Number(rankGap) <= 1) return "1";
+  if (Number(rankGap) === 2) return "2";
+  return "3+";
 }
 
-function normalizeRecommendation(value: unknown): RecommendationSettlement | null {
-  if (!value || typeof value !== "object") return null;
-  const record = value as RecommendationRecord;
-  const courseId = normalizeString(record.courseId);
-  const horseId = normalizeString(record.horseId);
-  const horseName = normalizeString(record.horseName);
-  if (!courseId || !horseId || !horseName || !isRecommendationPickType(record.pickType)) return null;
+function classifyScoreGap(scoreGap: number | null | undefined) {
+  const value = Number(scoreGap);
+  if (!Number.isFinite(value)) return "unknown";
+  if (value < 0.02) return "<0.02";
+  if (value < 0.05) return "0.02-0.05";
+  return "0.05+";
+}
 
+function isReadyRecord(record: RaceReviewRecord) {
+  return record.status === "review_ready" && record.reviewReady;
+}
+
+function normalizeSelectionBundle(selection: ReviewSelectionHorse | ReviewLegacyValueSelection | null, postedAt: string | null | undefined) {
+  if (!selection) return null;
+  const normalized = selection as Partial<ReviewSelectionHorse & ReviewLegacyValueSelection>;
   return {
-    courseId,
-    raceId: normalizeString(record.raceId) ?? extractRaceId(courseId),
-    raceLabel: normalizeString(record.raceLabel),
-    pickType: record.pickType,
-    predictionOrigin: inferRecommendationOrigin(record),
-    scoringVersion: normalizeScoringVersion(record.scoringVersion, DEFAULT_SCORING_VERSION),
-    horseId,
-    horseName,
-    postedAt: normalizeString(record.postedAt),
-    settledAt: normalizeString(record.settledAt),
-    settlementStatus: normalizeSettlementStatus(record.settlementStatus),
-    tanOutcome: normalizeBetOutcome(record.tanOutcome),
-    fukuOutcome: normalizeBetOutcome(record.fukuOutcome),
-    tanPayout: normalizeNumber(record.tanPayout),
-    fukuPayout: normalizeNumber(record.fukuPayout),
-    tanPayoutSource: normalizePayoutSource(record.tanPayoutSource),
-    fukuPayoutSource: normalizePayoutSource(record.fukuPayoutSource),
-    actualWinnerHorseId: normalizeString(record.actualWinnerHorseId),
-    actualTop3HorseIds: Array.isArray(record.actualTop3HorseIds)
-      ? record.actualTop3HorseIds.map((id) => String(id ?? "").trim()).filter(Boolean)
-      : [],
-    realOdds: normalizeNumber(record.realOdds),
-    placeOdds: normalizeNumber(record.placeOdds),
-    winProb: normalizeNumber(record.winProb),
-    placeProb: normalizeNumber(record.placeProb),
-    placeScore: normalizeNumber(record.placeScore),
-    valueScore: normalizeNumber(record.valueScore),
-    selectionReason: normalizeString(record.selectionReason),
-    scoreGap: normalizeNumber(record.scoreGap),
-    runnerUpHorseId: normalizeString(record.runnerUpHorseId),
-    runnerUpHorseName: normalizeString(record.runnerUpHorseName),
-    runnerUpPlaceScore: normalizeNumber(record.runnerUpPlaceScore),
-    runnerUpPlaceProb: normalizeNumber(record.runnerUpPlaceProb),
-    overbetLabel: normalizeString(record.overbetLabel),
+    horseId: selection.horseId,
+    horseName: selection.horseName ?? selection.horseId,
+    postedAt,
+    settlementStatus: normalized.settlementStatus ?? "pending_result",
+    tanOutcome: normalized.tanOutcome ?? "not_settled",
+    fukuOutcome: normalized.fukuOutcome ?? "not_settled",
+    tanPayout: Number(normalized.tanPayout ?? 0),
+    fukuPayout: Number(normalized.fukuPayout ?? 0),
+    tanPayoutSource: normalized.tanPayoutSource ?? "missing",
+    fukuPayoutSource: normalized.fukuPayoutSource ?? "missing",
+    realOdds: Number(normalized.realOdds ?? 0),
+    placeOdds: Number(normalized.placeOdds ?? 0),
+    winProb: Number(normalized.winProb ?? 0),
+    placeProb: Number(normalized.placeProb ?? 0),
+    placeScore: Number(normalized.placeScore ?? 0),
+    valueScore: Number(normalized.valueScore ?? 0),
+    selectionReason: normalized.selectionReason ?? null,
+    scoreGap: Number(normalized.scoreGap ?? 0),
+    runnerUpHorseId: normalized.runnerUpHorseId ?? null,
+    runnerUpHorseName: normalized.runnerUpHorseName ?? null,
+    runnerUpPlaceScore: Number(normalized.runnerUpPlaceScore ?? 0),
+    runnerUpPlaceProb: Number(normalized.runnerUpPlaceProb ?? 0),
+    overbetLabel: normalized.overbetLabel ?? null,
   };
 }
 
-function isPredictionSnapshot(value: unknown): value is PredictionSnapshot {
-  if (!value || typeof value !== "object") return false;
-  const snapshot = value as Partial<PredictionSnapshot>;
-  return typeof snapshot.raceId === "string" && typeof snapshot.courseId === "string" && typeof snapshot.capturedAt === "string" && Array.isArray(snapshot.rankedRows);
-}
+function settlementBundle(record: RaceReviewRecord) {
+  const opponent = normalizeSelectionBundle(record.opponent, record.snapshotTakenAt);
+  const legacyValue = normalizeSelectionBundle(record.legacyValue, record.snapshotTakenAt);
 
-function toNormalizedSnapshot(snapshot: PredictionSnapshot): PredictionSnapshot {
   return {
-    ...snapshot,
-    predictionOrigin: normalizePredictionOrigin(snapshot.predictionOrigin, DEFAULT_PREDICTION_ORIGIN),
-    scoringVersion: normalizeScoringVersion(snapshot.scoringVersion, DEFAULT_SCORING_VERSION),
+    win: record.honmei
+      ? {
+          horseId: record.honmei.horseId,
+          horseName: record.honmei.horseName ?? record.honmei.horseId,
+          postedAt: record.snapshotTakenAt,
+          settlementStatus: record.honmei.settlementStatus ?? "pending_result",
+          tanOutcome: record.honmei.tanOutcome ?? "not_settled",
+          fukuOutcome: record.honmei.fukuOutcome ?? "not_settled",
+          tanPayout: Number(record.honmei.tanPayout ?? 0),
+          fukuPayout: Number(record.honmei.fukuPayout ?? 0),
+          tanPayoutSource: record.honmei.tanPayoutSource ?? "missing",
+          fukuPayoutSource: record.honmei.fukuPayoutSource ?? "missing",
+          realOdds: Number(record.honmei.realOdds ?? 0),
+          placeOdds: Number(record.honmei.placeOdds ?? 0),
+          winProb: Number(record.honmei.winProb ?? 0),
+          placeProb: Number(record.honmei.placeProb ?? 0),
+          placeScore: Number(record.honmei.placeScore ?? 0),
+          valueScore: Number(record.honmei.valueScore ?? 0),
+          selectionReason: record.honmei.selectionReason ?? null,
+          scoreGap: Number(record.honmei.scoreGap ?? 0),
+          runnerUpHorseId: record.honmei.runnerUpHorseId ?? null,
+          runnerUpHorseName: record.honmei.runnerUpHorseName ?? null,
+          runnerUpPlaceScore: Number(record.honmei.runnerUpPlaceScore ?? 0),
+          runnerUpPlaceProb: Number(record.honmei.runnerUpPlaceProb ?? 0),
+          overbetLabel: record.honmei.overbetLabel ?? null,
+        }
+      : null,
+    opponent,
+    value: opponent ?? legacyValue,
+    legacyValue,
+    meta: {
+      status: record.status,
+      reviewReady: record.reviewReady,
+      compatibilityMode: record.compatibilityMode,
+      scheduledStartTime: record.meta.scheduledStartTime,
+      raceDate: record.meta.raceDate,
+      raceName: record.meta.raceName,
+      pair: record.pair,
+    },
   };
 }
 
-async function loadLatestSnapshotsByRaceId(scope: DiagnosticsAggregationScope): Promise<Record<string, PredictionSnapshot>> {
-  try {
-    const raw = await fs.readFile(SNAPSHOT_PATH, "utf8");
-    const latestByRaceId: Record<string, PredictionSnapshot> = {};
-    for (const line of raw.split(/\r?\n/).map((entry) => entry.trim()).filter(Boolean)) {
-      let parsed: unknown;
-      try {
-        parsed = JSON.parse(line);
-      } catch {
-        continue;
-      }
-      if (!isPredictionSnapshot(parsed)) continue;
-      const normalized = toNormalizedSnapshot(parsed);
-      if (!normalized.raceId || !includePredictionOrigin(normalized.predictionOrigin, scope)) continue;
-      const existing = latestByRaceId[normalized.raceId];
-      if (!existing || toTimestamp(normalized.capturedAt) >= toTimestamp(existing.capturedAt)) {
-        latestByRaceId[normalized.raceId] = normalized;
-      }
-    }
-    return latestByRaceId;
-  } catch (error) {
-    const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";
-    if (code === "ENOENT") return {};
-    throw error;
+function accumulateWeeklyPerformance(records: RaceReviewRecord[]) {
+  const totals = {
+    bets: 0,
+    tanHits: 0,
+    fukuHits: 0,
+    tanStake: 0,
+    tanPayout: 0,
+    fukuStake: 0,
+    fukuPayout: 0,
+  };
+
+  for (const record of records) {
+    if (!isReadyRecord(record) || !record.honmei) continue;
+    totals.bets += 1;
+    totals.tanStake += 100;
+    totals.fukuStake += 100;
+    if (record.honmei.tanOutcome === "hit") totals.tanHits += 1;
+    if (record.honmei.fukuOutcome === "hit") totals.fukuHits += 1;
+    totals.tanPayout += Number(record.honmei.tanPayout ?? 0);
+    totals.fukuPayout += Number(record.honmei.fukuPayout ?? 0);
   }
+
+  return totals;
 }
 
-function getPopularityBand(rank: number): PopularityBandKey {
-  if (rank <= 3) return "fav_1_3";
-  if (rank <= 6) return "fav_4_6";
-  return "fav_7_plus";
-}
+function buildSummary(records: RaceReviewRecord[]): SummaryPayload {
+  const readyRecords = records.filter(isReadyRecord);
+  const rankGapBuckets = buildGapBuckets(["1", "2", "3+", "unknown"]);
+  const scoreGapBuckets = buildGapBuckets(["<0.02", "0.02-0.05", "0.05+", "unknown"]);
 
-function getHorsePopularityRank(race: GeneratedReviewRace, horseId: string): number | null {
-  const ranked = [...race.horses]
-    .filter((horse) => Number.isFinite(Number(horse.realOdds)) && Number(horse.realOdds) > 0)
-    .sort((a, b) => Number(a.realOdds) - Number(b.realOdds) || String(a.id).localeCompare(String(b.id)));
-  const index = ranked.findIndex((horse) => String(horse.id) === horseId);
-  return index >= 0 ? index + 1 : null;
-}
+  const summary: SummaryPayload = {
+    counts: {
+      targetRaceCount: records.length,
+      readyCount: readyRecords.length,
+      pendingCount: records.filter((record) => record.status !== "review_ready" && record.status !== "review_failed").length,
+      failedCount: records.filter((record) => record.status === "review_failed").length,
+      legacyCount: records.filter((record) => record.compatibilityMode === "legacy_value_candidate").length,
+    },
+    honmei: {
+      raceCount: 0,
+      winCount: 0,
+      placeCount: 0,
+      winRate: 0,
+      placeRate: 0,
+      tanRoi: 0,
+      fukuRoi: 0,
+    },
+    opponent: {
+      raceCount: 0,
+      placeCount: 0,
+      placeRate: 0,
+      fukuRoi: 0,
+    },
+    pair: {
+      raceCount: 0,
+      wideHitCount: 0,
+      wideHitRate: 0,
+      wideReturnRate: 0,
+      simultaneousPlaceCount: 0,
+      simultaneousPlaceRate: 0,
+    },
+    rankGapBuckets,
+    scoreGapBuckets,
+  };
 
-function hasConfirmedResult(race: GeneratedReviewRace) {
-  return Boolean(race.result?.winnerHorseId && race.result?.top3HorseIds?.length);
-}
-
-function applyPopularityBandSummary(
-  target: Record<PopularityBandKey, PopularityBandSummary>,
-  race: GeneratedReviewRace,
-  horseId: string,
-  fukuOutcome: BetOutcome,
-  fukuPayout: number
-) {
-  const popularityRank = getHorsePopularityRank(race, horseId);
-  if (!popularityRank) return;
-  const band = target[getPopularityBand(popularityRank)];
-  band.raceCount += 1;
-  if (fukuOutcome === "hit") band.placeCount += 1;
-  band.fukuRoi += fukuPayout;
-}
-
-function buildAggregateSummary(
-  races: GeneratedReviewRace[],
-  snapshotsByRaceId: Record<string, PredictionSnapshot>,
-  settlementsByRaceId: Record<string, RecommendationSettlementBundle>
-): AggregateSummary {
-  const summary = createEmptySummary();
-
-  for (const race of races) {
-    if (!hasConfirmedResult(race)) continue;
-    const raceId = String(race.raceId ?? "");
-    const top3HorseIds = race.result?.top3HorseIds.map((id) => String(id)) ?? [];
-    const winnerHorseId = String(race.result?.winnerHorseId ?? "");
-    const snapshot = snapshotsByRaceId[raceId];
-    const settlement = settlementsByRaceId[raceId];
-
-    if (snapshot?.honmeiHorseId) {
-      summary.snapshotHonmei.raceCount += 1;
-      if (snapshot.honmeiHorseId === winnerHorseId) summary.snapshotHonmei.firstCount += 1;
-      if (top3HorseIds.includes(snapshot.honmeiHorseId)) summary.snapshotHonmei.placeCount += 1;
+  for (const record of readyRecords) {
+    const honmei = record.honmei;
+    const opponent = record.opponent;
+    if (honmei) {
+      summary.honmei.raceCount += 1;
+      if (honmei.tanOutcome === "hit") summary.honmei.winCount += 1;
+      if (honmei.fukuOutcome === "hit") summary.honmei.placeCount += 1;
+      summary.honmei.tanRoi += Number(honmei.tanPayout ?? 0);
+      summary.honmei.fukuRoi += Number(honmei.fukuPayout ?? 0);
     }
 
-    for (const rank of [1, 2, 3] as const) {
-      const row = snapshot?.rankedRows.find((entry) => entry.rank === rank);
-      if (!row) continue;
-      const bucket = summary.snapshotRanks[rank - 1];
-      bucket.raceCount += 1;
-      if (top3HorseIds.includes(String(row.horseId))) bucket.placeCount += 1;
+    if (opponent) {
+      summary.opponent.raceCount += 1;
+      if (opponent.fukuOutcome === "hit") summary.opponent.placeCount += 1;
+      summary.opponent.fukuRoi += Number(opponent.fukuPayout ?? 0);
     }
 
-    const routineWin = settlement?.win ?? null;
-    const value = settlement?.value ?? null;
+    if (honmei && opponent) {
+      summary.pair.raceCount += 1;
+      if (record.pair.wideOutcome === "hit") summary.pair.wideHitCount += 1;
+      if (record.pair.sameTop3) summary.pair.simultaneousPlaceCount += 1;
+      summary.pair.wideReturnRate += Number(record.pair.widePayout ?? 0);
 
-    if (snapshot?.honmeiHorseId && routineWin) {
-      summary.agreement.raceCount += 1;
-      const snapshotPlaced = top3HorseIds.includes(snapshot.honmeiHorseId);
-      const routinePlaced = top3HorseIds.includes(routineWin.horseId);
-      if (snapshot.honmeiHorseId === routineWin.horseId) {
-        summary.agreement.samePickCount += 1;
-        if (snapshotPlaced) summary.agreement.samePickPlaceCount += 1;
-      } else {
-        summary.agreement.differentPickCount += 1;
-        if (snapshotPlaced) summary.agreement.snapshotPlaceCountWhenDifferent += 1;
-        if (routinePlaced) summary.agreement.routinePlaceCountWhenDifferent += 1;
-
-        summary.disagreementDetail.raceCount += 1;
-        if (snapshotPlaced) summary.disagreementDetail.snapshotPlaceRate += 1;
-        if (routinePlaced) summary.disagreementDetail.routinePlaceRate += 1;
-        if (value && top3HorseIds.includes(value.horseId)) summary.disagreementDetail.valuePlaceCount += 1;
-        if (!snapshotPlaced && routinePlaced) summary.disagreementDetail.snapshotMissRoutinePlaceCount += 1;
-        if (snapshotPlaced && !routinePlaced) summary.disagreementDetail.routineMissSnapshotPlaceCount += 1;
+      const rankBucket = rankGapBuckets.find((bucket) => bucket.label === classifyRankGap(record.pair.rankGap));
+      const scoreBucket = scoreGapBuckets.find((bucket) => bucket.label === classifyScoreGap(record.pair.scoreGap));
+      for (const bucket of [rankBucket, scoreBucket]) {
+        if (!bucket) continue;
+        bucket.raceCount += 1;
+        if (opponent.fukuOutcome === "hit") bucket.opponentPlaceCount += 1;
+        if (record.pair.wideOutcome === "hit") bucket.wideHitCount += 1;
       }
     }
   }
 
-  for (const bundle of Object.values(settlementsByRaceId)) {
-    const race = races.find((entry) => String(entry.raceId ?? "") === String(bundle.raceId ?? ""));
-    if (bundle.win) {
-      if (bundle.win.settlementStatus === "settled") {
-        summary.routineHonmei.raceCount += 1;
-        if (bundle.win.tanOutcome === "hit") summary.routineHonmei.tanHitCount += 1;
-        if (bundle.win.fukuOutcome === "hit") summary.routineHonmei.fukuHitCount += 1;
-        summary.routineHonmei.tanRoi += bundle.win.tanPayout;
-        summary.routineHonmei.fukuRoi += bundle.win.fukuPayout;
-        if (race) {
-          applyPopularityBandSummary(
-            summary.popularityBands.routineHonmei,
-            race,
-            bundle.win.horseId,
-            bundle.win.fukuOutcome,
-            bundle.win.fukuPayout
-          );
-        }
-      } else {
-        summary.routineHonmei.pendingCount += 1;
-      }
-    }
+  summary.honmei.winRate = pct(summary.honmei.winCount, summary.honmei.raceCount);
+  summary.honmei.placeRate = pct(summary.honmei.placeCount, summary.honmei.raceCount);
+  summary.honmei.tanRoi = roi(summary.honmei.tanRoi, summary.honmei.raceCount);
+  summary.honmei.fukuRoi = roi(summary.honmei.fukuRoi, summary.honmei.raceCount);
+  summary.opponent.placeRate = pct(summary.opponent.placeCount, summary.opponent.raceCount);
+  summary.opponent.fukuRoi = roi(summary.opponent.fukuRoi, summary.opponent.raceCount);
+  summary.pair.wideHitRate = pct(summary.pair.wideHitCount, summary.pair.raceCount);
+  summary.pair.simultaneousPlaceRate = pct(summary.pair.simultaneousPlaceCount, summary.pair.raceCount);
+  summary.pair.wideReturnRate = roi(summary.pair.wideReturnRate, summary.pair.raceCount);
 
-    if (bundle.value) {
-      if (bundle.value.settlementStatus === "settled") {
-        summary.valueCandidate.raceCount += 1;
-        if (bundle.value.fukuOutcome === "hit") summary.valueCandidate.placeCount += 1;
-        summary.valueCandidate.fukuRoi += bundle.value.fukuPayout;
-        if (race) {
-          applyPopularityBandSummary(
-            summary.popularityBands.valueCandidate,
-            race,
-            bundle.value.horseId,
-            bundle.value.fukuOutcome,
-            bundle.value.fukuPayout
-          );
-        }
-      } else {
-        summary.valueCandidate.pendingCount += 1;
-      }
-    } else if (bundle.win) {
-      // Win exists but no value candidate: quality gate filtered all out
-      summary.valueCandidate.skippedCount += 1;
-    }
+  for (const bucket of [...rankGapBuckets, ...scoreGapBuckets]) {
+    bucket.opponentPlaceRate = pct(bucket.opponentPlaceCount, bucket.raceCount);
+    bucket.wideHitRate = pct(bucket.wideHitCount, bucket.raceCount);
   }
-
-  summary.snapshotHonmei.winRate = percentage(summary.snapshotHonmei.firstCount, summary.snapshotHonmei.raceCount);
-  summary.snapshotHonmei.placeRate = percentage(summary.snapshotHonmei.placeCount, summary.snapshotHonmei.raceCount);
-  summary.routineHonmei.tanHitRate = percentage(summary.routineHonmei.tanHitCount, summary.routineHonmei.raceCount);
-  summary.routineHonmei.fukuHitRate = percentage(summary.routineHonmei.fukuHitCount, summary.routineHonmei.raceCount);
-  summary.routineHonmei.tanRoi = roi(summary.routineHonmei.tanRoi, summary.routineHonmei.raceCount);
-  summary.routineHonmei.fukuRoi = roi(summary.routineHonmei.fukuRoi, summary.routineHonmei.raceCount);
-  summary.valueCandidate.placeRate = percentage(summary.valueCandidate.placeCount, summary.valueCandidate.raceCount);
-  summary.valueCandidate.fukuRoi = roi(summary.valueCandidate.fukuRoi, summary.valueCandidate.raceCount);
-  const valueTotalEligible = summary.valueCandidate.raceCount + summary.valueCandidate.skippedCount;
-  summary.valueCandidate.candidateRate = valueTotalEligible > 0 ? percentage(summary.valueCandidate.raceCount, valueTotalEligible) : 0;
-  summary.agreement.samePickRate = percentage(summary.agreement.samePickCount, summary.agreement.raceCount);
-  summary.agreement.samePickPlaceRate = percentage(summary.agreement.samePickPlaceCount, summary.agreement.samePickCount);
-  summary.agreement.snapshotPlaceRateWhenDifferent = percentage(summary.agreement.snapshotPlaceCountWhenDifferent, summary.agreement.differentPickCount);
-  summary.agreement.routinePlaceRateWhenDifferent = percentage(summary.agreement.routinePlaceCountWhenDifferent, summary.agreement.differentPickCount);
-
-  for (const bucket of summary.snapshotRanks) {
-    bucket.placeRate = percentage(bucket.placeCount, bucket.raceCount);
-  }
-  for (const record of [summary.popularityBands.routineHonmei, summary.popularityBands.valueCandidate]) {
-    for (const key of Object.keys(record) as PopularityBandKey[]) {
-      record[key].placeRate = percentage(record[key].placeCount, record[key].raceCount);
-      record[key].fukuRoi = roi(record[key].fukuRoi, record[key].raceCount);
-    }
-  }
-
-  summary.disagreementDetail.snapshotPlaceRate = percentage(
-    summary.disagreementDetail.snapshotPlaceRate,
-    summary.disagreementDetail.raceCount
-  );
-  summary.disagreementDetail.routinePlaceRate = percentage(
-    summary.disagreementDetail.routinePlaceRate,
-    summary.disagreementDetail.raceCount
-  );
 
   return summary;
 }
 
-function buildSegmentedAggregateSummary(
-  races: GeneratedReviewRace[],
-  snapshotsByRaceId: Record<string, PredictionSnapshot>,
-  settlementsByRaceId: Record<string, RecommendationSettlementBundle>,
-  diagnostics: ReturnType<typeof buildWeeklyDiagnostics>
-) {
-  return Object.fromEntries(
-    RACE_DIAGNOSTIC_SEGMENTS.map((segmentKey) => {
-      const segmentRaces = races.filter((race) => matchesRaceDiagnosticSegment(race, segmentKey));
-      const segmentDiagnostics = diagnostics.segments[segmentKey];
-      const segmentSummary: AggregateSegmentSummary = {
-        key: segmentKey,
-        label: segmentKey,
-        raceCount: segmentRaces.length,
-        settledRaceCount: segmentRaces.filter(hasConfirmedResult).length,
-        summary: buildAggregateSummary(segmentRaces, snapshotsByRaceId, settlementsByRaceId),
-        missDiagnostics: {
-          missRaceCount: segmentDiagnostics.missDiagnostics.missRaceCount,
-          primary: segmentDiagnostics.missDiagnostics.primary.map((entry) => ({
-            tag: entry.tag,
-            raceCount: entry.raceCount,
-            rate: entry.rate,
-          })),
-          all: segmentDiagnostics.missDiagnostics.all.map((entry) => ({
-            tag: entry.tag,
-            raceCount: entry.raceCount,
-            rate: entry.rate,
-          })),
-        },
-      };
-      return [segmentKey, segmentSummary];
-    })
-  ) as Record<RaceDiagnosticsSegmentKey, AggregateSegmentSummary>;
+function getCurrentWeek(records: RaceReviewRecord[]) {
+  const latest = records
+    .map((record) => record.meta.weekOf)
+    .filter((value): value is string => Boolean(value))
+    .sort()
+    .slice(-1)[0];
+  return latest ?? null;
+}
+
+function filterScope(records: RaceReviewRecord[], scope: DiagnosticsAggregationScope) {
+  if (scope === "all") return records;
+  return records.filter((record) => record.snapshot?.predictionOrigin !== "backfill");
+}
+
+function hasNativeOpponent(record: RaceReviewRecord) {
+  return record.compatibilityMode === "native_opponent" && Boolean(record.opponent);
 }
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const scope = normalizeAggregationScope(searchParams.get("scope"));
-    const [stateRaw, snapshotsByRaceId, diagnosticsContext] = await Promise.all([
-      fs.readFile(STATE_PATH, "utf8"),
-      loadLatestSnapshotsByRaceId(scope),
+    const scope = normalizeScope(searchParams.get("scope"));
+    const [reviewRecordsByRaceId, diagnosticsContext] = await Promise.all([
+      loadReviewRecords(),
       loadWeeklyDiagnosticsContext(scope),
     ]);
-    const state = JSON.parse(stateRaw.replace(/^\uFEFF/, ""));
 
-    const settlementsByCourseId: Record<string, RecommendationSettlementBundle> = {};
-    const rawRecommendations = Array.isArray(state.tanpukuRecommendations) ? state.tanpukuRecommendations : [];
-    for (const rawRecommendation of rawRecommendations) {
-      const recommendation = normalizeRecommendation(rawRecommendation);
-      if (!recommendation) continue;
-      if (!includePredictionOrigin(recommendation.predictionOrigin, scope)) continue;
-      const existing = settlementsByCourseId[recommendation.courseId] ?? {
-        courseId: recommendation.courseId,
-        raceId: recommendation.raceId,
-        raceLabel: recommendation.raceLabel,
-        win: null,
-        value: null,
-      };
-      settlementsByCourseId[recommendation.courseId] = {
-        ...existing,
-        raceId: existing.raceId ?? recommendation.raceId,
-        raceLabel: existing.raceLabel ?? recommendation.raceLabel,
-        win: recommendation.pickType === "win" ? compareRecommendations(existing.win, recommendation) : existing.win,
-        value: recommendation.pickType === "value" ? compareRecommendations(existing.value, recommendation) : existing.value,
-      };
-    }
-
-    const settlementsByRaceId: Record<string, RecommendationSettlementBundle> = {};
-    for (const bundle of Object.values(settlementsByCourseId)) {
-      if (!bundle.raceId) continue;
-      const existing = settlementsByRaceId[bundle.raceId];
-      if (!existing || getBundleTimestamp(bundle) >= getBundleTimestamp(existing)) {
-        settlementsByRaceId[bundle.raceId] = bundle;
-      }
-    }
-
-    const races = [...GENERATED_COMPLETED_RACES, ...GENERATED_ARCHIVED_RACES];
-    const summary = buildAggregateSummary(races, snapshotsByRaceId, settlementsByRaceId);
-    const diagnostics = buildWeeklyDiagnostics(diagnosticsContext);
-    const segmentedSummary = buildSegmentedAggregateSummary(
-      races,
-      snapshotsByRaceId,
-      settlementsByRaceId,
-      diagnostics
+    const filteredRecords = filterScope(Object.values(reviewRecordsByRaceId), scope).sort((a, b) =>
+      String(b.meta.scheduledStartTime ?? b.updatedAt).localeCompare(String(a.meta.scheduledStartTime ?? a.updatedAt))
     );
+    const currentWeek = getCurrentWeek(filteredRecords);
+    const weeklyRecords = filteredRecords.filter((record) => record.meta.weekOf === currentWeek);
+    const totalPerf = accumulateWeeklyPerformance(filteredRecords);
+    const weeklyPerf = accumulateWeeklyPerformance(weeklyRecords);
+    const summary = buildSummary(filteredRecords.filter((record) => record.reviewReady || hasNativeOpponent(record) || record.honmei));
+    const diagnostics = buildWeeklyDiagnostics(diagnosticsContext);
 
     return NextResponse.json({
       scope,
-      performance: state.performance ?? null,
-      updatedAt: state.performance?.updatedAt ?? null,
-      settlementsByCourseId,
-      settlementsByRaceId,
+      performance: {
+        weekly: {
+          weekOf: currentWeek,
+          ...weeklyPerf,
+        },
+        total: totalPerf,
+        updatedAt: new Date().toISOString(),
+      },
+      updatedAt: new Date().toISOString(),
+      reviewRecordsByRaceId,
+      settlementsByRaceId: Object.fromEntries(
+        filteredRecords.map((record) => [record.raceId, settlementBundle(record)])
+      ),
+      settlementsByCourseId: Object.fromEntries(
+        filteredRecords.map((record) => [record.courseId, settlementBundle(record)])
+      ),
       summary,
-      segmentedSummary,
       diagnostics,
     });
-  } catch {
-    return NextResponse.json({
-      scope: "all",
-      performance: null,
-      updatedAt: null,
-      settlementsByCourseId: {},
-      settlementsByRaceId: {},
-      summary: createEmptySummary(),
-      segmentedSummary: {},
-      diagnostics: null,
-    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "failed to load performance";
+    return NextResponse.json(
+      {
+        scope: "all",
+        performance: null,
+        updatedAt: null,
+        reviewRecordsByRaceId: {},
+        settlementsByRaceId: {},
+        settlementsByCourseId: {},
+        summary: null,
+        diagnostics: null,
+        error: message,
+      },
+      { status: 500 }
+    );
   }
 }

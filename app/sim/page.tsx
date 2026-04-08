@@ -730,20 +730,20 @@ function SimulatorContent() {
                         <p className="mt-2 text-xs leading-relaxed text-amber-700">{explanations.tanpukuHonmei}</p>
                       </div>
 
-                      {/* 妙味候補 */}
+                      {/* 相手候補 */}
                       <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
-                        <p className="text-xs font-semibold text-emerald-800">妙味候補</p>
+                        <p className="text-xs font-semibold text-emerald-800">相手候補</p>
                         {valuePick ? (
                           <>
                             <p className="mt-1 text-sm font-bold text-slate-800">{valuePick.horse.name}</p>
                             <div className="mt-1 space-y-0.5 text-[11px] text-slate-500">
                               <p>valueScore {valuePick.valueScore.toFixed(3)} / {Number(valuePick.horse.realOdds).toFixed(1)}倍</p>
-                              <p>複回収期待 {valuePick.fukuRoi.toFixed(0)}% / scoreGap {valuePick.scoreGap.toFixed(3)}</p>
+                              <p>複勝寄り期待 {valuePick.fukuRoi.toFixed(0)}% / scoreGap {valuePick.scoreGap.toFixed(3)}</p>
                             </div>
                             <p className="mt-2 text-xs leading-relaxed text-emerald-700">{explanations.valueCandidate}</p>
                           </>
                         ) : (
-                          <p className="mt-1 text-sm text-slate-500">該当なし</p>
+                          <p className="mt-1 text-sm text-slate-500">相手候補なし</p>
                         )}
                       </div>
                     </div>

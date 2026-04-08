@@ -148,6 +148,14 @@ export interface PredictionSnapshot {
   raceId: string;
   courseId: string;
   capturedAt: string;
+  snapshotTakenAt?: string;
+  snapshotType?: "manual_snapshot" | "pre_race_final";
+  raceDate?: string | null;
+  raceName?: string | null;
+  venue?: string | null;
+  venueKey?: string | null;
+  raceNumber?: number | null;
+  scheduledStartTime?: string | null;
   predictionOrigin: PredictionOrigin;
   scoringVersion: string;
   modelFamily: string;
@@ -157,10 +165,117 @@ export interface PredictionSnapshot {
   condition: RaceCondition;
   rankedRows: PredictionSnapshotRow[];
   honmeiHorseId: string | null;
+  opponentHorseId?: string | null;
+  opponentSelectionMethod?: "rank2" | "light_adjusted" | "legacy_value";
+  opponentScore?: number | null;
+  opponentRank?: number | null;
+  honmeiScore?: number | null;
+  honmeiRank?: number | null;
+  pairScoreGap?: number | null;
+  pairRankGap?: number | null;
   valueHorseId: string | null;
   watchHorseId: string | null;
   signalReasons: Record<string, PredictionSnapshotSignalReason>;
   marketMeta: PredictionSnapshotMarketMeta;
+}
+
+export type ReviewProcessingStatus =
+  | "not_snapshotted"
+  | "snapshotted"
+  | "result_pending"
+  | "payout_pending"
+  | "review_ready"
+  | "review_failed";
+
+export type ReviewCompatibilityMode = "native_opponent" | "legacy_value_candidate";
+
+export interface ReviewRaceMeta {
+  raceId: string;
+  courseId: string;
+  raceDate: string | null;
+  weekOf: string | null;
+  day: string | null;
+  raceName: string | null;
+  venue: string | null;
+  venueKey: string | null;
+  raceNumber: number | null;
+  scheduledStartTime: string | null;
+}
+
+export interface ReviewSelectionHorse {
+  horseId: string;
+  horseName: string | null;
+  rank: number | null;
+  score: number | null;
+  winProb: number | null;
+  realOdds: number | null;
+  placeOdds: number | null;
+  placeProb: number | null;
+  placeScore: number | null;
+  valueScore: number | null;
+  selectionMethod?: "rank2" | "light_adjusted" | "legacy_value";
+  selectionReason?: string | null;
+  overbetLabel?: string | null;
+  scoreGap?: number | null;
+  runnerUpHorseId?: string | null;
+  runnerUpHorseName?: string | null;
+  runnerUpPlaceScore?: number | null;
+  runnerUpPlaceProb?: number | null;
+  settlementStatus?: "pending_result" | "pending_payouts" | "settled";
+  tanOutcome?: "not_settled" | "hit" | "miss" | "hit_missing_payout";
+  fukuOutcome?: "not_settled" | "hit" | "miss" | "hit_missing_payout";
+  tanPayout?: number;
+  fukuPayout?: number;
+  tanPayoutSource?: "official" | "missing";
+  fukuPayoutSource?: "official" | "missing";
+}
+
+export interface ReviewPairMetrics {
+  honmeiHorseId: string | null;
+  opponentHorseId: string | null;
+  rankGap: number | null;
+  scoreGap: number | null;
+  sameTop3: boolean | null;
+  wideOutcome: "not_settled" | "hit" | "miss" | "hit_missing_payout";
+  widePayout: number;
+  widePayoutSource: "official" | "missing";
+}
+
+export interface ReviewLegacyValueSelection {
+  horseId: string;
+  horseName: string | null;
+  fukuOutcome: "not_settled" | "hit" | "miss" | "hit_missing_payout";
+  fukuPayout: number;
+  fukuPayoutSource: "official" | "missing";
+}
+
+export interface RaceReviewRecord {
+  raceId: string;
+  courseId: string;
+  status: ReviewProcessingStatus;
+  reviewReady: boolean;
+  compatibilityMode: ReviewCompatibilityMode;
+  createdAt: string;
+  updatedAt: string;
+  snapshotTakenAt: string | null;
+  resultFetchedAt: string | null;
+  payoutFetchedAt: string | null;
+  lastTriedAt: string | null;
+  lastError: string | null;
+  meta: ReviewRaceMeta;
+  snapshot: PredictionSnapshot | null;
+  honmei: ReviewSelectionHorse | null;
+  opponent: ReviewSelectionHorse | null;
+  legacyValue: ReviewLegacyValueSelection | null;
+  actualWinnerHorseId: string | null;
+  actualTop3HorseIds: string[];
+  pair: ReviewPairMetrics;
+}
+
+export interface ReviewRecordStore {
+  version: 1;
+  generatedAt: string;
+  records: Record<string, RaceReviewRecord>;
 }
 
 export type WeeklyDiagnosticsPopularityBandKey = "top3" | "mid" | "longshot";
