@@ -32,7 +32,8 @@ export type PickExplanationEntry = {
 export type PickExplanations = {
   simHonmei: string;
   tanpukuHonmei: string;
-  valueCandidate: string;
+  opponentCandidate: string;
+  wideLongshot: string;
   agreement: string;
   disagreement: string | null;
 };
@@ -128,22 +129,9 @@ export function buildTanpukuHonmeiExplanation(entry?: PickExplanationEntry | nul
   return "複勝寄りの安定性を評価して本命候補に選出。";
 }
 
-export function buildValueCandidateExplanation(entry?: PickExplanationEntry | null): string {
+export function buildOpponentCandidateExplanation(entry?: PickExplanationEntry | null): string {
   if (!entry) {
     return "相手候補は不在。相手候補として採用できる次点馬がいなかった。";
-  }
-
-  if (
-    isFiniteNumber(entry.valueScore) &&
-    isFiniteNumber(entry.placeReturnEdge) &&
-    isFiniteNumber(entry.longshotBonus) &&
-    entry.longshotBonus >= 0.1
-  ) {
-    return `valueScore ${r3(entry.valueScore)}が上位で、複勝期待値${pct(entry.placeReturnEdge)}と残りやすさを見て相手候補に選出。`;
-  }
-
-  if (isFiniteNumber(entry.valueScore) && isFiniteNumber(entry.placeReturnEdge)) {
-    return `valueScore ${r3(entry.valueScore)}が上位で、複勝期待値${pct(entry.placeReturnEdge)}を踏まえて相手候補に選出。`;
   }
 
   const selectionReason = normalizeText(entry.selectionReason);
@@ -151,11 +139,56 @@ export function buildValueCandidateExplanation(entry?: PickExplanationEntry | nu
     return selectionReason;
   }
 
-  if (isFiniteNumber(entry.valueScore)) {
-    return `valueScore ${r3(entry.valueScore)}が上位で、本命と組み合わせやすい相手候補として選出。`;
+  if (
+    isFiniteNumber(entry.placeScore) &&
+    isFiniteNumber(entry.scoreGap) &&
+    isFiniteNumber(entry.top3Stability)
+  ) {
+    return `本命候補と同じ placeScore 軸で次点。scoreGap ${r3(entry.scoreGap)} と3着内安定度${pct(entry.top3Stability)}を見て相手候補に選出。`;
   }
 
-  return "残りやすさと本命との組み合わせを見て相手候補に選出。";
+  if (isFiniteNumber(entry.placeScore) && isFiniteNumber(entry.top3Stability)) {
+    return `placeScore ${r3(entry.placeScore)}が次点で、3着内安定度${pct(entry.top3Stability)}も高いため相手候補に選出。`;
+  }
+
+  if (isFiniteNumber(entry.placeScore) && isFiniteNumber(entry.placeProb)) {
+    return `placeScore ${r3(entry.placeScore)}が次点で、複勝率${pct(entry.placeProb)}を評価して相手候補に選出。`;
+  }
+
+  if (isFiniteNumber(entry.placeScore)) {
+    return `本命候補と同じ placeScore 軸で次点のため相手候補に選出。`;
+  }
+
+  return "本命候補に近い安定指標を評価して相手候補に選出。";
+}
+
+export function buildWideLongshotExplanation(entry?: PickExplanationEntry | null): string {
+  if (!entry) {
+    return "ワイド高配当狙いは不在。妙味条件を満たす別軸候補がいなかった。";
+  }
+
+  const selectionReason = normalizeText(entry.selectionReason);
+  if (selectionReason) {
+    return selectionReason;
+  }
+
+  if (
+    isFiniteNumber(entry.valueScore) &&
+    isFiniteNumber(entry.placeReturnEdge) &&
+    isFiniteNumber(entry.placeProb)
+  ) {
+    return `valueScore ${r3(entry.valueScore)} と複勝寄り期待値${pct(entry.placeReturnEdge)}が高く、複勝率${pct(entry.placeProb)}も残しているためワイド高配当狙いに選出。`;
+  }
+
+  if (isFiniteNumber(entry.valueScore) && isFiniteNumber(entry.placeReturnEdge)) {
+    return `valueScore ${r3(entry.valueScore)} と複勝寄り期待値${pct(entry.placeReturnEdge)}を重視した別軸のワイド高配当狙い。`;
+  }
+
+  if (isFiniteNumber(entry.valueScore)) {
+    return `本命次点ではなく、valueScore ${r3(entry.valueScore)} の妙味を優先してワイド高配当狙いに選出。`;
+  }
+
+  return "安定本線ではなく、配当妙味を優先した別軸候補。";
 }
 
 export function buildAgreementExplanation(
@@ -231,12 +264,14 @@ export function buildPickExplanations(params: {
   agreementStatus: AgreementStatus;
   simEntry?: PickExplanationEntry | null;
   winEntry?: PickExplanationEntry | null;
-  valueEntry?: PickExplanationEntry | null;
+  opponentEntry?: PickExplanationEntry | null;
+  wideEntry?: PickExplanationEntry | null;
 }): PickExplanations {
   return {
     simHonmei: buildSimHonmeiExplanation(params.simEntry),
     tanpukuHonmei: buildTanpukuHonmeiExplanation(params.winEntry),
-    valueCandidate: buildValueCandidateExplanation(params.valueEntry),
+    opponentCandidate: buildOpponentCandidateExplanation(params.opponentEntry),
+    wideLongshot: buildWideLongshotExplanation(params.wideEntry),
     agreement: buildAgreementExplanation(params.agreementStatus, params.simEntry, params.winEntry),
     disagreement: buildDisagreementExplanation(params.agreementStatus, params.simEntry, params.winEntry),
   };

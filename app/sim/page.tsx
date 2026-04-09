@@ -684,12 +684,13 @@ function SimulatorContent() {
                 const rows = buildRaceAnalysisRows(results, horses, selectedCourse, condition);
                 const simHonmei = rows[0] ?? null;
                 const winPick = tanpukuPair.winPick;
-                const valuePick = tanpukuPair.valuePick;
+                const opponentPick = tanpukuPair.opponentPick;
+                const widePick = tanpukuPair.widePick ?? tanpukuPair.valuePick;
                 const simHorseId = simHonmei?.horseId ?? null;
                 const agreementStatus: "agree" | "disagree" | "unknown" =
                   simHorseId && winPick ? (simHorseId === winPick.horse.id ? "agree" : "disagree") : "unknown";
                 const simEntry = simHorseId ? tanpukuPair.scored.find((e: { horse: { id: string } }) => e.horse.id === simHorseId) : null;
-                const explanations = buildPickExplanations({ agreementStatus, simEntry, winEntry: winPick, valueEntry: valuePick });
+                const explanations = buildPickExplanations({ agreementStatus, simEntry, winEntry: winPick, opponentEntry: opponentPick, wideEntry: widePick });
 
                 return (
                   <div className="mt-4 rounded-2xl border border-violet-200 bg-white p-5 shadow-sm">
@@ -703,7 +704,7 @@ function SimulatorContent() {
                       <span className="text-xs text-slate-600">{explanations.agreement}</span>
                     </div>
 
-                    <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                       {/* シミュ本命 */}
                       <div className="rounded-lg border border-sky-200 bg-sky-50 px-4 py-3">
                         <p className="text-xs font-semibold text-sky-800">シミュ本命</p>
@@ -733,17 +734,33 @@ function SimulatorContent() {
                       {/* 相手候補 */}
                       <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
                         <p className="text-xs font-semibold text-emerald-800">相手候補</p>
-                        {valuePick ? (
+                        {opponentPick ? (
                           <>
-                            <p className="mt-1 text-sm font-bold text-slate-800">{valuePick.horse.name}</p>
+                            <p className="mt-1 text-sm font-bold text-slate-800">{opponentPick.horse.name}</p>
                             <div className="mt-1 space-y-0.5 text-[11px] text-slate-500">
-                              <p>valueScore {valuePick.valueScore.toFixed(3)} / {Number(valuePick.horse.realOdds).toFixed(1)}倍</p>
-                              <p>複勝寄り期待 {valuePick.fukuRoi.toFixed(0)}% / scoreGap {valuePick.scoreGap.toFixed(3)}</p>
+                              <p>placeScore {opponentPick.placeScore.toFixed(3)} / 本命差 {opponentPick.scoreGap.toFixed(3)}</p>
+                              <p>placeProb {(opponentPick.placeProb * 100).toFixed(0)}% / top3安定 {(opponentPick.top3Stability * 100).toFixed(0)}%</p>
                             </div>
-                            <p className="mt-2 text-xs leading-relaxed text-emerald-700">{explanations.valueCandidate}</p>
+                            <p className="mt-2 text-xs leading-relaxed text-emerald-700">{explanations.opponentCandidate}</p>
                           </>
                         ) : (
                           <p className="mt-1 text-sm text-slate-500">相手候補なし</p>
+                        )}
+                      </div>
+
+                      <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3">
+                        <p className="text-xs font-semibold text-rose-800">ワイド高配当狙い</p>
+                        {widePick ? (
+                          <>
+                            <p className="mt-1 text-sm font-bold text-slate-800">{widePick.horse.name}</p>
+                            <div className="mt-1 space-y-0.5 text-[11px] text-slate-500">
+                              <p>valueScore {widePick.valueScore.toFixed(3)} / {Number(widePick.horse.realOdds).toFixed(1)}倍</p>
+                              <p>複勝寄り期待 {widePick.fukuRoi.toFixed(0)}% / placeProb {(widePick.placeProb * 100).toFixed(0)}%</p>
+                            </div>
+                            <p className="mt-2 text-xs leading-relaxed text-rose-700">{explanations.wideLongshot}</p>
+                          </>
+                        ) : (
+                          <p className="mt-1 text-sm text-slate-500">ワイド高配当狙いなし</p>
                         )}
                       </div>
                     </div>
