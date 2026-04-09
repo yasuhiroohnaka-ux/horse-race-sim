@@ -16,6 +16,7 @@
     "review:snapshot": "npx tsx scripts/process-review-records.ts --phase=snapshot",
     "review:settle": "npx tsx scripts/process-review-records.ts --phase=settle",
     "review:pipeline": "npx tsx scripts/process-review-records.ts --phase=all",
+    "review:rebuild": "npx tsx scripts/process-review-records.ts --phase=all --include-archives --refresh-existing",
     "routine:keiba": "node scripts/keiba-routine.mjs",
     "audit:entry-data": "node scripts/daily-entry-check.mjs"
   },

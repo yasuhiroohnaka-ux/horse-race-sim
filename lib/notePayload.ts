@@ -318,11 +318,11 @@ function buildSummaryBlocks(
     },
     {
       key: "value_core",
-      title: "妙味複勝候補はどうだったか",
+      title: "ワイド高配当狙いはどうだったか",
       points: [
-        `妙味候補あり率 ${formatRate(diagnostics.valueCore.candidateRate)} (${diagnostics.valueCore.raceCount}R / skip ${diagnostics.valueCore.skippedCount}R)`,
-        `妙味候補 複勝率 ${formatRate(diagnostics.valueCore.placeRate)}`,
-        `妙味候補 複回収率 ${formatReturnRate(diagnostics.valueCore.placeReturnRate)}`,
+        `ワイド高配当狙いあり率 ${formatRate(diagnostics.valueCore.candidateRate)} (${diagnostics.valueCore.raceCount}R / skip ${diagnostics.valueCore.skippedCount}R)`,
+        `ワイド高配当狙い 複勝率 ${formatRate(diagnostics.valueCore.placeRate)}`,
+        `ワイド高配当狙い 複回収率 ${formatReturnRate(diagnostics.valueCore.placeReturnRate)}`,
         `人気薄帯 複回収率 ${formatReturnRate(diagnostics.valueCore.longshot.placeReturnRate)}`,
       ],
     },

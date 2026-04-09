@@ -407,7 +407,11 @@ async function loadSettlementsByRaceId(scope: DiagnosticsAggregationScope) {
         }
       : null;
 
-    const value = record.opponent
+    const valueSource = record.wide ?? record.legacyValue;
+    const normalizedValueSource = valueSource
+      ? (valueSource as Partial<RecommendationSettlement> & { horseId: string; horseName?: string | null })
+      : null;
+    const value = normalizedValueSource
       ? {
           courseId: record.courseId,
           raceId: record.raceId,
@@ -415,32 +419,32 @@ async function loadSettlementsByRaceId(scope: DiagnosticsAggregationScope) {
           pickType: "value" as const,
           predictionOrigin: normalizePredictionOrigin(snapshotOrigin, "saved_live"),
           scoringVersion: normalizeScoringVersion(record.snapshot?.scoringVersion, DEFAULT_SCORING_VERSION),
-          horseId: record.opponent.horseId,
-          horseName: record.opponent.horseName ?? record.opponent.horseId,
+          horseId: normalizedValueSource.horseId,
+          horseName: normalizedValueSource.horseName ?? normalizedValueSource.horseId,
           postedAt: record.snapshotTakenAt,
           settledAt: record.payoutFetchedAt ?? record.resultFetchedAt,
-          settlementStatus: record.opponent.settlementStatus ?? "pending_result",
-          tanOutcome: record.opponent.tanOutcome ?? "not_settled",
-          fukuOutcome: record.opponent.fukuOutcome ?? "not_settled",
-          tanPayout: Number(record.opponent.tanPayout ?? 0),
-          fukuPayout: Number(record.opponent.fukuPayout ?? 0),
-          tanPayoutSource: record.opponent.tanPayoutSource ?? "missing",
-          fukuPayoutSource: record.opponent.fukuPayoutSource ?? "missing",
+          settlementStatus: normalizedValueSource.settlementStatus ?? "pending_result",
+          tanOutcome: normalizedValueSource.tanOutcome ?? "not_settled",
+          fukuOutcome: normalizedValueSource.fukuOutcome ?? "not_settled",
+          tanPayout: Number(normalizedValueSource.tanPayout ?? 0),
+          fukuPayout: Number(normalizedValueSource.fukuPayout ?? 0),
+          tanPayoutSource: normalizedValueSource.tanPayoutSource ?? "missing",
+          fukuPayoutSource: normalizedValueSource.fukuPayoutSource ?? "missing",
           actualWinnerHorseId: record.actualWinnerHorseId,
           actualTop3HorseIds: record.actualTop3HorseIds,
-          realOdds: Number(record.opponent.realOdds ?? 0),
-          placeOdds: Number(record.opponent.placeOdds ?? 0),
-          winProb: Number(record.opponent.winProb ?? 0),
-          placeProb: Number(record.opponent.placeProb ?? 0),
-          placeScore: Number(record.opponent.placeScore ?? 0),
-          valueScore: Number(record.opponent.valueScore ?? 0),
-          selectionReason: record.opponent.selectionReason ?? null,
-          scoreGap: Number(record.opponent.scoreGap ?? 0),
-          runnerUpHorseId: record.opponent.runnerUpHorseId ?? null,
-          runnerUpHorseName: record.opponent.runnerUpHorseName ?? null,
-          runnerUpPlaceScore: Number(record.opponent.runnerUpPlaceScore ?? 0),
-          runnerUpPlaceProb: Number(record.opponent.runnerUpPlaceProb ?? 0),
-          overbetLabel: record.opponent.overbetLabel ?? null,
+          realOdds: Number(normalizedValueSource.realOdds ?? 0),
+          placeOdds: Number(normalizedValueSource.placeOdds ?? 0),
+          winProb: Number(normalizedValueSource.winProb ?? 0),
+          placeProb: Number(normalizedValueSource.placeProb ?? 0),
+          placeScore: Number(normalizedValueSource.placeScore ?? 0),
+          valueScore: Number(normalizedValueSource.valueScore ?? 0),
+          selectionReason: normalizedValueSource.selectionReason ?? null,
+          scoreGap: Number(normalizedValueSource.scoreGap ?? 0),
+          runnerUpHorseId: normalizedValueSource.runnerUpHorseId ?? null,
+          runnerUpHorseName: normalizedValueSource.runnerUpHorseName ?? null,
+          runnerUpPlaceScore: Number(normalizedValueSource.runnerUpPlaceScore ?? 0),
+          runnerUpPlaceProb: Number(normalizedValueSource.runnerUpPlaceProb ?? 0),
+          overbetLabel: normalizedValueSource.overbetLabel ?? null,
         }
       : null;
 

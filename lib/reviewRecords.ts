@@ -198,6 +198,7 @@ export function createReviewRecordFromSnapshot(params: {
   snapshot: PredictionSnapshot;
   honmei: ReviewSelectionHorse | null;
   opponent: ReviewSelectionHorse | null;
+  wide: ReviewSelectionHorse | null;
   now?: string;
 }): RaceReviewRecord {
   const now = normalizeString(params.now) ?? new Date().toISOString();
@@ -233,6 +234,7 @@ export function createReviewRecordFromSnapshot(params: {
     snapshot: params.snapshot,
     honmei: params.honmei,
     opponent: params.opponent,
+    wide: params.wide,
     legacyValue: null,
     actualWinnerHorseId: null,
     actualTop3HorseIds: [],
@@ -259,6 +261,7 @@ export function mergeReviewRecord(
     snapshot: next.snapshot ?? existing.snapshot,
     honmei: next.honmei ?? existing.honmei,
     opponent: next.opponent ?? existing.opponent,
+    wide: next.wide ?? existing.wide,
     legacyValue: next.legacyValue ?? existing.legacyValue,
     createdAt: existing.createdAt,
     updatedAt: normalizeString(next.updatedAt) ?? new Date().toISOString(),

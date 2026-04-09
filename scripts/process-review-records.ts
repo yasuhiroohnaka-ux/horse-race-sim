@@ -55,11 +55,24 @@ type WeeklyRacesFile = {
     weekOf?: string;
     races?: WeeklyRace[];
   };
+  archives?: Array<{
+    weekOf?: string;
+    races?: WeeklyRace[];
+  }>;
+};
+
+type RaceScope = {
+  weekOf: string | null;
+  race: WeeklyRace;
 };
 
 function argValue(name: string): string | null {
   const matched = process.argv.find((arg) => arg.startsWith(`--${name}=`));
   return matched ? matched.slice(name.length + 3) : null;
+}
+
+function hasFlag(name: string) {
+  return process.argv.includes(`--${name}`) || argValue(name) === "true";
 }
 
 function normalizeString(value: unknown): string | null {
@@ -94,6 +107,12 @@ function createDefaultCondition(courseId: string) {
     windSpeed: 3,
     paceScenario: "Average" as const,
   };
+}
+
+function hasConfirmedResult(race: WeeklyRace) {
+  const winnerHorseId = normalizeString(race.result?.winnerHorseId);
+  const top3HorseIds = Array.isArray(race.result?.top3HorseIds) ? race.result?.top3HorseIds.filter(Boolean) : [];
+  return Boolean(winnerHorseId && top3HorseIds.length > 0);
 }
 
 function isCancelledHorse(horse: Record<string, unknown> | null | undefined) {
@@ -140,6 +159,30 @@ async function withProcessLock<T>(fn: () => Promise<T>): Promise<T> {
 async function readWeeklyRaces(): Promise<WeeklyRacesFile> {
   const raw = await fs.readFile(WEEKLY_RACES_PATH, "utf8");
   return JSON.parse(raw.replace(/^\uFEFF/, ""));
+}
+
+function collectRaceScopes(weekly: WeeklyRacesFile, includeArchives: boolean): RaceScope[] {
+  const scopes: RaceScope[] = [];
+  const currentWeekOf = normalizeString(weekly.currentWeek?.weekOf);
+  const currentRaces = Array.isArray(weekly.currentWeek?.races) ? weekly.currentWeek?.races ?? [] : [];
+  for (const race of currentRaces) {
+    scopes.push({ weekOf: currentWeekOf, race });
+  }
+
+  if (!includeArchives) {
+    return scopes;
+  }
+
+  const archives = Array.isArray(weekly.archives) ? weekly.archives : [];
+  for (const archive of archives) {
+    const archiveWeekOf = normalizeString(archive.weekOf);
+    const archiveRaces = Array.isArray(archive.races) ? archive.races ?? [] : [];
+    for (const race of archiveRaces) {
+      scopes.push({ weekOf: archiveWeekOf, race });
+    }
+  }
+
+  return scopes;
 }
 
 function raceHorseById(race: WeeklyRace, horseId: string | null | undefined) {
@@ -261,28 +304,30 @@ async function appendSnapshot(snapshot: PredictionSnapshot) {
 }
 
 async function createSnapshotRecords(params: {
-  races: WeeklyRace[];
-  weekOf: string | null;
+  races: RaceScope[];
   now: Date;
   dayFilter: DayLabel | null;
   raceIdFilter: string | null;
+  refreshExisting: boolean;
 }) {
   const records = await loadReviewRecords();
   const nextRecords: RaceReviewRecord[] = [];
 
-  for (const race of params.races) {
+  for (const { race, weekOf } of params.races) {
     const raceId = extractRaceId(race.raceId ?? race.courseId);
     if (!raceId) continue;
     if (params.dayFilter && race.day !== params.dayFilter) continue;
     if (params.raceIdFilter && raceId !== params.raceIdFilter) continue;
 
-    const raceDate = safeRaceDate(race, params.weekOf);
+    const raceDate = safeRaceDate(race, weekOf);
     const scheduledStart = combineRaceDateAndTime(raceDate, normalizeString(race.scheduledStartTime));
-    if (!scheduledStart) continue;
-
-    const snapshotDueAt = new Date(new Date(scheduledStart).getTime() - 5 * 60_000);
-    if (params.now.getTime() < snapshotDueAt.getTime()) continue;
-    if (records[raceId]?.snapshot) continue;
+    if (scheduledStart) {
+      const snapshotDueAt = new Date(new Date(scheduledStart).getTime() - 5 * 60_000);
+      if (params.now.getTime() < snapshotDueAt.getTime()) continue;
+    } else if (!hasConfirmedResult(race)) {
+      continue;
+    }
+    if (records[raceId]?.snapshot && !params.refreshExisting) continue;
 
     const course = {
       id: race.courseId,
@@ -380,6 +425,16 @@ async function createSnapshotRecords(params: {
         }
       : null;
     const opponent = buildSelectionHorseFromPairEntry(opponentBase, "rank2");
+    const widePick = tanpukuPair?.widePick ?? tanpukuPair?.valuePick ?? null;
+    const wide = buildSelectionHorseFromPairEntry(
+      widePick
+        ? {
+            ...widePick,
+            rank: rankMap.get(String(widePick.horse.id)) ?? null,
+          }
+        : null,
+      "light_adjusted"
+    );
 
     if (opponent?.horseId) {
       snapshot.opponentHorseId = opponent.horseId;
@@ -396,12 +451,16 @@ async function createSnapshotRecords(params: {
           : snapshot.pairRankGap ?? null;
     }
 
+    if (wide?.horseId) {
+      snapshot.valueHorseId = wide.horseId;
+    }
+
     const reviewRecord = createReviewRecordFromSnapshot({
       meta: buildReviewRaceMeta({
         raceId,
         courseId: race.courseId,
         raceDate,
-        weekOf: params.weekOf,
+        weekOf,
         day: normalizeString(race.day),
         raceName: normalizeString(race.label),
         venue: normalizeString(race.venue),
@@ -412,11 +471,14 @@ async function createSnapshotRecords(params: {
       snapshot,
       honmei,
       opponent,
+      wide,
       now: toIso(params.now),
     });
 
     nextRecords.push(reviewRecord);
-    await appendSnapshot(snapshot);
+    if (!records[raceId]?.snapshot) {
+      await appendSnapshot(snapshot);
+    }
   }
 
   await upsertManyReviewRecords(nextRecords);
@@ -459,16 +521,16 @@ function settleSelection(
 }
 
 async function settleReviewRecords(params: {
-  races: WeeklyRace[];
-  weekOf: string | null;
+  races: RaceScope[];
   now: Date;
   dayFilter: DayLabel | null;
   raceIdFilter: string | null;
+  refreshExisting: boolean;
 }) {
   const records = await loadReviewRecords();
   const nextRecords: RaceReviewRecord[] = [];
 
-  for (const race of params.races) {
+  for (const { race, weekOf } of params.races) {
     const raceId = extractRaceId(race.raceId ?? race.courseId);
     if (!raceId) continue;
     if (params.dayFilter && race.day !== params.dayFilter) continue;
@@ -476,13 +538,16 @@ async function settleReviewRecords(params: {
 
     const existing = records[raceId];
     if (!existing?.snapshot) continue;
-    if (existing.status === "review_ready") continue;
+    if (existing.status === "review_ready" && !params.refreshExisting) continue;
 
-    const raceDate = safeRaceDate(race, params.weekOf);
+    const raceDate = safeRaceDate(race, weekOf);
     const scheduledStart = normalizeString(existing.meta.scheduledStartTime) ?? combineRaceDateAndTime(raceDate, normalizeString(race.scheduledStartTime));
-    if (!scheduledStart) continue;
-    const settleDueAt = new Date(new Date(scheduledStart).getTime() + 20 * 60_000);
-    if (params.now.getTime() < settleDueAt.getTime()) continue;
+    if (scheduledStart) {
+      const settleDueAt = new Date(new Date(scheduledStart).getTime() + 20 * 60_000);
+      if (params.now.getTime() < settleDueAt.getTime()) continue;
+    } else if (!hasConfirmedResult(race)) {
+      continue;
+    }
 
     const winnerHorseId = normalizeString(race.result?.winnerHorseId);
     const top3HorseIds = Array.isArray(race.result?.top3HorseIds) ? race.result?.top3HorseIds.map((value) => String(value)) : [];
@@ -490,6 +555,7 @@ async function settleReviewRecords(params: {
 
     const settledHonmei = settleSelection(race, existing.honmei, true);
     const settledOpponent = settleSelection(race, existing.opponent, false);
+    const settledWide = settleSelection(race, existing.wide, false);
 
     const honmeiFinisher = findHorseFinisher(race, existing.honmei?.horseId);
     const opponentFinisher = findHorseFinisher(race, existing.opponent?.horseId);
@@ -531,6 +597,7 @@ async function settleReviewRecords(params: {
       actualTop3HorseIds: top3HorseIds,
       honmei: settledHonmei,
       opponent: settledOpponent,
+      wide: settledWide,
       pair: {
         ...existing.pair,
         honmeiHorseId: existing.honmei?.horseId ?? null,
@@ -559,6 +626,8 @@ async function main() {
   const dayFilter = (argValue("day") ?? "") as DayLabel | "";
   const raceIdFilter = extractRaceId(argValue("race-id"));
   const nowArg = argValue("now");
+  const includeArchives = hasFlag("include-archives") || argValue("scope") === "all";
+  const refreshExisting = hasFlag("refresh-existing");
   const now = nowArg ? new Date(nowArg) : jstNow();
   if (Number.isNaN(now.getTime())) {
     throw new Error(`invalid --now value: ${nowArg}`);
@@ -566,8 +635,7 @@ async function main() {
 
   const result = await withProcessLock(async () => {
     const weekly = await readWeeklyRaces();
-    const weekOf = normalizeString(weekly.currentWeek?.weekOf);
-    const races = Array.isArray(weekly.currentWeek?.races) ? weekly.currentWeek?.races ?? [] : [];
+    const races = collectRaceScopes(weekly, includeArchives);
     const normalizedDayFilter = dayFilter === "Sat" || dayFilter === "Sun" ? dayFilter : null;
 
     let snapshotsCreated = 0;
@@ -576,26 +644,29 @@ async function main() {
     if (phase === "snapshot" || phase === "all") {
       snapshotsCreated = await createSnapshotRecords({
         races,
-        weekOf,
         now,
         dayFilter: normalizedDayFilter,
         raceIdFilter,
+        refreshExisting,
       });
     }
 
     if (phase === "settle" || phase === "all") {
       reviewsSettled = await settleReviewRecords({
         races,
-        weekOf,
         now,
         dayFilter: normalizedDayFilter,
         raceIdFilter,
+        refreshExisting,
       });
     }
 
     return {
       ok: true,
       phase,
+      includeArchives,
+      refreshExisting,
+      targetRaceCount: races.length,
       snapshotsCreated,
       reviewsSettled,
       now: toIso(now),

@@ -121,6 +121,7 @@ function normalizeSelectionBundle(selection: ReviewSelectionHorse | ReviewLegacy
 
 function settlementBundle(record: RaceReviewRecord) {
   const opponent = normalizeSelectionBundle(record.opponent, record.snapshotTakenAt);
+  const wide = normalizeSelectionBundle(record.wide, record.snapshotTakenAt);
   const legacyValue = normalizeSelectionBundle(record.legacyValue, record.snapshotTakenAt);
 
   return {
@@ -152,7 +153,8 @@ function settlementBundle(record: RaceReviewRecord) {
         }
       : null,
     opponent,
-    value: opponent ?? legacyValue,
+    wide,
+    value: wide ?? legacyValue,
     legacyValue,
     meta: {
       status: record.status,

@@ -65,6 +65,7 @@ type AggregateSummary = {
 type RecommendationSettlementBundle = {
   win: RecommendationSettlement | null;
   opponent?: RecommendationSettlement | null;
+  wide?: RecommendationSettlement | null;
   value?: RecommendationSettlement | null;
   meta?: { status?: string; reviewReady?: boolean; compatibilityMode?: "native_opponent" | "legacy_value_candidate" } | null;
 };
@@ -193,16 +194,16 @@ function renderWideStatsSummary(wideStats: WeeklyDiagnosticsWideStats | null) {
     <section className="mt-6 space-y-4">
       <div>
         <h2 className="text-lg font-bold text-slate-900">ワイド検証</h2>
-        <p className="mt-1 text-sm text-slate-500">本命候補と相手候補のワイド成績を補助的に確認します。</p>
+        <p className="mt-1 text-sm text-slate-500">本命候補とワイド高配当狙いのワイド成績を補助的に確認します。</p>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
-        <SummaryCard title="本命候補 × 相手候補" tone="border-cyan-200 bg-cyan-50 text-cyan-900">
+        <SummaryCard title="本命候補 × ワイド高配当狙い" tone="border-cyan-200 bg-cyan-50 text-cyan-900">
           <SummaryMetric label="対象レース数" value={`${pair.targetRaceCount}R`} />
-          <SummaryMetric label="相手候補あり" value={`${pair.valueCandidateRaceCount}R`} />
+          <SummaryMetric label="ワイド高配当狙いあり" value={`${pair.valueCandidateRaceCount}R`} />
           <SummaryMetric label="的中率" value={formatRate(pair.hitRate)} />
           <SummaryMetric label="回収率" value={formatRate(pair.returnRate)} />
         </SummaryCard>
-        <SummaryCard title="シミュ本命 / 本命候補 / 相手候補 BOX" tone="border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900">
+        <SummaryCard title="シミュ本命 / 本命候補 / ワイド高配当狙い BOX" tone="border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900">
           <SummaryMetric label="対象レース数" value={`${box.targetRaceCount}R`} />
           <SummaryMetric label="的中率" value={formatRate(box.hitRate)} />
           <SummaryMetric label="回収率" value={formatRate(box.returnRate)} />
@@ -213,8 +214,11 @@ function renderWideStatsSummary(wideStats: WeeklyDiagnosticsWideStats | null) {
 }
 
 function renderReviewCard(race: ReviewCard, snapshot: PredictionSnapshot | undefined, settlement: RecommendationSettlementBundle | null) {
-  const opponent = settlement?.opponent ?? settlement?.value ?? null;
-  const opponentHorseId = snapshot?.opponentHorseId ?? snapshot?.valueHorseId ?? null;
+  const opponent =
+    settlement?.opponent ??
+    (settlement?.meta?.compatibilityMode === "legacy_value_candidate" ? settlement?.value ?? null : null);
+  const opponentHorseId = snapshot?.opponentHorseId ?? null;
+  const wideHorseId = snapshot?.valueHorseId ?? null;
   const topRows = snapshot ? [...snapshot.rankedRows].sort((a, b) => a.rank - b.rank).slice(0, 3) : [];
   const resultText = race.result?.top3HorseNames?.length ? `1着 ${race.result?.top3HorseNames?.[0] ?? "-"} / 2着 ${race.result?.top3HorseNames?.[1] ?? "-"} / 3着 ${race.result?.top3HorseNames?.[2] ?? "-"}` : null;
 
@@ -236,8 +240,9 @@ function renderReviewCard(race: ReviewCard, snapshot: PredictionSnapshot | undef
             <>
               <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-slate-600">
                 <span className="rounded-full bg-white px-3 py-1">取得 {formatTimestamp(snapshot.snapshotTakenAt ?? snapshot.capturedAt)}</span>
-                <span className="rounded-full bg-sky-100 px-3 py-1">本命 {getSnapshotHorseDisplay(snapshot, snapshot.honmeiHorseId)}</span>
-                <span className="rounded-full bg-emerald-100 px-3 py-1">相手 {getSnapshotHorseDisplay(snapshot, opponentHorseId)}</span>
+                <span className="rounded-full bg-sky-100 px-3 py-1">シミュ本命 {getSnapshotHorseDisplay(snapshot, snapshot.honmeiHorseId)}</span>
+                <span className="rounded-full bg-emerald-100 px-3 py-1">相手候補 {getSnapshotHorseDisplay(snapshot, opponentHorseId)}</span>
+                {wideHorseId ? <span className="rounded-full bg-rose-100 px-3 py-1">ワイド高配当狙い {getSnapshotHorseDisplay(snapshot, wideHorseId)}</span> : null}
               </div>
               <div className="mt-3 space-y-2">
                 {topRows.map((row) => (

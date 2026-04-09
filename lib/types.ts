@@ -266,6 +266,7 @@ export interface RaceReviewRecord {
   snapshot: PredictionSnapshot | null;
   honmei: ReviewSelectionHorse | null;
   opponent: ReviewSelectionHorse | null;
+  wide: ReviewSelectionHorse | null;
   legacyValue: ReviewLegacyValueSelection | null;
   actualWinnerHorseId: string | null;
   actualTop3HorseIds: string[];
