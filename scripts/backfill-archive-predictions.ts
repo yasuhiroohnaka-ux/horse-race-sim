@@ -881,6 +881,22 @@ async function main() {
       continue;
     }
 
+    const routinePair = pickRoutineTanpukuPair(
+      {
+        courseId: race.courseId,
+        label: race.label,
+        day: race.day,
+        distance: race.distance,
+        straightLength: race.straightLength,
+        trackBias: { innerOuter: 0, frontBack: 0 },
+        horses: race.horses,
+      },
+      false,
+      true
+    );
+    const routineOpponentEntry = routinePair?.opponentPick ?? null;
+    const routineWideEntry = routinePair?.widePick ?? routinePair?.valuePick ?? null;
+
     let snapshot = latestByRaceId[raceId];
     if (!snapshot) {
       const course = getArchivedCourse(race);
@@ -898,6 +914,15 @@ async function main() {
         oddsSource: race.oddsSource ?? "official",
         predictionOrigin: "backfill",
         scoringVersion: DEFAULT_SCORING_VERSION,
+        opponentOverride: routineOpponentEntry
+          ? {
+              horseId: routineOpponentEntry.horse.id,
+              selectionMethod: "stable_next",
+              score: routineOpponentEntry.placeScore,
+              pairScoreGap: routineOpponentEntry.scoreGap ?? null,
+            }
+          : null,
+        valueHorseId: routineWideEntry?.horse?.id ?? null,
       });
       latestByRaceId[raceId] = snapshot;
       appendedSnapshotLines.push(JSON.stringify(snapshot));
@@ -909,6 +934,10 @@ async function main() {
         ...snapshot,
         predictionOrigin: "backfill",
         scoringVersion: DEFAULT_SCORING_VERSION,
+        opponentHorseId: routineOpponentEntry?.horse.id ?? snapshot.opponentHorseId ?? null,
+        opponentSelectionMethod: routineOpponentEntry ? "stable_next" : snapshot.opponentSelectionMethod,
+        opponentScore: routineOpponentEntry?.placeScore ?? snapshot.opponentScore ?? null,
+        valueHorseId: routineWideEntry?.horse.id ?? snapshot.valueHorseId ?? null,
         capturedAt: new Date().toISOString(),
       };
       latestByRaceId[raceId] = snapshot;
@@ -918,19 +947,6 @@ async function main() {
     const postedAt = createPostedAt(raceDate);
     const winKey = buildRecommendationKey(race.courseId, "win");
     const valueKey = buildRecommendationKey(race.courseId, "value");
-    const routinePair = pickRoutineTanpukuPair(
-      {
-        courseId: race.courseId,
-        label: race.label,
-        day: race.day,
-        distance: race.distance,
-        straightLength: race.straightLength,
-        trackBias: { innerOuter: 0, frontBack: 0 },
-        horses: race.horses,
-      },
-      false,
-      true
-    );
     const routineWinEntry = routinePair?.winPick ?? null;
     const routineValueEntry = routinePair?.valuePick ?? null;
     const winRow =

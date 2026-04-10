@@ -1,0 +1,4522 @@
+{
+  "meta": {
+    "generatedAt": "2026-04-10T15:32:05.140Z",
+    "analysisStartDate": "2026-02-22",
+    "availableRaceDateRange": {
+      "start": "2026-03-06",
+      "end": "2026-04-05"
+    },
+    "dataSources": [
+      "data/review-records.json",
+      "lib/generatedRaceSchedule.ts",
+      "lib/tanpukuSelection.mjs"
+    ],
+    "notes": [
+      "Workspace-local data was recoverable from 2026-03-06 onward; February races were not present in the current repository snapshot.",
+      "Current tanpuku metrics were recomputed with pickTanpukuPair for every archived race horse.",
+      "Snapshot edge and sim rank data were read from review-records current v2.2 snapshots."
+    ]
+  },
+  "counts": {
+    "raceCount": 39,
+    "horseCount": 562,
+    "eligibleHorseCount": 554
+  },
+  "selectionReproducibility": {
+    "totalRacesCompared": 39,
+    "honmeiMatchCount": 39,
+    "opponentMatchCount": 39,
+    "wideMatchCount": 39
+  },
+  "datasetColumns": [
+    "raceId",
+    "raceDate",
+    "raceName",
+    "courseId",
+    "venue",
+    "venueKey",
+    "surface",
+    "distance",
+    "grade",
+    "raceNumber",
+    "raceSegment",
+    "isSpecialRace",
+    "isFinalRace",
+    "isJumpRace",
+    "fieldSize",
+    "horseId",
+    "externalHorseId",
+    "horseName",
+    "jockey",
+    "runningStyle",
+    "gateNumber",
+    "horseNumber",
+    "finishPosition",
+    "finishGroup",
+    "isWinner",
+    "isTop3",
+    "popularity",
+    "popularityBand",
+    "odds",
+    "resultOdds",
+    "seedRealOdds",
+    "isPopularTop3",
+    "isLongshotHit",
+    "simRank",
+    "simScore",
+    "simWinProbPct",
+    "simWinProb",
+    "fairOdds",
+    "edge",
+    "placeRank",
+    "valueRank",
+    "winProb",
+    "placeProb",
+    "placeOdds",
+    "placeScore",
+    "valueScore",
+    "top3Stability",
+    "marketSupport",
+    "overbetRisk",
+    "placeReturnEdge",
+    "longshotBonus",
+    "officialImplied",
+    "tanRoi",
+    "fukuRoi",
+    "overbetLabel",
+    "scoreGap",
+    "selectionScoreGap",
+    "valueGap",
+    "simGap",
+    "isSimHonmei",
+    "isTanpukuHonmei",
+    "isOpponentCandidate",
+    "isWideCandidate",
+    "isAnyCandidate",
+    "candidateRole"
+  ],
+  "missingData": {
+    "raceCount": 39,
+    "horseCount": 562,
+    "missingReviewRaceIds": [],
+    "missingFinishPositionCount": 8,
+    "missingPopularityCount": 8,
+    "missingOddsCount": 0,
+    "missingEdgeCount": 0
+  },
+  "finishGroups": [
+    {
+      "metric": "simWinProb",
+      "groups": [
+        {
+          "key": "finish_1",
+          "label": "1着馬",
+          "stats": {
+            "count": 39,
+            "mean": 0.092,
+            "median": 0.048,
+            "q1": 0.027,
+            "q3": 0.096,
+            "min": 0.02,
+            "max": 0.502,
+            "stddev": 0.106
+          }
+        },
+        {
+          "key": "finish_2_3",
+          "label": "2-3着馬",
+          "stats": {
+            "count": 78,
+            "mean": 0.126,
+            "median": 0.072,
+            "q1": 0.03,
+            "q3": 0.198,
+            "min": 0.02,
+            "max": 0.589,
+            "stddev": 0.126
+          }
+        },
+        {
+          "key": "finish_4_plus",
+          "label": "4着以下",
+          "stats": {
+            "count": 437,
+            "mean": 0.057,
+            "median": 0.029,
+            "q1": 0.023,
+            "q3": 0.061,
+            "min": 0.02,
+            "max": 0.564,
+            "stddev": 0.065
+          }
+        }
+      ]
+    },
+    {
+      "metric": "edge",
+      "groups": [
+        {
+          "key": "finish_1",
+          "label": "1着馬",
+          "stats": {
+            "count": 39,
+            "mean": -10.182,
+            "median": -8.2,
+            "q1": -17.45,
+            "q3": -1.2,
+            "min": -53.8,
+            "max": 22.7,
+            "stddev": 16.589
+          }
+        },
+        {
+          "key": "finish_2_3",
+          "label": "2-3着馬",
+          "stats": {
+            "count": 78,
+            "mean": -4.518,
+            "median": -3.2,
+            "q1": -11.5,
+            "q3": 0.8,
+            "min": -46.5,
+            "max": 40.8,
+            "stddev": 13.023
+          }
+        },
+        {
+          "key": "finish_4_plus",
+          "label": "4着以下",
+          "stats": {
+            "count": 437,
+            "mean": -0.812,
+            "median": -0.1,
+            "q1": -3.7,
+            "q3": 1.9,
+            "min": -75,
+            "max": 33.9,
+            "stddev": 8.631
+          }
+        }
+      ]
+    },
+    {
+      "metric": "placeProb",
+      "groups": [
+        {
+          "key": "finish_1",
+          "label": "1着馬",
+          "stats": {
+            "count": 39,
+            "mean": 0.628,
+            "median": 0.618,
+            "q1": 0.565,
+            "q3": 0.698,
+            "min": 0.38,
+            "max": 0.88,
+            "stddev": 0.114
+          }
+        },
+        {
+          "key": "finish_2_3",
+          "label": "2-3着馬",
+          "stats": {
+            "count": 78,
+            "mean": 0.625,
+            "median": 0.627,
+            "q1": 0.568,
+            "q3": 0.678,
+            "min": 0.432,
+            "max": 0.88,
+            "stddev": 0.095
+          }
+        },
+        {
+          "key": "finish_4_plus",
+          "label": "4着以下",
+          "stats": {
+            "count": 437,
+            "mean": 0.53,
+            "median": 0.526,
+            "q1": 0.48,
+            "q3": 0.577,
+            "min": 0.38,
+            "max": 0.88,
+            "stddev": 0.073
+          }
+        }
+      ]
+    },
+    {
+      "metric": "placeScore",
+      "groups": [
+        {
+          "key": "finish_1",
+          "label": "1着馬",
+          "stats": {
+            "count": 39,
+            "mean": 0.52,
+            "median": 0.502,
+            "q1": 0.438,
+            "q3": 0.607,
+            "min": 0.272,
+            "max": 0.786,
+            "stddev": 0.131
+          }
+        },
+        {
+          "key": "finish_2_3",
+          "label": "2-3着馬",
+          "stats": {
+            "count": 78,
+            "mean": 0.512,
+            "median": 0.51,
+            "q1": 0.438,
+            "q3": 0.574,
+            "min": 0.31,
+            "max": 0.793,
+            "stddev": 0.109
+          }
+        },
+        {
+          "key": "finish_4_plus",
+          "label": "4着以下",
+          "stats": {
+            "count": 437,
+            "mean": 0.404,
+            "median": 0.397,
+            "q1": 0.345,
+            "q3": 0.451,
+            "min": 0.272,
+            "max": 0.769,
+            "stddev": 0.077
+          }
+        }
+      ]
+    },
+    {
+      "metric": "valueScore",
+      "groups": [
+        {
+          "key": "finish_1",
+          "label": "1着馬",
+          "stats": {
+            "count": 39,
+            "mean": 0.586,
+            "median": 0.6,
+            "q1": 0.548,
+            "q3": 0.631,
+            "min": 0.387,
+            "max": 0.714,
+            "stddev": 0.076
+          }
+        },
+        {
+          "key": "finish_2_3",
+          "label": "2-3着馬",
+          "stats": {
+            "count": 78,
+            "mean": 0.602,
+            "median": 0.603,
+            "q1": 0.561,
+            "q3": 0.663,
+            "min": 0.439,
+            "max": 0.736,
+            "stddev": 0.069
+          }
+        },
+        {
+          "key": "finish_4_plus",
+          "label": "4着以下",
+          "stats": {
+            "count": 437,
+            "mean": 0.545,
+            "median": 0.543,
+            "q1": 0.459,
+            "q3": 0.63,
+            "min": 0.387,
+            "max": 0.738,
+            "stddev": 0.095
+          }
+        }
+      ]
+    },
+    {
+      "metric": "top3Stability",
+      "groups": [
+        {
+          "key": "finish_1",
+          "label": "1着馬",
+          "stats": {
+            "count": 39,
+            "mean": 0.558,
+            "median": 0.564,
+            "q1": 0.51,
+            "q3": 0.625,
+            "min": 0.28,
+            "max": 0.818,
+            "stddev": 0.131
+          }
+        },
+        {
+          "key": "finish_2_3",
+          "label": "2-3着馬",
+          "stats": {
+            "count": 78,
+            "mean": 0.556,
+            "median": 0.567,
+            "q1": 0.493,
+            "q3": 0.636,
+            "min": 0.305,
+            "max": 0.795,
+            "stddev": 0.111
+          }
+        },
+        {
+          "key": "finish_4_plus",
+          "label": "4着以下",
+          "stats": {
+            "count": 437,
+            "mean": 0.448,
+            "median": 0.447,
+            "q1": 0.363,
+            "q3": 0.527,
+            "min": 0.28,
+            "max": 0.823,
+            "stddev": 0.102
+          }
+        }
+      ]
+    },
+    {
+      "metric": "placeReturnEdge",
+      "groups": [
+        {
+          "key": "finish_1",
+          "label": "1着馬",
+          "stats": {
+            "count": 39,
+            "mean": 0.588,
+            "median": 0.591,
+            "q1": 0.39,
+            "q3": 0.79,
+            "min": 0.259,
+            "max": 0.975,
+            "stddev": 0.225
+          }
+        },
+        {
+          "key": "finish_2_3",
+          "label": "2-3着馬",
+          "stats": {
+            "count": 78,
+            "mean": 0.636,
+            "median": 0.644,
+            "q1": 0.449,
+            "q3": 0.828,
+            "min": 0.246,
+            "max": 0.99,
+            "stddev": 0.212
+          }
+        },
+        {
+          "key": "finish_4_plus",
+          "label": "4着以下",
+          "stats": {
+            "count": 437,
+            "mean": 0.601,
+            "median": 0.563,
+            "q1": 0.4,
+            "q3": 0.804,
+            "min": 0.178,
+            "max": 0.995,
+            "stddev": 0.211
+          }
+        }
+      ]
+    },
+    {
+      "metric": "scoreGap",
+      "groups": [
+        {
+          "key": "finish_1",
+          "label": "1着馬",
+          "stats": {
+            "count": 39,
+            "mean": 0.128,
+            "median": 0.117,
+            "q1": 0,
+            "q3": 0.207,
+            "min": 0,
+            "max": 0.479,
+            "stddev": 0.117
+          }
+        },
+        {
+          "key": "finish_2_3",
+          "label": "2-3着馬",
+          "stats": {
+            "count": 78,
+            "mean": 0.136,
+            "median": 0.127,
+            "q1": 0.013,
+            "q3": 0.222,
+            "min": 0,
+            "max": 0.391,
+            "stddev": 0.115
+          }
+        },
+        {
+          "key": "finish_4_plus",
+          "label": "4着以下",
+          "stats": {
+            "count": 437,
+            "mean": 0.234,
+            "median": 0.241,
+            "q1": 0.151,
+            "q3": 0.321,
+            "min": 0,
+            "max": 0.484,
+            "stddev": 0.11
+          }
+        }
+      ]
+    }
+  ],
+  "candidateGroups": [
+    {
+      "metric": "simWinProb",
+      "groups": [
+        {
+          "key": "candidate_honmei",
+          "label": "単複本命",
+          "stats": {
+            "count": 38,
+            "mean": 0.176,
+            "median": 0.115,
+            "q1": 0.078,
+            "q3": 0.223,
+            "min": 0.022,
+            "max": 0.589,
+            "stddev": 0.149
+          }
+        },
+        {
+          "key": "candidate_opponent",
+          "label": "相手候補",
+          "stats": {
+            "count": 38,
+            "mean": 0.144,
+            "median": 0.113,
+            "q1": 0.047,
+            "q3": 0.22,
+            "min": 0.023,
+            "max": 0.564,
+            "stddev": 0.125
+          }
+        },
+        {
+          "key": "candidate_wide",
+          "label": "ワイド高配当狙い",
+          "stats": {
+            "count": 39,
+            "mean": 0.111,
+            "median": 0.08,
+            "q1": 0.047,
+            "q3": 0.141,
+            "min": 0.024,
+            "max": 0.341,
+            "stddev": 0.084
+          }
+        },
+        {
+          "key": "candidate_none",
+          "label": "候補外",
+          "stats": {
+            "count": 439,
+            "mean": 0.05,
+            "median": 0.027,
+            "q1": 0.023,
+            "q3": 0.05,
+            "min": 0.02,
+            "max": 0.501,
+            "stddev": 0.053
+          }
+        }
+      ]
+    },
+    {
+      "metric": "edge",
+      "groups": [
+        {
+          "key": "candidate_honmei",
+          "label": "単複本命",
+          "stats": {
+            "count": 38,
+            "mean": -17.145,
+            "median": -17.45,
+            "q1": -27.5,
+            "q3": -4.375,
+            "min": -75,
+            "max": 28.2,
+            "stddev": 21.584
+          }
+        },
+        {
+          "key": "candidate_opponent",
+          "label": "相手候補",
+          "stats": {
+            "count": 38,
+            "mean": -7.624,
+            "median": -9,
+            "q1": -18.05,
+            "q3": -2.5,
+            "min": -32.1,
+            "max": 28.6,
+            "stddev": 14.93
+          }
+        },
+        {
+          "key": "candidate_wide",
+          "label": "ワイド高配当狙い",
+          "stats": {
+            "count": 39,
+            "mean": 0.728,
+            "median": -1.1,
+            "q1": -5.7,
+            "q3": 4.55,
+            "min": -9.6,
+            "max": 22.7,
+            "stddev": 8.354
+          }
+        },
+        {
+          "key": "candidate_none",
+          "label": "候補外",
+          "stats": {
+            "count": 439,
+            "mean": -0.436,
+            "median": -0.1,
+            "q1": -3.3,
+            "q3": 1.9,
+            "min": -20.2,
+            "max": 40.8,
+            "stddev": 6.76
+          }
+        }
+      ]
+    },
+    {
+      "metric": "placeProb",
+      "groups": [
+        {
+          "key": "candidate_honmei",
+          "label": "単複本命",
+          "stats": {
+            "count": 38,
+            "mean": 0.739,
+            "median": 0.728,
+            "q1": 0.683,
+            "q3": 0.794,
+            "min": 0.616,
+            "max": 0.88,
+            "stddev": 0.069
+          }
+        },
+        {
+          "key": "candidate_opponent",
+          "label": "相手候補",
+          "stats": {
+            "count": 38,
+            "mean": 0.67,
+            "median": 0.664,
+            "q1": 0.644,
+            "q3": 0.692,
+            "min": 0.605,
+            "max": 0.762,
+            "stddev": 0.038
+          }
+        },
+        {
+          "key": "candidate_wide",
+          "label": "ワイド高配当狙い",
+          "stats": {
+            "count": 39,
+            "mean": 0.599,
+            "median": 0.604,
+            "q1": 0.583,
+            "q3": 0.623,
+            "min": 0.511,
+            "max": 0.661,
+            "stddev": 0.034
+          }
+        },
+        {
+          "key": "candidate_none",
+          "label": "候補外",
+          "stats": {
+            "count": 439,
+            "mean": 0.52,
+            "median": 0.517,
+            "q1": 0.478,
+            "q3": 0.567,
+            "min": 0.38,
+            "max": 0.706,
+            "stddev": 0.062
+          }
+        }
+      ]
+    },
+    {
+      "metric": "placeScore",
+      "groups": [
+        {
+          "key": "candidate_honmei",
+          "label": "単複本命",
+          "stats": {
+            "count": 38,
+            "mean": 0.648,
+            "median": 0.639,
+            "q1": 0.576,
+            "q3": 0.722,
+            "min": 0.506,
+            "max": 0.793,
+            "stddev": 0.079
+          }
+        },
+        {
+          "key": "candidate_opponent",
+          "label": "相手候補",
+          "stats": {
+            "count": 38,
+            "mean": 0.565,
+            "median": 0.554,
+            "q1": 0.528,
+            "q3": 0.598,
+            "min": 0.483,
+            "max": 0.669,
+            "stddev": 0.05
+          }
+        },
+        {
+          "key": "candidate_wide",
+          "label": "ワイド高配当狙い",
+          "stats": {
+            "count": 39,
+            "mean": 0.472,
+            "median": 0.48,
+            "q1": 0.453,
+            "q3": 0.496,
+            "min": 0.39,
+            "max": 0.535,
+            "stddev": 0.034
+          }
+        },
+        {
+          "key": "candidate_none",
+          "label": "候補外",
+          "stats": {
+            "count": 439,
+            "mean": 0.392,
+            "median": 0.387,
+            "q1": 0.344,
+            "q3": 0.436,
+            "min": 0.272,
+            "max": 0.603,
+            "stddev": 0.063
+          }
+        }
+      ]
+    },
+    {
+      "metric": "valueScore",
+      "groups": [
+        {
+          "key": "candidate_honmei",
+          "label": "単複本命",
+          "stats": {
+            "count": 38,
+            "mean": 0.581,
+            "median": 0.581,
+            "q1": 0.562,
+            "q3": 0.601,
+            "min": 0.511,
+            "max": 0.667,
+            "stddev": 0.037
+          }
+        },
+        {
+          "key": "candidate_opponent",
+          "label": "相手候補",
+          "stats": {
+            "count": 38,
+            "mean": 0.601,
+            "median": 0.603,
+            "q1": 0.561,
+            "q3": 0.634,
+            "min": 0.495,
+            "max": 0.738,
+            "stddev": 0.057
+          }
+        },
+        {
+          "key": "candidate_wide",
+          "label": "ワイド高配当狙い",
+          "stats": {
+            "count": 39,
+            "mean": 0.69,
+            "median": 0.692,
+            "q1": 0.674,
+            "q3": 0.718,
+            "min": 0.594,
+            "max": 0.736,
+            "stddev": 0.035
+          }
+        },
+        {
+          "key": "candidate_none",
+          "label": "候補外",
+          "stats": {
+            "count": 439,
+            "mean": 0.538,
+            "median": 0.528,
+            "q1": 0.456,
+            "q3": 0.621,
+            "min": 0.387,
+            "max": 0.725,
+            "stddev": 0.091
+          }
+        }
+      ]
+    },
+    {
+      "metric": "top3Stability",
+      "groups": [
+        {
+          "key": "candidate_honmei",
+          "label": "単複本命",
+          "stats": {
+            "count": 38,
+            "mean": 0.668,
+            "median": 0.655,
+            "q1": 0.614,
+            "q3": 0.726,
+            "min": 0.53,
+            "max": 0.823,
+            "stddev": 0.075
+          }
+        },
+        {
+          "key": "candidate_opponent",
+          "label": "相手候補",
+          "stats": {
+            "count": 38,
+            "mean": 0.613,
+            "median": 0.617,
+            "q1": 0.581,
+            "q3": 0.659,
+            "min": 0.47,
+            "max": 0.705,
+            "stddev": 0.06
+          }
+        },
+        {
+          "key": "candidate_wide",
+          "label": "ワイド高配当狙い",
+          "stats": {
+            "count": 39,
+            "mean": 0.535,
+            "median": 0.56,
+            "q1": 0.504,
+            "q3": 0.573,
+            "min": 0.378,
+            "max": 0.6,
+            "stddev": 0.057
+          }
+        },
+        {
+          "key": "candidate_none",
+          "label": "候補外",
+          "stats": {
+            "count": 439,
+            "mean": 0.436,
+            "median": 0.431,
+            "q1": 0.357,
+            "q3": 0.519,
+            "min": 0.28,
+            "max": 0.652,
+            "stddev": 0.094
+          }
+        }
+      ]
+    },
+    {
+      "metric": "placeReturnEdge",
+      "groups": [
+        {
+          "key": "candidate_honmei",
+          "label": "単複本命",
+          "stats": {
+            "count": 38,
+            "mean": 0.414,
+            "median": 0.357,
+            "q1": 0.312,
+            "q3": 0.511,
+            "min": 0.178,
+            "max": 0.778,
+            "stddev": 0.146
+          }
+        },
+        {
+          "key": "candidate_opponent",
+          "label": "相手候補",
+          "stats": {
+            "count": 38,
+            "mean": 0.577,
+            "median": 0.532,
+            "q1": 0.441,
+            "q3": 0.704,
+            "min": 0.313,
+            "max": 0.995,
+            "stddev": 0.185
+          }
+        },
+        {
+          "key": "candidate_wide",
+          "label": "ワイド高配当狙い",
+          "stats": {
+            "count": 39,
+            "mean": 0.922,
+            "median": 0.936,
+            "q1": 0.884,
+            "q3": 0.978,
+            "min": 0.722,
+            "max": 0.995,
+            "stddev": 0.065
+          }
+        },
+        {
+          "key": "candidate_none",
+          "label": "候補外",
+          "stats": {
+            "count": 439,
+            "mean": 0.595,
+            "median": 0.564,
+            "q1": 0.4,
+            "q3": 0.789,
+            "min": 0.391,
+            "max": 0.982,
+            "stddev": 0.199
+          }
+        }
+      ]
+    },
+    {
+      "metric": "scoreGap",
+      "groups": [
+        {
+          "key": "candidate_honmei",
+          "label": "単複本命",
+          "stats": {
+            "count": 38,
+            "mean": 0,
+            "median": 0,
+            "q1": 0,
+            "q3": 0,
+            "min": 0,
+            "max": 0,
+            "stddev": 0
+          }
+        },
+        {
+          "key": "candidate_opponent",
+          "label": "相手候補",
+          "stats": {
+            "count": 38,
+            "mean": 0.081,
+            "median": 0.062,
+            "q1": 0.015,
+            "q3": 0.111,
+            "min": 0.001,
+            "max": 0.303,
+            "stddev": 0.078
+          }
+        },
+        {
+          "key": "candidate_wide",
+          "label": "ワイド高配当狙い",
+          "stats": {
+            "count": 39,
+            "mean": 0.176,
+            "median": 0.15,
+            "q1": 0.113,
+            "q3": 0.246,
+            "min": 0.026,
+            "max": 0.339,
+            "stddev": 0.083
+          }
+        },
+        {
+          "key": "candidate_none",
+          "label": "候補外",
+          "stats": {
+            "count": 439,
+            "mean": 0.246,
+            "median": 0.244,
+            "q1": 0.169,
+            "q3": 0.324,
+            "min": 0.012,
+            "max": 0.484,
+            "stddev": 0.1
+          }
+        }
+      ]
+    }
+  ],
+  "successFailureGroups": [
+    {
+      "metric": "simWinProb",
+      "groups": [
+        {
+          "key": "honmei_hit",
+          "label": "単複本命で好走",
+          "stats": {
+            "count": 29,
+            "mean": 0.19,
+            "median": 0.141,
+            "q1": 0.077,
+            "q3": 0.23,
+            "min": 0.026,
+            "max": 0.589,
+            "stddev": 0.154
+          }
+        },
+        {
+          "key": "honmei_miss",
+          "label": "単複本命で飛び",
+          "stats": {
+            "count": 9,
+            "mean": 0.128,
+            "median": 0.083,
+            "q1": 0.08,
+            "q3": 0.109,
+            "min": 0.022,
+            "max": 0.44,
+            "stddev": 0.12
+          }
+        },
+        {
+          "key": "opponent_hit",
+          "label": "相手候補で好走",
+          "stats": {
+            "count": 18,
+            "mean": 0.163,
+            "median": 0.143,
+            "q1": 0.069,
+            "q3": 0.25,
+            "min": 0.031,
+            "max": 0.39,
+            "stddev": 0.106
+          }
+        },
+        {
+          "key": "opponent_miss",
+          "label": "相手候補で凡走",
+          "stats": {
+            "count": 20,
+            "mean": 0.127,
+            "median": 0.068,
+            "q1": 0.037,
+            "q3": 0.136,
+            "min": 0.023,
+            "max": 0.564,
+            "stddev": 0.138
+          }
+        },
+        {
+          "key": "wide_hit",
+          "label": "ワイド高配当狙いで好走",
+          "stats": {
+            "count": 8,
+            "mean": 0.146,
+            "median": 0.115,
+            "q1": 0.047,
+            "q3": 0.237,
+            "min": 0.041,
+            "max": 0.327,
+            "stddev": 0.102
+          }
+        },
+        {
+          "key": "wide_miss",
+          "label": "ワイド高配当狙いで凡走",
+          "stats": {
+            "count": 31,
+            "mean": 0.102,
+            "median": 0.077,
+            "q1": 0.048,
+            "q3": 0.119,
+            "min": 0.024,
+            "max": 0.341,
+            "stddev": 0.076
+          }
+        }
+      ]
+    },
+    {
+      "metric": "edge",
+      "groups": [
+        {
+          "key": "honmei_hit",
+          "label": "単複本命で好走",
+          "stats": {
+            "count": 29,
+            "mean": -15.69,
+            "median": -15.8,
+            "q1": -27.2,
+            "q3": -3.3,
+            "min": -53.8,
+            "max": 28.2,
+            "stddev": 19.86
+          }
+        },
+        {
+          "key": "honmei_miss",
+          "label": "単複本命で飛び",
+          "stats": {
+            "count": 9,
+            "mean": -21.833,
+            "median": -23.3,
+            "q1": -27.6,
+            "q3": -13,
+            "min": -75,
+            "max": 23.6,
+            "stddev": 25.833
+          }
+        },
+        {
+          "key": "opponent_hit",
+          "label": "相手候補で好走",
+          "stats": {
+            "count": 18,
+            "mean": -7.217,
+            "median": -8.25,
+            "q1": -18.05,
+            "q3": 0,
+            "min": -29.7,
+            "max": 22.6,
+            "stddev": 14.566
+          }
+        },
+        {
+          "key": "opponent_miss",
+          "label": "相手候補で凡走",
+          "stats": {
+            "count": 20,
+            "mean": -7.99,
+            "median": -9.15,
+            "q1": -18.375,
+            "q3": -3.775,
+            "min": -32.1,
+            "max": 28.6,
+            "stddev": 15.241
+          }
+        },
+        {
+          "key": "wide_hit",
+          "label": "ワイド高配当狙いで好走",
+          "stats": {
+            "count": 8,
+            "mean": 5.05,
+            "median": 0.4,
+            "q1": -2.5,
+            "q3": 12.825,
+            "min": -5.6,
+            "max": 22.7,
+            "stddev": 9.815
+          }
+        },
+        {
+          "key": "wide_miss",
+          "label": "ワイド高配当狙いで凡走",
+          "stats": {
+            "count": 31,
+            "mean": -0.387,
+            "median": -1.8,
+            "q1": -6.3,
+            "q3": 2.1,
+            "min": -9.6,
+            "max": 19.7,
+            "stddev": 7.541
+          }
+        }
+      ]
+    },
+    {
+      "metric": "placeProb",
+      "groups": [
+        {
+          "key": "honmei_hit",
+          "label": "単複本命で好走",
+          "stats": {
+            "count": 29,
+            "mean": 0.744,
+            "median": 0.735,
+            "q1": 0.682,
+            "q3": 0.806,
+            "min": 0.658,
+            "max": 0.88,
+            "stddev": 0.068
+          }
+        },
+        {
+          "key": "honmei_miss",
+          "label": "単複本命で飛び",
+          "stats": {
+            "count": 9,
+            "mean": 0.724,
+            "median": 0.698,
+            "q1": 0.686,
+            "q3": 0.754,
+            "min": 0.616,
+            "max": 0.88,
+            "stddev": 0.069
+          }
+        },
+        {
+          "key": "opponent_hit",
+          "label": "相手候補で好走",
+          "stats": {
+            "count": 18,
+            "mean": 0.682,
+            "median": 0.677,
+            "q1": 0.654,
+            "q3": 0.721,
+            "min": 0.605,
+            "max": 0.762,
+            "stddev": 0.039
+          }
+        },
+        {
+          "key": "opponent_miss",
+          "label": "相手候補で凡走",
+          "stats": {
+            "count": 20,
+            "mean": 0.659,
+            "median": 0.65,
+            "q1": 0.639,
+            "q3": 0.674,
+            "min": 0.607,
+            "max": 0.741,
+            "stddev": 0.034
+          }
+        },
+        {
+          "key": "wide_hit",
+          "label": "ワイド高配当狙いで好走",
+          "stats": {
+            "count": 8,
+            "mean": 0.602,
+            "median": 0.603,
+            "q1": 0.587,
+            "q3": 0.62,
+            "min": 0.55,
+            "max": 0.643,
+            "stddev": 0.027
+          }
+        },
+        {
+          "key": "wide_miss",
+          "label": "ワイド高配当狙いで凡走",
+          "stats": {
+            "count": 31,
+            "mean": 0.599,
+            "median": 0.604,
+            "q1": 0.583,
+            "q3": 0.623,
+            "min": 0.511,
+            "max": 0.661,
+            "stddev": 0.035
+          }
+        }
+      ]
+    },
+    {
+      "metric": "placeScore",
+      "groups": [
+        {
+          "key": "honmei_hit",
+          "label": "単複本命で好走",
+          "stats": {
+            "count": 29,
+            "mean": 0.655,
+            "median": 0.644,
+            "q1": 0.578,
+            "q3": 0.734,
+            "min": 0.542,
+            "max": 0.793,
+            "stddev": 0.079
+          }
+        },
+        {
+          "key": "honmei_miss",
+          "label": "単複本命で飛び",
+          "stats": {
+            "count": 9,
+            "mean": 0.624,
+            "median": 0.609,
+            "q1": 0.569,
+            "q3": 0.675,
+            "min": 0.506,
+            "max": 0.769,
+            "stddev": 0.074
+          }
+        },
+        {
+          "key": "opponent_hit",
+          "label": "相手候補で好走",
+          "stats": {
+            "count": 18,
+            "mean": 0.58,
+            "median": 0.572,
+            "q1": 0.542,
+            "q3": 0.621,
+            "min": 0.489,
+            "max": 0.665,
+            "stddev": 0.051
+          }
+        },
+        {
+          "key": "opponent_miss",
+          "label": "相手候補で凡走",
+          "stats": {
+            "count": 20,
+            "mean": 0.552,
+            "median": 0.548,
+            "q1": 0.52,
+            "q3": 0.58,
+            "min": 0.483,
+            "max": 0.669,
+            "stddev": 0.046
+          }
+        },
+        {
+          "key": "wide_hit",
+          "label": "ワイド高配当狙いで好走",
+          "stats": {
+            "count": 8,
+            "mean": 0.475,
+            "median": 0.471,
+            "q1": 0.469,
+            "q3": 0.49,
+            "min": 0.43,
+            "max": 0.508,
+            "stddev": 0.021
+          }
+        },
+        {
+          "key": "wide_miss",
+          "label": "ワイド高配当狙いで凡走",
+          "stats": {
+            "count": 31,
+            "mean": 0.471,
+            "median": 0.481,
+            "q1": 0.451,
+            "q3": 0.499,
+            "min": 0.39,
+            "max": 0.535,
+            "stddev": 0.036
+          }
+        }
+      ]
+    },
+    {
+      "metric": "valueScore",
+      "groups": [
+        {
+          "key": "honmei_hit",
+          "label": "単複本命で好走",
+          "stats": {
+            "count": 29,
+            "mean": 0.582,
+            "median": 0.584,
+            "q1": 0.56,
+            "q3": 0.601,
+            "min": 0.511,
+            "max": 0.667,
+            "stddev": 0.036
+          }
+        },
+        {
+          "key": "honmei_miss",
+          "label": "単複本命で飛び",
+          "stats": {
+            "count": 9,
+            "mean": 0.579,
+            "median": 0.574,
+            "q1": 0.568,
+            "q3": 0.598,
+            "min": 0.512,
+            "max": 0.643,
+            "stddev": 0.039
+          }
+        },
+        {
+          "key": "opponent_hit",
+          "label": "相手候補で好走",
+          "stats": {
+            "count": 18,
+            "mean": 0.597,
+            "median": 0.603,
+            "q1": 0.563,
+            "q3": 0.628,
+            "min": 0.519,
+            "max": 0.68,
+            "stddev": 0.044
+          }
+        },
+        {
+          "key": "opponent_miss",
+          "label": "相手候補で凡走",
+          "stats": {
+            "count": 20,
+            "mean": 0.605,
+            "median": 0.591,
+            "q1": 0.555,
+            "q3": 0.637,
+            "min": 0.495,
+            "max": 0.738,
+            "stddev": 0.066
+          }
+        },
+        {
+          "key": "wide_hit",
+          "label": "ワイド高配当狙いで好走",
+          "stats": {
+            "count": 8,
+            "mean": 0.689,
+            "median": 0.691,
+            "q1": 0.68,
+            "q3": 0.716,
+            "min": 0.604,
+            "max": 0.736,
+            "stddev": 0.038
+          }
+        },
+        {
+          "key": "wide_miss",
+          "label": "ワイド高配当狙いで凡走",
+          "stats": {
+            "count": 31,
+            "mean": 0.69,
+            "median": 0.692,
+            "q1": 0.673,
+            "q3": 0.718,
+            "min": 0.594,
+            "max": 0.735,
+            "stddev": 0.034
+          }
+        }
+      ]
+    },
+    {
+      "metric": "top3Stability",
+      "groups": [
+        {
+          "key": "honmei_hit",
+          "label": "単複本命で好走",
+          "stats": {
+            "count": 29,
+            "mean": 0.677,
+            "median": 0.66,
+            "q1": 0.624,
+            "q3": 0.733,
+            "min": 0.53,
+            "max": 0.818,
+            "stddev": 0.073
+          }
+        },
+        {
+          "key": "honmei_miss",
+          "label": "単複本命で飛び",
+          "stats": {
+            "count": 9,
+            "mean": 0.638,
+            "median": 0.603,
+            "q1": 0.598,
+            "q3": 0.666,
+            "min": 0.555,
+            "max": 0.823,
+            "stddev": 0.075
+          }
+        },
+        {
+          "key": "opponent_hit",
+          "label": "相手候補で好走",
+          "stats": {
+            "count": 18,
+            "mean": 0.63,
+            "median": 0.625,
+            "q1": 0.605,
+            "q3": 0.678,
+            "min": 0.522,
+            "max": 0.705,
+            "stddev": 0.053
+          }
+        },
+        {
+          "key": "opponent_miss",
+          "label": "相手候補で凡走",
+          "stats": {
+            "count": 20,
+            "mean": 0.597,
+            "median": 0.613,
+            "q1": 0.561,
+            "q3": 0.639,
+            "min": 0.47,
+            "max": 0.705,
+            "stddev": 0.062
+          }
+        },
+        {
+          "key": "wide_hit",
+          "label": "ワイド高配当狙いで好走",
+          "stats": {
+            "count": 8,
+            "mean": 0.557,
+            "median": 0.559,
+            "q1": 0.55,
+            "q3": 0.563,
+            "min": 0.54,
+            "max": 0.573,
+            "stddev": 0.01
+          }
+        },
+        {
+          "key": "wide_miss",
+          "label": "ワイド高配当狙いで凡走",
+          "stats": {
+            "count": 31,
+            "mean": 0.529,
+            "median": 0.56,
+            "q1": 0.482,
+            "q3": 0.577,
+            "min": 0.378,
+            "max": 0.6,
+            "stddev": 0.062
+          }
+        }
+      ]
+    },
+    {
+      "metric": "placeReturnEdge",
+      "groups": [
+        {
+          "key": "honmei_hit",
+          "label": "単複本命で好走",
+          "stats": {
+            "count": 29,
+            "mean": 0.408,
+            "median": 0.352,
+            "q1": 0.31,
+            "q3": 0.493,
+            "min": 0.246,
+            "max": 0.778,
+            "stddev": 0.135
+          }
+        },
+        {
+          "key": "honmei_miss",
+          "label": "単複本命で飛び",
+          "stats": {
+            "count": 9,
+            "mean": 0.435,
+            "median": 0.361,
+            "q1": 0.342,
+            "q3": 0.615,
+            "min": 0.178,
+            "max": 0.678,
+            "stddev": 0.176
+          }
+        },
+        {
+          "key": "opponent_hit",
+          "label": "相手候補で好走",
+          "stats": {
+            "count": 18,
+            "mean": 0.547,
+            "median": 0.506,
+            "q1": 0.441,
+            "q3": 0.689,
+            "min": 0.313,
+            "max": 0.832,
+            "stddev": 0.158
+          }
+        },
+        {
+          "key": "opponent_miss",
+          "label": "相手候補で凡走",
+          "stats": {
+            "count": 20,
+            "mean": 0.604,
+            "median": 0.568,
+            "q1": 0.448,
+            "q3": 0.706,
+            "min": 0.321,
+            "max": 0.995,
+            "stddev": 0.202
+          }
+        },
+        {
+          "key": "wide_hit",
+          "label": "ワイド高配当狙いで好走",
+          "stats": {
+            "count": 8,
+            "mean": 0.91,
+            "median": 0.933,
+            "q1": 0.884,
+            "q3": 0.965,
+            "min": 0.722,
+            "max": 0.99,
+            "stddev": 0.081
+          }
+        },
+        {
+          "key": "wide_miss",
+          "label": "ワイド高配当狙いで凡走",
+          "stats": {
+            "count": 31,
+            "mean": 0.925,
+            "median": 0.936,
+            "q1": 0.887,
+            "q3": 0.978,
+            "min": 0.778,
+            "max": 0.995,
+            "stddev": 0.06
+          }
+        }
+      ]
+    },
+    {
+      "metric": "scoreGap",
+      "groups": [
+        {
+          "key": "honmei_hit",
+          "label": "単複本命で好走",
+          "stats": {
+            "count": 29,
+            "mean": 0,
+            "median": 0,
+            "q1": 0,
+            "q3": 0,
+            "min": 0,
+            "max": 0,
+            "stddev": 0
+          }
+        },
+        {
+          "key": "honmei_miss",
+          "label": "単複本命で飛び",
+          "stats": {
+            "count": 9,
+            "mean": 0,
+            "median": 0,
+            "q1": 0,
+            "q3": 0,
+            "min": 0,
+            "max": 0,
+            "stddev": 0
+          }
+        },
+        {
+          "key": "opponent_hit",
+          "label": "相手候補で好走",
+          "stats": {
+            "count": 18,
+            "mean": 0.084,
+            "median": 0.074,
+            "q1": 0.025,
+            "q3": 0.11,
+            "min": 0.001,
+            "max": 0.223,
+            "stddev": 0.069
+          }
+        },
+        {
+          "key": "opponent_miss",
+          "label": "相手候補で凡走",
+          "stats": {
+            "count": 20,
+            "mean": 0.078,
+            "median": 0.042,
+            "q1": 0.012,
+            "q3": 0.11,
+            "min": 0.001,
+            "max": 0.303,
+            "stddev": 0.085
+          }
+        },
+        {
+          "key": "wide_hit",
+          "label": "ワイド高配当狙いで好走",
+          "stats": {
+            "count": 8,
+            "mean": 0.23,
+            "median": 0.235,
+            "q1": 0.2,
+            "q3": 0.271,
+            "min": 0.098,
+            "max": 0.339,
+            "stddev": 0.076
+          }
+        },
+        {
+          "key": "wide_miss",
+          "label": "ワイド高配当狙いで凡走",
+          "stats": {
+            "count": 31,
+            "mean": 0.162,
+            "median": 0.141,
+            "q1": 0.105,
+            "q3": 0.224,
+            "min": 0.026,
+            "max": 0.337,
+            "stddev": 0.079
+          }
+        }
+      ]
+    }
+  ],
+  "finishStats": {
+    "finish_1": {
+      "simWinProb": {
+        "count": 39,
+        "mean": 0.092,
+        "median": 0.048,
+        "q1": 0.027,
+        "q3": 0.096,
+        "min": 0.02,
+        "max": 0.502,
+        "stddev": 0.106
+      },
+      "edge": {
+        "count": 39,
+        "mean": -10.182,
+        "median": -8.2,
+        "q1": -17.45,
+        "q3": -1.2,
+        "min": -53.8,
+        "max": 22.7,
+        "stddev": 16.589
+      },
+      "winProb": {
+        "count": 39,
+        "mean": 0.432,
+        "median": 0.442,
+        "q1": 0.398,
+        "q3": 0.474,
+        "min": 0.235,
+        "max": 0.576,
+        "stddev": 0.073
+      },
+      "placeProb": {
+        "count": 39,
+        "mean": 0.628,
+        "median": 0.618,
+        "q1": 0.565,
+        "q3": 0.698,
+        "min": 0.38,
+        "max": 0.88,
+        "stddev": 0.114
+      },
+      "placeScore": {
+        "count": 39,
+        "mean": 0.52,
+        "median": 0.502,
+        "q1": 0.438,
+        "q3": 0.607,
+        "min": 0.272,
+        "max": 0.786,
+        "stddev": 0.131
+      },
+      "valueScore": {
+        "count": 39,
+        "mean": 0.586,
+        "median": 0.6,
+        "q1": 0.548,
+        "q3": 0.631,
+        "min": 0.387,
+        "max": 0.714,
+        "stddev": 0.076
+      },
+      "top3Stability": {
+        "count": 39,
+        "mean": 0.558,
+        "median": 0.564,
+        "q1": 0.51,
+        "q3": 0.625,
+        "min": 0.28,
+        "max": 0.818,
+        "stddev": 0.131
+      },
+      "marketSupport": {
+        "count": 39,
+        "mean": 0.422,
+        "median": 0.346,
+        "q1": 0.163,
+        "q3": 0.685,
+        "min": 0.045,
+        "max": 1,
+        "stddev": 0.307
+      },
+      "overbetRisk": {
+        "count": 39,
+        "mean": 0.003,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0.118,
+        "stddev": 0.019
+      },
+      "placeReturnEdge": {
+        "count": 39,
+        "mean": 0.588,
+        "median": 0.591,
+        "q1": 0.39,
+        "q3": 0.79,
+        "min": 0.259,
+        "max": 0.975,
+        "stddev": 0.225
+      },
+      "longshotBonus": {
+        "count": 39,
+        "mean": 0.352,
+        "median": 0.318,
+        "q1": 0.3,
+        "q3": 0.401,
+        "min": 0.265,
+        "max": 0.518,
+        "stddev": 0.065
+      },
+      "scoreGap": {
+        "count": 39,
+        "mean": 0.128,
+        "median": 0.117,
+        "q1": 0,
+        "q3": 0.207,
+        "min": 0,
+        "max": 0.479,
+        "stddev": 0.117
+      },
+      "selectionScoreGap": {
+        "count": 20,
+        "mean": 0.092,
+        "median": 0.085,
+        "q1": 0.016,
+        "q3": 0.122,
+        "min": 0.005,
+        "max": 0.302,
+        "stddev": 0.085
+      },
+      "simRank": {
+        "count": 39,
+        "mean": 6.359,
+        "median": 6,
+        "q1": 3,
+        "q3": 8.5,
+        "min": 1,
+        "max": 16,
+        "stddev": 4.341
+      },
+      "placeRank": {
+        "count": 39,
+        "mean": 4.821,
+        "median": 3,
+        "q1": 1,
+        "q3": 6,
+        "min": 1,
+        "max": 18,
+        "stddev": 4.706
+      },
+      "valueRank": {
+        "count": 39,
+        "mean": 6.385,
+        "median": 6,
+        "q1": 3,
+        "q3": 8,
+        "min": 1,
+        "max": 16,
+        "stddev": 3.773
+      },
+      "popularity": {
+        "count": 39,
+        "mean": 4.718,
+        "median": 4,
+        "q1": 1.5,
+        "q3": 7,
+        "min": 1,
+        "max": 15,
+        "stddev": 4.032
+      },
+      "odds": {
+        "count": 39,
+        "mean": 18.574,
+        "median": 7,
+        "q1": 3.05,
+        "q3": 13.65,
+        "min": 1.6,
+        "max": 252.4,
+        "stddev": 41.827
+      }
+    },
+    "finish_2_3": {
+      "simWinProb": {
+        "count": 78,
+        "mean": 0.126,
+        "median": 0.072,
+        "q1": 0.03,
+        "q3": 0.198,
+        "min": 0.02,
+        "max": 0.589,
+        "stddev": 0.126
+      },
+      "edge": {
+        "count": 78,
+        "mean": -4.518,
+        "median": -3.2,
+        "q1": -11.5,
+        "q3": 0.8,
+        "min": -46.5,
+        "max": 40.8,
+        "stddev": 13.023
+      },
+      "winProb": {
+        "count": 78,
+        "mean": 0.438,
+        "median": 0.445,
+        "q1": 0.404,
+        "q3": 0.482,
+        "min": 0.284,
+        "max": 0.588,
+        "stddev": 0.062
+      },
+      "placeProb": {
+        "count": 78,
+        "mean": 0.625,
+        "median": 0.627,
+        "q1": 0.568,
+        "q3": 0.678,
+        "min": 0.432,
+        "max": 0.88,
+        "stddev": 0.095
+      },
+      "placeScore": {
+        "count": 78,
+        "mean": 0.512,
+        "median": 0.51,
+        "q1": 0.438,
+        "q3": 0.574,
+        "min": 0.31,
+        "max": 0.793,
+        "stddev": 0.109
+      },
+      "valueScore": {
+        "count": 78,
+        "mean": 0.602,
+        "median": 0.603,
+        "q1": 0.561,
+        "q3": 0.663,
+        "min": 0.439,
+        "max": 0.736,
+        "stddev": 0.069
+      },
+      "top3Stability": {
+        "count": 78,
+        "mean": 0.556,
+        "median": 0.567,
+        "q1": 0.493,
+        "q3": 0.636,
+        "min": 0.305,
+        "max": 0.795,
+        "stddev": 0.111
+      },
+      "marketSupport": {
+        "count": 78,
+        "mean": 0.378,
+        "median": 0.334,
+        "q1": 0.18,
+        "q3": 0.5,
+        "min": 0.045,
+        "max": 1,
+        "stddev": 0.256
+      },
+      "overbetRisk": {
+        "count": 78,
+        "mean": 0.001,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0.068,
+        "stddev": 0.008
+      },
+      "placeReturnEdge": {
+        "count": 78,
+        "mean": 0.636,
+        "median": 0.644,
+        "q1": 0.449,
+        "q3": 0.828,
+        "min": 0.246,
+        "max": 0.99,
+        "stddev": 0.212
+      },
+      "longshotBonus": {
+        "count": 78,
+        "mean": 0.356,
+        "median": 0.326,
+        "q1": 0.3,
+        "q3": 0.4,
+        "min": 0.253,
+        "max": 0.538,
+        "stddev": 0.072
+      },
+      "scoreGap": {
+        "count": 78,
+        "mean": 0.136,
+        "median": 0.127,
+        "q1": 0.013,
+        "q3": 0.222,
+        "min": 0,
+        "max": 0.391,
+        "stddev": 0.115
+      },
+      "selectionScoreGap": {
+        "count": 35,
+        "mean": 0.076,
+        "median": 0.056,
+        "q1": 0.017,
+        "q3": 0.1,
+        "min": 0,
+        "max": 0.223,
+        "stddev": 0.067
+      },
+      "simRank": {
+        "count": 78,
+        "mean": 5.321,
+        "median": 5,
+        "q1": 2,
+        "q3": 8,
+        "min": 1,
+        "max": 16,
+        "stddev": 3.825
+      },
+      "placeRank": {
+        "count": 78,
+        "mean": 4.628,
+        "median": 3,
+        "q1": 2,
+        "q3": 6.75,
+        "min": 1,
+        "max": 17,
+        "stddev": 3.793
+      },
+      "valueRank": {
+        "count": 78,
+        "mean": 5.692,
+        "median": 5,
+        "q1": 3,
+        "q3": 8,
+        "min": 1,
+        "max": 17,
+        "stddev": 3.546
+      },
+      "popularity": {
+        "count": 78,
+        "mean": 4.5,
+        "median": 3,
+        "q1": 2,
+        "q3": 6.75,
+        "min": 1,
+        "max": 15,
+        "stddev": 3.647
+      },
+      "odds": {
+        "count": 78,
+        "mean": 15.435,
+        "median": 6.65,
+        "q1": 3.625,
+        "q3": 13.75,
+        "min": 1.8,
+        "max": 243.9,
+        "stddev": 30.133
+      }
+    },
+    "finish_4_plus": {
+      "simWinProb": {
+        "count": 437,
+        "mean": 0.057,
+        "median": 0.029,
+        "q1": 0.023,
+        "q3": 0.061,
+        "min": 0.02,
+        "max": 0.564,
+        "stddev": 0.065
+      },
+      "edge": {
+        "count": 437,
+        "mean": -0.812,
+        "median": -0.1,
+        "q1": -3.7,
+        "q3": 1.9,
+        "min": -75,
+        "max": 33.9,
+        "stddev": 8.631
+      },
+      "winProb": {
+        "count": 437,
+        "mean": 0.376,
+        "median": 0.376,
+        "q1": 0.335,
+        "q3": 0.421,
+        "min": 0.235,
+        "max": 0.577,
+        "stddev": 0.059
+      },
+      "placeProb": {
+        "count": 437,
+        "mean": 0.53,
+        "median": 0.526,
+        "q1": 0.48,
+        "q3": 0.577,
+        "min": 0.38,
+        "max": 0.88,
+        "stddev": 0.073
+      },
+      "placeScore": {
+        "count": 437,
+        "mean": 0.404,
+        "median": 0.397,
+        "q1": 0.345,
+        "q3": 0.451,
+        "min": 0.272,
+        "max": 0.769,
+        "stddev": 0.077
+      },
+      "valueScore": {
+        "count": 437,
+        "mean": 0.545,
+        "median": 0.543,
+        "q1": 0.459,
+        "q3": 0.63,
+        "min": 0.387,
+        "max": 0.738,
+        "stddev": 0.095
+      },
+      "top3Stability": {
+        "count": 437,
+        "mean": 0.448,
+        "median": 0.447,
+        "q1": 0.363,
+        "q3": 0.527,
+        "min": 0.28,
+        "max": 0.823,
+        "stddev": 0.102
+      },
+      "marketSupport": {
+        "count": 437,
+        "mean": 0.151,
+        "median": 0.098,
+        "q1": 0.045,
+        "q3": 0.199,
+        "min": 0.045,
+        "max": 1,
+        "stddev": 0.146
+      },
+      "overbetRisk": {
+        "count": 437,
+        "mean": 0.001,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0.295,
+        "stddev": 0.014
+      },
+      "placeReturnEdge": {
+        "count": 437,
+        "mean": 0.601,
+        "median": 0.563,
+        "q1": 0.4,
+        "q3": 0.804,
+        "min": 0.178,
+        "max": 0.995,
+        "stddev": 0.211
+      },
+      "longshotBonus": {
+        "count": 437,
+        "mean": 0.432,
+        "median": 0.441,
+        "q1": 0.367,
+        "q3": 0.491,
+        "min": 0.212,
+        "max": 0.588,
+        "stddev": 0.076
+      },
+      "scoreGap": {
+        "count": 437,
+        "mean": 0.234,
+        "median": 0.241,
+        "q1": 0.151,
+        "q3": 0.321,
+        "min": 0,
+        "max": 0.484,
+        "stddev": 0.11
+      },
+      "selectionScoreGap": {
+        "count": 60,
+        "mean": 0.049,
+        "median": 0.022,
+        "q1": 0.01,
+        "q3": 0.057,
+        "min": 0,
+        "max": 0.302,
+        "stddev": 0.063
+      },
+      "simRank": {
+        "count": 437,
+        "mean": 8.609,
+        "median": 9,
+        "q1": 5,
+        "q3": 12,
+        "min": 1,
+        "max": 18,
+        "stddev": 4.463
+      },
+      "placeRank": {
+        "count": 437,
+        "mean": 8.808,
+        "median": 9,
+        "q1": 5,
+        "q3": 12,
+        "min": 1,
+        "max": 18,
+        "stddev": 4.201
+      },
+      "valueRank": {
+        "count": 437,
+        "mean": 8.483,
+        "median": 8,
+        "q1": 5,
+        "q3": 12,
+        "min": 1,
+        "max": 18,
+        "stddev": 4.58
+      },
+      "popularity": {
+        "count": 437,
+        "mean": 8.769,
+        "median": 9,
+        "q1": 5,
+        "q3": 12,
+        "min": 1,
+        "max": 18,
+        "stddev": 4.25
+      },
+      "odds": {
+        "count": 437,
+        "mean": 56.755,
+        "median": 25.2,
+        "q1": 12.3,
+        "q3": 69.7,
+        "min": 2,
+        "max": 426,
+        "stddev": 74.239
+      }
+    }
+  },
+  "candidateStats": {
+    "candidate_honmei": {
+      "simWinProb": {
+        "count": 38,
+        "mean": 0.176,
+        "median": 0.115,
+        "q1": 0.078,
+        "q3": 0.223,
+        "min": 0.022,
+        "max": 0.589,
+        "stddev": 0.149
+      },
+      "edge": {
+        "count": 38,
+        "mean": -17.145,
+        "median": -17.45,
+        "q1": -27.5,
+        "q3": -4.375,
+        "min": -75,
+        "max": 28.2,
+        "stddev": 21.584
+      },
+      "winProb": {
+        "count": 38,
+        "mean": 0.497,
+        "median": 0.492,
+        "q1": 0.475,
+        "q3": 0.516,
+        "min": 0.429,
+        "max": 0.588,
+        "stddev": 0.038
+      },
+      "placeProb": {
+        "count": 38,
+        "mean": 0.739,
+        "median": 0.728,
+        "q1": 0.683,
+        "q3": 0.794,
+        "min": 0.616,
+        "max": 0.88,
+        "stddev": 0.069
+      },
+      "placeScore": {
+        "count": 38,
+        "mean": 0.648,
+        "median": 0.639,
+        "q1": 0.576,
+        "q3": 0.722,
+        "min": 0.506,
+        "max": 0.793,
+        "stddev": 0.079
+      },
+      "valueScore": {
+        "count": 38,
+        "mean": 0.581,
+        "median": 0.581,
+        "q1": 0.562,
+        "q3": 0.601,
+        "min": 0.511,
+        "max": 0.667,
+        "stddev": 0.037
+      },
+      "top3Stability": {
+        "count": 38,
+        "mean": 0.668,
+        "median": 0.655,
+        "q1": 0.614,
+        "q3": 0.726,
+        "min": 0.53,
+        "max": 0.823,
+        "stddev": 0.075
+      },
+      "marketSupport": {
+        "count": 38,
+        "mean": 0.726,
+        "median": 0.738,
+        "q1": 0.526,
+        "q3": 0.938,
+        "min": 0.363,
+        "max": 1,
+        "stddev": 0.217
+      },
+      "overbetRisk": {
+        "count": 38,
+        "mean": 0.013,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0.295,
+        "stddev": 0.051
+      },
+      "placeReturnEdge": {
+        "count": 38,
+        "mean": 0.414,
+        "median": 0.357,
+        "q1": 0.312,
+        "q3": 0.511,
+        "min": 0.178,
+        "max": 0.778,
+        "stddev": 0.146
+      },
+      "longshotBonus": {
+        "count": 38,
+        "mean": 0.298,
+        "median": 0.3,
+        "q1": 0.3,
+        "q3": 0.3,
+        "min": 0.212,
+        "max": 0.32,
+        "stddev": 0.016
+      },
+      "scoreGap": {
+        "count": 38,
+        "mean": 0,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0,
+        "stddev": 0
+      },
+      "selectionScoreGap": {
+        "count": 38,
+        "mean": 0.086,
+        "median": 0.074,
+        "q1": 0.016,
+        "q3": 0.115,
+        "min": 0,
+        "max": 0.302,
+        "stddev": 0.079
+      },
+      "simRank": {
+        "count": 38,
+        "mean": 3.447,
+        "median": 3,
+        "q1": 1,
+        "q3": 4.75,
+        "min": 1,
+        "max": 14,
+        "stddev": 2.721
+      },
+      "placeRank": {
+        "count": 38,
+        "mean": 1,
+        "median": 1,
+        "q1": 1,
+        "q3": 1,
+        "min": 1,
+        "max": 1,
+        "stddev": 0
+      },
+      "valueRank": {
+        "count": 38,
+        "mean": 6.842,
+        "median": 7,
+        "q1": 5,
+        "q3": 9,
+        "min": 2,
+        "max": 12,
+        "stddev": 2.423
+      },
+      "popularity": {
+        "count": 38,
+        "mean": 1.368,
+        "median": 1,
+        "q1": 1,
+        "q3": 1,
+        "min": 1,
+        "max": 4,
+        "stddev": 0.84
+      },
+      "odds": {
+        "count": 38,
+        "mean": 3.545,
+        "median": 3.05,
+        "q1": 2.4,
+        "q3": 3.925,
+        "min": 1.6,
+        "max": 8.6,
+        "stddev": 1.765
+      }
+    },
+    "candidate_opponent": {
+      "simWinProb": {
+        "count": 38,
+        "mean": 0.144,
+        "median": 0.113,
+        "q1": 0.047,
+        "q3": 0.22,
+        "min": 0.023,
+        "max": 0.564,
+        "stddev": 0.125
+      },
+      "edge": {
+        "count": 38,
+        "mean": -7.624,
+        "median": -9,
+        "q1": -18.05,
+        "q3": -2.5,
+        "min": -32.1,
+        "max": 28.6,
+        "stddev": 14.93
+      },
+      "winProb": {
+        "count": 38,
+        "mean": 0.466,
+        "median": 0.467,
+        "q1": 0.451,
+        "q3": 0.48,
+        "min": 0.415,
+        "max": 0.529,
+        "stddev": 0.026
+      },
+      "placeProb": {
+        "count": 38,
+        "mean": 0.67,
+        "median": 0.664,
+        "q1": 0.644,
+        "q3": 0.692,
+        "min": 0.605,
+        "max": 0.762,
+        "stddev": 0.038
+      },
+      "placeScore": {
+        "count": 38,
+        "mean": 0.565,
+        "median": 0.554,
+        "q1": 0.528,
+        "q3": 0.598,
+        "min": 0.483,
+        "max": 0.669,
+        "stddev": 0.05
+      },
+      "valueScore": {
+        "count": 38,
+        "mean": 0.601,
+        "median": 0.603,
+        "q1": 0.561,
+        "q3": 0.634,
+        "min": 0.495,
+        "max": 0.738,
+        "stddev": 0.057
+      },
+      "top3Stability": {
+        "count": 38,
+        "mean": 0.613,
+        "median": 0.617,
+        "q1": 0.581,
+        "q3": 0.659,
+        "min": 0.47,
+        "max": 0.705,
+        "stddev": 0.06
+      },
+      "marketSupport": {
+        "count": 38,
+        "mean": 0.496,
+        "median": 0.464,
+        "q1": 0.39,
+        "q3": 0.577,
+        "min": 0.25,
+        "max": 0.804,
+        "stddev": 0.146
+      },
+      "overbetRisk": {
+        "count": 38,
+        "mean": 0,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0,
+        "stddev": 0
+      },
+      "placeReturnEdge": {
+        "count": 38,
+        "mean": 0.577,
+        "median": 0.532,
+        "q1": 0.441,
+        "q3": 0.704,
+        "min": 0.313,
+        "max": 0.995,
+        "stddev": 0.185
+      },
+      "longshotBonus": {
+        "count": 38,
+        "mean": 0.31,
+        "median": 0.3,
+        "q1": 0.3,
+        "q3": 0.313,
+        "min": 0.3,
+        "max": 0.367,
+        "stddev": 0.017
+      },
+      "scoreGap": {
+        "count": 38,
+        "mean": 0.081,
+        "median": 0.062,
+        "q1": 0.015,
+        "q3": 0.111,
+        "min": 0.001,
+        "max": 0.303,
+        "stddev": 0.078
+      },
+      "selectionScoreGap": {
+        "count": 38,
+        "mean": 0.081,
+        "median": 0.061,
+        "q1": 0.015,
+        "q3": 0.111,
+        "min": 0,
+        "max": 0.302,
+        "stddev": 0.078
+      },
+      "simRank": {
+        "count": 38,
+        "mean": 4.395,
+        "median": 4,
+        "q1": 2,
+        "q3": 6,
+        "min": 1,
+        "max": 15,
+        "stddev": 3.257
+      },
+      "placeRank": {
+        "count": 38,
+        "mean": 2,
+        "median": 2,
+        "q1": 2,
+        "q3": 2,
+        "min": 2,
+        "max": 2,
+        "stddev": 0
+      },
+      "valueRank": {
+        "count": 38,
+        "mean": 5.316,
+        "median": 6,
+        "q1": 3.25,
+        "q3": 6.75,
+        "min": 1,
+        "max": 12,
+        "stddev": 2.586
+      },
+      "popularity": {
+        "count": 38,
+        "mean": 2.395,
+        "median": 2,
+        "q1": 2,
+        "q3": 2,
+        "min": 1,
+        "max": 9,
+        "stddev": 1.348
+      },
+      "odds": {
+        "count": 38,
+        "mean": 5.124,
+        "median": 4.45,
+        "q1": 3.5,
+        "q3": 5.925,
+        "min": 2.5,
+        "max": 17.9,
+        "stddev": 2.74
+      }
+    },
+    "candidate_wide": {
+      "simWinProb": {
+        "count": 39,
+        "mean": 0.111,
+        "median": 0.08,
+        "q1": 0.047,
+        "q3": 0.141,
+        "min": 0.024,
+        "max": 0.341,
+        "stddev": 0.084
+      },
+      "edge": {
+        "count": 39,
+        "mean": 0.728,
+        "median": -1.1,
+        "q1": -5.7,
+        "q3": 4.55,
+        "min": -9.6,
+        "max": 22.7,
+        "stddev": 8.354
+      },
+      "winProb": {
+        "count": 39,
+        "mean": 0.435,
+        "median": 0.441,
+        "q1": 0.413,
+        "q3": 0.457,
+        "min": 0.358,
+        "max": 0.481,
+        "stddev": 0.031
+      },
+      "placeProb": {
+        "count": 39,
+        "mean": 0.599,
+        "median": 0.604,
+        "q1": 0.583,
+        "q3": 0.623,
+        "min": 0.511,
+        "max": 0.661,
+        "stddev": 0.034
+      },
+      "placeScore": {
+        "count": 39,
+        "mean": 0.472,
+        "median": 0.48,
+        "q1": 0.453,
+        "q3": 0.496,
+        "min": 0.39,
+        "max": 0.535,
+        "stddev": 0.034
+      },
+      "valueScore": {
+        "count": 39,
+        "mean": 0.69,
+        "median": 0.692,
+        "q1": 0.674,
+        "q3": 0.718,
+        "min": 0.594,
+        "max": 0.736,
+        "stddev": 0.035
+      },
+      "top3Stability": {
+        "count": 39,
+        "mean": 0.535,
+        "median": 0.56,
+        "q1": 0.504,
+        "q3": 0.573,
+        "min": 0.378,
+        "max": 0.6,
+        "stddev": 0.057
+      },
+      "marketSupport": {
+        "count": 39,
+        "mean": 0.233,
+        "median": 0.245,
+        "q1": 0.202,
+        "q3": 0.268,
+        "min": 0.118,
+        "max": 0.346,
+        "stddev": 0.05
+      },
+      "overbetRisk": {
+        "count": 39,
+        "mean": 0,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0,
+        "stddev": 0
+      },
+      "placeReturnEdge": {
+        "count": 39,
+        "mean": 0.922,
+        "median": 0.936,
+        "q1": 0.884,
+        "q3": 0.978,
+        "min": 0.722,
+        "max": 0.995,
+        "stddev": 0.065
+      },
+      "longshotBonus": {
+        "count": 39,
+        "mean": 0.374,
+        "median": 0.362,
+        "q1": 0.353,
+        "q3": 0.388,
+        "min": 0.325,
+        "max": 0.485,
+        "stddev": 0.036
+      },
+      "scoreGap": {
+        "count": 39,
+        "mean": 0.176,
+        "median": 0.15,
+        "q1": 0.113,
+        "q3": 0.246,
+        "min": 0.026,
+        "max": 0.339,
+        "stddev": 0.083
+      },
+      "selectionScoreGap": {
+        "count": 39,
+        "mean": 0.028,
+        "median": 0.019,
+        "q1": 0.009,
+        "q3": 0.038,
+        "min": 0.001,
+        "max": 0.118,
+        "stddev": 0.027
+      },
+      "simRank": {
+        "count": 39,
+        "mean": 4.205,
+        "median": 4,
+        "q1": 2.5,
+        "q3": 6,
+        "min": 1,
+        "max": 12,
+        "stddev": 2.503
+      },
+      "placeRank": {
+        "count": 39,
+        "mean": 4.231,
+        "median": 4,
+        "q1": 4,
+        "q3": 5,
+        "min": 3,
+        "max": 7,
+        "stddev": 0.999
+      },
+      "valueRank": {
+        "count": 39,
+        "mean": 1.128,
+        "median": 1,
+        "q1": 1,
+        "q3": 1,
+        "min": 1,
+        "max": 2,
+        "stddev": 0.334
+      },
+      "popularity": {
+        "count": 39,
+        "mean": 4.744,
+        "median": 5,
+        "q1": 4,
+        "q3": 5,
+        "min": 2,
+        "max": 9,
+        "stddev": 1.497
+      },
+      "odds": {
+        "count": 39,
+        "mean": 10.828,
+        "median": 9.9,
+        "q1": 8.5,
+        "q3": 12.6,
+        "min": 4.5,
+        "max": 23.3,
+        "stddev": 3.71
+      }
+    },
+    "candidate_none": {
+      "simWinProb": {
+        "count": 439,
+        "mean": 0.05,
+        "median": 0.027,
+        "q1": 0.023,
+        "q3": 0.05,
+        "min": 0.02,
+        "max": 0.501,
+        "stddev": 0.053
+      },
+      "edge": {
+        "count": 439,
+        "mean": -0.436,
+        "median": -0.1,
+        "q1": -3.3,
+        "q3": 1.9,
+        "min": -20.2,
+        "max": 40.8,
+        "stddev": 6.76
+      },
+      "winProb": {
+        "count": 439,
+        "mean": 0.368,
+        "median": 0.37,
+        "q1": 0.332,
+        "q3": 0.411,
+        "min": 0.235,
+        "max": 0.496,
+        "stddev": 0.054
+      },
+      "placeProb": {
+        "count": 439,
+        "mean": 0.52,
+        "median": 0.517,
+        "q1": 0.478,
+        "q3": 0.567,
+        "min": 0.38,
+        "max": 0.706,
+        "stddev": 0.062
+      },
+      "placeScore": {
+        "count": 439,
+        "mean": 0.392,
+        "median": 0.387,
+        "q1": 0.344,
+        "q3": 0.436,
+        "min": 0.272,
+        "max": 0.603,
+        "stddev": 0.063
+      },
+      "valueScore": {
+        "count": 439,
+        "mean": 0.538,
+        "median": 0.528,
+        "q1": 0.456,
+        "q3": 0.621,
+        "min": 0.387,
+        "max": 0.725,
+        "stddev": 0.091
+      },
+      "top3Stability": {
+        "count": 439,
+        "mean": 0.436,
+        "median": 0.431,
+        "q1": 0.357,
+        "q3": 0.519,
+        "min": 0.28,
+        "max": 0.652,
+        "stddev": 0.094
+      },
+      "marketSupport": {
+        "count": 439,
+        "mean": 0.128,
+        "median": 0.092,
+        "q1": 0.045,
+        "q3": 0.164,
+        "min": 0.045,
+        "max": 0.563,
+        "stddev": 0.103
+      },
+      "overbetRisk": {
+        "count": 439,
+        "mean": 0,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0,
+        "stddev": 0
+      },
+      "placeReturnEdge": {
+        "count": 439,
+        "mean": 0.595,
+        "median": 0.564,
+        "q1": 0.4,
+        "q3": 0.789,
+        "min": 0.391,
+        "max": 0.982,
+        "stddev": 0.199
+      },
+      "longshotBonus": {
+        "count": 439,
+        "mean": 0.438,
+        "median": 0.449,
+        "q1": 0.387,
+        "q3": 0.494,
+        "min": 0.253,
+        "max": 0.588,
+        "stddev": 0.073
+      },
+      "scoreGap": {
+        "count": 439,
+        "mean": 0.246,
+        "median": 0.244,
+        "q1": 0.169,
+        "q3": 0.324,
+        "min": 0.012,
+        "max": 0.484,
+        "stddev": 0.1
+      },
+      "selectionScoreGap": {
+        "count": 0,
+        "mean": null,
+        "median": null,
+        "q1": null,
+        "q3": null,
+        "min": null,
+        "max": null,
+        "stddev": null
+      },
+      "simRank": {
+        "count": 439,
+        "mean": 9.027,
+        "median": 9,
+        "q1": 6,
+        "q3": 12,
+        "min": 1,
+        "max": 18,
+        "stddev": 4.314
+      },
+      "placeRank": {
+        "count": 439,
+        "mean": 9.383,
+        "median": 9,
+        "q1": 6,
+        "q3": 12,
+        "min": 3,
+        "max": 18,
+        "stddev": 3.878
+      },
+      "valueRank": {
+        "count": 439,
+        "mean": 8.87,
+        "median": 9,
+        "q1": 5,
+        "q3": 12,
+        "min": 2,
+        "max": 18,
+        "stddev": 4.359
+      },
+      "popularity": {
+        "count": 439,
+        "mean": 9.2,
+        "median": 9,
+        "q1": 6,
+        "q3": 12,
+        "min": 1,
+        "max": 18,
+        "stddev": 4.023
+      },
+      "odds": {
+        "count": 439,
+        "mean": 59.176,
+        "median": 28.3,
+        "q1": 14.2,
+        "q3": 73.5,
+        "min": 2.2,
+        "max": 426,
+        "stddev": 74.597
+      }
+    }
+  },
+  "successFailureStats": {
+    "honmei_hit": {
+      "simWinProb": {
+        "count": 29,
+        "mean": 0.19,
+        "median": 0.141,
+        "q1": 0.077,
+        "q3": 0.23,
+        "min": 0.026,
+        "max": 0.589,
+        "stddev": 0.154
+      },
+      "edge": {
+        "count": 29,
+        "mean": -15.69,
+        "median": -15.8,
+        "q1": -27.2,
+        "q3": -3.3,
+        "min": -53.8,
+        "max": 28.2,
+        "stddev": 19.86
+      },
+      "winProb": {
+        "count": 29,
+        "mean": 0.5,
+        "median": 0.494,
+        "q1": 0.475,
+        "q3": 0.52,
+        "min": 0.442,
+        "max": 0.588,
+        "stddev": 0.038
+      },
+      "placeProb": {
+        "count": 29,
+        "mean": 0.744,
+        "median": 0.735,
+        "q1": 0.682,
+        "q3": 0.806,
+        "min": 0.658,
+        "max": 0.88,
+        "stddev": 0.068
+      },
+      "placeScore": {
+        "count": 29,
+        "mean": 0.655,
+        "median": 0.644,
+        "q1": 0.578,
+        "q3": 0.734,
+        "min": 0.542,
+        "max": 0.793,
+        "stddev": 0.079
+      },
+      "valueScore": {
+        "count": 29,
+        "mean": 0.582,
+        "median": 0.584,
+        "q1": 0.56,
+        "q3": 0.601,
+        "min": 0.511,
+        "max": 0.667,
+        "stddev": 0.036
+      },
+      "top3Stability": {
+        "count": 29,
+        "mean": 0.677,
+        "median": 0.66,
+        "q1": 0.624,
+        "q3": 0.733,
+        "min": 0.53,
+        "max": 0.818,
+        "stddev": 0.073
+      },
+      "marketSupport": {
+        "count": 29,
+        "mean": 0.741,
+        "median": 0.75,
+        "q1": 0.549,
+        "q3": 0.938,
+        "min": 0.363,
+        "max": 1,
+        "stddev": 0.212
+      },
+      "overbetRisk": {
+        "count": 29,
+        "mean": 0.006,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0.118,
+        "stddev": 0.024
+      },
+      "placeReturnEdge": {
+        "count": 29,
+        "mean": 0.408,
+        "median": 0.352,
+        "q1": 0.31,
+        "q3": 0.493,
+        "min": 0.246,
+        "max": 0.778,
+        "stddev": 0.135
+      },
+      "longshotBonus": {
+        "count": 29,
+        "mean": 0.299,
+        "median": 0.3,
+        "q1": 0.3,
+        "q3": 0.3,
+        "min": 0.265,
+        "max": 0.32,
+        "stddev": 0.009
+      },
+      "scoreGap": {
+        "count": 29,
+        "mean": 0,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0,
+        "stddev": 0
+      },
+      "selectionScoreGap": {
+        "count": 29,
+        "mean": 0.094,
+        "median": 0.085,
+        "q1": 0.017,
+        "q3": 0.116,
+        "min": 0,
+        "max": 0.302,
+        "stddev": 0.08
+      },
+      "simRank": {
+        "count": 29,
+        "mean": 3,
+        "median": 2,
+        "q1": 1,
+        "q3": 4,
+        "min": 1,
+        "max": 8,
+        "stddev": 2.084
+      },
+      "placeRank": {
+        "count": 29,
+        "mean": 1,
+        "median": 1,
+        "q1": 1,
+        "q3": 1,
+        "min": 1,
+        "max": 1,
+        "stddev": 0
+      },
+      "valueRank": {
+        "count": 29,
+        "mean": 7.034,
+        "median": 8,
+        "q1": 5,
+        "q3": 9,
+        "min": 2,
+        "max": 12,
+        "stddev": 2.442
+      },
+      "popularity": {
+        "count": 29,
+        "mean": 1.31,
+        "median": 1,
+        "q1": 1,
+        "q3": 1,
+        "min": 1,
+        "max": 4,
+        "stddev": 0.792
+      },
+      "odds": {
+        "count": 29,
+        "mean": 3.352,
+        "median": 2.8,
+        "q1": 2.2,
+        "q3": 3.6,
+        "min": 1.6,
+        "max": 8.6,
+        "stddev": 1.689
+      }
+    },
+    "honmei_miss": {
+      "simWinProb": {
+        "count": 9,
+        "mean": 0.128,
+        "median": 0.083,
+        "q1": 0.08,
+        "q3": 0.109,
+        "min": 0.022,
+        "max": 0.44,
+        "stddev": 0.12
+      },
+      "edge": {
+        "count": 9,
+        "mean": -21.833,
+        "median": -23.3,
+        "q1": -27.6,
+        "q3": -13,
+        "min": -75,
+        "max": 23.6,
+        "stddev": 25.833
+      },
+      "winProb": {
+        "count": 9,
+        "mean": 0.489,
+        "median": 0.489,
+        "q1": 0.461,
+        "q3": 0.504,
+        "min": 0.429,
+        "max": 0.577,
+        "stddev": 0.04
+      },
+      "placeProb": {
+        "count": 9,
+        "mean": 0.724,
+        "median": 0.698,
+        "q1": 0.686,
+        "q3": 0.754,
+        "min": 0.616,
+        "max": 0.88,
+        "stddev": 0.069
+      },
+      "placeScore": {
+        "count": 9,
+        "mean": 0.624,
+        "median": 0.609,
+        "q1": 0.569,
+        "q3": 0.675,
+        "min": 0.506,
+        "max": 0.769,
+        "stddev": 0.074
+      },
+      "valueScore": {
+        "count": 9,
+        "mean": 0.579,
+        "median": 0.574,
+        "q1": 0.568,
+        "q3": 0.598,
+        "min": 0.512,
+        "max": 0.643,
+        "stddev": 0.039
+      },
+      "top3Stability": {
+        "count": 9,
+        "mean": 0.638,
+        "median": 0.603,
+        "q1": 0.598,
+        "q3": 0.666,
+        "min": 0.555,
+        "max": 0.823,
+        "stddev": 0.075
+      },
+      "marketSupport": {
+        "count": 9,
+        "mean": 0.678,
+        "median": 0.703,
+        "q1": 0.459,
+        "q3": 0.804,
+        "min": 0.375,
+        "max": 1,
+        "stddev": 0.227
+      },
+      "overbetRisk": {
+        "count": 9,
+        "mean": 0.034,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0.295,
+        "stddev": 0.092
+      },
+      "placeReturnEdge": {
+        "count": 9,
+        "mean": 0.435,
+        "median": 0.361,
+        "q1": 0.342,
+        "q3": 0.615,
+        "min": 0.178,
+        "max": 0.678,
+        "stddev": 0.176
+      },
+      "longshotBonus": {
+        "count": 9,
+        "mean": 0.292,
+        "median": 0.3,
+        "q1": 0.3,
+        "q3": 0.3,
+        "min": 0.212,
+        "max": 0.317,
+        "stddev": 0.029
+      },
+      "scoreGap": {
+        "count": 9,
+        "mean": 0,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0,
+        "stddev": 0
+      },
+      "selectionScoreGap": {
+        "count": 9,
+        "mean": 0.06,
+        "median": 0.039,
+        "q1": 0.01,
+        "q3": 0.065,
+        "min": 0.004,
+        "max": 0.22,
+        "stddev": 0.068
+      },
+      "simRank": {
+        "count": 9,
+        "mean": 4.889,
+        "median": 4,
+        "q1": 3,
+        "q3": 5,
+        "min": 1,
+        "max": 14,
+        "stddev": 3.814
+      },
+      "placeRank": {
+        "count": 9,
+        "mean": 1,
+        "median": 1,
+        "q1": 1,
+        "q3": 1,
+        "min": 1,
+        "max": 1,
+        "stddev": 0
+      },
+      "valueRank": {
+        "count": 9,
+        "mean": 6.222,
+        "median": 6,
+        "q1": 4,
+        "q3": 9,
+        "min": 3,
+        "max": 9,
+        "stddev": 2.25
+      },
+      "popularity": {
+        "count": 9,
+        "mean": 1.556,
+        "median": 1,
+        "q1": 1,
+        "q3": 2,
+        "min": 1,
+        "max": 4,
+        "stddev": 0.956
+      },
+      "odds": {
+        "count": 9,
+        "mean": 4.167,
+        "median": 3.7,
+        "q1": 2.8,
+        "q3": 4.9,
+        "min": 2,
+        "max": 8.6,
+        "stddev": 1.858
+      }
+    },
+    "opponent_hit": {
+      "simWinProb": {
+        "count": 18,
+        "mean": 0.163,
+        "median": 0.143,
+        "q1": 0.069,
+        "q3": 0.25,
+        "min": 0.031,
+        "max": 0.39,
+        "stddev": 0.106
+      },
+      "edge": {
+        "count": 18,
+        "mean": -7.217,
+        "median": -8.25,
+        "q1": -18.05,
+        "q3": 0,
+        "min": -29.7,
+        "max": 22.6,
+        "stddev": 14.566
+      },
+      "winProb": {
+        "count": 18,
+        "mean": 0.474,
+        "median": 0.469,
+        "q1": 0.464,
+        "q3": 0.482,
+        "min": 0.423,
+        "max": 0.529,
+        "stddev": 0.024
+      },
+      "placeProb": {
+        "count": 18,
+        "mean": 0.682,
+        "median": 0.677,
+        "q1": 0.654,
+        "q3": 0.721,
+        "min": 0.605,
+        "max": 0.762,
+        "stddev": 0.039
+      },
+      "placeScore": {
+        "count": 18,
+        "mean": 0.58,
+        "median": 0.572,
+        "q1": 0.542,
+        "q3": 0.621,
+        "min": 0.489,
+        "max": 0.665,
+        "stddev": 0.051
+      },
+      "valueScore": {
+        "count": 18,
+        "mean": 0.597,
+        "median": 0.603,
+        "q1": 0.563,
+        "q3": 0.628,
+        "min": 0.519,
+        "max": 0.68,
+        "stddev": 0.044
+      },
+      "top3Stability": {
+        "count": 18,
+        "mean": 0.63,
+        "median": 0.625,
+        "q1": 0.605,
+        "q3": 0.678,
+        "min": 0.522,
+        "max": 0.705,
+        "stddev": 0.053
+      },
+      "marketSupport": {
+        "count": 18,
+        "mean": 0.529,
+        "median": 0.512,
+        "q1": 0.401,
+        "q3": 0.672,
+        "min": 0.336,
+        "max": 0.776,
+        "stddev": 0.146
+      },
+      "overbetRisk": {
+        "count": 18,
+        "mean": 0,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0,
+        "stddev": 0
+      },
+      "placeReturnEdge": {
+        "count": 18,
+        "mean": 0.547,
+        "median": 0.506,
+        "q1": 0.441,
+        "q3": 0.689,
+        "min": 0.313,
+        "max": 0.832,
+        "stddev": 0.158
+      },
+      "longshotBonus": {
+        "count": 18,
+        "mean": 0.307,
+        "median": 0.3,
+        "q1": 0.3,
+        "q3": 0.311,
+        "min": 0.3,
+        "max": 0.328,
+        "stddev": 0.01
+      },
+      "scoreGap": {
+        "count": 18,
+        "mean": 0.084,
+        "median": 0.074,
+        "q1": 0.025,
+        "q3": 0.11,
+        "min": 0.001,
+        "max": 0.223,
+        "stddev": 0.069
+      },
+      "selectionScoreGap": {
+        "count": 18,
+        "mean": 0.084,
+        "median": 0.074,
+        "q1": 0.025,
+        "q3": 0.11,
+        "min": 0.001,
+        "max": 0.223,
+        "stddev": 0.069
+      },
+      "simRank": {
+        "count": 18,
+        "mean": 3.389,
+        "median": 2.5,
+        "q1": 2,
+        "q3": 5.5,
+        "min": 1,
+        "max": 8,
+        "stddev": 2.138
+      },
+      "placeRank": {
+        "count": 18,
+        "mean": 2,
+        "median": 2,
+        "q1": 2,
+        "q3": 2,
+        "min": 2,
+        "max": 2,
+        "stddev": 0
+      },
+      "valueRank": {
+        "count": 18,
+        "mean": 4.722,
+        "median": 5,
+        "q1": 3,
+        "q3": 6,
+        "min": 1,
+        "max": 8,
+        "stddev": 2.076
+      },
+      "popularity": {
+        "count": 18,
+        "mean": 2.167,
+        "median": 2,
+        "q1": 2,
+        "q3": 2,
+        "min": 1,
+        "max": 4,
+        "stddev": 0.601
+      },
+      "odds": {
+        "count": 18,
+        "mean": 4.3,
+        "median": 3.95,
+        "q1": 3.025,
+        "q3": 5.075,
+        "min": 2.5,
+        "max": 7.5,
+        "stddev": 1.458
+      }
+    },
+    "opponent_miss": {
+      "simWinProb": {
+        "count": 20,
+        "mean": 0.127,
+        "median": 0.068,
+        "q1": 0.037,
+        "q3": 0.136,
+        "min": 0.023,
+        "max": 0.564,
+        "stddev": 0.138
+      },
+      "edge": {
+        "count": 20,
+        "mean": -7.99,
+        "median": -9.15,
+        "q1": -18.375,
+        "q3": -3.775,
+        "min": -32.1,
+        "max": 28.6,
+        "stddev": 15.241
+      },
+      "winProb": {
+        "count": 20,
+        "mean": 0.459,
+        "median": 0.462,
+        "q1": 0.444,
+        "q3": 0.476,
+        "min": 0.415,
+        "max": 0.508,
+        "stddev": 0.025
+      },
+      "placeProb": {
+        "count": 20,
+        "mean": 0.659,
+        "median": 0.65,
+        "q1": 0.639,
+        "q3": 0.674,
+        "min": 0.607,
+        "max": 0.741,
+        "stddev": 0.034
+      },
+      "placeScore": {
+        "count": 20,
+        "mean": 0.552,
+        "median": 0.548,
+        "q1": 0.52,
+        "q3": 0.58,
+        "min": 0.483,
+        "max": 0.669,
+        "stddev": 0.046
+      },
+      "valueScore": {
+        "count": 20,
+        "mean": 0.605,
+        "median": 0.591,
+        "q1": 0.555,
+        "q3": 0.637,
+        "min": 0.495,
+        "max": 0.738,
+        "stddev": 0.066
+      },
+      "top3Stability": {
+        "count": 20,
+        "mean": 0.597,
+        "median": 0.613,
+        "q1": 0.561,
+        "q3": 0.639,
+        "min": 0.47,
+        "max": 0.705,
+        "stddev": 0.062
+      },
+      "marketSupport": {
+        "count": 20,
+        "mean": 0.466,
+        "median": 0.45,
+        "q1": 0.385,
+        "q3": 0.567,
+        "min": 0.25,
+        "max": 0.804,
+        "stddev": 0.139
+      },
+      "overbetRisk": {
+        "count": 20,
+        "mean": 0,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0,
+        "stddev": 0
+      },
+      "placeReturnEdge": {
+        "count": 20,
+        "mean": 0.604,
+        "median": 0.568,
+        "q1": 0.448,
+        "q3": 0.706,
+        "min": 0.321,
+        "max": 0.995,
+        "stddev": 0.202
+      },
+      "longshotBonus": {
+        "count": 20,
+        "mean": 0.313,
+        "median": 0.301,
+        "q1": 0.3,
+        "q3": 0.314,
+        "min": 0.3,
+        "max": 0.367,
+        "stddev": 0.02
+      },
+      "scoreGap": {
+        "count": 20,
+        "mean": 0.078,
+        "median": 0.042,
+        "q1": 0.012,
+        "q3": 0.11,
+        "min": 0.001,
+        "max": 0.303,
+        "stddev": 0.085
+      },
+      "selectionScoreGap": {
+        "count": 20,
+        "mean": 0.078,
+        "median": 0.042,
+        "q1": 0.012,
+        "q3": 0.11,
+        "min": 0,
+        "max": 0.302,
+        "stddev": 0.085
+      },
+      "simRank": {
+        "count": 20,
+        "mean": 5.3,
+        "median": 4,
+        "q1": 2.75,
+        "q3": 8,
+        "min": 1,
+        "max": 15,
+        "stddev": 3.783
+      },
+      "placeRank": {
+        "count": 20,
+        "mean": 2,
+        "median": 2,
+        "q1": 2,
+        "q3": 2,
+        "min": 2,
+        "max": 2,
+        "stddev": 0
+      },
+      "valueRank": {
+        "count": 20,
+        "mean": 5.85,
+        "median": 6,
+        "q1": 4.75,
+        "q3": 8,
+        "min": 1,
+        "max": 12,
+        "stddev": 2.868
+      },
+      "popularity": {
+        "count": 20,
+        "mean": 2.6,
+        "median": 2,
+        "q1": 2,
+        "q3": 3,
+        "min": 1,
+        "max": 9,
+        "stddev": 1.744
+      },
+      "odds": {
+        "count": 20,
+        "mean": 5.865,
+        "median": 4.8,
+        "q1": 3.85,
+        "q3": 6.175,
+        "min": 2.8,
+        "max": 17.9,
+        "stddev": 3.345
+      }
+    },
+    "wide_hit": {
+      "simWinProb": {
+        "count": 8,
+        "mean": 0.146,
+        "median": 0.115,
+        "q1": 0.047,
+        "q3": 0.237,
+        "min": 0.041,
+        "max": 0.327,
+        "stddev": 0.102
+      },
+      "edge": {
+        "count": 8,
+        "mean": 5.05,
+        "median": 0.4,
+        "q1": -2.5,
+        "q3": 12.825,
+        "min": -5.6,
+        "max": 22.7,
+        "stddev": 9.815
+      },
+      "winProb": {
+        "count": 8,
+        "mean": 0.44,
+        "median": 0.448,
+        "q1": 0.421,
+        "q3": 0.455,
+        "min": 0.402,
+        "max": 0.475,
+        "stddev": 0.024
+      },
+      "placeProb": {
+        "count": 8,
+        "mean": 0.602,
+        "median": 0.603,
+        "q1": 0.587,
+        "q3": 0.62,
+        "min": 0.55,
+        "max": 0.643,
+        "stddev": 0.027
+      },
+      "placeScore": {
+        "count": 8,
+        "mean": 0.475,
+        "median": 0.471,
+        "q1": 0.469,
+        "q3": 0.49,
+        "min": 0.43,
+        "max": 0.508,
+        "stddev": 0.021
+      },
+      "valueScore": {
+        "count": 8,
+        "mean": 0.689,
+        "median": 0.691,
+        "q1": 0.68,
+        "q3": 0.716,
+        "min": 0.604,
+        "max": 0.736,
+        "stddev": 0.038
+      },
+      "top3Stability": {
+        "count": 8,
+        "mean": 0.557,
+        "median": 0.559,
+        "q1": 0.55,
+        "q3": 0.563,
+        "min": 0.54,
+        "max": 0.573,
+        "stddev": 0.01
+      },
+      "marketSupport": {
+        "count": 8,
+        "mean": 0.216,
+        "median": 0.23,
+        "q1": 0.178,
+        "q3": 0.259,
+        "min": 0.118,
+        "max": 0.268,
+        "stddev": 0.05
+      },
+      "overbetRisk": {
+        "count": 8,
+        "mean": 0,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0,
+        "stddev": 0
+      },
+      "placeReturnEdge": {
+        "count": 8,
+        "mean": 0.91,
+        "median": 0.933,
+        "q1": 0.884,
+        "q3": 0.965,
+        "min": 0.722,
+        "max": 0.99,
+        "stddev": 0.081
+      },
+      "longshotBonus": {
+        "count": 8,
+        "mean": 0.394,
+        "median": 0.375,
+        "q1": 0.362,
+        "q3": 0.427,
+        "min": 0.339,
+        "max": 0.485,
+        "stddev": 0.046
+      },
+      "scoreGap": {
+        "count": 8,
+        "mean": 0.23,
+        "median": 0.235,
+        "q1": 0.2,
+        "q3": 0.271,
+        "min": 0.098,
+        "max": 0.339,
+        "stddev": 0.076
+      },
+      "selectionScoreGap": {
+        "count": 8,
+        "mean": 0.032,
+        "median": 0.028,
+        "q1": 0.01,
+        "q3": 0.044,
+        "min": 0.002,
+        "max": 0.084,
+        "stddev": 0.025
+      },
+      "simRank": {
+        "count": 8,
+        "mean": 3.5,
+        "median": 2.5,
+        "q1": 1,
+        "q3": 5,
+        "min": 1,
+        "max": 8,
+        "stddev": 2.784
+      },
+      "placeRank": {
+        "count": 8,
+        "mean": 3.875,
+        "median": 4,
+        "q1": 3.75,
+        "q3": 4,
+        "min": 3,
+        "max": 5,
+        "stddev": 0.599
+      },
+      "valueRank": {
+        "count": 8,
+        "mean": 1.25,
+        "median": 1,
+        "q1": 1,
+        "q3": 1.25,
+        "min": 1,
+        "max": 2,
+        "stddev": 0.433
+      },
+      "popularity": {
+        "count": 8,
+        "mean": 4.75,
+        "median": 4,
+        "q1": 4,
+        "q3": 5.25,
+        "min": 3,
+        "max": 8,
+        "stddev": 1.479
+      },
+      "odds": {
+        "count": 8,
+        "mean": 10.95,
+        "median": 9.8,
+        "q1": 8.7,
+        "q3": 12.65,
+        "min": 6,
+        "max": 19.4,
+        "stddev": 3.806
+      }
+    },
+    "wide_miss": {
+      "simWinProb": {
+        "count": 31,
+        "mean": 0.102,
+        "median": 0.077,
+        "q1": 0.048,
+        "q3": 0.119,
+        "min": 0.024,
+        "max": 0.341,
+        "stddev": 0.076
+      },
+      "edge": {
+        "count": 31,
+        "mean": -0.387,
+        "median": -1.8,
+        "q1": -6.3,
+        "q3": 2.1,
+        "min": -9.6,
+        "max": 19.7,
+        "stddev": 7.541
+      },
+      "winProb": {
+        "count": 31,
+        "mean": 0.434,
+        "median": 0.441,
+        "q1": 0.413,
+        "q3": 0.457,
+        "min": 0.358,
+        "max": 0.481,
+        "stddev": 0.032
+      },
+      "placeProb": {
+        "count": 31,
+        "mean": 0.599,
+        "median": 0.604,
+        "q1": 0.583,
+        "q3": 0.623,
+        "min": 0.511,
+        "max": 0.661,
+        "stddev": 0.035
+      },
+      "placeScore": {
+        "count": 31,
+        "mean": 0.471,
+        "median": 0.481,
+        "q1": 0.451,
+        "q3": 0.499,
+        "min": 0.39,
+        "max": 0.535,
+        "stddev": 0.036
+      },
+      "valueScore": {
+        "count": 31,
+        "mean": 0.69,
+        "median": 0.692,
+        "q1": 0.673,
+        "q3": 0.718,
+        "min": 0.594,
+        "max": 0.735,
+        "stddev": 0.034
+      },
+      "top3Stability": {
+        "count": 31,
+        "mean": 0.529,
+        "median": 0.56,
+        "q1": 0.482,
+        "q3": 0.577,
+        "min": 0.378,
+        "max": 0.6,
+        "stddev": 0.062
+      },
+      "marketSupport": {
+        "count": 31,
+        "mean": 0.237,
+        "median": 0.25,
+        "q1": 0.207,
+        "q3": 0.27,
+        "min": 0.133,
+        "max": 0.346,
+        "stddev": 0.049
+      },
+      "overbetRisk": {
+        "count": 31,
+        "mean": 0,
+        "median": 0,
+        "q1": 0,
+        "q3": 0,
+        "min": 0,
+        "max": 0,
+        "stddev": 0
+      },
+      "placeReturnEdge": {
+        "count": 31,
+        "mean": 0.925,
+        "median": 0.936,
+        "q1": 0.887,
+        "q3": 0.978,
+        "min": 0.778,
+        "max": 0.995,
+        "stddev": 0.06
+      },
+      "longshotBonus": {
+        "count": 31,
+        "mean": 0.369,
+        "median": 0.358,
+        "q1": 0.352,
+        "q3": 0.382,
+        "min": 0.325,
+        "max": 0.463,
+        "stddev": 0.03
+      },
+      "scoreGap": {
+        "count": 31,
+        "mean": 0.162,
+        "median": 0.141,
+        "q1": 0.105,
+        "q3": 0.224,
+        "min": 0.026,
+        "max": 0.337,
+        "stddev": 0.079
+      },
+      "selectionScoreGap": {
+        "count": 31,
+        "mean": 0.027,
+        "median": 0.015,
+        "q1": 0.009,
+        "q3": 0.035,
+        "min": 0.001,
+        "max": 0.118,
+        "stddev": 0.027
+      },
+      "simRank": {
+        "count": 31,
+        "mean": 4.387,
+        "median": 4,
+        "q1": 3,
+        "q3": 6,
+        "min": 1,
+        "max": 12,
+        "stddev": 2.392
+      },
+      "placeRank": {
+        "count": 31,
+        "mean": 4.323,
+        "median": 4,
+        "q1": 4,
+        "q3": 5,
+        "min": 3,
+        "max": 7,
+        "stddev": 1.059
+      },
+      "valueRank": {
+        "count": 31,
+        "mean": 1.097,
+        "median": 1,
+        "q1": 1,
+        "q3": 1,
+        "min": 1,
+        "max": 2,
+        "stddev": 0.296
+      },
+      "popularity": {
+        "count": 31,
+        "mean": 4.742,
+        "median": 5,
+        "q1": 4,
+        "q3": 5,
+        "min": 2,
+        "max": 9,
+        "stddev": 1.502
+      },
+      "odds": {
+        "count": 31,
+        "mean": 10.797,
+        "median": 9.9,
+        "q1": 8.5,
+        "q3": 12.5,
+        "min": 4.5,
+        "max": 23.3,
+        "stddev": 3.684
+      }
+    }
+  },
+  "quartileSpreads": [
+    {
+      "metric": "placeRank",
+      "orientation": "low",
+      "bestQuartileTop3Rate": 52.174,
+      "worstQuartileTop3Rate": 7.246,
+      "top3RateSpread": 44.928,
+      "bestQuartileWinRate": 17.391,
+      "worstQuartileWinRate": 3.623,
+      "winRateSpread": 13.768
+    },
+    {
+      "metric": "placeProb",
+      "orientation": "high",
+      "bestQuartileTop3Rate": 49.275,
+      "worstQuartileTop3Rate": 5.797,
+      "top3RateSpread": 43.478,
+      "bestQuartileWinRate": 18.116,
+      "worstQuartileWinRate": 2.899,
+      "winRateSpread": 15.217
+    },
+    {
+      "metric": "placeScore",
+      "orientation": "high",
+      "bestQuartileTop3Rate": 48.551,
+      "worstQuartileTop3Rate": 6.522,
+      "top3RateSpread": 42.029,
+      "bestQuartileWinRate": 15.942,
+      "worstQuartileWinRate": 2.899,
+      "winRateSpread": 13.043
+    },
+    {
+      "metric": "top3Stability",
+      "orientation": "high",
+      "bestQuartileTop3Rate": 47.826,
+      "worstQuartileTop3Rate": 7.246,
+      "top3RateSpread": 40.58,
+      "bestQuartileWinRate": 15.217,
+      "worstQuartileWinRate": 2.899,
+      "winRateSpread": 12.319
+    },
+    {
+      "metric": "scoreGap",
+      "orientation": "low",
+      "bestQuartileTop3Rate": 43.478,
+      "worstQuartileTop3Rate": 8.696,
+      "top3RateSpread": 34.783,
+      "bestQuartileWinRate": 15.217,
+      "worstQuartileWinRate": 2.899,
+      "winRateSpread": 12.319
+    },
+    {
+      "metric": "simWinProb",
+      "orientation": "high",
+      "bestQuartileTop3Rate": 36.232,
+      "worstQuartileTop3Rate": 8.696,
+      "top3RateSpread": 27.536,
+      "bestQuartileWinRate": 9.42,
+      "worstQuartileWinRate": 2.899,
+      "winRateSpread": 6.522
+    },
+    {
+      "metric": "simRank",
+      "orientation": "low",
+      "bestQuartileTop3Rate": 36.957,
+      "worstQuartileTop3Rate": 9.42,
+      "top3RateSpread": 27.536,
+      "bestQuartileWinRate": 10.145,
+      "worstQuartileWinRate": 5.072,
+      "winRateSpread": 5.072
+    },
+    {
+      "metric": "valueRank",
+      "orientation": "low",
+      "bestQuartileTop3Rate": 33.333,
+      "worstQuartileTop3Rate": 7.246,
+      "top3RateSpread": 26.087,
+      "bestQuartileWinRate": 9.42,
+      "worstQuartileWinRate": 3.623,
+      "winRateSpread": 5.797
+    },
+    {
+      "metric": "valueScore",
+      "orientation": "high",
+      "bestQuartileTop3Rate": 27.536,
+      "worstQuartileTop3Rate": 5.797,
+      "top3RateSpread": 21.739,
+      "bestQuartileWinRate": 7.246,
+      "worstQuartileWinRate": 2.174,
+      "winRateSpread": 5.072
+    },
+    {
+      "metric": "placeReturnEdge",
+      "orientation": "high",
+      "bestQuartileTop3Rate": 21.739,
+      "worstQuartileTop3Rate": 19.565,
+      "top3RateSpread": 2.174,
+      "bestQuartileWinRate": 5.797,
+      "worstQuartileWinRate": 7.246,
+      "winRateSpread": -1.449
+    },
+    {
+      "metric": "overbetRisk",
+      "orientation": "low",
+      "bestQuartileTop3Rate": 20.29,
+      "worstQuartileTop3Rate": 23.188,
+      "top3RateSpread": -2.899,
+      "bestQuartileWinRate": 6.522,
+      "worstQuartileWinRate": 7.971,
+      "winRateSpread": -1.449
+    },
+    {
+      "metric": "edge",
+      "orientation": "high",
+      "bestQuartileTop3Rate": 17.391,
+      "worstQuartileTop3Rate": 41.304,
+      "top3RateSpread": -23.913,
+      "bestQuartileWinRate": 5.072,
+      "worstQuartileWinRate": 16.667,
+      "winRateSpread": -11.594
+    }
+  ],
+  "valueOnlyComparison": {
+    "threshold": 0.633,
+    "count": 145,
+    "hitCount": 38,
+    "missCount": 107,
+    "hitRate": 26.207,
+    "hits": {
+      "simWinProb": {
+        "count": 38,
+        "mean": 0.146,
+        "median": 0.091,
+        "q1": 0.045,
+        "q3": 0.234,
+        "min": 0.024,
+        "max": 0.501,
+        "stddev": 0.129
+      },
+      "edge": {
+        "count": 38,
+        "mean": 3.353,
+        "median": 0.3,
+        "q1": -5.55,
+        "q3": 11.35,
+        "min": -10.6,
+        "max": 40.8,
+        "stddev": 11.658
+      },
+      "placeProb": {
+        "count": 38,
+        "mean": 0.607,
+        "median": 0.601,
+        "q1": 0.577,
+        "q3": 0.639,
+        "min": 0.55,
+        "max": 0.686,
+        "stddev": 0.037
+      },
+      "placeScore": {
+        "count": 38,
+        "mean": 0.481,
+        "median": 0.471,
+        "q1": 0.453,
+        "q3": 0.51,
+        "min": 0.422,
+        "max": 0.563,
+        "stddev": 0.038
+      },
+      "valueScore": {
+        "count": 38,
+        "mean": 0.673,
+        "median": 0.672,
+        "q1": 0.657,
+        "q3": 0.686,
+        "min": 0.634,
+        "max": 0.736,
+        "stddev": 0.026
+      },
+      "top3Stability": {
+        "count": 38,
+        "mean": 0.549,
+        "median": 0.56,
+        "q1": 0.52,
+        "q3": 0.573,
+        "min": 0.398,
+        "max": 0.629,
+        "stddev": 0.05
+      },
+      "placeReturnEdge": {
+        "count": 38,
+        "mean": 0.866,
+        "median": 0.88,
+        "q1": 0.813,
+        "q3": 0.928,
+        "min": 0.686,
+        "max": 0.99,
+        "stddev": 0.077
+      },
+      "scoreGap": {
+        "count": 38,
+        "mean": 0.159,
+        "median": 0.152,
+        "q1": 0.107,
+        "q3": 0.232,
+        "min": 0,
+        "max": 0.348,
+        "stddev": 0.092
+      }
+    },
+    "misses": {
+      "simWinProb": {
+        "count": 107,
+        "mean": 0.088,
+        "median": 0.056,
+        "q1": 0.033,
+        "q3": 0.118,
+        "min": 0.02,
+        "max": 0.39,
+        "stddev": 0.078
+      },
+      "edge": {
+        "count": 107,
+        "mean": -1.203,
+        "median": -3.7,
+        "q1": -7.45,
+        "q3": 3.2,
+        "min": -11,
+        "max": 33.9,
+        "stddev": 8.089
+      },
+      "placeProb": {
+        "count": 107,
+        "mean": 0.591,
+        "median": 0.592,
+        "q1": 0.569,
+        "q3": 0.613,
+        "min": 0.519,
+        "max": 0.683,
+        "stddev": 0.035
+      },
+      "placeScore": {
+        "count": 107,
+        "mean": 0.464,
+        "median": 0.46,
+        "q1": 0.441,
+        "q3": 0.489,
+        "min": 0.397,
+        "max": 0.559,
+        "stddev": 0.036
+      },
+      "valueScore": {
+        "count": 107,
+        "mean": 0.672,
+        "median": 0.671,
+        "q1": 0.644,
+        "q3": 0.688,
+        "min": 0.633,
+        "max": 0.738,
+        "stddev": 0.03
+      },
+      "top3Stability": {
+        "count": 107,
+        "mean": 0.526,
+        "median": 0.551,
+        "q1": 0.485,
+        "q3": 0.569,
+        "min": 0.376,
+        "max": 0.636,
+        "stddev": 0.062
+      },
+      "placeReturnEdge": {
+        "count": 107,
+        "mean": 0.883,
+        "median": 0.89,
+        "q1": 0.839,
+        "q3": 0.939,
+        "min": 0.678,
+        "max": 0.995,
+        "stddev": 0.075
+      },
+      "scoreGap": {
+        "count": 107,
+        "mean": 0.157,
+        "median": 0.141,
+        "q1": 0.11,
+        "q3": 0.202,
+        "min": 0,
+        "max": 0.35,
+        "stddev": 0.08
+      }
+    }
+  },
+  "popularityComparisons": {
+    "popularHitsCount": 61,
+    "longshotHitsCount": 23,
+    "popularHits": {
+      "simWinProb": {
+        "count": 61,
+        "mean": 0.151,
+        "median": 0.106,
+        "q1": 0.048,
+        "q3": 0.225,
+        "min": 0.024,
+        "max": 0.589,
+        "stddev": 0.132
+      },
+      "edge": {
+        "count": 61,
+        "mean": -11.738,
+        "median": -12.2,
+        "q1": -20.2,
+        "q3": -3.3,
+        "min": -53.8,
+        "max": 28.2,
+        "stddev": 16.33
+      },
+      "placeProb": {
+        "count": 61,
+        "mean": 0.697,
+        "median": 0.678,
+        "q1": 0.651,
+        "q3": 0.735,
+        "min": 0.556,
+        "max": 0.88,
+        "stddev": 0.074
+      },
+      "placeScore": {
+        "count": 61,
+        "mean": 0.597,
+        "median": 0.575,
+        "q1": 0.53,
+        "q3": 0.649,
+        "min": 0.435,
+        "max": 0.793,
+        "stddev": 0.088
+      },
+      "valueScore": {
+        "count": 61,
+        "mean": 0.598,
+        "median": 0.6,
+        "q1": 0.567,
+        "q3": 0.621,
+        "min": 0.512,
+        "max": 0.736,
+        "stddev": 0.045
+      },
+      "top3Stability": {
+        "count": 61,
+        "mean": 0.632,
+        "median": 0.626,
+        "q1": 0.58,
+        "q3": 0.686,
+        "min": 0.427,
+        "max": 0.818,
+        "stddev": 0.083
+      },
+      "placeReturnEdge": {
+        "count": 61,
+        "mean": 0.527,
+        "median": 0.501,
+        "q1": 0.347,
+        "q3": 0.686,
+        "min": 0.246,
+        "max": 0.99,
+        "stddev": 0.191
+      },
+      "scoreGap": {
+        "count": 61,
+        "mean": 0.059,
+        "median": 0.012,
+        "q1": 0,
+        "q3": 0.115,
+        "min": 0,
+        "max": 0.268,
+        "stddev": 0.075
+      }
+    },
+    "longshotHits": {
+      "simWinProb": {
+        "count": 23,
+        "mean": 0.039,
+        "median": 0.024,
+        "q1": 0.022,
+        "q3": 0.033,
+        "min": 0.02,
+        "max": 0.19,
+        "stddev": 0.038
+      },
+      "edge": {
+        "count": 23,
+        "mean": 0.039,
+        "median": -1.1,
+        "q1": -2.25,
+        "q3": 1.05,
+        "min": -4,
+        "max": 11.8,
+        "stddev": 3.412
+      },
+      "placeProb": {
+        "count": 23,
+        "mean": 0.494,
+        "median": 0.505,
+        "q1": 0.458,
+        "q3": 0.521,
+        "min": 0.38,
+        "max": 0.603,
+        "stddev": 0.056
+      },
+      "placeScore": {
+        "count": 23,
+        "mean": 0.367,
+        "median": 0.37,
+        "q1": 0.333,
+        "q3": 0.393,
+        "min": 0.272,
+        "max": 0.466,
+        "stddev": 0.051
+      },
+      "valueScore": {
+        "count": 23,
+        "mean": 0.522,
+        "median": 0.541,
+        "q1": 0.459,
+        "q3": 0.575,
+        "min": 0.387,
+        "max": 0.676,
+        "stddev": 0.081
+      },
+      "top3Stability": {
+        "count": 23,
+        "mean": 0.408,
+        "median": 0.384,
+        "q1": 0.339,
+        "q3": 0.494,
+        "min": 0.28,
+        "max": 0.551,
+        "stddev": 0.089
+      },
+      "placeReturnEdge": {
+        "count": 23,
+        "mean": 0.584,
+        "median": 0.587,
+        "q1": 0.4,
+        "q3": 0.712,
+        "min": 0.4,
+        "max": 0.88,
+        "stddev": 0.161
+      },
+      "scoreGap": {
+        "count": 23,
+        "mean": 0.253,
+        "median": 0.24,
+        "q1": 0.198,
+        "q3": 0.316,
+        "min": 0.114,
+        "max": 0.479,
+        "stddev": 0.088
+      }
+    }
+  }
+}

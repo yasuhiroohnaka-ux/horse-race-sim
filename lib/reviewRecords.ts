@@ -84,7 +84,9 @@ export function buildSelectionHorseFromSnapshot(snapshot: PredictionSnapshot | n
     placeScore: null,
     valueScore: null,
     selectionMethod:
-      snapshot.opponentHorseId && snapshot.opponentHorseId === row.horseId ? snapshot.opponentSelectionMethod ?? "rank2" : undefined,
+      snapshot.opponentHorseId && snapshot.opponentHorseId === row.horseId
+        ? snapshot.opponentSelectionMethod ?? "stable_next"
+        : undefined,
     selectionReason: normalizeString(snapshot.signalReasons?.[row.horseId]?.signalReason),
     overbetLabel: null,
     scoreGap: null,

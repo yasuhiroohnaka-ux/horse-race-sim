@@ -166,7 +166,7 @@ export interface PredictionSnapshot {
   rankedRows: PredictionSnapshotRow[];
   honmeiHorseId: string | null;
   opponentHorseId?: string | null;
-  opponentSelectionMethod?: "rank2" | "light_adjusted" | "legacy_value";
+  opponentSelectionMethod?: "rank2" | "light_adjusted" | "legacy_value" | "stable_next";
   opponentScore?: number | null;
   opponentRank?: number | null;
   honmeiScore?: number | null;
@@ -213,7 +213,7 @@ export interface ReviewSelectionHorse {
   placeProb: number | null;
   placeScore: number | null;
   valueScore: number | null;
-  selectionMethod?: "rank2" | "light_adjusted" | "legacy_value";
+  selectionMethod?: "rank2" | "light_adjusted" | "legacy_value" | "stable_next";
   selectionReason?: string | null;
   overbetLabel?: string | null;
   scoreGap?: number | null;

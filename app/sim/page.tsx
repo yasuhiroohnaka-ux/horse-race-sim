@@ -485,6 +485,8 @@ function SimulatorContent() {
       const simulationResults = runMonteCarlo(horses, selectedCourse, condition, MONTE_CARLO_RUNS);
       setResults(simulationResults);
 
+      let pair: ReturnType<typeof pickTanpukuPair> | null = null;
+
       // Compute tanpuku pair from scored horses
       try {
         const raceForTanpuku = {
@@ -495,7 +497,7 @@ function SimulatorContent() {
           trackBias: { innerOuter: 0, frontBack: 0 },
           horses: horses.map((h) => ({ ...h })),
         };
-        const pair = pickTanpukuPair(raceForTanpuku, false, true);
+        pair = pickTanpukuPair(raceForTanpuku, false, true);
         setTanpukuPair(pair);
       } catch {
         setTanpukuPair(null);
@@ -513,6 +515,15 @@ function SimulatorContent() {
             simulationCount: MONTE_CARLO_RUNS,
             oddsFetchedAt: oddsLastFetchedAt || null,
             oddsSource: horses.find((horse) => String(horse.oddsSource ?? "").trim())?.oddsSource ?? null,
+            opponentOverride: pair?.opponentPick
+              ? {
+                  horseId: pair.opponentPick.horse.id,
+                  selectionMethod: "stable_next",
+                  score: pair.opponentPick.placeScore,
+                  pairScoreGap: pair.opponentPick.scoreGap ?? null,
+                }
+              : null,
+            valueHorseId: pair?.widePick?.horse?.id ?? pair?.valuePick?.horse?.id ?? null,
           });
 
           const response = await fetch("/api/prediction-snapshots", {

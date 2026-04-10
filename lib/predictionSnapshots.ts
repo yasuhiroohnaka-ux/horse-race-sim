@@ -21,7 +21,7 @@ const CONTRIBUTOR_LABELS: Record<PredictionSnapshotContributorKey, string> = {
 export const PREDICTION_SNAPSHOT_MODEL_FAMILY = "manual-sim-montecarlo";
 export const PREDICTION_SNAPSHOT_MODEL_VERSION = "sim-page-v1";
 export const DEFAULT_PREDICTION_ORIGIN: PredictionOrigin = "saved_manual";
-export const DEFAULT_SCORING_VERSION = "tanpuku-place-v2.2";
+export const DEFAULT_SCORING_VERSION = "tanpuku-place-v2.3";
 
 const SCORING_CONFIG_SOURCE = {
   engine: "runMonteCarlo",
@@ -30,7 +30,7 @@ const SCORING_CONFIG_SOURCE = {
   winProbabilityField: "simWinRate",
   edgeField: "simWinRate - officialImplied",
   honmeiRule: "rows[0]",
-  opponentRule: "rows[1]",
+  opponentRule: "tanpukuPair.opponentPick(placeProb -> top3Stability -> placeScore -> simWinProb)",
   watchRule: "official top4 sorted by officialImplied - simWinRate",
   contributors: [
     "abilityScore",
@@ -166,6 +166,15 @@ export async function buildPredictionSnapshot(params: {
   oddsSource?: string | null;
   predictionOrigin?: PredictionOrigin;
   scoringVersion?: string | null;
+  opponentOverride?: {
+    horseId: string;
+    selectionMethod?: "rank2" | "light_adjusted" | "legacy_value" | "stable_next";
+    score?: number | null;
+    rank?: number | null;
+    pairScoreGap?: number | null;
+    pairRankGap?: number | null;
+  } | null;
+  valueHorseId?: string | null;
 }): Promise<PredictionSnapshot> {
   const {
     results,
@@ -185,13 +194,16 @@ export async function buildPredictionSnapshot(params: {
     oddsSource = null,
     predictionOrigin = DEFAULT_PREDICTION_ORIGIN,
     scoringVersion = DEFAULT_SCORING_VERSION,
+    opponentOverride = null,
+    valueHorseId = null,
   } = params;
 
   const rows = buildRaceAnalysisRows(results, horses, course, condition);
   const scoringConfigHash = await getScoringConfigHash();
   const honmeiHorseId = rows[0]?.horseId ?? null;
-  const opponentRow = rows.find((row) => row.horseId !== honmeiHorseId) ?? null;
-  const opponentHorseId = opponentRow?.horseId ?? null;
+  const defaultOpponentRow = rows.find((row) => row.horseId !== honmeiHorseId) ?? null;
+  const opponentHorseId = opponentOverride?.horseId ?? defaultOpponentRow?.horseId ?? null;
+  const opponentRow = rows.find((row) => row.horseId === opponentHorseId) ?? defaultOpponentRow ?? null;
   const watchHorseId =
     [...rows]
       .filter((row) => row.officialRank <= Math.min(4, rows.length))
@@ -259,15 +271,34 @@ export async function buildPredictionSnapshot(params: {
     rankedRows,
     honmeiHorseId,
     opponentHorseId,
-    opponentSelectionMethod: opponentHorseId ? "rank2" : undefined,
-    opponentScore: opponentRow ? round1(opponentRow.abilityScore) : null,
-    opponentRank: opponentRow ? rows.findIndex((row) => row.horseId === opponentRow.horseId) + 1 : null,
+    opponentSelectionMethod: opponentHorseId ? opponentOverride?.selectionMethod ?? "rank2" : undefined,
+    opponentScore:
+      opponentHorseId && opponentOverride?.score !== undefined && opponentOverride?.score !== null
+        ? round1(opponentOverride.score)
+        : opponentRow
+          ? round1(opponentRow.abilityScore)
+          : null,
+    opponentRank:
+      opponentHorseId && opponentOverride?.rank !== undefined && opponentOverride?.rank !== null
+        ? opponentOverride.rank
+        : opponentRow
+          ? rows.findIndex((row) => row.horseId === opponentRow.horseId) + 1
+          : null,
     honmeiScore: honmeiRow ? round1(honmeiRow.abilityScore) : null,
     honmeiRank: honmeiRow ? rows.findIndex((row) => row.horseId === honmeiRow.horseId) + 1 : null,
     pairScoreGap:
-      honmeiRow && opponentRow ? round1(honmeiRow.abilityScore - opponentRow.abilityScore) : null,
-    pairRankGap: honmeiRow && opponentRow ? 1 : null,
-    valueHorseId: null,
+      opponentOverride?.pairScoreGap !== undefined && opponentOverride?.pairScoreGap !== null
+        ? round1(opponentOverride.pairScoreGap)
+        : honmeiRow && opponentRow
+          ? round1(honmeiRow.abilityScore - opponentRow.abilityScore)
+          : null,
+    pairRankGap:
+      opponentOverride?.pairRankGap !== undefined && opponentOverride?.pairRankGap !== null
+        ? opponentOverride.pairRankGap
+        : honmeiRow && opponentRow
+          ? 1
+          : null,
+    valueHorseId,
     watchHorseId,
     signalReasons,
     marketMeta: {

@@ -213,7 +213,10 @@ function getHorseName(race: WeeklyRace, horseId: string | null | undefined) {
   return normalizeString(raceHorseById(race, horseId)?.name) ?? null;
 }
 
-function buildSelectionHorseFromPairEntry(entry: Record<string, unknown> | null, selectionMethod: "rank2" | "light_adjusted"): ReviewSelectionHorse | null {
+function buildSelectionHorseFromPairEntry(
+  entry: Record<string, unknown> | null,
+  selectionMethod: "rank2" | "light_adjusted" | "stable_next"
+): ReviewSelectionHorse | null {
   if (!entry) return null;
   const horse = (entry.horse ?? null) as Record<string, unknown> | null;
   const horseId = normalizeString(horse?.id);
@@ -344,7 +347,8 @@ async function createSnapshotRecords(params: {
     const condition = createDefaultCondition(race.courseId);
     const horses = race.horses as never[];
     const simulationResults = runMonteCarlo(horses, course, condition, MONTE_CARLO_RUNS);
-    const tanpukuPair = (await import("../lib/tanpukuSelection.mjs")).pickTanpukuPair(
+    const tanpukuSelectionModule = await import("../lib/tanpukuSelection.mjs");
+    const tanpukuPair = tanpukuSelectionModule.pickTanpukuPair(
       {
         courseId: race.courseId,
         label: normalizeString(race.label) ?? race.courseId,
@@ -384,47 +388,41 @@ async function createSnapshotRecords(params: {
       tanpukuPair?.winPick ? { ...tanpukuPair.winPick, rank: rankMap.get(String(tanpukuPair.winPick.horse.id)) ?? 1 } : null,
       "rank2"
     );
-    const fallbackRunnerUpEntry =
-      eligibleScoredRows.find((entry: Record<string, unknown>) => String((entry.horse as Record<string, unknown>)?.id ?? "") !== String(honmei?.horseId ?? "")) ?? null;
-    const winRunnerUp =
-      tanpukuPair?.winRunnerUp && !isCancelledHorse(raceHorseById(race, tanpukuPair.winRunnerUp.horseId) as Record<string, unknown> | null)
-        ? tanpukuPair.winRunnerUp
-        : fallbackRunnerUpEntry
-          ? {
-              horseId: String((fallbackRunnerUpEntry.horse as Record<string, unknown>)?.id ?? ""),
-              horseName: normalizeString((fallbackRunnerUpEntry.horse as Record<string, unknown>)?.name) ?? "",
-              placeScore: normalizeNumber(fallbackRunnerUpEntry.placeScore) ?? 0,
-              valueScore: normalizeNumber(fallbackRunnerUpEntry.valueScore) ?? 0,
-              placeProb: normalizeNumber(fallbackRunnerUpEntry.placeProb) ?? 0,
-              winProb: normalizeNumber(fallbackRunnerUpEntry.winProb) ?? 0,
-              top3Stability: normalizeNumber(fallbackRunnerUpEntry.top3Stability) ?? 0,
-              marketSupport: normalizeNumber(fallbackRunnerUpEntry.marketSupport) ?? 0,
-              overbetRisk: normalizeNumber(fallbackRunnerUpEntry.overbetRisk) ?? 0,
-            }
-          : null;
-    const opponentBase = winRunnerUp
+    const fallbackOpponentEntry = tanpukuSelectionModule.pickOpponentEntry(
+      scoredRows,
+      honmei?.horseId ?? tanpukuPair?.winPick?.horse?.id ?? null
+    ).entry;
+    const selectedOpponentSource =
+      tanpukuPair?.opponentPick &&
+      !isCancelledHorse(raceHorseById(race, tanpukuPair.opponentPick.horse.id) as Record<string, unknown> | null)
+        ? tanpukuPair.opponentPick
+        : fallbackOpponentEntry;
+    const opponentBase = selectedOpponentSource
       ? {
-          ...(scoredRows.find((entry: Record<string, unknown>) => String((entry.horse as Record<string, unknown>)?.id ?? "") === String(winRunnerUp.horseId)) ??
+          ...(scoredRows.find((entry: Record<string, unknown>) => String((entry.horse as Record<string, unknown>)?.id ?? "") === String(selectedOpponentSource.horse.id ?? selectedOpponentSource.horseId)) ??
             {
               horse: {
-                id: winRunnerUp.horseId,
-                name: winRunnerUp.horseName,
-                realOdds: raceHorseById(race, winRunnerUp.horseId)?.realOdds ?? null,
+                id: selectedOpponentSource.horse?.id ?? selectedOpponentSource.horseId,
+                name: selectedOpponentSource.horse?.name ?? selectedOpponentSource.horseName,
+                realOdds: raceHorseById(race, selectedOpponentSource.horse?.id ?? selectedOpponentSource.horseId)?.realOdds ?? null,
               },
             }),
-          rank: rankMap.get(String(winRunnerUp.horseId)) ?? 2,
-          placeScore: winRunnerUp.placeScore,
-          placeProb: winRunnerUp.placeProb,
+          rank: rankMap.get(String(selectedOpponentSource.horse?.id ?? selectedOpponentSource.horseId)) ?? 2,
+          placeScore: selectedOpponentSource.placeScore,
+          placeProb: selectedOpponentSource.placeProb,
+          top3Stability: selectedOpponentSource.top3Stability,
+          winProb: selectedOpponentSource.winProb,
+          selectionReason: selectedOpponentSource.selectionReason,
           scoreGap:
             honmei?.placeScore !== null &&
             honmei?.placeScore !== undefined &&
-            winRunnerUp.placeScore !== null &&
-            winRunnerUp.placeScore !== undefined
-              ? Number((honmei.placeScore - Number(winRunnerUp.placeScore)).toFixed(3))
+            selectedOpponentSource.placeScore !== null &&
+            selectedOpponentSource.placeScore !== undefined
+              ? Number((honmei.placeScore - Number(selectedOpponentSource.placeScore)).toFixed(3))
               : null,
         }
       : null;
-    const opponent = buildSelectionHorseFromPairEntry(opponentBase, "rank2");
+    const opponent = buildSelectionHorseFromPairEntry(opponentBase, "stable_next");
     const widePick = tanpukuPair?.widePick ?? tanpukuPair?.valuePick ?? null;
     const wide = buildSelectionHorseFromPairEntry(
       widePick
@@ -438,7 +436,7 @@ async function createSnapshotRecords(params: {
 
     if (opponent?.horseId) {
       snapshot.opponentHorseId = opponent.horseId;
-      snapshot.opponentSelectionMethod = "rank2";
+      snapshot.opponentSelectionMethod = "stable_next";
       snapshot.opponentScore = opponent.score ?? null;
       snapshot.opponentRank = opponent.rank ?? null;
       snapshot.pairScoreGap =
@@ -476,7 +474,7 @@ async function createSnapshotRecords(params: {
     });
 
     nextRecords.push(reviewRecord);
-    if (!records[raceId]?.snapshot) {
+    if (!records[raceId]?.snapshot || params.refreshExisting) {
       await appendSnapshot(snapshot);
     }
   }

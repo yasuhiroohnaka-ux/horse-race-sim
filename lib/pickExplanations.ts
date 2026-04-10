@@ -260,6 +260,30 @@ export function buildDisagreementExplanation(
   return "シミュ本命は勝ち切り寄り、本命候補は安定寄りの評価になった。";
 }
 
+function buildStableOpponentCandidateExplanation(entry?: PickExplanationEntry | null): string {
+  if (!entry) {
+    return "相手候補は、単複本命を除いた中で安定指標を比較して選ぶ次点候補です。";
+  }
+
+  const selectionReason = normalizeText(entry.selectionReason);
+  if (selectionReason) {
+    return selectionReason;
+  }
+
+  const detailParts: string[] = [];
+  if (isFiniteNumber(entry.placeProb)) detailParts.push(`placeProb ${pct(entry.placeProb)}`);
+  if (isFiniteNumber(entry.top3Stability)) detailParts.push(`top3安定 ${pct(entry.top3Stability)}`);
+  if (isFiniteNumber(entry.placeScore)) detailParts.push(`placeScore ${r3(entry.placeScore)}`);
+  if (isFiniteNumber(entry.winProb)) detailParts.push(`simWinProb ${pct(entry.winProb)}`);
+  if (isFiniteNumber(entry.scoreGap)) detailParts.push(`本命差 ${r3(entry.scoreGap)}`);
+
+  if (detailParts.length > 0) {
+    return `単複本命を除いた中で、placeProb を最優先に top3Stability・placeScore・simWinProb を比較し、安定次点として相手候補に選出。${detailParts.join(" / ")}`;
+  }
+
+  return "本命候補に次ぐ安定評価として相手候補に選出。3着内の残りやすさを重視しています。";
+}
+
 export function buildPickExplanations(params: {
   agreementStatus: AgreementStatus;
   simEntry?: PickExplanationEntry | null;
@@ -270,7 +294,7 @@ export function buildPickExplanations(params: {
   return {
     simHonmei: buildSimHonmeiExplanation(params.simEntry),
     tanpukuHonmei: buildTanpukuHonmeiExplanation(params.winEntry),
-    opponentCandidate: buildOpponentCandidateExplanation(params.opponentEntry),
+    opponentCandidate: buildStableOpponentCandidateExplanation(params.opponentEntry),
     wideLongshot: buildWideLongshotExplanation(params.wideEntry),
     agreement: buildAgreementExplanation(params.agreementStatus, params.simEntry, params.winEntry),
     disagreement: buildDisagreementExplanation(params.agreementStatus, params.simEntry, params.winEntry),
