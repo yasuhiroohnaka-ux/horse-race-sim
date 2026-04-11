@@ -572,7 +572,7 @@ function SimulatorContent() {
       });
 
       console.log("[Issue8] pre_race payload", payload);
-      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(payload.text)}`, "_blank");
+      window.open(`https://twitter.com/intent/tweet?text=${payload.encodedText ?? encodeURIComponent(payload.text)}`, "_blank");
       return;
     }
 
