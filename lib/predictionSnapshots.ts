@@ -91,6 +91,11 @@ function resolveOddsSource(horses: Horse[], explicitOddsSource?: string | null):
   return candidate ? String(candidate) : null;
 }
 
+function normalizeString(value: unknown): string | null {
+  const normalized = String(value ?? "").trim();
+  return normalized || null;
+}
+
 export async function getScoringConfigHash(): Promise<string> {
   return sha256Hex(canonicalize(SCORING_CONFIG_SOURCE));
 }
@@ -227,6 +232,7 @@ export async function buildPredictionSnapshot(params: {
     const profile = getScenarioProfile(horse, course, condition);
     return {
       horseId: row.horseId,
+      externalHorseId: normalizeString((horse as Horse & { externalHorseId?: unknown }).externalHorseId),
       horseName: row.name,
       rank: index + 1,
       score: row.abilityScore,

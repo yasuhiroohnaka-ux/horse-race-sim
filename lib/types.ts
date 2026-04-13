@@ -124,6 +124,7 @@ export interface PredictionSnapshotSignalReason {
 
 export interface PredictionSnapshotRow {
   horseId: string;
+  externalHorseId?: string | null;
   horseName: string;
   rank: number;
   score: number;
@@ -217,6 +218,7 @@ export interface ReviewRaceMeta {
 
 export interface ReviewSelectionHorse {
   horseId: string;
+  externalHorseId?: string | null;
   horseName: string | null;
   rank: number | null;
   score: number | null;

@@ -75,6 +75,7 @@ export function buildSelectionHorseFromSnapshot(snapshot: PredictionSnapshot | n
   if (!row) return null;
   return {
     horseId: row.horseId,
+    externalHorseId: normalizeString(row.externalHorseId),
     horseName: row.horseName ?? null,
     rank: normalizeNumber(row.rank),
     score: normalizeNumber(row.score),
@@ -132,6 +133,33 @@ function normalizeSnapshot(snapshot: PredictionSnapshot | null | undefined, meta
   };
 }
 
+function normalizeSelection(selection: ReviewSelectionHorse | null | undefined): ReviewSelectionHorse | null {
+  if (!selection) return null;
+  return {
+    ...selection,
+    horseId: normalizeString(selection.horseId) ?? "",
+    externalHorseId: normalizeString(selection.externalHorseId),
+    horseName: normalizeString(selection.horseName),
+    rank: normalizeNumber(selection.rank),
+    score: normalizeNumber(selection.score),
+    winProb: normalizeNumber(selection.winProb),
+    realOdds: normalizeNumber(selection.realOdds),
+    placeOdds: normalizeNumber(selection.placeOdds),
+    placeProb: normalizeNumber(selection.placeProb),
+    placeScore: normalizeNumber(selection.placeScore),
+    valueScore: normalizeNumber(selection.valueScore),
+    selectionReason: normalizeString(selection.selectionReason),
+    overbetLabel: normalizeString(selection.overbetLabel),
+    scoreGap: normalizeNumber(selection.scoreGap),
+    runnerUpHorseId: normalizeString(selection.runnerUpHorseId),
+    runnerUpHorseName: normalizeString(selection.runnerUpHorseName),
+    runnerUpPlaceScore: normalizeNumber(selection.runnerUpPlaceScore),
+    runnerUpPlaceProb: normalizeNumber(selection.runnerUpPlaceProb),
+    tanPayout: Number(selection.tanPayout ?? 0),
+    fukuPayout: Number(selection.fukuPayout ?? 0),
+  };
+}
+
 export function normalizeReviewRecord(record: RaceReviewRecord): RaceReviewRecord {
   const meta = buildReviewRaceMeta({
     raceId: extractRaceId(record.meta?.raceId ?? record.raceId) ?? extractRaceId(record.raceId) ?? String(record.raceId),
@@ -165,6 +193,9 @@ export function normalizeReviewRecord(record: RaceReviewRecord): RaceReviewRecor
     lastError: normalizeString(record.lastError),
     meta,
     snapshot: normalizeSnapshot(record.snapshot, meta),
+    honmei: normalizeSelection(record.honmei),
+    opponent: normalizeSelection(record.opponent),
+    wide: normalizeSelection(record.wide),
     actualWinnerHorseId: normalizeString(record.actualWinnerHorseId),
     actualTop3HorseIds: Array.isArray(record.actualTop3HorseIds)
       ? record.actualTop3HorseIds.map((value) => String(value)).filter(Boolean)

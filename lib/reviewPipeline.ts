@@ -314,6 +314,7 @@ function buildSelectionHorseFromPairEntry(
   if (!horseId) return null;
   return {
     horseId,
+    externalHorseId: normalizeString(horse?.externalHorseId),
     horseName: normalizeString(horse?.name),
     rank: normalizeNumber(entry.rank) ?? null,
     score: normalizeNumber(entry.placeScore) ?? normalizeNumber(entry.valueScore),
@@ -482,10 +483,112 @@ function hydrateSelectionsFromSnapshot(record: RaceReviewRecord): RaceReviewReco
   };
 }
 
-function findHorseFinisher(race: WeeklyRace, horseId: string | null | undefined) {
+function normalizeHorseName(value: unknown) {
+  return String(value ?? "")
+    .normalize("NFKC")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
+function raceHorseByExternalId(race: WeeklyRace, externalHorseId: string | null | undefined) {
+  if (!externalHorseId) return null;
+  return race.horses.find((horse) => String(horse.externalHorseId ?? "") === String(externalHorseId)) ?? null;
+}
+
+function raceHorseByName(race: WeeklyRace, horseName: string | null | undefined) {
+  const normalizedName = normalizeHorseName(horseName);
+  if (!normalizedName) return null;
+  return race.horses.find((horse) => normalizeHorseName(horse.name) === normalizedName) ?? null;
+}
+
+function findHorseFinisherById(race: WeeklyRace, horseId: string | null | undefined) {
   if (!horseId) return null;
   const finishers = Array.isArray(race.result?.finishers) ? race.result?.finishers ?? [] : [];
   return finishers.find((finisher) => String(finisher.horseId ?? "") === String(horseId)) ?? null;
+}
+
+function findHorseFinisherByExternalId(race: WeeklyRace, externalHorseId: string | null | undefined) {
+  if (!externalHorseId) return null;
+  const finishers = Array.isArray(race.result?.finishers) ? race.result?.finishers ?? [] : [];
+  return finishers.find((finisher) => String(finisher.externalHorseId ?? "") === String(externalHorseId)) ?? null;
+}
+
+function findHorseFinisherByName(race: WeeklyRace, horseName: string | null | undefined) {
+  const normalizedName = normalizeHorseName(horseName);
+  if (!normalizedName) return null;
+  const finishers = Array.isArray(race.result?.finishers) ? race.result?.finishers ?? [] : [];
+  return finishers.find((finisher) => normalizeHorseName(finisher.name) === normalizedName) ?? null;
+}
+
+function resolveSelectionForSettlement(race: WeeklyRace, selection: ReviewSelectionHorse | null) {
+  if (!selection) return null;
+
+  const normalizedName = normalizeHorseName(selection.horseName);
+  let resolvedHorse: Record<string, unknown> | null = null;
+  let resolvedFinisher: Record<string, unknown> | null = null;
+
+  if (selection.externalHorseId) {
+    resolvedHorse = raceHorseByExternalId(race, selection.externalHorseId);
+    resolvedFinisher = findHorseFinisherByExternalId(race, selection.externalHorseId);
+  }
+
+  if (!resolvedHorse && !resolvedFinisher && normalizedName) {
+    resolvedHorse = raceHorseByName(race, selection.horseName);
+    resolvedFinisher = findHorseFinisherByName(race, selection.horseName);
+  }
+
+  const verifiedIdHorse = raceHorseById(race, selection.horseId);
+  const verifiedIdFinisher = findHorseFinisherById(race, selection.horseId);
+  const verifiedIdName = normalizeHorseName(verifiedIdHorse?.name ?? verifiedIdFinisher?.name);
+  const canTrustStoredHorseId = !selection.horseId
+    ? false
+    : !normalizedName || !verifiedIdName || verifiedIdName === normalizedName;
+
+  if (!resolvedHorse && canTrustStoredHorseId) {
+    resolvedHorse = verifiedIdHorse;
+  }
+
+  if (!resolvedFinisher && canTrustStoredHorseId) {
+    resolvedFinisher = verifiedIdFinisher;
+  }
+
+  if (!resolvedHorse && resolvedFinisher?.horseId) {
+    resolvedHorse = raceHorseById(race, normalizeString(resolvedFinisher.horseId));
+  }
+
+  if (!resolvedFinisher && resolvedHorse?.id) {
+    resolvedFinisher = findHorseFinisherById(race, normalizeString(resolvedHorse.id));
+  }
+
+  const resolvedHorseId =
+    normalizeString(resolvedHorse?.id) ??
+    normalizeString(resolvedFinisher?.horseId) ??
+    normalizeString(selection.horseId) ??
+    selection.horseId;
+  const resolvedExternalHorseId =
+    normalizeString(resolvedHorse?.externalHorseId) ??
+    normalizeString(resolvedFinisher?.externalHorseId) ??
+    normalizeString(selection.externalHorseId);
+  const resolvedHorseName =
+    normalizeString(resolvedHorse?.name) ??
+    normalizeString(resolvedFinisher?.name) ??
+    normalizeString(selection.horseName);
+  const resolvedHorseNumber =
+    normalizeNumber(resolvedFinisher?.horseNumber) ??
+    normalizeNumber(resolvedHorse?.gateNumber) ??
+    normalizeNumber(resolvedHorse?.id);
+
+  return {
+    selection: {
+      ...selection,
+      horseId: resolvedHorseId,
+      externalHorseId: resolvedExternalHorseId,
+      horseName: resolvedHorseName,
+    },
+    finisher: resolvedFinisher,
+    horseNumber: resolvedHorseNumber,
+  };
 }
 
 function payoutForHorseNumber(
@@ -528,14 +631,16 @@ function settleSelection(
   includeTan: boolean
 ): ReviewSelectionHorse | null {
   if (!selection) return null;
+  const resolved = resolveSelectionForSettlement(race, selection);
+  if (!resolved) return null;
+  const settledSelection = resolved.selection;
   const winnerHorseId = normalizeString(race.result?.winnerHorseId);
   const top3HorseIds = Array.isArray(race.result?.top3HorseIds) ? race.result?.top3HorseIds.map((value) => String(value)) : [];
-  const finisher = findHorseFinisher(race, selection.horseId);
-  const horseNumber = normalizeNumber(finisher?.horseNumber);
+  const horseNumber = resolved.horseNumber;
   const tanPayout = includeTan ? payoutForHorseNumber(race.result?.payouts?.tansho, horseNumber) : 0;
   const fukuPayout = payoutForHorseNumber(race.result?.payouts?.fukusho, horseNumber);
-  const tanHit = includeTan && winnerHorseId === selection.horseId;
-  const fukuHit = top3HorseIds.includes(selection.horseId);
+  const tanHit = includeTan && winnerHorseId === settledSelection.horseId;
+  const fukuHit = top3HorseIds.includes(settledSelection.horseId);
   const hasTan = includeTan ? hasPayoutTable(race.result?.payouts?.tansho) : true;
   const hasFuku = hasPayoutTable(race.result?.payouts?.fukusho);
   const settlementStatus =
@@ -546,7 +651,7 @@ function settleSelection(
         : "settled";
 
   return {
-    ...selection,
+    ...settledSelection,
     settlementStatus,
     tanOutcome: includeTan ? (tanHit ? (tanPayout !== null ? "hit" : "hit_missing_payout") : "miss") : "not_settled",
     fukuOutcome: fukuHit ? (fukuPayout !== null ? "hit" : "hit_missing_payout") : "miss",
@@ -776,8 +881,8 @@ export async function runReviewPipeline(options: ReviewPipelineOptions): Promise
         const settledHonmei = settleSelection(race, record.honmei, true);
         const settledOpponent = settleSelection(race, record.opponent, false);
         const settledWide = settleSelection(race, record.wide, false);
-        const honmeiFinisher = findHorseFinisher(race, record.honmei?.horseId);
-        const opponentFinisher = findHorseFinisher(race, record.opponent?.horseId);
+        const honmeiFinisher = findHorseFinisherById(race, settledHonmei?.horseId);
+        const opponentFinisher = findHorseFinisherById(race, settledOpponent?.horseId);
         const top3HorseIds = Array.isArray(race.result?.top3HorseIds) ? race.result?.top3HorseIds.map((value) => String(value)) : [];
         const widePayout = payoutForWidePair(
           race.result?.payouts?.wide,
@@ -787,7 +892,10 @@ export async function runReviewPipeline(options: ReviewPipelineOptions): Promise
         );
         const hasWide = hasPayoutTable(race.result?.payouts?.wide);
         const wideOutcome =
-          honmeiFinisher && opponentFinisher && top3HorseIds.includes(String(record.honmei?.horseId)) && top3HorseIds.includes(String(record.opponent?.horseId))
+          honmeiFinisher &&
+          opponentFinisher &&
+          top3HorseIds.includes(String(settledHonmei?.horseId)) &&
+          top3HorseIds.includes(String(settledOpponent?.horseId))
             ? widePayout !== null
               ? "hit"
               : "hit_missing_payout"
@@ -803,11 +911,11 @@ export async function runReviewPipeline(options: ReviewPipelineOptions): Promise
           payoutFetchedAt: payoutsAvailable ? toIso(now) : record.payoutFetchedAt,
           pair: {
             ...record.pair,
-            honmeiHorseId: record.honmei?.horseId ?? null,
-            opponentHorseId: record.opponent?.horseId ?? null,
+            honmeiHorseId: settledHonmei?.horseId ?? null,
+            opponentHorseId: settledOpponent?.horseId ?? null,
             sameTop3:
-              record.honmei?.horseId && record.opponent?.horseId
-                ? top3HorseIds.includes(record.honmei.horseId) && top3HorseIds.includes(record.opponent.horseId)
+              settledHonmei?.horseId && settledOpponent?.horseId
+                ? top3HorseIds.includes(settledHonmei.horseId) && top3HorseIds.includes(settledOpponent.horseId)
                 : null,
             wideOutcome,
             widePayout: widePayout ?? 0,
