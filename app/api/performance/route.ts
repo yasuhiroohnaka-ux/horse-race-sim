@@ -13,6 +13,27 @@ type GapBucket = {
   wideHitRate: number;
 };
 
+type ClassificationBreakdownEntry = {
+  classification: string;
+  raceCount: number;
+  winCount: number;
+  placeCount: number;
+  winRate: number;
+  placeRate: number;
+  tanRoi: number;
+  fukuRoi: number;
+};
+
+type HonmeiMetrics = {
+  raceCount: number;
+  winCount: number;
+  placeCount: number;
+  winRate: number;
+  placeRate: number;
+  tanRoi: number;
+  fukuRoi: number;
+};
+
 type SummaryPayload = {
   counts: {
     targetRaceCount: number;
@@ -21,15 +42,7 @@ type SummaryPayload = {
     failedCount: number;
     legacyCount: number;
   };
-  honmei: {
-    raceCount: number;
-    winCount: number;
-    placeCount: number;
-    winRate: number;
-    placeRate: number;
-    tanRoi: number;
-    fukuRoi: number;
-  };
+  honmei: HonmeiMetrics;
   opponent: {
     raceCount: number;
     placeCount: number;
@@ -46,6 +59,28 @@ type SummaryPayload = {
   };
   rankGapBuckets: GapBucket[];
   scoreGapBuckets: GapBucket[];
+  classificationBreakdown?: ClassificationBreakdownEntry[];
+  classificationComparison?: {
+    all: HonmeiMetrics;
+    classified: HonmeiMetrics;
+    excludeSkip: HonmeiMetrics;
+    byClassification: ClassificationBreakdownEntry[];
+    delta: {
+      vsAll: {
+        winRateDelta: number;
+        placeRateDelta: number;
+        tanRoiDelta: number;
+        fukuRoiDelta: number;
+      };
+      vsClassified: {
+        winRateDelta: number;
+        placeRateDelta: number;
+        tanRoiDelta: number;
+        fukuRoiDelta: number;
+      };
+    };
+    unclassifiedCount: number;
+  };
 };
 
 function normalizeScope(value: string | null | undefined): DiagnosticsAggregationScope {
@@ -162,6 +197,7 @@ function settlementBundle(record: RaceReviewRecord) {
           runnerUpPlaceScore: Number(record.honmei.runnerUpPlaceScore ?? 0),
           runnerUpPlaceProb: Number(record.honmei.runnerUpPlaceProb ?? 0),
           overbetLabel: record.honmei.overbetLabel ?? null,
+          classificationHint: record.honmei.classificationHint ?? null,
         }
       : null,
     opponent,
@@ -251,6 +287,8 @@ function buildSummary(records: RaceReviewRecord[]): SummaryPayload {
     scoreGapBuckets,
   };
 
+  const classificationAccum = new Map<string, { raceCount: number; winCount: number; placeCount: number; tanPayout: number; fukuPayout: number }>();
+
   for (const record of readyRecords) {
     const honmei = record.honmei;
     const opponent = record.opponent;
@@ -260,6 +298,17 @@ function buildSummary(records: RaceReviewRecord[]): SummaryPayload {
       if (honmei.fukuOutcome === "hit") summary.honmei.placeCount += 1;
       summary.honmei.tanRoi += Number(honmei.tanPayout ?? 0);
       summary.honmei.fukuRoi += Number(honmei.fukuPayout ?? 0);
+
+      const cKey = honmei.classificationHint?.classification;
+      if (cKey) {
+        const bucket = classificationAccum.get(cKey) ?? { raceCount: 0, winCount: 0, placeCount: 0, tanPayout: 0, fukuPayout: 0 };
+        bucket.raceCount += 1;
+        if (honmei.tanOutcome === "hit") bucket.winCount += 1;
+        if (honmei.fukuOutcome === "hit") bucket.placeCount += 1;
+        bucket.tanPayout += Number(honmei.tanPayout ?? 0);
+        bucket.fukuPayout += Number(honmei.fukuPayout ?? 0);
+        classificationAccum.set(cKey, bucket);
+      }
     }
 
     if (opponent) {
@@ -299,6 +348,72 @@ function buildSummary(records: RaceReviewRecord[]): SummaryPayload {
     bucket.opponentPlaceRate = pct(bucket.opponentPlaceCount, bucket.raceCount);
     bucket.wideHitRate = pct(bucket.wideHitCount, bucket.raceCount);
   }
+
+  summary.classificationBreakdown = (["win", "place", "skip"] as const).map((key) => {
+    const b = classificationAccum.get(key) ?? { raceCount: 0, winCount: 0, placeCount: 0, tanPayout: 0, fukuPayout: 0 };
+    return {
+      classification: key,
+      raceCount: b.raceCount,
+      winCount: b.winCount,
+      placeCount: b.placeCount,
+      winRate: pct(b.winCount, b.raceCount),
+      placeRate: pct(b.placeCount, b.raceCount),
+      tanRoi: roi(b.tanPayout, b.raceCount),
+      fukuRoi: roi(b.fukuPayout, b.raceCount),
+    };
+  });
+
+  const classifiedAccum = { raceCount: 0, winCount: 0, placeCount: 0, tanPayout: 0, fukuPayout: 0 };
+  const excludeSkipAccum = { raceCount: 0, winCount: 0, placeCount: 0, tanPayout: 0, fukuPayout: 0 };
+
+  for (const [key, b] of Array.from(classificationAccum.entries())) {
+    classifiedAccum.raceCount += b.raceCount;
+    classifiedAccum.winCount += b.winCount;
+    classifiedAccum.placeCount += b.placeCount;
+    classifiedAccum.tanPayout += b.tanPayout;
+    classifiedAccum.fukuPayout += b.fukuPayout;
+
+    if (key === "win" || key === "place") {
+      excludeSkipAccum.raceCount += b.raceCount;
+      excludeSkipAccum.winCount += b.winCount;
+      excludeSkipAccum.placeCount += b.placeCount;
+      excludeSkipAccum.tanPayout += b.tanPayout;
+      excludeSkipAccum.fukuPayout += b.fukuPayout;
+    }
+  }
+
+  const toMetrics = (b: { raceCount: number; winCount: number; placeCount: number; tanPayout: number; fukuPayout: number }): HonmeiMetrics => ({
+    raceCount: b.raceCount,
+    winCount: b.winCount,
+    placeCount: b.placeCount,
+    winRate: pct(b.winCount, b.raceCount),
+    placeRate: pct(b.placeCount, b.raceCount),
+    tanRoi: roi(b.tanPayout, b.raceCount),
+    fukuRoi: roi(b.fukuPayout, b.raceCount),
+  });
+
+  const allMetrics: HonmeiMetrics = { ...summary.honmei };
+  const classifiedMetrics: HonmeiMetrics = toMetrics(classifiedAccum);
+  const excludeSkipMetrics: HonmeiMetrics = toMetrics(excludeSkipAccum);
+
+  const reqDelta = (base: HonmeiMetrics, target: HonmeiMetrics) => ({
+    winRateDelta: target.winRate - base.winRate,
+    placeRateDelta: target.placeRate - base.placeRate,
+    tanRoiDelta: target.tanRoi - base.tanRoi,
+    fukuRoiDelta: target.fukuRoi - base.fukuRoi,
+  });
+
+  summary.classificationComparison = {
+    all: allMetrics,
+    classified: classifiedMetrics,
+    excludeSkip: excludeSkipMetrics,
+    byClassification: summary.classificationBreakdown,
+    delta: {
+      vsAll: reqDelta(allMetrics, excludeSkipMetrics),
+      vsClassified: reqDelta(classifiedMetrics, excludeSkipMetrics),
+    },
+    unclassifiedCount: allMetrics.raceCount - classifiedMetrics.raceCount,
+  };
 
   return summary;
 }

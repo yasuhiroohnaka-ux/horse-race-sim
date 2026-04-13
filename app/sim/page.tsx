@@ -739,6 +739,22 @@ function SimulatorContent() {
                             {winPick.overbetLabel && <span className="inline-block rounded-full bg-red-100 px-2 py-0.5 text-red-700">{winPick.overbetLabel}</span>}
                           </div>
                         )}
+                        {winPick?.classificationHint && (
+                          <div className="mt-1.5 flex items-center gap-1.5">
+                            <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                              winPick.classificationHint.classification === "win" ? "bg-orange-100 text-orange-800"
+                                : winPick.classificationHint.classification === "place" ? "bg-blue-100 text-blue-800"
+                                : "bg-slate-200 text-slate-600"
+                            }`}>
+                              {winPick.classificationHint.classification === "win" ? "単勝向き"
+                                : winPick.classificationHint.classification === "place" ? "複勝向き"
+                                : "見送り"}
+                            </span>
+                            {winPick.classificationHint.reason && (
+                              <span className="text-[10px] text-slate-500">{winPick.classificationHint.reason}</span>
+                            )}
+                          </div>
+                        )}
                         <p className="mt-2 text-xs leading-relaxed text-amber-700">{explanations.tanpukuHonmei}</p>
                       </div>
                     </div>

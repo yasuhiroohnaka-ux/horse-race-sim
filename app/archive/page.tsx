@@ -43,6 +43,7 @@ type RecommendationSettlement = {
   runnerUpPlaceScore: number;
   runnerUpPlaceProb: number;
   overbetLabel: string | null;
+  classificationHint?: { classification: string; confidence: number; reason: string | null } | null;
 };
 
 type ReviewMeta = {
@@ -72,6 +73,13 @@ type AggregateSummary = {
   };
   rankGapBuckets?: unknown[];
   scoreGapBuckets?: unknown[];
+  classificationComparison?: {
+    all: { raceCount: number; winRate: number; placeRate: number; tanRoi: number; fukuRoi: number };
+    classified: { raceCount: number; winRate: number; placeRate: number; tanRoi: number; fukuRoi: number };
+    excludeSkip: { raceCount: number; winRate: number; placeRate: number; tanRoi: number; fukuRoi: number };
+    byClassification: { classification: string; raceCount: number; winRate: number; placeRate: number; tanRoi: number; fukuRoi: number }[];
+    unclassifiedCount: number;
+  };
 };
 
 type RecommendationSettlementBundle = {
@@ -233,6 +241,63 @@ function getCardState(params: {
 
 function renderAggregateSummary(summary: AggregateSummary | null, counts: AggregateSummary["counts"]) {
   if (!summary) return null;
+
+  const comp = summary.classificationComparison;
+  let compNode = null;
+
+  if (comp) {
+    if (comp.classified.raceCount === 0) {
+      compNode = (
+        <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-center text-sm text-slate-500">
+          classification付きデータがまだないため、分類別比較は今後のレースで表示されます。
+          {comp.unclassifiedCount > 0 && `（未分類: ${comp.unclassifiedCount}件）`}
+        </div>
+      );
+    } else {
+      const rows = [
+        { label: "全体", ...comp.all },
+        { label: "分類済 (classified)", ...comp.classified },
+        ...comp.byClassification.map((b) => ({ label: `判定: ${b.classification}`, ...b })),
+        { label: "skip除外後 (win+place)", ...comp.excludeSkip },
+      ];
+
+      compNode = (
+        <div className="mt-6">
+          <h3 className="text-sm font-bold text-slate-800">分類別比較 (classificationHint検証)</h3>
+          {comp.unclassifiedCount > 0 && (
+            <p className="mt-1 text-xs text-slate-500">※レガシーデータ（未分類） {comp.unclassifiedCount}件</p>
+          )}
+          <div className="mt-3 overflow-x-auto rounded-lg border border-slate-200">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 text-xs text-slate-500">
+                <tr>
+                  <th className="px-4 py-2 font-medium">条件</th>
+                  <th className="px-4 py-2 font-medium text-right">R数</th>
+                  <th className="px-4 py-2 font-medium text-right">単勝率</th>
+                  <th className="px-4 py-2 font-medium text-right">複勝率</th>
+                  <th className="px-4 py-2 font-medium text-right">単回値</th>
+                  <th className="px-4 py-2 font-medium text-right">複回値</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {rows.map((r, i) => (
+                  <tr key={i} className={r.label.startsWith("skip除外") ? "bg-amber-50" : "bg-white"}>
+                    <td className="px-4 py-2 font-medium text-slate-700">{r.label}</td>
+                    <td className="px-4 py-2 text-right">{r.raceCount}</td>
+                    <td className="px-4 py-2 text-right">{r.winRate.toFixed(1)}%</td>
+                    <td className="px-4 py-2 text-right">{r.placeRate.toFixed(1)}%</td>
+                    <td className="px-4 py-2 text-right">{Math.round(r.tanRoi)}%</td>
+                    <td className="px-4 py-2 text-right">{Math.round(r.fukuRoi)}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    }
+  }
+
   return (
     <section className="space-y-4">
       <div>
@@ -253,6 +318,7 @@ function renderAggregateSummary(summary: AggregateSummary | null, counts: Aggreg
           <SummaryMetric label="複回収率" value={formatRate(summary.honmei.fukuRoi)} />
         </SummaryCard>
       </div>
+      {compNode}
     </section>
   );
 }
@@ -337,6 +403,22 @@ function renderReviewCard(params: {
               {settlement?.win ? (
                 <div className="mt-2 space-y-2 text-sm text-slate-700">
                   <p className="font-semibold text-slate-800">{settlement.win.horseName} ({settlement.win.horseId})</p>
+                  {settlement.win.classificationHint && (
+                    <div className="flex items-center gap-1.5">
+                      <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                        settlement.win.classificationHint.classification === "win" ? "bg-orange-100 text-orange-800"
+                          : settlement.win.classificationHint.classification === "place" ? "bg-blue-100 text-blue-800"
+                          : "bg-slate-200 text-slate-600"
+                      }`}>
+                        {settlement.win.classificationHint.classification === "win" ? "単勝向き"
+                          : settlement.win.classificationHint.classification === "place" ? "複勝向き"
+                          : "見送り"}
+                      </span>
+                      {settlement.win.classificationHint.reason && (
+                        <span className="text-[10px] text-slate-500">{settlement.win.classificationHint.reason}</span>
+                      )}
+                    </div>
+                  )}
                   <SummaryMetric label="状態" value={formatSettlementStatus(settlement.win.settlementStatus)} />
                   <SummaryMetric label="単勝" value={formatOutcome(settlement.win.tanOutcome, "tan")} />
                   <SummaryMetric label="複勝" value={formatOutcome(settlement.win.fukuOutcome, "fuku")} />

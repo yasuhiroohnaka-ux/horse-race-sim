@@ -22,7 +22,7 @@ import {
 } from "@/lib/reviewStatus";
 import { runMonteCarlo } from "@/lib/simulation";
 import { MONTE_CARLO_RUNS } from "@/lib/simulationConfig";
-import type { PredictionSnapshot, RaceReviewRecord, ReviewSelectionHorse } from "@/lib/types";
+import type { PickClassificationHint, PredictionSnapshot, RaceReviewRecord, ReviewSelectionHorse } from "@/lib/types";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -123,6 +123,18 @@ function normalizeString(value: unknown): string | null {
 function normalizeNumber(value: unknown): number | null {
   const normalized = Number(value);
   return Number.isFinite(normalized) ? normalized : null;
+}
+
+function normalizeClassificationHint(value: unknown): PickClassificationHint | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const raw = value as Record<string, unknown>;
+  const c = raw.classification;
+  if (c !== "win" && c !== "place" && c !== "skip") return undefined;
+  return {
+    classification: c,
+    confidence: normalizeNumber(raw.confidence) ?? 0,
+    reason: normalizeString(raw.reason),
+  };
 }
 
 function jstNow() {
@@ -332,6 +344,7 @@ function buildSelectionHorseFromPairEntry(
     runnerUpHorseName: normalizeString(entry.runnerUpHorseName),
     runnerUpPlaceScore: normalizeNumber(entry.runnerUpPlaceScore),
     runnerUpPlaceProb: normalizeNumber(entry.runnerUpPlaceProb),
+    classificationHint: normalizeClassificationHint(entry.classificationHint),
     settlementStatus: "pending_result",
     tanOutcome: "not_settled",
     fukuOutcome: "not_settled",

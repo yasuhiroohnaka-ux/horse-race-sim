@@ -1,14 +1,19 @@
 export type RunningStyle = "Nige" | "Senko" | "Sashi" | "Oikomi";
 
-// --- Single-pick classification (future extension) ---
+// --- Single-pick classification (prediction-time hint) ---
 // Classifies a honmei pick as win-oriented, place-oriented, or skip.
+// This is a prediction-time hint, NOT a retrospective confirmed label.
+// The honmei candidate is selected by placeScore (stability-weighted composite),
+// and classification asks: "does this candidate also have strong win credentials,
+// or is it primarily place-oriented, or are both too weak to recommend?"
 // Values are UI-friendly so they can be displayed directly.
+// A separate confirmed classification may be introduced later for retrospective analysis.
 export type PickClassification = "win" | "place" | "skip";
 
 export interface PickClassificationHint {
   classification: PickClassification;
-  confidence: number; // 0–1
-  reason: string | null;
+  confidence: number; // 0–1, how strongly the classification applies
+  reason: string | null; // human-readable reason in Japanese
 }
 export type HorseSex = "M" | "F";
 export type GroundCondition = "Firm" | "Good" | "Yielding" | "Soft";
@@ -248,8 +253,11 @@ export interface ReviewSelectionHorse {
   runnerUpPlaceScore?: number | null;
   runnerUpPlaceProb?: number | null;
   settlementStatus?: "pending_result" | "pending_payouts" | "settled";
-  // TODO: future extension — attach single-pick classification hint
-  // classificationHint?: PickClassificationHint;
+  // Prediction-time classification hint.
+  // Indicates whether this honmei candidate leans toward win, place, or skip.
+  // This is set at prediction time and is NOT a retrospective confirmed label.
+  // Legacy records without this field are treated as "unclassified".
+  classificationHint?: PickClassificationHint;
   tanOutcome?: "not_settled" | "hit" | "miss" | "hit_missing_payout";
   fukuOutcome?: "not_settled" | "hit" | "miss" | "hit_missing_payout";
   tanPayout?: number;
