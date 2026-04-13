@@ -20,8 +20,13 @@ function hasSettledSelection(selection: ReviewSelectionHorse | null, requireTan:
   return true;
 }
 
+/**
+ * Pair resolution check.
+ * When opponent is absent, the pair is considered N/A (not blocking ready).
+ * This supports the "本命 settle 完了で ready" spec.
+ */
 function hasResolvedPair(record: Pick<RaceReviewRecord, "pair" | "honmei" | "opponent">) {
-  if (!record.honmei || !record.opponent) return false;
+  if (!record.honmei || !record.opponent) return true; // pair N/A when opponent absent
   if (record.pair.wideOutcome === "not_settled" || record.pair.wideOutcome === "hit_missing_payout") return false;
   return record.pair.widePayoutSource === "official";
 }
@@ -66,17 +71,16 @@ export function getMissingReasons(params: {
   if (!record.honmei) {
     reasons.push("NO_MAIN_PICK");
   }
-  if (!record.opponent) {
-    reasons.push("NO_PARTNER_PICK");
-  }
+  // NOTE: opponent is no longer required for review_ready.
+  // NO_PARTNER_PICK is kept as a legacy reason but does not block readiness.
 
   const hasResult = Boolean(record.actualWinnerHorseId && record.actualTop3HorseIds.length > 0);
   if (!hasResult) {
     reasons.push(resultAvailable ? "NO_RESULT" : "UPSTREAM_NOT_READY");
   } else {
+    // 本命 settle 完了で ready — opponent settlement is optional
     const hasResolvedPayouts =
       hasSettledSelection(record.honmei, true) &&
-      hasSettledSelection(record.opponent, false) &&
       hasResolvedPair(record);
 
     if (!hasResolvedPayouts) {
@@ -139,7 +143,7 @@ export function formatMissingReason(reason: ReviewMissingReason) {
     case "NO_MAIN_PICK":
       return "本命候補 未取得";
     case "NO_PARTNER_PICK":
-      return "相手候補 未取得";
+      return "相手候補 未取得 (legacy)";
     case "NO_RESULT":
       return "結果未反映";
     case "NO_PAYOUT":

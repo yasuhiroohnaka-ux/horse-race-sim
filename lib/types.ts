@@ -1,4 +1,15 @@
-﻿export type RunningStyle = "Nige" | "Senko" | "Sashi" | "Oikomi";
+export type RunningStyle = "Nige" | "Senko" | "Sashi" | "Oikomi";
+
+// --- Single-pick classification (future extension) ---
+// Classifies a honmei pick as win-oriented, place-oriented, or skip.
+// Values are UI-friendly so they can be displayed directly.
+export type PickClassification = "win" | "place" | "skip";
+
+export interface PickClassificationHint {
+  classification: PickClassification;
+  confidence: number; // 0–1
+  reason: string | null;
+}
 export type HorseSex = "M" | "F";
 export type GroundCondition = "Firm" | "Good" | "Yielding" | "Soft";
 export type Weather = "Sunny" | "Cloudy" | "Rain" | "Snow";
@@ -237,6 +248,8 @@ export interface ReviewSelectionHorse {
   runnerUpPlaceScore?: number | null;
   runnerUpPlaceProb?: number | null;
   settlementStatus?: "pending_result" | "pending_payouts" | "settled";
+  // TODO: future extension — attach single-pick classification hint
+  // classificationHint?: PickClassificationHint;
   tanOutcome?: "not_settled" | "hit" | "miss" | "hit_missing_payout";
   fukuOutcome?: "not_settled" | "hit" | "miss" | "hit_missing_payout";
   tanPayout?: number;

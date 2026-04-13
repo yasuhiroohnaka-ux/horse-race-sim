@@ -86,18 +86,18 @@ function classifyScoreGap(scoreGap: number | null | undefined) {
   return "0.05+";
 }
 
+/**
+ * 本命 settle 完了で ready.
+ * Opponent settlement is no longer required — this aligns with the
+ * single-pick (win/place) focused direction of the app.
+ */
 function isReadyRecord(record: RaceReviewRecord) {
   const resultAvailable = Boolean(record.actualWinnerHorseId && record.actualTop3HorseIds.length > 0);
-  const payoutsAvailable =
-    record.honmei?.settlementStatus === "settled" &&
-    record.opponent?.settlementStatus === "settled" &&
-    record.pair.wideOutcome !== "not_settled" &&
-    record.pair.wideOutcome !== "hit_missing_payout" &&
-    record.pair.widePayoutSource === "official";
+  const payoutsAvailable = record.honmei?.settlementStatus === "settled";
   return isReviewComplete({
     record,
     resultAvailable,
-    payoutsAvailable,
+    payoutsAvailable: Boolean(payoutsAvailable),
   });
 }
 
