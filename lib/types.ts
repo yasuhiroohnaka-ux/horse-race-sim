@@ -195,8 +195,10 @@ export type ReviewMissingReason =
   | "NO_MAIN_PICK"
   | "NO_PARTNER_PICK"
   | "NO_RESULT"
+  | "NO_PAYOUT"
   | "JOIN_KEY_MISMATCH"
-  | "UPSTREAM_NOT_READY";
+  | "UPSTREAM_NOT_READY"
+  | "UPSTREAM_PAYOUT_NOT_READY";
 
 export type ReviewCompatibilityMode = "native_opponent" | "legacy_value_candidate";
 

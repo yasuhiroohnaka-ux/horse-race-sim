@@ -183,6 +183,10 @@ function StatusChip({ state }: { state: CardState }) {
   return <span className={`rounded-full px-3 py-1 text-xs font-semibold ${state.tone}`}>{state.label}</span>;
 }
 
+function hasMissingReason(meta: ReviewMeta, reason: string) {
+  return Boolean(meta?.missingReasons?.includes(reason));
+}
+
 function getCardState(params: {
   snapshot?: PredictionSnapshot;
   settlement: RecommendationSettlementBundle | null;
@@ -191,6 +195,10 @@ function getCardState(params: {
   const { snapshot, settlement, isRepairing } = params;
   const meta = settlement?.meta ?? null;
   const missingLabels = meta?.missingReasonLabels ?? [];
+  const resultPending = hasMissingReason(meta, "UPSTREAM_NOT_READY");
+  const payoutPending = hasMissingReason(meta, "UPSTREAM_PAYOUT_NOT_READY");
+  const resultStale = hasMissingReason(meta, "NO_RESULT");
+  const payoutIncomplete = hasMissingReason(meta, "NO_PAYOUT");
   const nextRetryAt = meta?.nextRetryAt ? `次回 ${formatTimestamp(meta.nextRetryAt)}` : null;
   const baseDetail = missingLabels.length > 0 ? missingLabels.join(" / ") : nextRetryAt;
 
@@ -202,6 +210,18 @@ function getCardState(params: {
   }
   if (meta?.status === "review_failed") {
     return { key: "failed", label: "失敗", tone: "bg-rose-100 text-rose-700", detail: meta.lastError ?? baseDetail ?? "再試行上限に到達しました。" };
+  }
+  if (resultPending) {
+    return { key: "retry_scheduled", label: "結果待ち", tone: "bg-sky-50 text-sky-700", detail: baseDetail ?? "結果 source の反映待ちです。" };
+  }
+  if (payoutPending) {
+    return { key: "retry_scheduled", label: "払戻待ち", tone: "bg-cyan-50 text-cyan-700", detail: baseDetail ?? "払戻 source の反映待ちです。" };
+  }
+  if (resultStale) {
+    return { key: "partial", label: "結果未反映", tone: "bg-amber-100 text-amber-800", detail: baseDetail ?? "source には結果がありますが review record に反映しきれていません。" };
+  }
+  if (payoutIncomplete) {
+    return { key: "partial", label: "払戻不完全", tone: "bg-amber-100 text-amber-800", detail: baseDetail ?? "source に結果はありますが払戻の反映が不完全です。" };
   }
   if (meta?.status === "review_partial") {
     return { key: "partial", label: "一部のみ取得済み", tone: "bg-amber-100 text-amber-800", detail: baseDetail ?? "不足項目を補完中です。" };

@@ -73,12 +73,15 @@ export function getMissingReasons(params: {
   const hasResult = Boolean(record.actualWinnerHorseId && record.actualTop3HorseIds.length > 0);
   if (!hasResult) {
     reasons.push(resultAvailable ? "NO_RESULT" : "UPSTREAM_NOT_READY");
-  } else if (
-    !hasSettledSelection(record.honmei, true) ||
-    !hasSettledSelection(record.opponent, false) ||
-    !hasResolvedPair(record)
-  ) {
-    reasons.push(payoutsAvailable ? "NO_RESULT" : "UPSTREAM_NOT_READY");
+  } else {
+    const hasResolvedPayouts =
+      hasSettledSelection(record.honmei, true) &&
+      hasSettledSelection(record.opponent, false) &&
+      hasResolvedPair(record);
+
+    if (!hasResolvedPayouts) {
+      reasons.push(payoutsAvailable ? "NO_PAYOUT" : "UPSTREAM_PAYOUT_NOT_READY");
+    }
   }
 
   return uniqueReasons(reasons);
@@ -117,7 +120,10 @@ export function deriveIncompleteStatus(params: {
   missingReasons: ReviewMissingReason[];
 }): ReviewProcessingStatus {
   const { record, missingReasons } = params;
-  if (record.retryCount >= REVIEW_MAX_RETRY && missingReasons.some((reason) => reason !== "UPSTREAM_NOT_READY")) {
+  if (
+    record.retryCount >= REVIEW_MAX_RETRY &&
+    missingReasons.some((reason) => reason !== "UPSTREAM_NOT_READY" && reason !== "UPSTREAM_PAYOUT_NOT_READY")
+  ) {
     return "review_failed";
   }
   if (hasAnyReviewCore(record)) {
@@ -135,11 +141,15 @@ export function formatMissingReason(reason: ReviewMissingReason) {
     case "NO_PARTNER_PICK":
       return "相手候補 未取得";
     case "NO_RESULT":
-      return "結果データ不足";
+      return "結果未反映";
+    case "NO_PAYOUT":
+      return "払戻不完全";
     case "JOIN_KEY_MISMATCH":
-      return "join key 不整合";
+      return "join key 不一致";
     case "UPSTREAM_NOT_READY":
-      return "上流データ待ち";
+      return "結果待ち";
+    case "UPSTREAM_PAYOUT_NOT_READY":
+      return "払戻待ち";
     default:
       return reason;
   }

@@ -857,7 +857,8 @@ export async function runReviewPipeline(options: ReviewPipelineOptions): Promise
         });
       } else {
         const nextRetryCount =
-          attemptedRepair && missingReasons.some((reason) => reason !== "UPSTREAM_NOT_READY")
+          attemptedRepair &&
+          missingReasons.some((reason) => reason !== "UPSTREAM_NOT_READY" && reason !== "UPSTREAM_PAYOUT_NOT_READY")
             ? record.retryCount + 1
             : record.retryCount;
         const nextStatus = deriveIncompleteStatus({
