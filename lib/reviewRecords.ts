@@ -8,6 +8,7 @@ import type {
   ReviewRecordStore,
   ReviewSelectionHorse,
 } from "@/lib/types";
+import { normalizeLegacyReviewStatus } from "@/lib/reviewStatus";
 
 const ROOT = process.cwd();
 const DATA_DIR = path.join(ROOT, "data");
@@ -116,6 +117,99 @@ function emptyStore(): ReviewRecordStore {
   };
 }
 
+function normalizeSnapshot(snapshot: PredictionSnapshot | null | undefined, meta: ReviewRaceMeta): PredictionSnapshot | null {
+  if (!snapshot) return null;
+  return {
+    ...snapshot,
+    raceId: extractRaceId(snapshot.raceId) ?? meta.raceId,
+    courseId: normalizeString(snapshot.courseId) ?? meta.courseId,
+    raceDate: normalizeString(snapshot.raceDate) ?? meta.raceDate,
+    raceName: normalizeString(snapshot.raceName) ?? meta.raceName,
+    venue: normalizeString(snapshot.venue) ?? meta.venue,
+    venueKey: normalizeString(snapshot.venueKey) ?? meta.venueKey,
+    raceNumber: normalizeNumber(snapshot.raceNumber) ?? meta.raceNumber,
+    scheduledStartTime: normalizeString(snapshot.scheduledStartTime) ?? meta.scheduledStartTime,
+  };
+}
+
+export function normalizeReviewRecord(record: RaceReviewRecord): RaceReviewRecord {
+  const meta = buildReviewRaceMeta({
+    raceId: extractRaceId(record.meta?.raceId ?? record.raceId) ?? extractRaceId(record.raceId) ?? String(record.raceId),
+    courseId: normalizeString(record.meta?.courseId ?? record.courseId) ?? String(record.courseId),
+    raceDate: record.meta?.raceDate ?? null,
+    weekOf: record.meta?.weekOf ?? null,
+    day: record.meta?.day ?? null,
+    raceName: record.meta?.raceName ?? null,
+    venue: record.meta?.venue ?? null,
+    venueKey: record.meta?.venueKey ?? null,
+    raceNumber: record.meta?.raceNumber ?? null,
+    scheduledStartTime: record.meta?.scheduledStartTime ?? null,
+  });
+
+  return {
+    ...record,
+    raceId: meta.raceId,
+    courseId: meta.courseId,
+    status: normalizeLegacyReviewStatus(record.status),
+    reviewReady: record.reviewReady === true || normalizeLegacyReviewStatus(record.status) === "review_ready",
+    createdAt: normalizeString(record.createdAt) ?? new Date().toISOString(),
+    updatedAt: normalizeString(record.updatedAt) ?? new Date().toISOString(),
+    snapshotTakenAt: normalizeString(record.snapshotTakenAt),
+    resultFetchedAt: normalizeString(record.resultFetchedAt),
+    payoutFetchedAt: normalizeString(record.payoutFetchedAt),
+    lastTriedAt: normalizeString(record.lastTriedAt),
+    lastRetryAt: normalizeString(record.lastRetryAt),
+    nextRetryAt: normalizeString(record.nextRetryAt),
+    retryCount: Math.max(0, Number(record.retryCount ?? 0)),
+    missingReasons: Array.isArray(record.missingReasons) ? record.missingReasons : [],
+    lastError: normalizeString(record.lastError),
+    meta,
+    snapshot: normalizeSnapshot(record.snapshot, meta),
+    actualWinnerHorseId: normalizeString(record.actualWinnerHorseId),
+    actualTop3HorseIds: Array.isArray(record.actualTop3HorseIds)
+      ? record.actualTop3HorseIds.map((value) => String(value)).filter(Boolean)
+      : [],
+    pair: {
+      ...createEmptyPairMetrics(),
+      ...(record.pair ?? {}),
+    },
+  };
+}
+
+export function createDiscoveredReviewRecord(params: {
+  meta: ReviewRaceMeta;
+  now?: string;
+}): RaceReviewRecord {
+  const now = normalizeString(params.now) ?? new Date().toISOString();
+  return normalizeReviewRecord({
+    raceId: params.meta.raceId,
+    courseId: params.meta.courseId,
+    status: "discovered",
+    reviewReady: false,
+    compatibilityMode: "native_opponent",
+    createdAt: now,
+    updatedAt: now,
+    snapshotTakenAt: null,
+    resultFetchedAt: null,
+    payoutFetchedAt: null,
+    lastTriedAt: null,
+    lastRetryAt: null,
+    nextRetryAt: null,
+    retryCount: 0,
+    missingReasons: [],
+    lastError: null,
+    meta: params.meta,
+    snapshot: null,
+    honmei: null,
+    opponent: null,
+    wide: null,
+    legacyValue: null,
+    actualWinnerHorseId: null,
+    actualTop3HorseIds: [],
+    pair: createEmptyPairMetrics(),
+  });
+}
+
 export async function loadReviewRecordStore(): Promise<ReviewRecordStore> {
   try {
     const raw = await fs.readFile(REVIEW_RECORDS_PATH, "utf8");
@@ -130,7 +224,12 @@ export async function loadReviewRecordStore(): Promise<ReviewRecordStore> {
       return {
         version: 1,
         generatedAt: normalizeString((parsed as ReviewRecordStore).generatedAt) ?? new Date().toISOString(),
-        records: (parsed as ReviewRecordStore).records,
+        records: Object.fromEntries(
+          Object.entries((parsed as ReviewRecordStore).records).map(([raceId, record]) => [
+            extractRaceId(raceId) ?? raceId,
+            normalizeReviewRecord(record),
+          ])
+        ),
       };
     }
     return emptyStore();
@@ -222,7 +321,7 @@ export function createReviewRecordFromSnapshot(params: {
   return {
     raceId: params.meta.raceId,
     courseId: params.meta.courseId,
-    status: "snapshotted",
+    status: "review_partial",
     reviewReady: false,
     compatibilityMode: "native_opponent",
     createdAt: now,
@@ -231,6 +330,10 @@ export function createReviewRecordFromSnapshot(params: {
     resultFetchedAt: null,
     payoutFetchedAt: null,
     lastTriedAt: now,
+    lastRetryAt: null,
+    nextRetryAt: null,
+    retryCount: 0,
+    missingReasons: [],
     lastError: null,
     meta: params.meta,
     snapshot: params.snapshot,
@@ -248,25 +351,27 @@ export function mergeReviewRecord(
   existing: RaceReviewRecord | null,
   next: RaceReviewRecord
 ): RaceReviewRecord {
-  if (!existing) return next;
+  const normalizedNext = normalizeReviewRecord(next);
+  if (!existing) return normalizedNext;
+  const normalizedExisting = normalizeReviewRecord(existing);
   return {
-    ...existing,
-    ...next,
+    ...normalizedExisting,
+    ...normalizedNext,
     meta: {
-      ...existing.meta,
-      ...next.meta,
+      ...normalizedExisting.meta,
+      ...normalizedNext.meta,
     },
     pair: {
-      ...existing.pair,
-      ...next.pair,
+      ...normalizedExisting.pair,
+      ...normalizedNext.pair,
     },
-    snapshot: next.snapshot ?? existing.snapshot,
-    honmei: next.honmei ?? existing.honmei,
-    opponent: next.opponent ?? existing.opponent,
-    wide: next.wide ?? existing.wide,
-    legacyValue: next.legacyValue ?? existing.legacyValue,
-    createdAt: existing.createdAt,
-    updatedAt: normalizeString(next.updatedAt) ?? new Date().toISOString(),
+    snapshot: normalizedNext.snapshot ?? normalizedExisting.snapshot,
+    honmei: normalizedNext.honmei ?? normalizedExisting.honmei,
+    opponent: normalizedNext.opponent ?? normalizedExisting.opponent,
+    wide: normalizedNext.wide ?? normalizedExisting.wide,
+    legacyValue: normalizedNext.legacyValue ?? normalizedExisting.legacyValue,
+    createdAt: normalizedExisting.createdAt,
+    updatedAt: normalizeString(normalizedNext.updatedAt) ?? new Date().toISOString(),
   };
 }
 

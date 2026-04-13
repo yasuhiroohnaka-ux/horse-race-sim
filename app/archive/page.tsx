@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   GENERATED_ARCHIVED_RACES,
   GENERATED_COMPLETED_RACES,
@@ -46,6 +45,18 @@ type RecommendationSettlement = {
   overbetLabel: string | null;
 };
 
+type ReviewMeta = {
+  status?: string;
+  reviewReady?: boolean;
+  compatibilityMode?: "native_opponent" | "legacy_value_candidate";
+  missingReasons?: string[];
+  missingReasonLabels?: string[];
+  retryCount?: number;
+  lastRetryAt?: string | null;
+  nextRetryAt?: string | null;
+  lastError?: string | null;
+} | null;
+
 type AggregateSummary = {
   counts: { targetRaceCount: number; readyCount: number; pendingCount: number; failedCount: number; legacyCount: number };
   honmei: { raceCount: number; winCount: number; placeCount: number; winRate: number; placeRate: number; tanRoi: number; fukuRoi: number };
@@ -67,7 +78,7 @@ type RecommendationSettlementBundle = {
   opponent?: RecommendationSettlement | null;
   wide?: RecommendationSettlement | null;
   value?: RecommendationSettlement | null;
-  meta?: { status?: string; reviewReady?: boolean; compatibilityMode?: "native_opponent" | "legacy_value_candidate" } | null;
+  meta?: ReviewMeta;
 };
 
 type PerformanceLookupResponse = {
@@ -75,6 +86,18 @@ type PerformanceLookupResponse = {
   settlementsByRaceId: Record<string, RecommendationSettlementBundle>;
   summary: AggregateSummary | null;
   diagnostics?: { wideStats: WeeklyDiagnosticsWideStats } | null;
+};
+
+type RepairResponse = {
+  ok: boolean;
+  error?: string;
+};
+
+type CardState = {
+  key: "ready" | "retrying" | "retry_scheduled" | "partial" | "failed" | "discovered";
+  label: string;
+  tone: string;
+  detail: string | null;
 };
 
 function formatSurface(surface: "Turf" | "Dirt") {
@@ -89,20 +112,26 @@ function formatTimestamp(value?: string | null) {
   if (!value) return "-";
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return value;
-  return new Intl.DateTimeFormat("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false }).format(parsed);
+  return new Intl.DateTimeFormat("ja-JP", {
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(parsed);
 }
 
 function formatSettlementStatus(status: SettlementStatus) {
-  if (status === "settled") return "精算済み";
+  if (status === "settled") return "確定";
   if (status === "pending_payouts") return "払戻待ち";
   return "結果待ち";
 }
 
 function formatOutcome(outcome: BetOutcome, kind: "tan" | "fuku") {
-  if (outcome === "hit") return kind === "tan" ? "単勝的中" : "複勝的中";
-  if (outcome === "miss") return kind === "tan" ? "単勝不的中" : "複勝圏外";
-  if (outcome === "hit_missing_payout") return kind === "tan" ? "単勝的中(払戻未取得)" : "複勝的中(払戻未取得)";
-  return "未精算";
+  if (outcome === "hit") return kind === "tan" ? "単勝 的中" : "複勝 的中";
+  if (outcome === "miss") return kind === "tan" ? "単勝 不的中" : "複勝 不的中";
+  if (outcome === "hit_missing_payout") return kind === "tan" ? "単勝 的中(払戻未取得)" : "複勝 的中(払戻未取得)";
+  return "未確定";
 }
 
 function formatPayout(value: number) {
@@ -150,20 +179,56 @@ function SummaryCard({ title, tone, children }: { title: string; tone: string; c
   return <div className={`rounded-lg border px-4 py-4 ${tone}`}><p className="text-sm font-bold">{title}</p><div className="mt-3 space-y-2">{children}</div></div>;
 }
 
-function renderAggregateSummary(summary: AggregateSummary | null) {
+function StatusChip({ state }: { state: CardState }) {
+  return <span className={`rounded-full px-3 py-1 text-xs font-semibold ${state.tone}`}>{state.label}</span>;
+}
+
+function getCardState(params: {
+  snapshot?: PredictionSnapshot;
+  settlement: RecommendationSettlementBundle | null;
+  isRepairing: boolean;
+}): CardState {
+  const { snapshot, settlement, isRepairing } = params;
+  const meta = settlement?.meta ?? null;
+  const missingLabels = meta?.missingReasonLabels ?? [];
+  const nextRetryAt = meta?.nextRetryAt ? `次回 ${formatTimestamp(meta.nextRetryAt)}` : null;
+  const baseDetail = missingLabels.length > 0 ? missingLabels.join(" / ") : nextRetryAt;
+
+  if (isRepairing) {
+    return { key: "retrying", label: "再取得中", tone: "bg-sky-100 text-sky-700", detail: "不足項目を即時再取得しています。" };
+  }
+  if (meta?.reviewReady) {
+    return { key: "ready", label: "完了", tone: "bg-emerald-100 text-emerald-700", detail: "archive 表示に必要な情報が揃っています。" };
+  }
+  if (meta?.status === "review_failed") {
+    return { key: "failed", label: "失敗", tone: "bg-rose-100 text-rose-700", detail: meta.lastError ?? baseDetail ?? "再試行上限に到達しました。" };
+  }
+  if (meta?.status === "review_partial") {
+    return { key: "partial", label: "一部のみ取得済み", tone: "bg-amber-100 text-amber-800", detail: baseDetail ?? "不足項目を補完中です。" };
+  }
+  if (meta?.status === "retry_scheduled" || meta?.nextRetryAt) {
+    return { key: "retry_scheduled", label: "再取得待ち", tone: "bg-sky-50 text-sky-700", detail: baseDetail ?? "不足項目の再取得を予定しています。" };
+  }
+  if (snapshot || settlement?.win || settlement?.opponent) {
+    return { key: "partial", label: "一部のみ取得済み", tone: "bg-amber-100 text-amber-800", detail: baseDetail ?? "不足項目を補完中です。" };
+  }
+  return { key: "discovered", label: "対象認識済み", tone: "bg-slate-100 text-slate-700", detail: "review record を作成し、再取得待ちです。" };
+}
+
+function renderAggregateSummary(summary: AggregateSummary | null, counts: AggregateSummary["counts"]) {
   if (!summary) return null;
   return (
     <section className="space-y-4">
       <div>
         <h2 className="text-lg font-bold text-slate-900">週次回顧サマリー</h2>
-        <p className="mt-1 text-sm text-slate-500">review_ready の review record だけを対象に、本命候補と相手候補の成績を確認します。</p>
+        <p className="mt-1 text-sm text-slate-500">archive 個別カードと同じ状態判定で件数を集計し、本命候補と相手候補の成績を表示します。</p>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
-        <SummaryCard title="処理状況" tone="border-slate-200 bg-white text-slate-800">
-          <SummaryMetric label="対象レース数" value={`${summary.counts.targetRaceCount}R`} />
-          <SummaryMetric label="ready件数" value={`${summary.counts.readyCount}R`} />
-          <SummaryMetric label="pending件数" value={`${summary.counts.pendingCount}R`} />
-          <SummaryMetric label="failed件数" value={`${summary.counts.failedCount}R`} />
+        <SummaryCard title="処理件数" tone="border-slate-200 bg-white text-slate-800">
+          <SummaryMetric label="対象レース数" value={`${counts.targetRaceCount}R`} />
+          <SummaryMetric label="ready件数" value={`${counts.readyCount}R`} />
+          <SummaryMetric label="pending件数" value={`${counts.pendingCount}R`} />
+          <SummaryMetric label="failed件数" value={`${counts.failedCount}R`} />
         </SummaryCard>
         <SummaryCard title="本命候補" tone="border-amber-200 bg-amber-50 text-amber-800">
           <SummaryMetric label="単勝率" value={formatRate(summary.honmei.winRate)} />
@@ -194,16 +259,16 @@ function renderWideStatsSummary(wideStats: WeeklyDiagnosticsWideStats | null) {
     <section className="mt-6 space-y-4">
       <div>
         <h2 className="text-lg font-bold text-slate-900">ワイド検証</h2>
-        <p className="mt-1 text-sm text-slate-500">本命候補とワイド高配当狙いのワイド成績を補助的に確認します。</p>
+        <p className="mt-1 text-sm text-slate-500">本命候補とワイド系戦略の成績です。</p>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
-        <SummaryCard title="本命候補 × ワイド高配当狙い" tone="border-cyan-200 bg-cyan-50 text-cyan-900">
+        <SummaryCard title="本命候補 + ワイド候補" tone="border-cyan-200 bg-cyan-50 text-cyan-900">
           <SummaryMetric label="対象レース数" value={`${pair.targetRaceCount}R`} />
-          <SummaryMetric label="ワイド高配当狙いあり" value={`${pair.valueCandidateRaceCount}R`} />
+          <SummaryMetric label="ワイド候補あり" value={`${pair.valueCandidateRaceCount}R`} />
           <SummaryMetric label="的中率" value={formatRate(pair.hitRate)} />
           <SummaryMetric label="回収率" value={formatRate(pair.returnRate)} />
         </SummaryCard>
-        <SummaryCard title="シミュ本命 / 本命候補 / ワイド高配当狙い BOX" tone="border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900">
+        <SummaryCard title="シミュ本命 / 本命候補 / ワイド候補 BOX" tone="border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900">
           <SummaryMetric label="対象レース数" value={`${box.targetRaceCount}R`} />
           <SummaryMetric label="的中率" value={formatRate(box.hitRate)} />
           <SummaryMetric label="回収率" value={formatRate(box.returnRate)} />
@@ -213,14 +278,40 @@ function renderWideStatsSummary(wideStats: WeeklyDiagnosticsWideStats | null) {
   );
 }
 
-function renderReviewCard(race: ReviewCard, snapshot: PredictionSnapshot | undefined, settlement: RecommendationSettlementBundle | null) {
-  const opponent =
-    settlement?.opponent ??
-    (settlement?.meta?.compatibilityMode === "legacy_value_candidate" ? settlement?.value ?? null : null);
+function RepairButton({ raceId, busy, onReplay }: { raceId: string | null; busy: boolean; onReplay: () => Promise<void> }) {
+  const handleClick = async () => {
+    if (!raceId || busy) return;
+    await onReplay();
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={() => void handleClick()}
+      disabled={!raceId || busy}
+      className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {busy ? "再取得中..." : "Replay"}
+    </button>
+  );
+}
+
+function renderReviewCard(params: {
+  race: ReviewCard;
+  raceId: string | null;
+  snapshot: PredictionSnapshot | undefined;
+  settlement: RecommendationSettlementBundle | null;
+  state: CardState;
+  isRepairing: boolean;
+  onRefresh: () => Promise<void>;
+}) {
+  const { race, raceId, snapshot, settlement, state, isRepairing, onRefresh } = params;
+  const opponent = settlement?.opponent ?? (settlement?.meta?.compatibilityMode === "legacy_value_candidate" ? settlement?.value ?? null : null);
   const opponentHorseId = snapshot?.opponentHorseId ?? null;
   const wideHorseId = snapshot?.valueHorseId ?? null;
   const topRows = snapshot ? [...snapshot.rankedRows].sort((a, b) => a.rank - b.rank).slice(0, 3) : [];
   const resultText = race.result?.top3HorseNames?.length ? `1着 ${race.result?.top3HorseNames?.[0] ?? "-"} / 2着 ${race.result?.top3HorseNames?.[1] ?? "-"} / 3着 ${race.result?.top3HorseNames?.[2] ?? "-"}` : null;
+  const meta = settlement?.meta ?? null;
 
   return (
     <article key={`${race.courseId}-${race.date}`} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -229,8 +320,13 @@ function renderReviewCard(race: ReviewCard, snapshot: PredictionSnapshot | undef
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{race.date} / {formatSurface(race.surface)} {race.distance}m / {race.grade}</p>
           <h3 className="mt-1 text-xl font-bold text-slate-900">{race.label}</h3>
           {resultText ? <p className="mt-2 text-sm text-slate-600">結果: {resultText}</p> : null}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <StatusChip state={state} />
+            {state.detail ? <span className="text-xs text-slate-500">{state.detail}</span> : null}
+          </div>
+          {meta?.missingReasonLabels?.length ? <p className="mt-2 text-xs text-slate-500">不足: {meta.missingReasonLabels.join(" / ")}</p> : null}
         </div>
-        <Link href={`/sim?course=${encodeURIComponent(race.courseId)}`} className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900">Replay</Link>
+        <RepairButton raceId={raceId} busy={isRepairing} onReplay={onRefresh} />
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
@@ -242,7 +338,7 @@ function renderReviewCard(race: ReviewCard, snapshot: PredictionSnapshot | undef
                 <span className="rounded-full bg-white px-3 py-1">取得 {formatTimestamp(snapshot.snapshotTakenAt ?? snapshot.capturedAt)}</span>
                 <span className="rounded-full bg-sky-100 px-3 py-1">シミュ本命 {getSnapshotHorseDisplay(snapshot, snapshot.honmeiHorseId)}</span>
                 <span className="rounded-full bg-emerald-100 px-3 py-1">相手候補 {getSnapshotHorseDisplay(snapshot, opponentHorseId)}</span>
-                {wideHorseId ? <span className="rounded-full bg-rose-100 px-3 py-1">ワイド高配当狙い {getSnapshotHorseDisplay(snapshot, wideHorseId)}</span> : null}
+                {wideHorseId ? <span className="rounded-full bg-rose-100 px-3 py-1">ワイド候補 {getSnapshotHorseDisplay(snapshot, wideHorseId)}</span> : null}
               </div>
               <div className="mt-3 space-y-2">
                 {topRows.map((row) => (
@@ -257,7 +353,7 @@ function renderReviewCard(race: ReviewCard, snapshot: PredictionSnapshot | undef
                 <SummaryMetric label="相手結果" value={getSnapshotFinishLabel(race, opponentHorseId)} />
               </div>
             </>
-          ) : <p className="mt-2 text-sm text-slate-500">このレースの snapshot はありません。</p>}
+          ) : <p className="mt-2 text-sm text-slate-500">snapshot は未取得です。自動再取得または Replay で補完します。</p>}
         </div>
 
         <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
@@ -268,25 +364,25 @@ function renderReviewCard(race: ReviewCard, snapshot: PredictionSnapshot | undef
               {settlement?.win ? (
                 <div className="mt-2 space-y-2 text-sm text-slate-700">
                   <p className="font-semibold text-slate-800">{settlement.win.horseName} ({settlement.win.horseId})</p>
-                  <SummaryMetric label="精算状態" value={formatSettlementStatus(settlement.win.settlementStatus)} />
+                  <SummaryMetric label="状態" value={formatSettlementStatus(settlement.win.settlementStatus)} />
                   <SummaryMetric label="単勝" value={formatOutcome(settlement.win.tanOutcome, "tan")} />
                   <SummaryMetric label="複勝" value={formatOutcome(settlement.win.fukuOutcome, "fuku")} />
-                  <SummaryMetric label="単勝払戻" value={formatPayout(settlement.win.tanPayout)} />
-                  <SummaryMetric label="複勝払戻" value={formatPayout(settlement.win.fukuPayout)} />
+                  <SummaryMetric label="単払戻" value={formatPayout(settlement.win.tanPayout)} />
+                  <SummaryMetric label="複払戻" value={formatPayout(settlement.win.fukuPayout)} />
                 </div>
-              ) : <p className="mt-2 text-sm text-slate-500">本命候補は未取得です。</p>}
+              ) : <p className="mt-2 text-sm text-slate-500">本命候補は未取得です。自動再取得対象です。</p>}
             </div>
             <div className="rounded-md border border-emerald-100 bg-emerald-50 px-3 py-3">
               <p className="text-xs font-semibold text-emerald-800">相手候補</p>
               {opponent ? (
                 <div className="mt-2 space-y-2 text-sm text-slate-700">
                   <p className="font-semibold text-slate-800">{opponent.horseName} ({opponent.horseId})</p>
-                  <SummaryMetric label="精算状態" value={formatSettlementStatus(opponent.settlementStatus)} />
+                  <SummaryMetric label="状態" value={formatSettlementStatus(opponent.settlementStatus)} />
                   <SummaryMetric label="複勝" value={formatOutcome(opponent.fukuOutcome, "fuku")} />
-                  <SummaryMetric label="複勝払戻" value={formatPayout(opponent.fukuPayout)} />
-                  <SummaryMetric label="複勝払戻元" value={formatPayoutSource(opponent.fukuPayoutSource)} />
+                  <SummaryMetric label="複払戻" value={formatPayout(opponent.fukuPayout)} />
+                  <SummaryMetric label="払戻ソース" value={formatPayoutSource(opponent.fukuPayoutSource)} />
                 </div>
-              ) : <p className="mt-2 text-sm text-slate-500">相手候補は未取得です。</p>}
+              ) : <p className="mt-2 text-sm text-slate-500">相手候補は未取得です。自動再取得対象です。</p>}
             </div>
           </div>
         </div>
@@ -301,61 +397,123 @@ export default function ArchivePage() {
   const [settlementsByCourseId, setSettlementsByCourseId] = useState<Record<string, RecommendationSettlementBundle>>({});
   const [aggregateSummary, setAggregateSummary] = useState<AggregateSummary | null>(null);
   const [wideStats, setWideStats] = useState<WeeklyDiagnosticsWideStats | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    async function load() {
-      try {
-        const [snapshotRes, performanceRes] = await Promise.all([fetch("/api/prediction-snapshots", { cache: "no-store" }), fetch("/api/performance", { cache: "no-store" })]);
-        const snapshotJson = (await snapshotRes.json()) as SnapshotLookupResponse;
-        const performanceJson = (await performanceRes.json()) as PerformanceLookupResponse;
-        if (!isMounted) return;
-        setSnapshotsByRaceId(snapshotJson.snapshotsByRaceId ?? {});
-        setSettlementsByRaceId(performanceJson.settlementsByRaceId ?? {});
-        setSettlementsByCourseId(performanceJson.settlementsByCourseId ?? {});
-        setAggregateSummary(performanceJson.summary ?? null);
-        setWideStats(performanceJson.diagnostics?.wideStats ?? null);
-      } catch (error) {
-        console.warn("failed to load archive comparison data", error);
-      }
-    }
-    void load();
-    return () => { isMounted = false; };
-  }, []);
+  const [repairingRaceIds, setRepairingRaceIds] = useState<Record<string, boolean>>({});
+  const autoRepairStartedRef = useRef(false);
 
   const generatedCards = useMemo<ReviewCard[]>(() => [
     ...GENERATED_COMPLETED_RACES.map((race) => ({ ...race, archived: false })),
     ...GENERATED_ARCHIVED_RACES.map((race) => ({ ...race, archived: true })),
   ], []);
 
+  const load = async () => {
+    const [snapshotRes, performanceRes] = await Promise.all([
+      fetch("/api/prediction-snapshots", { cache: "no-store" }),
+      fetch("/api/performance", { cache: "no-store" }),
+    ]);
+    const snapshotJson = (await snapshotRes.json()) as SnapshotLookupResponse;
+    const performanceJson = (await performanceRes.json()) as PerformanceLookupResponse;
+    setSnapshotsByRaceId(snapshotJson.snapshotsByRaceId ?? {});
+    setSettlementsByRaceId(performanceJson.settlementsByRaceId ?? {});
+    setSettlementsByCourseId(performanceJson.settlementsByCourseId ?? {});
+    setAggregateSummary(performanceJson.summary ?? null);
+    setWideStats(performanceJson.diagnostics?.wideStats ?? null);
+  };
+
+  useEffect(() => {
+    void load().catch((error) => {
+      console.warn("failed to load archive comparison data", error);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (autoRepairStartedRef.current) return;
+    autoRepairStartedRef.current = true;
+    void fetch("/api/review-repair", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ includeArchives: true }),
+    })
+      .then((response) => response.json() as Promise<RepairResponse>)
+      .then(() => load())
+      .catch((error) => {
+        console.warn("failed to run archive auto-repair", error);
+      });
+  }, []);
+
+  const derivedCounts = useMemo(() => {
+    return generatedCards.reduce(
+      (acc, race) => {
+        const { raceId, courseId } = getRaceKey(race);
+        const snapshot = raceId ? snapshotsByRaceId[raceId] : undefined;
+        const settlement = (raceId ? settlementsByRaceId[raceId] : null) ?? settlementsByCourseId[courseId] ?? null;
+        const state = getCardState({
+          snapshot,
+          settlement,
+          isRepairing: Boolean(raceId && repairingRaceIds[raceId]),
+        });
+
+        acc.targetRaceCount += 1;
+        if (state.key === "ready") acc.readyCount += 1;
+        else if (state.key === "failed") acc.failedCount += 1;
+        else acc.pendingCount += 1;
+        return acc;
+      },
+      { targetRaceCount: 0, readyCount: 0, pendingCount: 0, failedCount: 0, legacyCount: aggregateSummary?.counts.legacyCount ?? 0 }
+    );
+  }, [aggregateSummary?.counts.legacyCount, generatedCards, repairingRaceIds, settlementsByCourseId, settlementsByRaceId, snapshotsByRaceId]);
+
+  const refreshAfterReplay = async (raceId: string | null) => {
+    if (!raceId) return;
+    setRepairingRaceIds((prev) => ({ ...prev, [raceId]: true }));
+    try {
+      await fetch("/api/review-repair", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ raceId, includeArchives: true, forceRetryNow: true }),
+      });
+      await load();
+    } finally {
+      setRepairingRaceIds((prev) => ({ ...prev, [raceId]: false }));
+    }
+  };
+
   return (
     <main className="min-h-screen bg-slate-50 py-12">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">回顧アーカイブ</h1>
-          <p className="mt-2 text-sm text-slate-500">保存済み snapshot と review record を並べて見比べ、本命候補と相手候補がどう機能したかを確認できます。</p>
+          <p className="mt-2 text-sm text-slate-500">snapshot と review record を照合し、不足項目は自動再取得します。Replay は対象レースの即時再試行です。</p>
         </div>
 
-        {renderAggregateSummary(aggregateSummary)}
+        {renderAggregateSummary(aggregateSummary, derivedCounts)}
         {renderWideStatsSummary(wideStats)}
 
         <section className="mt-10 space-y-6">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">現行データ回顧</h2>
-            <p className="mt-1 text-sm text-slate-500">保存済み snapshot と結果、review record をまとめて確認できます。</p>
+            <h2 className="text-lg font-bold text-slate-900">個別カード</h2>
+            <p className="mt-1 text-sm text-slate-500">カードと summary は同じ状態判定を使っています。</p>
           </div>
           <div className="space-y-6">
             {generatedCards.map((race) => {
               const { raceId, courseId } = getRaceKey(race);
               const snapshot = raceId ? snapshotsByRaceId[raceId] : undefined;
               const settlement = (raceId ? settlementsByRaceId[raceId] : null) ?? settlementsByCourseId[courseId] ?? null;
-              return renderReviewCard(race, snapshot, settlement);
+              const state = getCardState({
+                snapshot,
+                settlement,
+                isRepairing: Boolean(raceId && repairingRaceIds[raceId]),
+              });
+              return renderReviewCard({
+                race,
+                raceId,
+                snapshot,
+                settlement,
+                state,
+                isRepairing: Boolean(raceId && repairingRaceIds[raceId]),
+                onRefresh: () => refreshAfterReplay(raceId),
+              });
             })}
           </div>
-        </section>
-
-        <section className="mt-10 rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
-          旧データ期間は互換表示を簡略化しています。新UIの主軸は、相手候補を持つ新しい review record です。
         </section>
       </div>
     </main>

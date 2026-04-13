@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { GradeFilterChips } from "@/components/GradeFilterChips";
 import { ACTIVE_COURSES, ARCHIVED_COURSES } from "@/lib/courses";
 import { countCoursesByGrade, CourseGradeFilter, filterCoursesByGrade, getCourseGrade } from "@/lib/courseGrades";
@@ -56,10 +56,9 @@ export function CourseConfig({
   onRefreshOdds,
 }: CourseConfigProps) {
   const [gradeFilter, setGradeFilter] = useState<CourseGradeFilter>(getCourseGrade(selectedCourse));
-
-  useEffect(() => {
-    setGradeFilter(getCourseGrade(selectedCourse));
-  }, [selectedCourse.id, selectedCourse.grade]);
+  const selectedCourseGrade = getCourseGrade(selectedCourse);
+  const effectiveGradeFilter =
+    gradeFilter === "ALL" || gradeFilter === selectedCourseGrade ? gradeFilter : selectedCourseGrade;
 
   const updateBias = (key: "innerOuter" | "frontBack", value: number) => {
     onConditionChange({
@@ -73,10 +72,10 @@ export function CourseConfig({
 
   const allCourses = [...ACTIVE_COURSES, ...ARCHIVED_COURSES];
   const counts = countCoursesByGrade(allCourses);
-  const activeCourses = filterCoursesByGrade(ACTIVE_COURSES, gradeFilter);
+  const activeCourses = filterCoursesByGrade(ACTIVE_COURSES, effectiveGradeFilter);
   const activeSpecialCourses = activeCourses.filter((course) => getCourseGrade(course) !== "OTHER");
   const activeOtherCourses = activeCourses.filter((course) => getCourseGrade(course) === "OTHER");
-  const archivedCourses = filterCoursesByGrade(ARCHIVED_COURSES, gradeFilter);
+  const archivedCourses = filterCoursesByGrade(ARCHIVED_COURSES, effectiveGradeFilter);
 
   const handleGradeFilterChange = (nextFilter: CourseGradeFilter) => {
     setGradeFilter(nextFilter);
@@ -129,7 +128,7 @@ export function CourseConfig({
           <span className="text-xs font-medium text-slate-500">レース</span>
           <p className="text-[11px] font-medium tracking-[0.16em] text-slate-400">GRADE FILTER</p>
           <GradeFilterChips
-            value={gradeFilter}
+            value={effectiveGradeFilter}
             onChange={handleGradeFilterChange}
             counts={counts}
             totalCount={allCourses.length}
