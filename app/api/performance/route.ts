@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { buildWeeklyDiagnostics, loadWeeklyDiagnosticsContext } from "@/lib/weeklyDiagnostics";
 import { loadReviewRecords } from "@/lib/reviewRecords";
+import { formatMissingReason, isReviewComplete, normalizeLegacyReviewStatus } from "@/lib/reviewStatus";
 import type { DiagnosticsAggregationScope, RaceReviewRecord, ReviewLegacyValueSelection, ReviewSelectionHorse } from "@/lib/types";
 
 type GapBucket = {
@@ -86,7 +87,18 @@ function classifyScoreGap(scoreGap: number | null | undefined) {
 }
 
 function isReadyRecord(record: RaceReviewRecord) {
-  return record.status === "review_ready" && record.reviewReady;
+  const resultAvailable = Boolean(record.actualWinnerHorseId && record.actualTop3HorseIds.length > 0);
+  const payoutsAvailable =
+    record.honmei?.settlementStatus === "settled" &&
+    record.opponent?.settlementStatus === "settled" &&
+    record.pair.wideOutcome !== "not_settled" &&
+    record.pair.wideOutcome !== "hit_missing_payout" &&
+    record.pair.widePayoutSource === "official";
+  return isReviewComplete({
+    record,
+    resultAvailable,
+    payoutsAvailable,
+  });
 }
 
 function normalizeSelectionBundle(selection: ReviewSelectionHorse | ReviewLegacyValueSelection | null, postedAt: string | null | undefined) {
@@ -157,13 +169,19 @@ function settlementBundle(record: RaceReviewRecord) {
     value: wide ?? legacyValue,
     legacyValue,
     meta: {
-      status: record.status,
-      reviewReady: record.reviewReady,
+      status: normalizeLegacyReviewStatus(record.status),
+      reviewReady: isReadyRecord(record),
       compatibilityMode: record.compatibilityMode,
       scheduledStartTime: record.meta.scheduledStartTime,
       raceDate: record.meta.raceDate,
       raceName: record.meta.raceName,
       pair: record.pair,
+      missingReasons: record.missingReasons,
+      missingReasonLabels: record.missingReasons.map(formatMissingReason),
+      retryCount: record.retryCount,
+      lastRetryAt: record.lastRetryAt,
+      nextRetryAt: record.nextRetryAt,
+      lastError: record.lastError,
     },
   };
 }
@@ -202,8 +220,8 @@ function buildSummary(records: RaceReviewRecord[]): SummaryPayload {
     counts: {
       targetRaceCount: records.length,
       readyCount: readyRecords.length,
-      pendingCount: records.filter((record) => record.status !== "review_ready" && record.status !== "review_failed").length,
-      failedCount: records.filter((record) => record.status === "review_failed").length,
+      pendingCount: records.filter((record) => !isReadyRecord(record) && normalizeLegacyReviewStatus(record.status) !== "review_failed").length,
+      failedCount: records.filter((record) => normalizeLegacyReviewStatus(record.status) === "review_failed").length,
       legacyCount: records.filter((record) => record.compatibilityMode === "legacy_value_candidate").length,
     },
     honmei: {
@@ -299,10 +317,6 @@ function filterScope(records: RaceReviewRecord[], scope: DiagnosticsAggregationS
   return records.filter((record) => record.snapshot?.predictionOrigin !== "backfill");
 }
 
-function hasNativeOpponent(record: RaceReviewRecord) {
-  return record.compatibilityMode === "native_opponent" && Boolean(record.opponent);
-}
-
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -319,7 +333,7 @@ export async function GET(request: Request) {
     const weeklyRecords = filteredRecords.filter((record) => record.meta.weekOf === currentWeek);
     const totalPerf = accumulateWeeklyPerformance(filteredRecords);
     const weeklyPerf = accumulateWeeklyPerformance(weeklyRecords);
-    const summary = buildSummary(filteredRecords.filter((record) => record.reviewReady || hasNativeOpponent(record) || record.honmei));
+    const summary = buildSummary(filteredRecords);
     const diagnostics = buildWeeklyDiagnostics(diagnosticsContext);
 
     return NextResponse.json({

@@ -184,8 +184,19 @@ export type ReviewProcessingStatus =
   | "snapshotted"
   | "result_pending"
   | "payout_pending"
+  | "discovered"
+  | "retry_scheduled"
+  | "review_partial"
   | "review_ready"
   | "review_failed";
+
+export type ReviewMissingReason =
+  | "NO_SNAPSHOT"
+  | "NO_MAIN_PICK"
+  | "NO_PARTNER_PICK"
+  | "NO_RESULT"
+  | "JOIN_KEY_MISMATCH"
+  | "UPSTREAM_NOT_READY";
 
 export type ReviewCompatibilityMode = "native_opponent" | "legacy_value_candidate";
 
@@ -261,6 +272,10 @@ export interface RaceReviewRecord {
   resultFetchedAt: string | null;
   payoutFetchedAt: string | null;
   lastTriedAt: string | null;
+  lastRetryAt: string | null;
+  nextRetryAt: string | null;
+  retryCount: number;
+  missingReasons: ReviewMissingReason[];
   lastError: string | null;
   meta: ReviewRaceMeta;
   snapshot: PredictionSnapshot | null;
