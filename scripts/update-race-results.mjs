@@ -8,6 +8,8 @@ const GENERATED_REVIEWS_PATH = path.join(ROOT, "data", "generated-reviews.json")
 const ARG_DAY = process.argv.find((arg) => arg.startsWith("--day="))?.split("=")[1] ?? "";
 const TARGET_DAY = ARG_DAY === "Sat" || ARG_DAY === "Sun" ? ARG_DAY : null;
 const INCLUDE_ARCHIVES = process.argv.includes("--include-archives");
+const SKIP_CURRENT_WEEK = process.argv.includes("--skip-current-week");
+const TARGET_ARCHIVE_WEEK = process.argv.find((arg) => arg.startsWith("--archive-week="))?.split("=")[1] ?? "";
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
@@ -413,7 +415,9 @@ async function main() {
   const originalGeneratedReviews = JSON.stringify(generatedReviews);
 
   const currentWeekRaces = Array.isArray(weekly.currentWeek?.races) ? weekly.currentWeek.races : [];
-  const currentWeekUpdate = await updateRaceCollection(currentWeekRaces, generatedReviews);
+  const currentWeekUpdate = SKIP_CURRENT_WEEK
+    ? { nextRaces: currentWeekRaces, changed: false, reviewChanged: false }
+    : await updateRaceCollection(currentWeekRaces, generatedReviews);
 
   let archivesChanged = false;
   let archiveReviewChanged = false;
@@ -422,6 +426,10 @@ async function main() {
   if (INCLUDE_ARCHIVES) {
     nextArchives = [];
     for (const archive of Array.isArray(weekly.archives) ? weekly.archives : []) {
+      if (TARGET_ARCHIVE_WEEK && String(archive?.weekOf ?? "") !== TARGET_ARCHIVE_WEEK) {
+        nextArchives.push(archive);
+        continue;
+      }
       const archiveRaces = Array.isArray(archive?.races) ? archive.races : [];
       const archiveUpdate = await updateRaceCollection(archiveRaces, generatedReviews);
       if (archiveUpdate.changed) archivesChanged = true;
@@ -441,7 +449,7 @@ async function main() {
 
   if (!changed && !reviewsChanged) {
     console.log(
-      `[update-race-results] no changes${TARGET_DAY ? ` day=${TARGET_DAY}` : ""}${INCLUDE_ARCHIVES ? " includeArchives=true" : ""}`
+      `[update-race-results] no changes${TARGET_DAY ? ` day=${TARGET_DAY}` : ""}${INCLUDE_ARCHIVES ? " includeArchives=true" : ""}${SKIP_CURRENT_WEEK ? " skipCurrentWeek=true" : ""}${TARGET_ARCHIVE_WEEK ? ` archiveWeek=${TARGET_ARCHIVE_WEEK}` : ""}`
     );
     return;
   }
@@ -465,7 +473,7 @@ async function main() {
   console.log(
     `[update-race-results] updatedCurrent=${updatedCurrentCount}${
       INCLUDE_ARCHIVES ? ` updatedArchives=${updatedArchiveCount}` : ""
-    }${TARGET_DAY ? ` day=${TARGET_DAY}` : ""}`
+    }${TARGET_DAY ? ` day=${TARGET_DAY}` : ""}${SKIP_CURRENT_WEEK ? " skipCurrentWeek=true" : ""}${TARGET_ARCHIVE_WEEK ? ` archiveWeek=${TARGET_ARCHIVE_WEEK}` : ""}`
   );
 }
 

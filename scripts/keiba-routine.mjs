@@ -394,6 +394,27 @@ function ensurePerf(state, weekOf) {
 
 async function handleMonday10(now) {
   const state = await readJson(STATE_PATH, {});
+  const weeklyBefore = await readJson(WEEKLY_RACES_PATH, { currentWeek: null, archives: [] });
+  const targetWeekOf = isoDate(startOfWeekMonday(now));
+  const currentWeekOf = String(weeklyBefore.currentWeek?.weekOf ?? "");
+  const mostRecentArchiveWeekOf = String(weeklyBefore.archives?.[0]?.weekOf ?? "");
+  const rolloverPending = Boolean(currentWeekOf && currentWeekOf !== targetWeekOf);
+  const archiveBackfillWeekOf = rolloverPending ? currentWeekOf : mostRecentArchiveWeekOf;
+
+  for (const day of ["Sat", "Sun"]) {
+    const args = [`--day=${day}`];
+    if (rolloverPending) {
+      await runNodeScript("scripts/update-race-results.mjs", args);
+    }
+    if (archiveBackfillWeekOf) {
+      await runNodeScript("scripts/update-race-results.mjs", [
+        ...args,
+        "--include-archives",
+        "--skip-current-week",
+        `--archive-week=${archiveBackfillWeekOf}`,
+      ]);
+    }
+  }
 
   await runNodeScript("scripts/refresh-weekly-races.mjs");
   await runNodeScript("scripts/sync-race-schedule.mjs");
