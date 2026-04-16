@@ -73,3 +73,13 @@ git checkout -b feature/your-task-name
 
 `eslint` が `devDependencies` に追加されていないため、`npm run lint` は現在失敗する。
 ESLint の正式導入は別タスクで対応予定。
+
+### データ更新時の注意
+
+`data/weekly-races.json` の出走馬やオッズ等を手動・スクリプト等で修正した場合、**必ず以下の Sync コマンドを実行して静的キャッシュ (TS) に反映**させてからコミットしてください。
+
+```bash
+npm run sync:race-schedule
+```
+
+> **Note**: アプリのUIレイヤー (特に `/sim`) はパフォーマンスと安定性のため、JSON を毎回動的にFetchするのではなく、上記スクリプトで自動生成される `lib/generatedRaceSchedule.ts` を静的に Import しています。これを忘れると、元JSONを修正しても画面表示やシミュレーションの内部参照データが古いままでズレが生じます。
