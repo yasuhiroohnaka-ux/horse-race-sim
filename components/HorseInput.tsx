@@ -13,6 +13,7 @@ interface HorseInputProps {
   course: Course;
   condition: RaceCondition;
   onHorsesChange: (horses: Horse[]) => void;
+  onRunningStyleChange?: () => void;
   hashtag?: string;
 }
 
@@ -26,7 +27,7 @@ const TRAIT_FIELDS: Array<{ key: TraitFieldKey; label: string; title: string; to
   { key: "paceFitScore", label: "展開", title: "展開適性", tone: "text-emerald-600" },
 ];
 
-export function HorseInput({ horses, course, condition, onHorsesChange, hashtag = "#競馬" }: HorseInputProps) {
+export function HorseInput({ horses, course, condition, onHorsesChange, onRunningStyleChange, hashtag = "#競馬" }: HorseInputProps) {
   const showTrainingColumn = horses.some(
     (horse) => Math.abs(horse.trainingScore ?? 0) > 0.01 || Boolean((horse.trainingNote ?? "").trim())
   );
@@ -249,6 +250,7 @@ export function HorseInput({ horses, course, condition, onHorsesChange, hashtag 
                       value={horse.runningStyle}
                       onChange={(event) => {
                         const nextStyle = event.target.value as Horse["runningStyle"];
+                        onRunningStyleChange?.();
                         updateHorse(horse.id, "runningStyle", nextStyle);
                         if (course?.id && !course.archived) {
                           void fetch("/api/horse-running-style", {
@@ -257,8 +259,8 @@ export function HorseInput({ horses, course, condition, onHorsesChange, hashtag 
                             body: JSON.stringify({ courseId: course.id, horseId: horse.id, runningStyle: nextStyle }),
                           })
                             .then(async (res) => {
+                              const text = await res.text().catch(() => "");
                               if (!res.ok) {
-                                const text = await res.text().catch(() => "");
                                 console.warn("[HorseInput] failed to persist runningStyle", res.status, text);
                               }
                             })

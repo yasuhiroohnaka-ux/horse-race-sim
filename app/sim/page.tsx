@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CourseConfig } from "@/components/CourseConfig";
 import { HorseInput } from "@/components/HorseInput";
 import { SimulationResults } from "@/components/SimulationResults";
@@ -220,6 +220,8 @@ function SimulatorContent() {
   const [manualOddsRefreshKey, setManualOddsRefreshKey] = useState(0);
   const mountedRef = useRef(true);
   const oddsLastFetchedAtRef = useRef("");
+  const runningStyleMutationRef = useRef(0);
+  const router = useRouter();
 
   const selectedCourse = COURSES.find((course) => course.id === condition.courseId) ?? initialCourse;
   const isArchive = selectedCourse?.archived === true;
@@ -235,6 +237,10 @@ function SimulatorContent() {
   }, []);
 
   const handleCourseChange = (courseId: string) => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("course", courseId);
+    nextParams.delete("archive");
+    router.replace(`/sim?${nextParams.toString()}`, { scroll: false });
     setCondition(createDefaultCondition(courseId));
     setHorses(buildInitialHorses(courseId));
     setResults(null); setTanpukuPair(null);
@@ -420,6 +426,7 @@ function SimulatorContent() {
 
     let cancelled = false;
     const currentCourseId = condition.courseId;
+    const requestMutationVersion = runningStyleMutationRef.current;
 
     const refreshRunningStyles = async () => {
       try {
@@ -429,6 +436,7 @@ function SimulatorContent() {
         if (!response.ok || cancelled) return;
 
         const payload = (await response.json()) as RunningStylePayload;
+        if (cancelled || runningStyleMutationRef.current !== requestMutationVersion) return;
         const runningStyles = payload.runningStyles ?? {};
 
         setHorses((previous) => {
@@ -438,7 +446,6 @@ function SimulatorContent() {
             if (!nextRunningStyle || horse.runningStyle === nextRunningStyle) {
               return horse;
             }
-
             changed = true;
             return { ...horse, runningStyle: nextRunningStyle };
           });
@@ -705,6 +712,9 @@ function SimulatorContent() {
             horses={horses}
             course={selectedCourse}
             condition={condition}
+            onRunningStyleChange={() => {
+              runningStyleMutationRef.current += 1;
+            }}
             onHorsesChange={(nextHorses) => {
               setHorses(nextHorses);
               setResults(null); setTanpukuPair(null);

@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
 const SYNC_SCRIPT_PATH = path.join(ROOT, "scripts", "sync-race-schedule.mjs");
+const RUNNING_STYLE_OVERRIDE_COOKIE = "horse_running_style_overrides";
 
 const VALID_STYLES = new Set(["Nige", "Senko", "Sashi", "Oikomi"]);
 
@@ -31,6 +32,8 @@ type WeeklyRacesPayload = {
   currentWeek?: { races?: Array<{ courseId?: string; horses?: Array<{ id?: unknown; runningStyle?: string }> }> };
 };
 
+type RunningStyleOverrideMap = Record<string, Record<string, string>>;
+
 async function readWeeklyRaces(): Promise<{ bom: string; data: WeeklyRacesPayload }> {
   const raw = await fs.readFile(WEEKLY_RACES_PATH, "utf8");
   const bom = raw.startsWith("\uFEFF") ? "\uFEFF" : "";
@@ -40,6 +43,33 @@ async function readWeeklyRaces(): Promise<{ bom: string; data: WeeklyRacesPayloa
 
 function findRace(data: WeeklyRacesPayload, courseId: string) {
   return (data.currentWeek?.races ?? []).find((race) => race?.courseId === courseId);
+}
+
+function readRunningStyleOverrides(request: NextRequest): RunningStyleOverrideMap {
+  const raw = request.cookies.get(RUNNING_STYLE_OVERRIDE_COOKIE)?.value ?? "";
+  if (!raw) return {};
+
+  try {
+    const parsed = JSON.parse(raw) as RunningStyleOverrideMap;
+    if (!parsed || typeof parsed !== "object") return {};
+    return parsed;
+  } catch {
+    return {};
+  }
+}
+
+function buildRunningStylesResponse(race: NonNullable<ReturnType<typeof findRace>>, overrides: Record<string, string>) {
+  return Object.fromEntries(
+    (race.horses ?? [])
+      .map((horse) => {
+        const horseId = String(horse?.id ?? "").trim();
+        const overrideStyle = String(overrides[horseId] ?? "").trim();
+        const runningStyle = overrideStyle || String(horse?.runningStyle ?? "").trim();
+        if (!horseId || !VALID_STYLES.has(runningStyle)) return null;
+        return [horseId, runningStyle];
+      })
+      .filter((entry): entry is [string, string] => entry !== null)
+  );
 }
 
 export async function GET(request: NextRequest) {
@@ -54,16 +84,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "race not found for courseId" }, { status: 404 });
   }
 
-  const runningStyles = Object.fromEntries(
-    (race.horses ?? [])
-      .map((horse) => {
-        const horseId = String(horse?.id ?? "").trim();
-        const runningStyle = String(horse?.runningStyle ?? "").trim();
-        if (!horseId || !VALID_STYLES.has(runningStyle)) return null;
-        return [horseId, runningStyle];
-      })
-      .filter((entry): entry is [string, string] => entry !== null)
-  );
+  const overrides = readRunningStyleOverrides(request)[courseId] ?? {};
+  const runningStyles = buildRunningStylesResponse(race, overrides);
 
   return NextResponse.json({ courseId, runningStyles });
 }
@@ -99,19 +121,43 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "horse not found in race" }, { status: 404 });
   }
 
-  if (horse.runningStyle === runningStyle) {
+  const allOverrides = readRunningStyleOverrides(request);
+  const courseOverrides = { ...(allOverrides[courseId] ?? {}) };
+  const currentStyle = String(courseOverrides[horseId] ?? horse.runningStyle ?? "").trim();
+  if (currentStyle === runningStyle) {
     return NextResponse.json({ ok: true, unchanged: true });
   }
+  courseOverrides[horseId] = runningStyle;
+  allOverrides[courseId] = courseOverrides;
 
-  horse.runningStyle = runningStyle;
-  await fs.writeFile(WEEKLY_RACES_PATH, bom + JSON.stringify(data, null, 2) + "\n", "utf8");
+  let persistedToFile = false;
+  let syncError = "";
 
   try {
-    await regenerateSchedule();
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "sync failed";
-    return NextResponse.json({ ok: true, syncError: message }, { status: 200 });
+    horse.runningStyle = runningStyle;
+    await fs.writeFile(WEEKLY_RACES_PATH, bom + JSON.stringify(data, null, 2) + "\n", "utf8");
+    persistedToFile = true;
+
+    try {
+      await regenerateSchedule();
+    } catch (error) {
+      syncError = error instanceof Error ? error.message : "sync failed";
+    }
+  } catch {
+    // On Vercel, runtime filesystem writes are not persistent. Keep the browser override in a cookie.
   }
 
-  return NextResponse.json({ ok: true });
+  const response = NextResponse.json({
+    ok: true,
+    persistedToFile,
+    ...(syncError ? { syncError } : {}),
+  });
+  response.cookies.set(RUNNING_STYLE_OVERRIDE_COOKIE, JSON.stringify(allOverrides), {
+    httpOnly: false,
+    sameSite: "lax",
+    secure: request.nextUrl.protocol === "https:",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30,
+  });
+  return response;
 }
