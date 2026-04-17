@@ -528,6 +528,42 @@ function guessRunningStyle(seed) {
   return "Oikomi";
 }
 
+const NETKEIBA_RUNNING_STYLE_LABELS = {
+  先頭: "Nige",
+  先団: "Senko",
+  中団: "Sashi",
+  後方: "Oikomi"
+};
+
+function parseNetkeibaRunningStyles(shutubaHtml) {
+  try {
+    const section = shutubaHtml.match(/<section class="Sec_Deploy_Race">([\s\S]*?)<\/section>/i)?.[1] ?? "";
+    if (!section) return {};
+
+    const firstSlide = section.match(/<div class="DeployRace_SlideBoxItem">([\s\S]*?)<\/div>/i)?.[1] ?? "";
+    if (!firstSlide) return {};
+
+    const byGate = {};
+    for (const group of firstSlide.matchAll(/<dl>\s*<dt>([\s\S]*?)<\/dt>\s*<dd>[\s\S]*?<ul>([\s\S]*?)<\/ul>/gi)) {
+      const label = normalizeSpace(group[1]);
+      const runningStyle = NETKEIBA_RUNNING_STYLE_LABELS[label];
+      if (!runningStyle) continue;
+
+      for (const item of group[2].matchAll(/<li>([\s\S]*?)<\/li>/gi)) {
+        const gateNumber = Number.parseInt(
+          item[1].match(/<span class="lblWaku[^"]*">\s*(\d{1,2})\s*<\/span>/i)?.[1] ?? "",
+          10
+        );
+        if (!Number.isFinite(gateNumber) || gateNumber <= 0) continue;
+        byGate[String(gateNumber)] = runningStyle;
+      }
+    }
+    return byGate;
+  } catch {
+    return {};
+  }
+}
+
 function marketOddsToPopularity(odds, xBuzzScore) {
   if (!(odds > 0)) {
     return clamp(Math.round(10 + xBuzzScore * 2), 1, 150);
@@ -649,6 +685,7 @@ async function buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate) {
   );
 
   const oddsSource = jstNow() >= getRaceFriday1930(raceDate) ? "official" : "forecast";
+  const netkeibaRunningStyleByGate = parseNetkeibaRunningStyles(shutubaHtml);
 
   return seeds.map((seed, index) => {
     const oreproEntry = oreproEntries.get(normalizeName(seed.name));
@@ -657,7 +694,9 @@ async function buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate) {
     const xBuzzScore = xBuzzScores.get(normalizeName(seed.name)) ?? 0;
     const currentOdds = oreproEntry?.odds ?? seed.marketOdds ?? 0;
     const popularityScore = marketOddsToPopularity(currentOdds, xBuzzScore);
-    const runningStyle = guessRunningStyle(`${meta.raceId}:${seed.id}:${seed.name}`);
+    const runningStyle =
+      netkeibaRunningStyleByGate[String(seed.gateNumber)] ??
+      guessRunningStyle(`${meta.raceId}:${seed.id}:${seed.name}`);
     // Ability seed comes from past performance only; market data is kept for the market layer.
     const abilityBase = performanceToAbilityBase(pastEntry);
     const ability = buildAbilityStats(abilityBase, runningStyle, `${meta.raceId}:${seed.id}:${seed.name}`);
