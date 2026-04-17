@@ -247,7 +247,24 @@ export function HorseInput({ horses, course, condition, onHorsesChange, hashtag 
                   <td className="px-2 py-2 text-center">
                     <select
                       value={horse.runningStyle}
-                      onChange={(event) => updateHorse(horse.id, "runningStyle", event.target.value as Horse["runningStyle"])}
+                      onChange={(event) => {
+                        const nextStyle = event.target.value as Horse["runningStyle"];
+                        updateHorse(horse.id, "runningStyle", nextStyle);
+                        if (course?.id && !course.archived) {
+                          void fetch("/api/horse-running-style", {
+                            method: "POST",
+                            headers: { "content-type": "application/json" },
+                            body: JSON.stringify({ courseId: course.id, horseId: horse.id, runningStyle: nextStyle }),
+                          })
+                            .then(async (res) => {
+                              if (!res.ok) {
+                                const text = await res.text().catch(() => "");
+                                console.warn("[HorseInput] failed to persist runningStyle", res.status, text);
+                              }
+                            })
+                            .catch((err) => console.warn("[HorseInput] failed to persist runningStyle", err));
+                        }
+                      }}
                       className="rounded border border-slate-200 bg-white px-2 py-1"
                     >
                       <option value="Nige">逃げ</option>
