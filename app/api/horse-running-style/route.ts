@@ -27,6 +27,47 @@ async function regenerateSchedule(): Promise<void> {
   });
 }
 
+type WeeklyRacesPayload = {
+  currentWeek?: { races?: Array<{ courseId?: string; horses?: Array<{ id?: unknown; runningStyle?: string }> }> };
+};
+
+async function readWeeklyRaces(): Promise<{ bom: string; data: WeeklyRacesPayload }> {
+  const raw = await fs.readFile(WEEKLY_RACES_PATH, "utf8");
+  const bom = raw.startsWith("\uFEFF") ? "\uFEFF" : "";
+  const data = JSON.parse(raw.replace(/^\uFEFF/, "")) as WeeklyRacesPayload;
+  return { bom, data };
+}
+
+function findRace(data: WeeklyRacesPayload, courseId: string) {
+  return (data.currentWeek?.races ?? []).find((race) => race?.courseId === courseId);
+}
+
+export async function GET(request: NextRequest) {
+  const courseId = request.nextUrl.searchParams.get("courseId")?.trim() ?? "";
+  if (!courseId) {
+    return NextResponse.json({ error: "courseId is required" }, { status: 400 });
+  }
+
+  const { data } = await readWeeklyRaces();
+  const race = findRace(data, courseId);
+  if (!race) {
+    return NextResponse.json({ error: "race not found for courseId" }, { status: 404 });
+  }
+
+  const runningStyles = Object.fromEntries(
+    (race.horses ?? [])
+      .map((horse) => {
+        const horseId = String(horse?.id ?? "").trim();
+        const runningStyle = String(horse?.runningStyle ?? "").trim();
+        if (!horseId || !VALID_STYLES.has(runningStyle)) return null;
+        return [horseId, runningStyle];
+      })
+      .filter((entry): entry is [string, string] => entry !== null)
+  );
+
+  return NextResponse.json({ courseId, runningStyles });
+}
+
 export async function POST(request: NextRequest) {
   let body: unknown;
   try {
@@ -47,13 +88,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "invalid runningStyle" }, { status: 400 });
   }
 
-  const raw = await fs.readFile(WEEKLY_RACES_PATH, "utf8");
-  const bom = raw.startsWith("\uFEFF") ? "\uFEFF" : "";
-  const data = JSON.parse(raw.replace(/^\uFEFF/, "")) as {
-    currentWeek?: { races?: Array<{ courseId?: string; horses?: Array<{ id?: unknown; runningStyle?: string }> }> };
-  };
-
-  const race = (data.currentWeek?.races ?? []).find((r) => r?.courseId === courseId);
+  const { bom, data } = await readWeeklyRaces();
+  const race = findRace(data, courseId);
   if (!race) {
     return NextResponse.json({ error: "race not found for courseId" }, { status: 404 });
   }

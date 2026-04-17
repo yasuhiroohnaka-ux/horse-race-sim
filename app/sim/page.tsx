@@ -15,7 +15,7 @@ import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
 import { MONTE_CARLO_RUNS, MONTE_CARLO_RUNS_LABEL } from "@/lib/simulationConfig";
 import { calculateOdds, runMonteCarlo } from "@/lib/simulation";
 import { pickTanpukuPair } from "@/lib/tanpukuSelection.mjs";
-import { buildPickExplanations, buildDisagreementExplanation, formatOverbetLabel } from "@/lib/pickExplanations";
+import { buildPickExplanations, buildDisagreementExplanation } from "@/lib/pickExplanations";
 import { buildManualPreRacePayload } from "@/lib/xPostPayload.mjs";
 import { Course, Horse, RaceCondition } from "@/lib/types";
 
@@ -89,6 +89,10 @@ type LiveRaceConditionsPayload = {
   windSpeed?: number;
   windLabel?: string;
   observedAt?: string;
+};
+
+type RunningStylePayload = {
+  runningStyles?: Record<string, Horse["runningStyle"]>;
 };
 
 function createDefaultCondition(courseId: string): RaceCondition {
@@ -410,6 +414,48 @@ function SimulatorContent() {
       }
     };
   }, [condition.courseId, manualOddsRefreshKey]);
+
+  useEffect(() => {
+    if (!condition.courseId) return;
+
+    let cancelled = false;
+    const currentCourseId = condition.courseId;
+
+    const refreshRunningStyles = async () => {
+      try {
+        const response = await fetch(`/api/horse-running-style?courseId=${encodeURIComponent(currentCourseId)}`, {
+          cache: "no-store",
+        });
+        if (!response.ok || cancelled) return;
+
+        const payload = (await response.json()) as RunningStylePayload;
+        const runningStyles = payload.runningStyles ?? {};
+
+        setHorses((previous) => {
+          let changed = false;
+          const updated = previous.map((horse) => {
+            const nextRunningStyle = runningStyles[horse.id];
+            if (!nextRunningStyle || horse.runningStyle === nextRunningStyle) {
+              return horse;
+            }
+
+            changed = true;
+            return { ...horse, runningStyle: nextRunningStyle };
+          });
+
+          return changed ? calculateOdds(updated) : previous;
+        });
+      } catch {
+        // Keep local edits usable even when the persistence endpoint is unavailable.
+      }
+    };
+
+    void refreshRunningStyles();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [condition.courseId]);
 
   useEffect(() => {
     if (!condition.courseId) return;

@@ -41,6 +41,7 @@ type CandidateResult = {
   overlap: number;
   oddsCount: number;
   entries: ParsedEntry[];
+  shutubaHtml: string;
 };
 
 type ParsedPerformanceEntry = {
@@ -64,6 +65,8 @@ type PerformancePayload = {
   lastRaceGradeLabel?: string;
   lastRaceDistance?: number;
 };
+
+type RunningStyle = "Nige" | "Senko" | "Sashi" | "Oikomi";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -300,6 +303,39 @@ function parseOreproEntries(oreproHtml: string): ParsedEntry[] {
   }
 
   return entries;
+}
+
+function parseNetkeibaRunningStyles(shutubaHtml: string): Record<string, RunningStyle> {
+  const section = shutubaHtml.match(/<section class="Sec_Deploy_Race">([\s\S]*?)<\/section>/i)?.[1] ?? "";
+  if (!section) return {};
+
+  const firstSlide = section.match(/<div class="DeployRace_SlideBoxItem">([\s\S]*?)<\/div>/i)?.[1] ?? "";
+  if (!firstSlide) return {};
+
+  const styleLabelMap: Record<string, RunningStyle> = {
+    先頭: "Nige",
+    先団: "Senko",
+    中団: "Sashi",
+    後方: "Oikomi",
+  };
+
+  const runningStyleByGate: Record<string, RunningStyle> = {};
+  for (const group of firstSlide.matchAll(/<dl>\s*<dt>([\s\S]*?)<\/dt>\s*<dd>[\s\S]*?<ul>([\s\S]*?)<\/ul>/gi)) {
+    const label = normalizeSpace(decodeHtmlText(stripTags(group[1])));
+    const runningStyle = styleLabelMap[label];
+    if (!runningStyle) continue;
+
+    for (const item of group[2].matchAll(/<li>([\s\S]*?)<\/li>/gi)) {
+      const gateNumber = Number.parseInt(
+        item[1].match(/<span class="lblWaku[^"]*">\s*(\d{1,2})\s*<\/span>/i)?.[1] ?? "",
+        10
+      );
+      if (!Number.isFinite(gateNumber) || gateNumber <= 0) continue;
+      runningStyleByGate[String(gateNumber)] = runningStyle;
+    }
+  }
+
+  return runningStyleByGate;
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -545,7 +581,7 @@ export async function GET(request: NextRequest) {
 
         const overlap = calculateOverlap(entries, candidateNames);
         const oddsCount = entries.filter((e) => Number.isFinite(e.odds) && (e.odds ?? 0) > 0).length;
-        const score = { raceId, overlap, oddsCount, entries };
+        const score = { raceId, overlap, oddsCount, entries, shutubaHtml: html };
 
         if (!best) {
           best = score;
@@ -583,6 +619,8 @@ export async function GET(request: NextRequest) {
     const oddsByGate: Record<string, number> = {};
     const gateByHorseKey: Record<string, number> = {};
     const oddsByHorseKey: Record<string, number> = {};
+    const runningStyleByGate: Record<string, RunningStyle> = {};
+    const runningStyleByHorseKey: Record<string, RunningStyle> = {};
     const popularityRankByGate: Record<string, number> = {};
     const popularityRankByHorseKey: Record<string, number> = {};
     const popularityByGate: Record<string, number> = {};
@@ -601,6 +639,7 @@ export async function GET(request: NextRequest) {
         .filter((horse) => horse.name)
         .map((horse) => [normalizeName(horse.name ?? ""), horse] as const)
     );
+    const netkeibaRunningStyleByGate = parseNetkeibaRunningStyles(best.shutubaHtml);
     for (const entry of best.entries) {
       const gateKey = String(entry.gateNumber);
       const horseKey = normalizeName(entry.horseName);
@@ -616,6 +655,13 @@ export async function GET(request: NextRequest) {
         oddsByGate[gateKey] = Number(resolvedOdds);
         if (horseKey) {
           oddsByHorseKey[horseKey] = Number(resolvedOdds);
+        }
+      }
+      const resolvedRunningStyle = netkeibaRunningStyleByGate[gateKey];
+      if (resolvedRunningStyle) {
+        runningStyleByGate[gateKey] = resolvedRunningStyle;
+        if (horseKey) {
+          runningStyleByHorseKey[horseKey] = resolvedRunningStyle;
         }
       }
       if (Number.isFinite(resolvedPopularityRank) && (resolvedPopularityRank ?? 0) > 0) {
@@ -679,6 +725,8 @@ export async function GET(request: NextRequest) {
         oddsByGate,
         gateByHorseKey,
         oddsByHorseKey,
+        runningStyleByGate,
+        runningStyleByHorseKey,
         popularityRankByGate,
         popularityRankByHorseKey,
         popularityByGate,

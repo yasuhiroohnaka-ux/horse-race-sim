@@ -1,4 +1,4 @@
-﻿import fs from "node:fs/promises";
+import fs from "node:fs/promises";
 import path from "node:path";
 import {
   TARGET_RACE_CONFIG,
@@ -735,6 +735,20 @@ async function main() {
 
   const prev = await readJson(WEEKLY_RACES_PATH, { currentWeek: null, archives: [] });
   const archives = Array.isArray(prev.archives) ? [...prev.archives] : [];
+
+  if (prev.currentWeek?.races && Array.isArray(prev.currentWeek.races)) {
+    for (const newRace of races) {
+      const oldRace = prev.currentWeek.races.find(r => r.raceId === newRace.raceId);
+      if (oldRace?.horses && Array.isArray(oldRace.horses)) {
+        for (const newHorse of newRace.horses) {
+          const oldHorse = oldRace.horses.find(h => h.id === newHorse.id);
+          if (oldHorse?.runningStyle) {
+            newHorse.runningStyle = oldHorse.runningStyle;
+          }
+        }
+      }
+    }
+  }
 
   if (prev.currentWeek?.weekOf && prev.currentWeek.weekOf !== weekOf && Array.isArray(prev.currentWeek.races) && prev.currentWeek.races.length > 0) {
     archives.unshift({
