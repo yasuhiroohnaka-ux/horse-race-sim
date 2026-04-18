@@ -1,11 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { spawn } from "node:child_process";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  readRunningStyleOverridesStore,
+  writeRunningStyleOverridesStore,
+} from "@/lib/runningStyleOverrides.mjs";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
-const SYNC_SCRIPT_PATH = path.join(ROOT, "scripts", "sync-race-schedule.mjs");
 const RUNNING_STYLE_OVERRIDE_COOKIE = "horse_running_style_overrides";
 
 const VALID_STYLES = new Set(["Nige", "Senko", "Sashi", "Oikomi"]);
@@ -13,26 +15,22 @@ const VALID_STYLES = new Set(["Nige", "Senko", "Sashi", "Oikomi"]);
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-async function regenerateSchedule(): Promise<void> {
-  await new Promise<void>((resolve, reject) => {
-    const child = spawn(process.execPath, [SYNC_SCRIPT_PATH], {
-      cwd: ROOT,
-      stdio: "ignore",
-      windowsHide: true,
-    });
-    child.on("error", reject);
-    child.on("exit", (code) => {
-      if (code === 0) resolve();
-      else reject(new Error(`sync-race-schedule exited with code ${code}`));
-    });
-  });
-}
-
 type WeeklyRacesPayload = {
-  currentWeek?: { races?: Array<{ courseId?: string; horses?: Array<{ id?: unknown; runningStyle?: string }> }> };
+  currentWeek?: {
+    races?: Array<{
+      courseId?: string;
+      horses?: Array<{ id?: unknown; runningStyle?: string; runningStyleSource?: string }>;
+    }>;
+  };
 };
 
 type RunningStyleOverrideMap = Record<string, Record<string, string>>;
+type RunningStyleOverrideEntry = {
+  runningStyle?: string;
+  source?: string;
+  updatedAt?: string | null;
+};
+type RunningStyleOverrideStore = Record<string, Record<string, RunningStyleOverrideEntry>>;
 
 async function readWeeklyRaces(): Promise<{ bom: string; data: WeeklyRacesPayload }> {
   const raw = await fs.readFile(WEEKLY_RACES_PATH, "utf8");
@@ -58,13 +56,18 @@ function readRunningStyleOverrides(request: NextRequest): RunningStyleOverrideMa
   }
 }
 
-function buildRunningStylesResponse(race: NonNullable<ReturnType<typeof findRace>>, overrides: Record<string, string>) {
+function buildRunningStylesResponse(
+  race: NonNullable<ReturnType<typeof findRace>>,
+  overrides: Record<string, { runningStyle?: string }>,
+  cookieOverrides: Record<string, string>
+) {
   return Object.fromEntries(
     (race.horses ?? [])
       .map((horse) => {
         const horseId = String(horse?.id ?? "").trim();
-        const overrideStyle = String(overrides[horseId] ?? "").trim();
-        const runningStyle = overrideStyle || String(horse?.runningStyle ?? "").trim();
+        const overrideStyle = String(overrides[horseId]?.runningStyle ?? "").trim();
+        const cookieStyle = String(cookieOverrides[horseId] ?? "").trim();
+        const runningStyle = overrideStyle || cookieStyle || String(horse?.runningStyle ?? "").trim();
         if (!horseId || !VALID_STYLES.has(runningStyle)) return null;
         return [horseId, runningStyle];
       })
@@ -84,8 +87,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "race not found for courseId" }, { status: 404 });
   }
 
-  const overrides = readRunningStyleOverrides(request)[courseId] ?? {};
-  const runningStyles = buildRunningStylesResponse(race, overrides);
+  const storedOverrideStore = (await readRunningStyleOverridesStore()) as RunningStyleOverrideStore;
+  const storedOverrides = storedOverrideStore[courseId] ?? {};
+  const cookieOverrides = readRunningStyleOverrides(request)[courseId] ?? {};
+  const runningStyles = buildRunningStylesResponse(race, storedOverrides, cookieOverrides);
 
   return NextResponse.json({ courseId, runningStyles });
 }
@@ -110,7 +115,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "invalid runningStyle" }, { status: 400 });
   }
 
-  const { bom, data } = await readWeeklyRaces();
+  const { data } = await readWeeklyRaces();
   const race = findRace(data, courseId);
   if (!race) {
     return NextResponse.json({ error: "race not found for courseId" }, { status: 404 });
@@ -123,34 +128,35 @@ export async function POST(request: NextRequest) {
 
   const allOverrides = readRunningStyleOverrides(request);
   const courseOverrides = { ...(allOverrides[courseId] ?? {}) };
-  const currentStyle = String(courseOverrides[horseId] ?? horse.runningStyle ?? "").trim();
+  const storedOverrides = (await readRunningStyleOverridesStore()) as RunningStyleOverrideStore;
+  const courseStoredOverrides = { ...(storedOverrides[courseId] ?? {}) };
+  const currentStyle = String(
+    courseStoredOverrides[horseId]?.runningStyle ?? courseOverrides[horseId] ?? horse.runningStyle ?? ""
+  ).trim();
   if (currentStyle === runningStyle) {
     return NextResponse.json({ ok: true, unchanged: true });
   }
   courseOverrides[horseId] = runningStyle;
   allOverrides[courseId] = courseOverrides;
+  courseStoredOverrides[horseId] = {
+    runningStyle,
+    source: "saved_manual_override",
+    updatedAt: new Date().toISOString(),
+  };
+  storedOverrides[courseId] = courseStoredOverrides;
 
-  let persistedToFile = false;
-  let syncError = "";
+  let persistedToOverrideStore = false;
 
   try {
-    horse.runningStyle = runningStyle;
-    await fs.writeFile(WEEKLY_RACES_PATH, bom + JSON.stringify(data, null, 2) + "\n", "utf8");
-    persistedToFile = true;
-
-    try {
-      await regenerateSchedule();
-    } catch (error) {
-      syncError = error instanceof Error ? error.message : "sync failed";
-    }
+    await writeRunningStyleOverridesStore(storedOverrides);
+    persistedToOverrideStore = true;
   } catch {
-    // On Vercel, runtime filesystem writes are not persistent. Keep the browser override in a cookie.
+    // On Vercel, runtime filesystem writes are not persistent. Keep the browser override as a cache fallback.
   }
 
   const response = NextResponse.json({
     ok: true,
-    persistedToFile,
-    ...(syncError ? { syncError } : {}),
+    persistedToOverrideStore,
   });
   response.cookies.set(RUNNING_STYLE_OVERRIDE_COOKIE, JSON.stringify(allOverrides), {
     httpOnly: false,

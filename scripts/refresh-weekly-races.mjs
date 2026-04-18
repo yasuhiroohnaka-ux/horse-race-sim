@@ -5,9 +5,12 @@ import {
   getRaceTargetFlags,
   isExpandedTargetRace
 } from "../lib/raceSegmentation.mjs";
+import { readRunningStyleOverridesStore } from "../lib/runningStyleOverrides.mjs";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
+const RUNNING_STYLE_AUDIT_RACE_ID = String(process.env.RUNNING_STYLE_AUDIT_RACE_ID ?? "").trim();
+const RUNNING_STYLE_AUDIT_ONLY = process.env.RUNNING_STYLE_AUDIT_ONLY === "1";
 
 const TRACK_CODE_TO_VENUE = {
   "01": { key: "sapporo", label: "札幌" },
@@ -694,9 +697,11 @@ async function buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate) {
     const xBuzzScore = xBuzzScores.get(normalizeName(seed.name)) ?? 0;
     const currentOdds = oreproEntry?.odds ?? seed.marketOdds ?? 0;
     const popularityScore = marketOddsToPopularity(currentOdds, xBuzzScore);
+    const gateMatchedRunningStyle = netkeibaRunningStyleByGate[String(seed.gateNumber)];
     const runningStyle =
-      netkeibaRunningStyleByGate[String(seed.gateNumber)] ??
+      gateMatchedRunningStyle ??
       guessRunningStyle(`${meta.raceId}:${seed.id}:${seed.name}`);
+    const runningStyleSource = gateMatchedRunningStyle ? "netkeiba_gate" : "guessed_fallback";
     // Ability seed comes from past performance only; market data is kept for the market layer.
     const abilityBase = performanceToAbilityBase(pastEntry);
     const ability = buildAbilityStats(abilityBase, runningStyle, `${meta.raceId}:${seed.id}:${seed.name}`);
@@ -710,7 +715,10 @@ async function buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate) {
       name: seed.name,
       jockey: seed.jockey,
       trainer: seed.trainer,
+      runningStyleInitial: runningStyle,
       runningStyle,
+      runningStyleInitialSource: runningStyleSource,
+      runningStyleSource,
       gateNumber: seed.gateNumber,
       sex: seed.sex,
       weight: seed.weight,
@@ -734,6 +742,33 @@ async function buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate) {
       distanceChange
     };
   });
+}
+
+function buildRunningStyleAudit(race) {
+  const horses = race.horses.map((horse) => ({
+    id: horse.id,
+    gateNumber: horse.gateNumber,
+    name: horse.name,
+    initialRunningStyle: horse.runningStyleInitial ?? horse.runningStyle,
+    runningStyle: horse.runningStyle,
+    initialSource: horse.runningStyleInitialSource ?? horse.runningStyleSource ?? "unknown",
+    source: horse.runningStyleSource ?? "unknown"
+  }));
+
+  return {
+    raceId: race.raceId,
+    courseId: race.courseId,
+    label: race.label,
+    horses,
+    fallbackCount: horses.filter((horse) => horse.source === "guessed_fallback").length,
+    netkeibaGateCount: horses.filter((horse) => horse.source === "netkeiba_gate").length,
+    savedManualOverrideCount: horses.filter((horse) => horse.source === "saved_manual_override").length,
+    carriedForwardPreviousValueCount: horses.filter((horse) => horse.source === "carried_forward_previous_value").length,
+    horseNameMatchCount: horses.filter((horse) => horse.source === "netkeiba_horse_name").length,
+    initialFallbackCount: horses.filter((horse) => horse.initialSource === "guessed_fallback").length,
+    initialNetkeibaGateCount: horses.filter((horse) => horse.initialSource === "netkeiba_gate").length,
+    initialHorseNameMatchCount: horses.filter((horse) => horse.initialSource === "netkeiba_horse_name").length
+  };
 }
 
 async function buildRace(seed) {
@@ -773,20 +808,45 @@ async function main() {
   }
 
   const prev = await readJson(WEEKLY_RACES_PATH, { currentWeek: null, archives: [] });
+  const manualOverrides = await readRunningStyleOverridesStore();
   const archives = Array.isArray(prev.archives) ? [...prev.archives] : [];
 
-  if (prev.currentWeek?.races && Array.isArray(prev.currentWeek.races)) {
-    for (const newRace of races) {
-      const oldRace = prev.currentWeek.races.find(r => r.raceId === newRace.raceId);
+  const previousRaces = prev.currentWeek?.races && Array.isArray(prev.currentWeek.races) ? prev.currentWeek.races : [];
+  for (const newRace of races) {
+    const oldRace = previousRaces.find(r => r.raceId === newRace.raceId);
+    const raceManualOverrides = manualOverrides[newRace.courseId] ?? {};
+    for (const newHorse of newRace.horses) {
+      const manualOverride = raceManualOverrides[newHorse.id];
+      if (manualOverride?.runningStyle) {
+        newHorse.runningStyle = manualOverride.runningStyle;
+        newHorse.runningStyleSource = "saved_manual_override";
+        continue;
+      }
       if (oldRace?.horses && Array.isArray(oldRace.horses)) {
-        for (const newHorse of newRace.horses) {
-          const oldHorse = oldRace.horses.find(h => h.id === newHorse.id);
-          if (oldHorse?.runningStyle) {
-            newHorse.runningStyle = oldHorse.runningStyle;
+        const oldHorse = oldRace.horses.find(h => h.id === newHorse.id);
+        if (oldHorse?.runningStyle) {
+          const carriedRunningStyle = String(oldHorse.runningStyle).trim();
+          const initialRunningStyle = String(newHorse.runningStyle ?? "").trim();
+          const initialSource = String(newHorse.runningStyleSource ?? "").trim();
+          if (!carriedRunningStyle || carriedRunningStyle === initialRunningStyle) {
+            continue;
+          }
+          if (initialSource === "guessed_fallback") {
+            newHorse.runningStyle = carriedRunningStyle;
+            newHorse.runningStyleSource = "carried_forward_previous_value";
           }
         }
       }
     }
+  }
+
+  if (RUNNING_STYLE_AUDIT_RACE_ID) {
+    const auditRace = races.find((race) => race.raceId === RUNNING_STYLE_AUDIT_RACE_ID);
+    if (!auditRace) {
+      throw new Error(`Audit race not found: ${RUNNING_STYLE_AUDIT_RACE_ID}`);
+    }
+    console.log("[running-style-audit]");
+    console.log(JSON.stringify(buildRunningStyleAudit(auditRace), null, 2));
   }
 
   if (prev.currentWeek?.weekOf && prev.currentWeek.weekOf !== weekOf && Array.isArray(prev.currentWeek.races) && prev.currentWeek.races.length > 0) {
@@ -804,6 +864,11 @@ async function main() {
     },
     archives: archives.slice(0, 24)
   };
+
+  if (RUNNING_STYLE_AUDIT_ONLY) {
+    console.log("[refresh-weekly-races] audit-only skip write");
+    return;
+  }
 
   await fs.writeFile(WEEKLY_RACES_PATH, JSON.stringify(next, null, 2), "utf8");
   console.log(`[refresh-weekly-races] weekOf=${weekOf} races=${races.length}`);
