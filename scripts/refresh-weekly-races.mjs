@@ -5,7 +5,10 @@ import {
   getRaceTargetFlags,
   isExpandedTargetRace
 } from "../lib/raceSegmentation.mjs";
-import { readRunningStyleOverridesStore } from "../lib/runningStyleOverrides.mjs";
+import {
+  getRunningStyleOverrideStorageStatus,
+  readRunningStyleOverridesStore
+} from "../lib/runningStyleOverrides.mjs";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -808,8 +811,15 @@ async function main() {
   }
 
   const prev = await readJson(WEEKLY_RACES_PATH, { currentWeek: null, archives: [] });
+  const overrideStorage = getRunningStyleOverrideStorageStatus();
   const manualOverrides = await readRunningStyleOverridesStore();
   const archives = Array.isArray(prev.archives) ? [...prev.archives] : [];
+
+  if (!overrideStorage.available) {
+    console.warn(
+      `[refresh-weekly-races] running style override storage unavailable: ${overrideStorage.kind}:${overrideStorage.reason ?? "unknown"}`
+    );
+  }
 
   const previousRaces = prev.currentWeek?.races && Array.isArray(prev.currentWeek.races) ? prev.currentWeek.races : [];
   for (const newRace of races) {

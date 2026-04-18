@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { NextRequest, NextResponse } from "next/server";
 import {
+  getRunningStyleOverrideStorageStatus,
   readRunningStyleOverridesStore,
   writeRunningStyleOverridesStore,
 } from "@/lib/runningStyleOverrides.mjs";
@@ -75,6 +76,21 @@ function buildRunningStylesResponse(
   );
 }
 
+function withOverrideCookie(
+  response: NextResponse,
+  request: NextRequest,
+  allOverrides: RunningStyleOverrideMap
+) {
+  response.cookies.set(RUNNING_STYLE_OVERRIDE_COOKIE, JSON.stringify(allOverrides), {
+    httpOnly: false,
+    sameSite: "lax",
+    secure: request.nextUrl.protocol === "https:",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30,
+  });
+  return response;
+}
+
 export async function GET(request: NextRequest) {
   const courseId = request.nextUrl.searchParams.get("courseId")?.trim() ?? "";
   if (!courseId) {
@@ -87,12 +103,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "race not found for courseId" }, { status: 404 });
   }
 
+  const overrideStorage = getRunningStyleOverrideStorageStatus();
   const storedOverrideStore = (await readRunningStyleOverridesStore()) as RunningStyleOverrideStore;
   const storedOverrides = storedOverrideStore[courseId] ?? {};
   const cookieOverrides = readRunningStyleOverrides(request)[courseId] ?? {};
   const runningStyles = buildRunningStylesResponse(race, storedOverrides, cookieOverrides);
 
-  return NextResponse.json({ courseId, runningStyles });
+  return NextResponse.json({ courseId, runningStyles, overrideStorage });
 }
 
 export async function POST(request: NextRequest) {
@@ -128,6 +145,7 @@ export async function POST(request: NextRequest) {
 
   const allOverrides = readRunningStyleOverrides(request);
   const courseOverrides = { ...(allOverrides[courseId] ?? {}) };
+  const overrideStorage = getRunningStyleOverrideStorageStatus();
   const storedOverrides = (await readRunningStyleOverridesStore()) as RunningStyleOverrideStore;
   const courseStoredOverrides = { ...(storedOverrides[courseId] ?? {}) };
   const currentStyle = String(
@@ -146,24 +164,48 @@ export async function POST(request: NextRequest) {
   storedOverrides[courseId] = courseStoredOverrides;
 
   let persistedToOverrideStore = false;
+  let persistError = null;
 
   try {
     await writeRunningStyleOverridesStore(storedOverrides);
     persistedToOverrideStore = true;
-  } catch {
-    // On Vercel, runtime filesystem writes are not persistent. Keep the browser override as a cache fallback.
+  } catch (error) {
+    persistError = {
+      code:
+        typeof error === "object" && error !== null && "code" in error && typeof error.code === "string"
+          ? error.code
+          : "override_store_unavailable",
+      message: error instanceof Error ? error.message : "Running style override storage is unavailable.",
+    };
   }
 
-  const response = NextResponse.json({
-    ok: true,
-    persistedToOverrideStore,
-  });
-  response.cookies.set(RUNNING_STYLE_OVERRIDE_COOKIE, JSON.stringify(allOverrides), {
-    httpOnly: false,
-    sameSite: "lax",
-    secure: request.nextUrl.protocol === "https:",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 30,
-  });
-  return response;
+  if (!persistedToOverrideStore) {
+    return withOverrideCookie(
+      NextResponse.json(
+        {
+          ok: false,
+          error: persistError?.code ?? overrideStorage.reason ?? "override_store_unavailable",
+          message:
+            persistError?.message ??
+            "Running style override could not be persisted to the configured storage. Cookie fallback only.",
+          persistedToOverrideStore: false,
+          fallback: "cookie",
+          overrideStorage,
+        },
+        { status: 503 }
+      ),
+      request,
+      allOverrides
+    );
+  }
+
+  return withOverrideCookie(
+    NextResponse.json({
+      ok: true,
+      persistedToOverrideStore,
+      overrideStorage,
+    }),
+    request,
+    allOverrides
+  );
 }
