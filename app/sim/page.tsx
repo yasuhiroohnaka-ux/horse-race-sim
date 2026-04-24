@@ -11,6 +11,7 @@ import { getDefaultHorses } from "@/lib/defaultHorses";
 import { dedupeHorses, findHorseDuplicates } from "@/lib/horseIntegrity";
 import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
 import { buildPredictionSnapshot } from "@/lib/predictionSnapshots";
+import { buildBettingExpectationView, type ExpectationGrade } from "@/lib/bettingExpectation";
 import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
 import { MONTE_CARLO_RUNS, MONTE_CARLO_RUNS_LABEL } from "@/lib/simulationConfig";
 import { calculateOdds, runMonteCarlo } from "@/lib/simulation";
@@ -180,6 +181,28 @@ function buildOddsRefreshSummary(lastFetchedAt: string, course?: Pick<Course, "i
   }
 
   return `一般オッズ最終取得: ${formatRefreshTimestamp(lastFetchedAt)} / 自動更新 ${refreshLabel}`;
+}
+
+function getGradeTone(grade: ExpectationGrade) {
+  switch (grade) {
+    case "S":
+      return "border-emerald-300 bg-emerald-100 text-emerald-800";
+    case "A":
+      return "border-blue-300 bg-blue-100 text-blue-800";
+    case "B":
+      return "border-amber-300 bg-amber-100 text-amber-800";
+    default:
+      return "border-slate-300 bg-slate-100 text-slate-700";
+  }
+}
+
+function GradeBadge({ label, grade }: { label: string; grade: ExpectationGrade }) {
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-bold ${getGradeTone(grade)}`}>
+      <span>{label}</span>
+      <span className="text-sm leading-none">{grade}</span>
+    </span>
+  );
 }
 
 export default function SimulatorPage() {
@@ -758,36 +781,60 @@ function SimulatorContent() {
                   simHorseId && winPick ? (simHorseId === winPick.horse.id ? "agree" : "disagree") : "unknown";
                 const simEntry = simHorseId ? tanpukuPair.scored.find((e: { horse: { id: string } }) => e.horse.id === simHorseId) : null;
                 const explanations = buildPickExplanations({ agreementStatus, simEntry, winEntry: winPick, opponentEntry: opponentPick, wideEntry: widePick });
+                const expectationView = buildBettingExpectationView({
+                  rows,
+                  simulationLeaderEntry: simEntry,
+                  tanpukuHonmeiEntry: winPick,
+                  course: selectedCourse,
+                });
 
                 return (
                   <div className="mt-4 rounded-2xl border border-violet-200 bg-white p-5 shadow-sm">
-                    <h3 className="text-base font-bold text-violet-900">単複推奨パネル</h3>
-                    <p className="mt-1 text-xs text-violet-600">v{tanpukuPair.scoringVersion}</p>
+                    <h3 className="text-base font-bold text-violet-900">馬券推奨パネル</h3>
+                    <p className="mt-1 text-xs text-violet-600">
+                      v{tanpukuPair.scoringVersion} / S-A-B-Cは回顧傾向を反映した暫定ラベルです
+                    </p>
 
-                    <div className="mt-4 flex items-center gap-2">
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
                       <span className={`rounded-full px-3 py-1 text-xs font-semibold ${agreementStatus === "agree" ? "bg-emerald-100 text-emerald-800" : agreementStatus === "disagree" ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-600"}`}>
                         {agreementStatus === "agree" ? "一致" : agreementStatus === "disagree" ? "不一致" : "比較不可"}
                       </span>
-                      <span className="text-xs text-slate-600">{explanations.agreement}</span>
+                      <span className="text-xs text-slate-600">{expectationView.agreement.summary}</span>
                     </div>
 
                     <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                      {/* シミュ本命 */}
                       <div className="rounded-lg border border-sky-200 bg-sky-50 px-4 py-3">
-                        <p className="text-xs font-semibold text-sky-800">シミュ本命</p>
-                        <p className="mt-1 text-sm font-bold text-slate-800">{simHonmei?.name ?? "-"}</p>
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <p className="text-xs font-semibold text-sky-800">総合試走1位</p>
+                          <GradeBadge label="馬券評価" grade={expectationView.simulationLeader.bettingGrade} />
+                        </div>
+                        <p className="mt-1 text-sm font-bold text-slate-800">{expectationView.simulationLeader.horseName}</p>
                         {simEntry && (
                           <p className="mt-1 text-[11px] text-slate-500">
                             winProb {(simEntry.winProb * 100).toFixed(0)}% / placeScore {simEntry.placeScore.toFixed(3)}
                           </p>
                         )}
+                        <ul className="mt-2 space-y-1 text-xs leading-relaxed text-sky-700">
+                          {expectationView.simulationLeader.reasons.map((reason) => (
+                            <li key={reason}>・{reason}</li>
+                          ))}
+                        </ul>
                         <p className="mt-2 text-xs leading-relaxed text-sky-700">{explanations.simHonmei}</p>
                       </div>
 
-                      {/* 単複本命 */}
                       <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
-                        <p className="text-xs font-semibold text-amber-800">単複本命</p>
-                        <p className="mt-1 text-sm font-bold text-slate-800">{winPick?.horse?.name ?? "-"}</p>
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <p className="text-xs font-semibold text-amber-800">馬券推奨本命</p>
+                          <GradeBadge label="期待度" grade={expectationView.tanpukuHonmei.expectationGrade} />
+                        </div>
+                        <p className="mt-1 text-sm font-bold text-slate-800">
+                          {expectationView.tanpukuHonmei.horseName}
+                          {expectationView.tanpukuHonmei.rank ? (
+                            <span className="ml-2 text-[11px] font-medium text-slate-500">
+                              総合試走{expectationView.tanpukuHonmei.rank}位
+                            </span>
+                          ) : null}
+                        </p>
                         {winPick && (
                           <div className="mt-1 space-y-0.5 text-[11px] text-slate-500">
                             <p>placeScore {winPick.placeScore.toFixed(3)} / scoreGap {winPick.scoreGap.toFixed(3)}</p>
@@ -811,6 +858,11 @@ function SimulatorContent() {
                             )}
                           </div>
                         )}
+                        <ul className="mt-2 space-y-1 text-xs leading-relaxed text-amber-700">
+                          {expectationView.tanpukuHonmei.reasons.map((reason) => (
+                            <li key={reason}>・{reason}</li>
+                          ))}
+                        </ul>
                         <p className="mt-2 text-xs leading-relaxed text-amber-700">{explanations.tanpukuHonmei}</p>
                       </div>
                     </div>

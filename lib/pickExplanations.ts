@@ -75,14 +75,14 @@ export function formatOverbetLabel(label?: string | null): string | null {
 
 export function buildSimHonmeiExplanation(entry?: PickExplanationEntry | null): string {
   if (!entry) {
-    return "シミュ本命データがなく、根拠表示は未取得。";
+    return "総合試走1位データがなく、根拠表示は未取得。";
   }
 
   const contributors = getContributorLabels(entry);
   const signalReason = normalizeText(entry.signalReason);
 
   if (isFiniteNumber(entry.winProb) && contributors.length > 0) {
-    return `winProb ${pct(entry.winProb)}で、${joinJapanese(contributors)}が押し上げたシミュ本命。`;
+    return `winProb ${pct(entry.winProb)}で、${joinJapanese(contributors)}が押し上げた総合試走1位。`;
   }
 
   if (isFiniteNumber(entry.winProb)) {
@@ -97,24 +97,24 @@ export function buildSimHonmeiExplanation(entry?: PickExplanationEntry | null): 
     return signalReason;
   }
 
-  return "総合評価の積み上がりでシミュ本命になった。";
+  return "総合評価の積み上がりで総合試走1位になった。";
 }
 
 export function buildTanpukuHonmeiExplanation(entry?: PickExplanationEntry | null): string {
   if (!entry) {
-    return "本命候補データがなく、表示できません。";
+    return "馬券推奨本命データがなく、表示できません。";
   }
 
   if (isFiniteNumber(entry.placeScore) && isFiniteNumber(entry.top3Stability) && entry.top3Stability >= 0.55) {
-    return `placeScore ${r3(entry.placeScore)}が高く、3着内安定度${pct(entry.top3Stability)}を評価して本命候補に選出。`;
+    return `placeScore ${r3(entry.placeScore)}が高く、3着内安定度${pct(entry.top3Stability)}を評価して馬券推奨本命に選出。`;
   }
 
   if (isFiniteNumber(entry.placeScore) && isFiniteNumber(entry.marketSupport) && entry.marketSupport >= 0.65) {
-    return `placeScore ${r3(entry.placeScore)}が高く、市場支持もある本命候補。`;
+    return `placeScore ${r3(entry.placeScore)}が高く、市場支持もある馬券推奨本命。`;
   }
 
   if (isFiniteNumber(entry.placeScore) && isFiniteNumber(entry.overbetRisk) && entry.overbetRisk <= 0.12) {
-    return `placeScore ${r3(entry.placeScore)}が高く、過剰人気リスクを抑えた本命候補。`;
+    return `placeScore ${r3(entry.placeScore)}が高く、過剰人気リスクを抑えた馬券推奨本命。`;
   }
 
   const selectionReason = normalizeText(entry.selectionReason);
@@ -123,10 +123,10 @@ export function buildTanpukuHonmeiExplanation(entry?: PickExplanationEntry | nul
   }
 
   if (isFiniteNumber(entry.placeScore)) {
-    return `placeScore ${r3(entry.placeScore)}が上位で、本命候補として採用。`;
+    return `placeScore ${r3(entry.placeScore)}が上位で、馬券推奨本命として採用。`;
   }
 
-  return "複勝寄りの安定性を評価して本命候補に選出。";
+  return "複勝寄りの安定性を評価して馬券推奨本命に選出。";
 }
 
 export function buildOpponentCandidateExplanation(entry?: PickExplanationEntry | null): string {
@@ -144,7 +144,7 @@ export function buildOpponentCandidateExplanation(entry?: PickExplanationEntry |
     isFiniteNumber(entry.scoreGap) &&
     isFiniteNumber(entry.top3Stability)
   ) {
-    return `本命候補と同じ placeScore 軸で次点。scoreGap ${r3(entry.scoreGap)} と3着内安定度${pct(entry.top3Stability)}を見て相手候補に選出。`;
+    return `馬券推奨本命と同じ placeScore 軸で次点。scoreGap ${r3(entry.scoreGap)} と3着内安定度${pct(entry.top3Stability)}を見て相手候補に選出。`;
   }
 
   if (isFiniteNumber(entry.placeScore) && isFiniteNumber(entry.top3Stability)) {
@@ -156,10 +156,10 @@ export function buildOpponentCandidateExplanation(entry?: PickExplanationEntry |
   }
 
   if (isFiniteNumber(entry.placeScore)) {
-    return `本命候補と同じ placeScore 軸で次点のため相手候補に選出。`;
+    return `馬券推奨本命と同じ placeScore 軸で次点のため相手候補に選出。`;
   }
 
-  return "本命候補に近い安定指標を評価して相手候補に選出。";
+  return "馬券推奨本命に近い安定指標を評価して相手候補に選出。";
 }
 
 export function buildWideLongshotExplanation(entry?: PickExplanationEntry | null): string {
@@ -197,22 +197,22 @@ export function buildAgreementExplanation(
   winEntry?: PickExplanationEntry | null
 ): string {
   if (agreementStatus === "agree") {
-    return "シミュ本命と本命候補は一致。勝ち切り評価と安定評価が揃った。";
+    return "試走と馬券推奨が一致。勝ち切り評価と安定評価が揃った。";
   }
 
   if (agreementStatus === "disagree") {
-    return "シミュ本命と本命候補は不一致。勝ち切り評価と安定評価の差を分けて見ている。";
+    return "総合試走1位と馬券推奨本命は不一致。勝ち切り評価と安定評価の差を分けて見ている。";
   }
 
   if (simEntry && !winEntry) {
-    return "シミュ本命のみ取得でき、本命候補との比較は未完了。";
+    return "総合試走1位のみ取得でき、馬券推奨本命との比較は未完了。";
   }
 
   if (!simEntry && winEntry) {
-    return "本命候補のみ取得でき、シミュ本命との比較は未完了。";
+    return "馬券推奨本命のみ取得でき、総合試走1位との比較は未完了。";
   }
 
-  return "シミュ本命と本命候補の比較データがありません。";
+  return "総合試走1位と馬券推奨本命の比較データがありません。";
 }
 
 export function buildDisagreementExplanation(
@@ -230,7 +230,7 @@ export function buildDisagreementExplanation(
     isFiniteNumber(winEntry.overbetRisk) &&
     simEntry.overbetRisk - winEntry.overbetRisk > 0.15
   ) {
-    return "シミュ本命は過剰人気リスクが高く、本命候補ではその点を嫌った。";
+    return "総合試走1位は過剰人気リスクが高く、馬券推奨本命ではその点を嫌った。";
   }
 
   if (
@@ -238,7 +238,7 @@ export function buildDisagreementExplanation(
     isFiniteNumber(winEntry.top3Stability) &&
     winEntry.top3Stability - simEntry.top3Stability > 0.05
   ) {
-    return "本命候補は3着内安定度をより強く評価して前に出た。";
+    return "馬券推奨本命は3着内安定度をより強く評価して前に出た。";
   }
 
   if (
@@ -246,7 +246,7 @@ export function buildDisagreementExplanation(
     isFiniteNumber(winEntry.placeScore) &&
     winEntry.placeScore - simEntry.placeScore > 0.02
   ) {
-    return `本命候補は placeScore ${r3(winEntry.placeScore)}で優位となり、安定評価で上回った。`;
+    return `馬券推奨本命は placeScore ${r3(winEntry.placeScore)}で優位となり、安定評価で上回った。`;
   }
 
   if (
@@ -254,15 +254,15 @@ export function buildDisagreementExplanation(
     isFiniteNumber(winEntry.marketSupport) &&
     winEntry.marketSupport - simEntry.marketSupport > 0.1
   ) {
-    return "本命候補は市場支持とのバランスでも優位だった。";
+    return "馬券推奨本命は市場支持とのバランスでも優位だった。";
   }
 
-  return "シミュ本命は勝ち切り寄り、本命候補は安定寄りの評価になった。";
+  return "総合試走1位は勝ち切り寄り、馬券推奨本命は安定寄りの評価になった。";
 }
 
 function buildStableOpponentCandidateExplanation(entry?: PickExplanationEntry | null): string {
   if (!entry) {
-    return "相手候補は、単複本命を除いた中で安定指標を比較して選ぶ次点候補です。";
+    return "相手候補は、馬券推奨本命を除いた中で安定指標を比較して選ぶ次点候補です。";
   }
 
   const selectionReason = normalizeText(entry.selectionReason);
@@ -278,10 +278,10 @@ function buildStableOpponentCandidateExplanation(entry?: PickExplanationEntry | 
   if (isFiniteNumber(entry.scoreGap)) detailParts.push(`本命差 ${r3(entry.scoreGap)}`);
 
   if (detailParts.length > 0) {
-    return `単複本命を除いた中で、placeProb を最優先に top3Stability・placeScore・simWinProb を比較し、安定次点として相手候補に選出。${detailParts.join(" / ")}`;
+    return `馬券推奨本命を除いた中で、placeProb を最優先に top3Stability・placeScore・simWinProb を比較し、安定次点として相手候補に選出。${detailParts.join(" / ")}`;
   }
 
-  return "本命候補に次ぐ安定評価として相手候補に選出。3着内の残りやすさを重視しています。";
+  return "馬券推奨本命に次ぐ安定評価として相手候補に選出。3着内の残りやすさを重視しています。";
 }
 
 export function buildPickExplanations(params: {
