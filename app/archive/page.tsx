@@ -33,6 +33,7 @@ type ArchiveSourceRace = Partial<GeneratedReviewRace> & {
   courseId: string;
   label: string;
   date: string;
+  weekOf?: string | null;
   result?: GeneratedRaceResult;
 };
 
@@ -139,6 +140,64 @@ function formatTimestamp(value?: string | null) {
   }).format(parsed);
 }
 
+function parseDateParts(value?: string | null) {
+  const match = String(value ?? "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+  const [, year, month, day] = match;
+  const y = Number(year);
+  const m = Number(month);
+  const d = Number(day);
+  if (![y, m, d].every(Number.isFinite)) return null;
+  return { year: y, month: m, day: d };
+}
+
+function formatDateParts(date: Date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function getLocalDateDow(value?: string | null) {
+  const parts = parseDateParts(value);
+  if (!parts) return null;
+  return new Date(parts.year, parts.month - 1, parts.day).getDay();
+}
+
+function inferJraWeekendDowFromRaceId(raceId?: string | null) {
+  const normalized = String(raceId ?? "");
+  const match = normalized.match(/^\d{4}\d{2}\d{2}(\d{2})\d{2}$/);
+  if (!match) return null;
+  const raceDayNumber = Number(match[1]);
+  if (!Number.isFinite(raceDayNumber)) return null;
+  return raceDayNumber % 2 === 1 ? 6 : 0;
+}
+
+function deriveRaceDateFromWeekOf(weekOf?: string | null, targetDow?: number | null) {
+  const parts = parseDateParts(weekOf);
+  if (!parts || targetDow === null || targetDow === undefined) return null;
+  const base = new Date(parts.year, parts.month - 1, parts.day);
+  const baseDow = base.getDay();
+  let offset = (targetDow - baseDow + 7) % 7;
+  if (offset === 0 && targetDow === 0) offset = 7;
+  return formatDateParts(new Date(parts.year, parts.month - 1, parts.day + offset));
+}
+
+function resolveCalendarRaceDate(params: {
+  raceId?: string | null;
+  raceDate?: string | null;
+  snapshotRaceDate?: string | null;
+  fallbackDate?: string | null;
+  weekOf?: string | null;
+}) {
+  const explicitRaceDate = params.raceDate ?? params.snapshotRaceDate ?? params.fallbackDate ?? "";
+  const inferredDow = inferJraWeekendDowFromRaceId(params.raceId);
+  const explicitDow = getLocalDateDow(explicitRaceDate);
+
+  if (explicitRaceDate && inferredDow !== null && explicitDow !== null && explicitDow !== inferredDow) {
+    return deriveRaceDateFromWeekOf(params.weekOf, inferredDow) ?? explicitRaceDate;
+  }
+
+  return explicitRaceDate;
+}
+
 function formatPayout(value: number) {
   return value > 0 ? `${Math.round(value).toLocaleString("ja-JP")}円` : "-";
 }
@@ -195,7 +254,13 @@ function getTopSnapshotRow(snapshot: PredictionSnapshot | null) {
 }
 
 function getRaceDate(record: RaceReviewRecord | null, race: ArchiveSourceRace, snapshot: PredictionSnapshot | null) {
-  return record?.meta.raceDate ?? snapshot?.raceDate ?? race.raceDate ?? race.date ?? "";
+  return resolveCalendarRaceDate({
+    raceId: record?.raceId ?? snapshot?.raceId ?? race.raceId,
+    raceDate: record?.meta.raceDate,
+    snapshotRaceDate: snapshot?.raceDate,
+    fallbackDate: race.raceDate ?? race.date,
+    weekOf: record?.meta.weekOf ?? race.weekOf,
+  });
 }
 
 function getRaceNumber(record: RaceReviewRecord | null, race: ArchiveSourceRace, snapshot: PredictionSnapshot | null) {
@@ -261,13 +326,20 @@ function getQualityFlags(params: {
 }
 
 function recordToSourceRace(record: RaceReviewRecord): ArchiveSourceRace {
-  const date = record.meta.raceDate ?? record.snapshot?.raceDate ?? record.createdAt.slice(0, 10);
+  const date = resolveCalendarRaceDate({
+    raceId: record.raceId,
+    raceDate: record.meta.raceDate,
+    snapshotRaceDate: record.snapshot?.raceDate,
+    fallbackDate: record.createdAt.slice(0, 10),
+    weekOf: record.meta.weekOf,
+  });
   return {
     raceId: record.raceId,
     courseId: record.courseId,
     label: record.meta.raceName ?? record.snapshot?.raceName ?? record.raceId,
     date,
     raceDate: date,
+    weekOf: record.meta.weekOf,
     raceNumber: record.meta.raceNumber ?? record.snapshot?.raceNumber ?? undefined,
     venue: record.meta.venue ?? record.snapshot?.venue ?? undefined,
     venueKey: record.meta.venueKey ?? record.snapshot?.venueKey ?? undefined,
