@@ -29,11 +29,13 @@ import {
 } from "@/lib/widePayouts";
 import type {
   DiagnosticsAggregationScope,
+  ExpectationGrade,
   PredictionOrigin,
   PredictionSnapshot,
   RaceDiagnosticsSegmentKey,
   WeeklyDiagnostics,
   WeeklyDiagnosticsEvaluation,
+  WeeklyDiagnosticsExpectationGradeCounts,
   WeeklyDiagnosticsMissTag,
   WeeklyDiagnosticsMissTagCount,
   WeeklyDiagnosticsMissTagDetail,
@@ -240,6 +242,30 @@ function roi(totalPayout: number, raceCount: number) {
 
 function returnRate(totalPayout: number, totalStake: number) {
   return totalStake > 0 ? (totalPayout / totalStake) * 100 : 0;
+}
+
+const EXPECTATION_GRADE_ORDER: ExpectationGrade[] = ["S", "A", "B", "C"];
+
+function normalizeExpectationGrade(value: unknown): ExpectationGrade | null {
+  return value === "S" || value === "A" || value === "B" || value === "C" ? value : null;
+}
+
+function createExpectationGradeStats(): WeeklyDiagnosticsExpectationGradeCounts {
+  const createStats = () => ({
+    raceCount: 0,
+    settledRaceCount: 0,
+    buckets: EXPECTATION_GRADE_ORDER.map((grade) => ({
+      grade,
+      raceCount: 0,
+      placeHitCount: 0,
+      placeRate: 0,
+    })),
+  });
+
+  return {
+    simulationLeader: createStats(),
+    tanpukuHonmei: createStats(),
+  };
 }
 
 function compareRecommendations(a: RecommendationSettlement | null, b: RecommendationSettlement): RecommendationSettlement {
@@ -1158,6 +1184,7 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
     honmeiNonOverbetCount: 0,
     honmeiNonOverbetPlaceHitCount: 0,
   };
+  const expectationGradeCounts = createExpectationGradeStats();
 
   const bestHitCandidates: Array<{ score: number; race: WeeklyDiagnosticsRepresentativeRace }> = [];
   const worstMissCandidates: Array<{ score: number; race: WeeklyDiagnosticsRepresentativeRace }> = [];
@@ -1392,6 +1419,26 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
     const snapshotPlaced = snapshot?.honmeiHorseId ? top3HorseIds.includes(snapshot.honmeiHorseId) : false;
     const routinePlaced = settlement?.win ? top3HorseIds.includes(settlement.win.horseId) : false;
     const valuePlaced = settlement?.value ? top3HorseIds.includes(settlement.value.horseId) : false;
+    const simulationGrade = normalizeExpectationGrade(snapshot?.expectation?.simulationLeader?.grade);
+    if (simulationGrade && snapshot?.honmeiHorseId) {
+      expectationGradeCounts.simulationLeader.raceCount += 1;
+      expectationGradeCounts.simulationLeader.settledRaceCount += 1;
+      const bucket = expectationGradeCounts.simulationLeader.buckets.find((entry) => entry.grade === simulationGrade);
+      if (bucket) {
+        bucket.raceCount += 1;
+        if (snapshotPlaced) bucket.placeHitCount += 1;
+      }
+    }
+    const tanpukuGrade = normalizeExpectationGrade(snapshot?.expectation?.tanpukuHonmei?.grade);
+    if (tanpukuGrade && settlement?.win?.horseId) {
+      expectationGradeCounts.tanpukuHonmei.raceCount += 1;
+      expectationGradeCounts.tanpukuHonmei.settledRaceCount += 1;
+      const bucket = expectationGradeCounts.tanpukuHonmei.buckets.find((entry) => entry.grade === tanpukuGrade);
+      if (bucket) {
+        bucket.raceCount += 1;
+        if (routinePlaced) bucket.placeHitCount += 1;
+      }
+    }
     const simTopRows = snapshot
       ? [1, 2, 3]
           .map((rank) => snapshot.rankedRows.find((row) => row.rank === rank))
@@ -1509,6 +1556,11 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
 
   disagreement.snapshotPlaceRate = percentage(disagreement.snapshotPlaceRate, disagreement.raceCount);
   disagreement.routinePlaceRate = percentage(disagreement.routinePlaceRate, disagreement.raceCount);
+  for (const group of [expectationGradeCounts.simulationLeader, expectationGradeCounts.tanpukuHonmei]) {
+    for (const bucket of group.buckets) {
+      bucket.placeRate = percentage(bucket.placeHitCount, bucket.raceCount);
+    }
+  }
 
   const missDiagnostics = {
     missRaceCount: raceMisses.length,
@@ -1578,6 +1630,7 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
           : null,
       missPatternCounts,
       marketHeatCounts,
+      expectationGradeCounts,
     },
   };
 

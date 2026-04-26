@@ -1,7 +1,9 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import type {
+  ExpectationGrade,
   PredictionSnapshot,
+  PredictionSnapshotExpectation,
   RaceReviewRecord,
   ReviewPairMetrics,
   ReviewRaceMeta,
@@ -22,6 +24,35 @@ function normalizeString(value: unknown): string | null {
 function normalizeNumber(value: unknown): number | null {
   const normalized = Number(value);
   return Number.isFinite(normalized) ? normalized : null;
+}
+
+function normalizeExpectationGrade(value: unknown): ExpectationGrade | null {
+  return value === "S" || value === "A" || value === "B" || value === "C" ? value : null;
+}
+
+function normalizeExpectation(value: unknown): PredictionSnapshotExpectation | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = value as Partial<PredictionSnapshotExpectation>;
+  return {
+    simulationLeader: {
+      horseId: normalizeString(raw.simulationLeader?.horseId),
+      grade: normalizeExpectationGrade(raw.simulationLeader?.grade),
+      reasons: Array.isArray(raw.simulationLeader?.reasons)
+        ? raw.simulationLeader.reasons.map((reason) => String(reason ?? "").trim()).filter(Boolean)
+        : [],
+    },
+    tanpukuHonmei: {
+      horseId: normalizeString(raw.tanpukuHonmei?.horseId),
+      grade: normalizeExpectationGrade(raw.tanpukuHonmei?.grade),
+      reasons: Array.isArray(raw.tanpukuHonmei?.reasons)
+        ? raw.tanpukuHonmei.reasons.map((reason) => String(reason ?? "").trim()).filter(Boolean)
+        : [],
+    },
+    agreement: {
+      sameHorse: raw.agreement?.sameHorse === true,
+      summary: normalizeString(raw.agreement?.summary),
+    },
+  };
 }
 
 function toTimestamp(value: string | null | undefined): number {
@@ -130,6 +161,7 @@ function normalizeSnapshot(snapshot: PredictionSnapshot | null | undefined, meta
     venueKey: normalizeString(snapshot.venueKey) ?? meta.venueKey,
     raceNumber: normalizeNumber(snapshot.raceNumber) ?? meta.raceNumber,
     scheduledStartTime: normalizeString(snapshot.scheduledStartTime) ?? meta.scheduledStartTime,
+    expectation: normalizeExpectation(snapshot.expectation),
   };
 }
 
@@ -193,6 +225,7 @@ export function normalizeReviewRecord(record: RaceReviewRecord): RaceReviewRecor
     lastError: normalizeString(record.lastError),
     meta,
     snapshot: normalizeSnapshot(record.snapshot, meta),
+    expectation: normalizeExpectation(record.expectation ?? record.snapshot?.expectation),
     honmei: normalizeSelection(record.honmei),
     opponent: normalizeSelection(record.opponent),
     wide: normalizeSelection(record.wide),
@@ -231,6 +264,7 @@ export function createDiscoveredReviewRecord(params: {
     lastError: null,
     meta: params.meta,
     snapshot: null,
+    expectation: null,
     honmei: null,
     opponent: null,
     wide: null,
@@ -368,6 +402,7 @@ export function createReviewRecordFromSnapshot(params: {
     lastError: null,
     meta: params.meta,
     snapshot: params.snapshot,
+    expectation: normalizeExpectation(params.snapshot.expectation),
     honmei: params.honmei,
     opponent: params.opponent,
     wide: params.wide,
@@ -397,6 +432,7 @@ export function mergeReviewRecord(
       ...normalizedNext.pair,
     },
     snapshot: normalizedNext.snapshot ?? normalizedExisting.snapshot,
+    expectation: normalizedNext.expectation ?? normalizedExisting.expectation,
     honmei: normalizedNext.honmei ?? normalizedExisting.honmei,
     opponent: normalizedNext.opponent ?? normalizedExisting.opponent,
     wide: normalizedNext.wide ?? normalizedExisting.wide,

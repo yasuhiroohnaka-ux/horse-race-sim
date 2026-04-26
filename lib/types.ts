@@ -21,6 +21,7 @@ export type Weather = "Sunny" | "Cloudy" | "Rain" | "Snow";
 export type WindDirection = "Headwind" | "Tailwind" | "Crosswind";
 export type PaceScenario = "Slow" | "Average" | "Fast";
 export type PredictionOrigin = "saved_live" | "saved_manual" | "backfill";
+export type ExpectationGrade = "S" | "A" | "B" | "C";
 export type DiagnosticsAggregationScope = "all" | "saved_only";
 export type RaceSegment = "special" | "special_final12" | "final12" | "other";
 export type RaceDiagnosticsSegmentKey =
@@ -160,6 +161,21 @@ export interface PredictionSnapshotMarketMeta {
   oddsSource: string | null;
 }
 
+export interface PredictionSnapshotExpectationEntry {
+  horseId: string | null;
+  grade: ExpectationGrade | null;
+  reasons: string[];
+}
+
+export interface PredictionSnapshotExpectation {
+  simulationLeader: PredictionSnapshotExpectationEntry;
+  tanpukuHonmei: PredictionSnapshotExpectationEntry;
+  agreement: {
+    sameHorse: boolean;
+    summary: string | null;
+  };
+}
+
 export interface PredictionSnapshot {
   snapshotId: string;
   raceId: string;
@@ -192,6 +208,7 @@ export interface PredictionSnapshot {
   pairRankGap?: number | null;
   valueHorseId: string | null;
   watchHorseId: string | null;
+  expectation?: PredictionSnapshotExpectation | null;
   signalReasons: Record<string, PredictionSnapshotSignalReason>;
   marketMeta: PredictionSnapshotMarketMeta;
 }
@@ -304,6 +321,7 @@ export interface RaceReviewRecord {
   lastError: string | null;
   meta: ReviewRaceMeta;
   snapshot: PredictionSnapshot | null;
+  expectation: PredictionSnapshotExpectation | null;
   honmei: ReviewSelectionHorse | null;
   opponent: ReviewSelectionHorse | null;
   wide: ReviewSelectionHorse | null;
@@ -579,6 +597,24 @@ export interface WeeklyDiagnosticsMarketHeatCounts {
   honmeiNonOverbetPlaceHitCount: number;
 }
 
+export interface WeeklyDiagnosticsExpectationGradeBucket {
+  grade: ExpectationGrade;
+  raceCount: number;
+  placeHitCount: number;
+  placeRate: number;
+}
+
+export interface WeeklyDiagnosticsExpectationGradeStats {
+  raceCount: number;
+  settledRaceCount: number;
+  buckets: WeeklyDiagnosticsExpectationGradeBucket[];
+}
+
+export interface WeeklyDiagnosticsExpectationGradeCounts {
+  simulationLeader: WeeklyDiagnosticsExpectationGradeStats;
+  tanpukuHonmei: WeeklyDiagnosticsExpectationGradeStats;
+}
+
 export interface WeeklyDiagnosticsEvaluation {
   primaryKpis: {
     tanpukuHonmeiPlaceHitRate: number;
@@ -589,6 +625,7 @@ export interface WeeklyDiagnosticsEvaluation {
     honmeiValueDivergenceRate: number | null;
     missPatternCounts: WeeklyDiagnosticsMissPatternCounts;
     marketHeatCounts: WeeklyDiagnosticsMarketHeatCounts;
+    expectationGradeCounts: WeeklyDiagnosticsExpectationGradeCounts;
   };
 }
 

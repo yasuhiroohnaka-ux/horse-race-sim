@@ -34,6 +34,13 @@ type HonmeiMetrics = {
   fukuRoi: number;
 };
 
+type ExpectationGradeBreakdownEntry = {
+  grade: "S" | "A" | "B" | "C";
+  raceCount: number;
+  placeCount: number;
+  placeRate: number;
+};
+
 type SummaryPayload = {
   counts: {
     targetRaceCount: number;
@@ -80,6 +87,10 @@ type SummaryPayload = {
       };
     };
     unclassifiedCount: number;
+  };
+  expectationGradeBreakdown?: {
+    simulationLeader: ExpectationGradeBreakdownEntry[];
+    tanpukuHonmei: ExpectationGradeBreakdownEntry[];
   };
 };
 
@@ -288,6 +299,13 @@ function buildSummary(records: RaceReviewRecord[]): SummaryPayload {
   };
 
   const classificationAccum = new Map<string, { raceCount: number; winCount: number; placeCount: number; tanPayout: number; fukuPayout: number }>();
+  const simulationGradeAccum = new Map<"S" | "A" | "B" | "C", { raceCount: number; placeCount: number }>();
+  const tanpukuGradeAccum = new Map<"S" | "A" | "B" | "C", { raceCount: number; placeCount: number }>();
+  const gradeKeys: Array<"S" | "A" | "B" | "C"> = ["S", "A", "B", "C"];
+  for (const key of gradeKeys) {
+    simulationGradeAccum.set(key, { raceCount: 0, placeCount: 0 });
+    tanpukuGradeAccum.set(key, { raceCount: 0, placeCount: 0 });
+  }
 
   for (const record of readyRecords) {
     const honmei = record.honmei;
@@ -308,6 +326,27 @@ function buildSummary(records: RaceReviewRecord[]): SummaryPayload {
         bucket.tanPayout += Number(honmei.tanPayout ?? 0);
         bucket.fukuPayout += Number(honmei.fukuPayout ?? 0);
         classificationAccum.set(cKey, bucket);
+      }
+    }
+
+    const simulationGrade = record.expectation?.simulationLeader?.grade;
+    if (simulationGrade && simulationGradeAccum.has(simulationGrade) && record.snapshot?.honmeiHorseId) {
+      const bucket = simulationGradeAccum.get(simulationGrade);
+      if (bucket) {
+        bucket.raceCount += 1;
+        if (record.actualTop3HorseIds.includes(record.snapshot.honmeiHorseId)) {
+          bucket.placeCount += 1;
+        }
+      }
+    }
+    const tanpukuGrade = record.expectation?.tanpukuHonmei?.grade;
+    if (tanpukuGrade && tanpukuGradeAccum.has(tanpukuGrade) && record.honmei?.horseId) {
+      const bucket = tanpukuGradeAccum.get(tanpukuGrade);
+      if (bucket) {
+        bucket.raceCount += 1;
+        if (record.actualTop3HorseIds.includes(record.honmei.horseId)) {
+          bucket.placeCount += 1;
+        }
       }
     }
 
@@ -413,6 +452,27 @@ function buildSummary(records: RaceReviewRecord[]): SummaryPayload {
       vsClassified: reqDelta(classifiedMetrics, excludeSkipMetrics),
     },
     unclassifiedCount: allMetrics.raceCount - classifiedMetrics.raceCount,
+  };
+
+  summary.expectationGradeBreakdown = {
+    simulationLeader: gradeKeys.map((grade) => {
+      const bucket = simulationGradeAccum.get(grade) ?? { raceCount: 0, placeCount: 0 };
+      return {
+        grade,
+        raceCount: bucket.raceCount,
+        placeCount: bucket.placeCount,
+        placeRate: pct(bucket.placeCount, bucket.raceCount),
+      };
+    }),
+    tanpukuHonmei: gradeKeys.map((grade) => {
+      const bucket = tanpukuGradeAccum.get(grade) ?? { raceCount: 0, placeCount: 0 };
+      return {
+        grade,
+        raceCount: bucket.raceCount,
+        placeCount: bucket.placeCount,
+        placeRate: pct(bucket.placeCount, bucket.raceCount),
+      };
+    }),
   };
 
   return summary;

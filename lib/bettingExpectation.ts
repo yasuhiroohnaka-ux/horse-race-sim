@@ -1,7 +1,7 @@
-import type { Course } from "./types";
+import type { Course, ExpectationGrade } from "./types";
 import type { RaceAnalysisRow } from "./raceAnalysis";
 
-export type ExpectationGrade = "S" | "A" | "B" | "C";
+export type { ExpectationGrade } from "./types";
 
 export type BettingPickEntry = {
   horse?: {

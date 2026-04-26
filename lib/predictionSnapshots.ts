@@ -6,6 +6,7 @@ import {
   PredictionSnapshot,
   PredictionSnapshotContributor,
   PredictionSnapshotContributorKey,
+  PredictionSnapshotExpectation,
   RaceCondition,
 } from "./types";
 
@@ -180,6 +181,7 @@ export async function buildPredictionSnapshot(params: {
     pairRankGap?: number | null;
   } | null;
   valueHorseId?: string | null;
+  expectation?: PredictionSnapshotExpectation | null;
 }): Promise<PredictionSnapshot> {
   const {
     results,
@@ -201,6 +203,7 @@ export async function buildPredictionSnapshot(params: {
     scoringVersion = DEFAULT_SCORING_VERSION,
     opponentOverride = null,
     valueHorseId = null,
+    expectation = null,
   } = params;
 
   const rows = buildRaceAnalysisRows(results, horses, course, condition);
@@ -306,6 +309,7 @@ export async function buildPredictionSnapshot(params: {
           : null,
     valueHorseId,
     watchHorseId,
+    expectation,
     signalReasons,
     marketMeta: {
       fieldSize: horses.length,

@@ -18,7 +18,7 @@ import { calculateOdds, runMonteCarlo } from "@/lib/simulation";
 import { pickTanpukuPair } from "@/lib/tanpukuSelection.mjs";
 import { buildPickExplanations, buildDisagreementExplanation } from "@/lib/pickExplanations";
 import { buildManualPreRacePayload } from "@/lib/xPostPayload.mjs";
-import { Course, Horse, RaceCondition } from "@/lib/types";
+import { Course, Horse, PredictionSnapshotExpectation, RaceCondition } from "@/lib/types";
 
 const groundLabels: Record<RaceCondition["groundCondition"], string> = {
   Firm: "良",
@@ -606,6 +606,39 @@ function SimulatorContent() {
 
       void (async () => {
         try {
+          const rows = buildRaceAnalysisRows(simulationResults, horses, selectedCourse, condition);
+          const simHonmei = rows[0] ?? null;
+          const simHorseId = simHonmei?.horseId ?? null;
+          const simEntry = simHorseId
+            ? pair?.scored?.find((entry: { horse?: { id?: string } }) => entry?.horse?.id === simHorseId) ?? null
+            : null;
+          const expectationView = pair?.winPick
+            ? buildBettingExpectationView({
+                rows,
+                simulationLeaderEntry: simEntry,
+                tanpukuHonmeiEntry: pair.winPick,
+                course: selectedCourse,
+              })
+            : null;
+          const expectation: PredictionSnapshotExpectation | null = expectationView
+            ? {
+                simulationLeader: {
+                  horseId: simHorseId,
+                  grade: expectationView.simulationLeader.bettingGrade,
+                  reasons: expectationView.simulationLeader.reasons,
+                },
+                tanpukuHonmei: {
+                  horseId: pair?.winPick?.horse?.id ?? null,
+                  grade: expectationView.tanpukuHonmei.expectationGrade,
+                  reasons: expectationView.tanpukuHonmei.reasons,
+                },
+                agreement: {
+                  sameHorse: expectationView.agreement.sameHorse,
+                  summary: expectationView.agreement.summary,
+                },
+              }
+            : null;
+
           const snapshot = await buildPredictionSnapshot({
             results: simulationResults,
             horses,
@@ -623,6 +656,7 @@ function SimulatorContent() {
                 }
               : null,
             valueHorseId: pair?.widePick?.horse?.id ?? pair?.valuePick?.horse?.id ?? null,
+            expectation,
           });
 
           const response = await fetch("/api/prediction-snapshots", {

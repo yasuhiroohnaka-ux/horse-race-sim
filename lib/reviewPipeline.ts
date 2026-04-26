@@ -1,6 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { buildBettingExpectationView } from "@/lib/bettingExpectation";
 import { buildPredictionSnapshot } from "@/lib/predictionSnapshots";
+import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
 import {
   buildRaceDateFromWeekOf,
   buildReviewRaceMeta,
@@ -23,7 +25,13 @@ import {
 import { runMonteCarlo } from "@/lib/simulation";
 import { MONTE_CARLO_RUNS } from "@/lib/simulationConfig";
 import { filterRaceDayNoOddsHorses } from "@/lib/raceDayExclusions.mjs";
-import type { PickClassificationHint, PredictionSnapshot, RaceReviewRecord, ReviewSelectionHorse } from "@/lib/types";
+import type {
+  PickClassificationHint,
+  PredictionSnapshot,
+  PredictionSnapshotExpectation,
+  RaceReviewRecord,
+  ReviewSelectionHorse,
+} from "@/lib/types";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -392,6 +400,39 @@ async function buildSnapshotBundle(params: { race: WeeklyRace; weekOf: string | 
 
   const raceDate = safeRaceDate(race, weekOf);
   const scheduledStart = combineRaceDateAndTime(raceDate, normalizeString(race.scheduledStartTime));
+  const scoredRows = Array.isArray(tanpukuPair?.scored) ? tanpukuPair.scored : [];
+  const rows = buildRaceAnalysisRows(simulationResults, horses, course, condition);
+  const simHonmei = rows[0] ?? null;
+  const simHorseId = simHonmei?.horseId ?? null;
+  const simEntry = simHorseId
+    ? scoredRows.find((entry: Record<string, unknown>) => String((entry.horse as Record<string, unknown>)?.id ?? "") === simHorseId) ?? null
+    : null;
+  const expectationView = tanpukuPair?.winPick
+    ? buildBettingExpectationView({
+        rows,
+        simulationLeaderEntry: simEntry,
+        tanpukuHonmeiEntry: tanpukuPair.winPick,
+        course,
+      })
+    : null;
+  const expectation: PredictionSnapshotExpectation | null = expectationView
+    ? {
+        simulationLeader: {
+          horseId: simHorseId,
+          grade: expectationView.simulationLeader.bettingGrade,
+          reasons: expectationView.simulationLeader.reasons,
+        },
+        tanpukuHonmei: {
+          horseId: normalizeString(tanpukuPair?.winPick?.horse?.id),
+          grade: expectationView.tanpukuHonmei.expectationGrade,
+          reasons: expectationView.tanpukuHonmei.reasons,
+        },
+        agreement: {
+          sameHorse: expectationView.agreement.sameHorse,
+          summary: expectationView.agreement.summary,
+        },
+      }
+    : null;
   const snapshot = await buildPredictionSnapshot({
     results: simulationResults,
     horses,
@@ -408,9 +449,8 @@ async function buildSnapshotBundle(params: { race: WeeklyRace; weekOf: string | 
     snapshotType: "pre_race_final",
     oddsSource: normalizeString(race.oddsSource),
     predictionOrigin: "saved_live",
+    expectation,
   });
-
-  const scoredRows = Array.isArray(tanpukuPair?.scored) ? tanpukuPair.scored : [];
   const eligibleScoredRows = createTieBrokenScoredRows(
     scoredRows.filter((entry: Record<string, unknown>) => !isCancelledHorse((entry.horse ?? null) as Record<string, unknown> | null))
   );
