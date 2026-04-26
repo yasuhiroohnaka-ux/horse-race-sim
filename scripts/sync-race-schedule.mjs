@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { getRaceTargetFlags } from "../lib/raceSegmentation.mjs";
+import { filterRaceDayNoOddsHorses } from "../lib/raceDayExclusions.mjs";
 
 const ROOT = process.cwd();
 const GENERATED_REVIEWS_PATH = path.join(ROOT, "data", "generated-reviews.json");
@@ -65,6 +66,7 @@ function mapRaceMeta(race) {
     courseId: String(race.courseId),
     raceId: String(race.raceId ?? ""),
     label: String(race.label ?? race.courseId),
+    raceDate: race.raceDate ? String(race.raceDate) : undefined,
     grade: String(race.grade ?? "OTHER"),
     day: String(race.day ?? "Sat"),
     raceNumber: Number(race.raceNumber ?? flags.raceNumber ?? 0),
@@ -173,13 +175,14 @@ function getPreferredReviewForRace(race, generatedReviews) {
 }
 
 function mapReviewRace(race, weekOf, archivedAt, generatedReviews) {
+  const horses = Array.isArray(race.horses) ? filterRaceDayNoOddsHorses(race.horses, race) : [];
   return {
     ...mapRaceMeta(race),
     date: isoDateFromWeekAndDay(String(weekOf ?? ""), String(race.day ?? "")),
     archivedAt: archivedAt ? String(archivedAt) : undefined,
     result: mapRaceResult(race),
     review: mapRaceReview(getPreferredReviewForRace(race, generatedReviews)),
-    horses: Array.isArray(race.horses) ? race.horses.map((h) => mapHorseSeed(h, race)) : [],
+    horses: horses.map((h) => mapHorseSeed(h, race)),
   };
 }
 
@@ -193,8 +196,9 @@ async function main() {
 
   for (const race of src.currentWeek?.races ?? []) {
     if (!race?.courseId || !Array.isArray(race.horses)) continue;
+    const horses = filterRaceDayNoOddsHorses(race.horses, race);
     raceMeta.push(mapRaceMeta(race));
-    raceMap[race.courseId] = race.horses.map((h) => mapHorseSeed(h, race));
+    raceMap[race.courseId] = horses.map((h) => mapHorseSeed(h, race));
   }
 
   const completedCurrentRaces = (src.currentWeek?.races ?? [])
@@ -252,6 +256,7 @@ export interface GeneratedRaceMeta {
   courseId: string;
   raceId: string;
   label: string;
+  raceDate?: string;
   grade: string;
   day: string;
   raceNumber: number;

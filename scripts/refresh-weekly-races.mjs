@@ -9,6 +9,7 @@ import {
   getRunningStyleOverrideStorageStatus,
   readRunningStyleOverridesStore
 } from "../lib/runningStyleOverrides.mjs";
+import { filterRaceDayNoOddsHorses } from "../lib/raceDayExclusions.mjs";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -780,12 +781,17 @@ async function buildRace(seed) {
   if (!meta) return null;
   const shutubaPastHtml = await fetchText(`https://race.netkeiba.com/race/shutuba_past.html?race_id=${seed.raceId}`);
   const raceDate = raceDateFromSeed(seed);
-  const horses = await buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate);
+  const builtHorses = await buildRaceEntries(meta, shutubaHtml, shutubaPastHtml, raceDate);
+  const raceOddsSource = builtHorses.some((horse) => horse.oddsSource === "official") ? "official" : "forecast";
+  const horses = filterRaceDayNoOddsHorses(builtHorses, {
+    raceDate: seed.dateIso,
+    oddsSource: raceOddsSource,
+  });
   if (horses.length === 0) return null;
   return {
     ...meta,
     raceDate: seed.dateIso,
-    oddsSource: horses.some((horse) => horse.oddsSource === "official") ? "official" : "forecast",
+    oddsSource: raceOddsSource,
     horses: horses.sort((a, b) => a.gateNumber - b.gateNumber)
   };
 }

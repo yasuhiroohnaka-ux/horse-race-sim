@@ -1,9 +1,15 @@
 import { Horse } from "./types";
 import { getDefaultHorses as getLegacyDefaultHorses } from "./raceData";
-import { GENERATED_ARCHIVED_RACES, GENERATED_WEEKLY_HORSES_MAP, type GeneratedHorseSeed } from "./generatedRaceSchedule";
+import {
+  GENERATED_ARCHIVED_RACES,
+  GENERATED_WEEKLY_HORSES_MAP,
+  GENERATED_WEEKLY_RACES,
+  type GeneratedHorseSeed,
+} from "./generatedRaceSchedule";
 import { GENERATED_DRAW_OVERRIDES } from "./generatedDrawOverrides";
 import { dedupeHorses } from "./horseIntegrity";
 import { applyNetkeibaRatings } from "./netkeibaRatings";
+import { filterRaceDayNoOddsHorses } from "./raceDayExclusions.mjs";
 
 function enrichHorse(_courseId: string, horse: Horse): Horse {
   return applyNetkeibaRatings(horse);
@@ -53,7 +59,9 @@ export function getDefaultHorses(courseId: string): Horse[] {
   const generated = GENERATED_WEEKLY_HORSES_MAP[courseId];
 
   if (generated && generated.length > 0) {
-    return sortByGateNumber(dedupeHorses(generated.map((h, i) => mapGeneratedHorse(courseId, h, i))));
+    const race = GENERATED_WEEKLY_RACES.find((entry) => entry.courseId === courseId);
+    const horses = generated.map((h, i) => mapGeneratedHorse(courseId, h, i));
+    return sortByGateNumber(dedupeHorses(filterRaceDayNoOddsHorses(horses, race) as Horse[]));
   }
 
   const generatedArchived = GENERATED_ARCHIVED_RACES.find((race) => race.courseId === courseId);

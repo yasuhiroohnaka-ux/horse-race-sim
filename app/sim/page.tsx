@@ -81,6 +81,12 @@ type NetkeibaOddsPayload = {
       lastRaceDistance?: number;
     }
   >;
+  raceDayNoOddsExclusionsActive?: boolean;
+  includedByNoOddsGates?: number[];
+  includedByNoOddsHorseKeys?: string[];
+  excludedByNoOddsGates?: number[];
+  excludedByNoOddsHorseKeys?: string[];
+  excludedByNoOddsHorseNames?: string[];
 };
 
 type LiveRaceConditionsPayload = {
@@ -301,6 +307,10 @@ function SimulatorContent() {
         const jockeyByHorseKey = payload.jockeyByHorseKey ?? {};
         const performanceByGate = payload.performanceByGate ?? {};
         const performanceByHorseKey = payload.performanceByHorseKey ?? {};
+        const includedByNoOddsGates = new Set((payload.includedByNoOddsGates ?? []).map((gate) => String(gate)));
+        const includedByNoOddsHorseKeys = new Set(payload.includedByNoOddsHorseKeys ?? []);
+        const excludedByNoOddsGates = new Set((payload.excludedByNoOddsGates ?? []).map((gate) => String(gate)));
+        const excludedByNoOddsHorseKeys = new Set(payload.excludedByNoOddsHorseKeys ?? []);
         if (
           Object.keys(gateByHorseKey).length === 0 &&
           Object.keys(oddsByGate).length === 0 &&
@@ -321,7 +331,20 @@ function SimulatorContent() {
 
         setHorses((previous) => {
           let changed = false;
-          const updated = previous.map((horse) => {
+          const retained = payload.raceDayNoOddsExclusionsActive
+            ? previous.filter((horse) => {
+                const horseKey = normalizeHorseKey(horse.name);
+                const gateKey = String(horse.gateNumber);
+                if (includedByNoOddsGates.size > 0 || includedByNoOddsHorseKeys.size > 0) {
+                  return includedByNoOddsGates.has(gateKey) || includedByNoOddsHorseKeys.has(horseKey);
+                }
+                return !excludedByNoOddsGates.has(gateKey) && !excludedByNoOddsHorseKeys.has(horseKey);
+              })
+            : previous;
+
+          if (retained.length !== previous.length) changed = true;
+
+          const updated = retained.map((horse) => {
             let nextHorse = horse;
             let touched = false;
             let needsRatingsRecalc = false;

@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { NextRequest, NextResponse } from "next/server";
 import { GENERATED_DRAW_OVERRIDES } from "@/lib/generatedDrawOverrides";
+import { getRaceDayNoOddsExclusions, toJstDateString } from "@/lib/raceDayExclusions.mjs";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -629,6 +630,7 @@ export async function GET(request: NextRequest) {
     const jockeyByHorseKey: Record<string, string> = {};
     const performanceByGate: Record<string, PerformancePayload> = {};
     const performanceByHorseKey: Record<string, PerformancePayload> = {};
+    const resolvedOddsByGate = new Map<string, number | null>();
     const weeklyHorseByGate = new Map(
       (race.horses ?? [])
         .filter((horse) => Number.isFinite(horse.gateNumber) && Number(horse.gateNumber) > 0)
@@ -647,6 +649,7 @@ export async function GET(request: NextRequest) {
       const resolvedOdds = entry.odds ?? oreproEntry?.odds ?? null;
       const resolvedPopularityRank = entry.popularityRank ?? oreproEntry?.popularityRank ?? null;
       const resolvedJockey = entry.jockey ?? oreproEntry?.jockey ?? null;
+      resolvedOddsByGate.set(gateKey, Number.isFinite(resolvedOdds) && (resolvedOdds ?? 0) > 0 ? Number(resolvedOdds) : null);
 
       if (horseKey && Number.isFinite(entry.gateNumber) && entry.gateNumber > 0) {
         gateByHorseKey[horseKey] = entry.gateNumber;
@@ -716,6 +719,17 @@ export async function GET(request: NextRequest) {
       // Keep odds/popularity/jockey refresh working even if past-performance parsing fails.
     }
 
+    const raceDateIso = toJstDateString(raceDate);
+    const raceDayNoOddsExclusions = getRaceDayNoOddsExclusions(
+      best.entries.map((entry) => ({
+        name: entry.horseName,
+        gateNumber: entry.gateNumber,
+        realOdds: resolvedOddsByGate.get(String(entry.gateNumber)) ?? 0,
+        oddsSource: "official",
+      })),
+      { raceDate: raceDateIso, oddsSource: "official" }
+    );
+
     return NextResponse.json(
       {
         courseId,
@@ -735,6 +749,12 @@ export async function GET(request: NextRequest) {
         jockeyByHorseKey,
         performanceByGate,
         performanceByHorseKey,
+        raceDayNoOddsExclusionsActive: raceDayNoOddsExclusions.active,
+        includedByNoOddsGates: raceDayNoOddsExclusions.included.map((entry) => entry.gateNumber),
+        includedByNoOddsHorseKeys: raceDayNoOddsExclusions.included.map((entry) => normalizeName(entry.name ?? "")),
+        excludedByNoOddsGates: raceDayNoOddsExclusions.excluded.map((entry) => entry.gateNumber),
+        excludedByNoOddsHorseKeys: raceDayNoOddsExclusions.excluded.map((entry) => normalizeName(entry.name ?? "")),
+        excludedByNoOddsHorseNames: raceDayNoOddsExclusions.excluded.map((entry) => entry.name),
       },
       {
         headers: {
