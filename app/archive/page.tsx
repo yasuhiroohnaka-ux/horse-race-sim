@@ -102,6 +102,25 @@ type CalendarDay = {
   gradeCounts: Record<ExpectationGrade, number>;
 };
 
+type ReturnSummary = {
+  raceCount: number;
+  tanHitCount: number;
+  fukuHitCount: number;
+  tanPayout: number;
+  fukuPayout: number;
+  tanRate: number;
+  fukuRate: number;
+  tanRoi: number;
+  fukuRoi: number;
+};
+
+type ReturnSummarySource = {
+  tanOutcome?: string | null;
+  fukuOutcome?: string | null;
+  tanPayout?: number | null;
+  fukuPayout?: number | null;
+};
+
 const EMPTY_FILTERS: Filters = {
   from: "",
   to: "",
@@ -204,6 +223,10 @@ function formatPayout(value: number) {
 
 function formatRate(value: number) {
   return `${value.toFixed(1)}%`;
+}
+
+function formatCount(value: number) {
+  return value.toLocaleString("ja-JP");
 }
 
 function formatOdds(value: number | null) {
@@ -428,6 +451,55 @@ function matchesFilters(row: ArchiveRow, filters: Filters, options?: { ignoreDat
   return true;
 }
 
+function isSettledOutcome(value: string) {
+  return value !== "not_settled";
+}
+
+function isHitOutcome(value: string) {
+  return value === "hit" || value === "hit_missing_payout";
+}
+
+function buildReturnSummary(
+  rows: ArchiveRow[],
+  getSource: (row: ArchiveRow) => ReturnSummarySource | null = (row) => row
+): ReturnSummary {
+  const summary = {
+    raceCount: 0,
+    tanHitCount: 0,
+    fukuHitCount: 0,
+    tanPayout: 0,
+    fukuPayout: 0,
+  };
+
+  for (const row of rows) {
+    const source = getSource(row);
+    if (!source) continue;
+    const tanOutcome = source.tanOutcome ?? "not_settled";
+    const fukuOutcome = source.fukuOutcome ?? "not_settled";
+    if (!isSettledOutcome(tanOutcome) && !isSettledOutcome(fukuOutcome)) continue;
+    summary.raceCount += 1;
+    if (isHitOutcome(tanOutcome)) summary.tanHitCount += 1;
+    if (isHitOutcome(fukuOutcome)) summary.fukuHitCount += 1;
+    summary.tanPayout += Number(source.tanPayout ?? 0);
+    summary.fukuPayout += Number(source.fukuPayout ?? 0);
+  }
+
+  return {
+    ...summary,
+    tanRate: summary.raceCount > 0 ? (summary.tanHitCount / summary.raceCount) * 100 : 0,
+    fukuRate: summary.raceCount > 0 ? (summary.fukuHitCount / summary.raceCount) * 100 : 0,
+    tanRoi: summary.raceCount > 0 ? (summary.tanPayout / (summary.raceCount * 100)) * 100 : 0,
+    fukuRoi: summary.raceCount > 0 ? (summary.fukuPayout / (summary.raceCount * 100)) * 100 : 0,
+  };
+}
+
+function getStoredSelectionForHorse(row: ArchiveRow, horseId?: string | null): ReviewSelectionHorse | null {
+  if (!horseId) return null;
+  const target = String(horseId);
+  const selections = [row.record?.honmei, row.record?.opponent, row.record?.wide];
+  return selections.find((selection) => selection && String(selection.horseId) === target) ?? null;
+}
+
 function buildCalendarDays(rows: ArchiveRow[]): CalendarDay[] {
   const grouped = new Map<string, ArchiveRow[]>();
   for (const row of rows) {
@@ -512,6 +584,44 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
+function ReturnSummaryCard({
+  title,
+  summary,
+  note,
+}: {
+  title: string;
+  summary: ReturnSummary;
+  note?: string;
+}) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-bold text-slate-900">{title}</p>
+          <p className="mt-1 text-xs text-slate-500">{formatCount(summary.raceCount)}R / 単複各100円</p>
+        </div>
+        <div className="text-right text-xs text-slate-500">
+          <p>単 {summary.tanHitCount}/{summary.raceCount}</p>
+          <p>複 {summary.fukuHitCount}/{summary.raceCount}</p>
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="rounded-md bg-slate-50 p-3">
+          <p className="text-xs font-semibold text-slate-500">単勝回収率</p>
+          <p className="mt-1 text-2xl font-bold text-slate-900">{formatRate(summary.tanRoi)}</p>
+          <p className="mt-1 text-xs text-slate-500">的中率 {formatRate(summary.tanRate)}</p>
+        </div>
+        <div className="rounded-md bg-slate-50 p-3">
+          <p className="text-xs font-semibold text-slate-500">複勝回収率</p>
+          <p className="mt-1 text-2xl font-bold text-slate-900">{formatRate(summary.fukuRoi)}</p>
+          <p className="mt-1 text-xs text-slate-500">的中率 {formatRate(summary.fukuRate)}</p>
+        </div>
+      </div>
+      {note ? <p className="mt-3 text-xs leading-5 text-slate-500">{note}</p> : null}
+    </div>
+  );
+}
+
 export default function ArchivePage() {
   const [snapshotsByRaceId, setSnapshotsByRaceId] = useState<Record<string, PredictionSnapshot>>({});
   const [reviewRecordsByRaceId, setReviewRecordsByRaceId] = useState<Record<string, RaceReviewRecord>>({});
@@ -572,6 +682,16 @@ export default function ArchivePage() {
 
   const venues = useMemo(() => Array.from(new Set(rows.map((row) => row.venue).filter(Boolean))).sort(), [rows]);
   const filteredRows = useMemo(() => rows.filter((row) => matchesFilters(row, filters)), [filters, rows]);
+  const totalReturnSummary = useMemo(() => buildReturnSummary(rows), [rows]);
+  const filteredReturnSummary = useMemo(() => buildReturnSummary(filteredRows), [filteredRows]);
+  const filteredSimLeaderReturnSummary = useMemo(
+    () => buildReturnSummary(filteredRows, (row) => getStoredSelectionForHorse(row, row.simLeaderHorseId)),
+    [filteredRows]
+  );
+  const filteredAgreementReturnSummary = useMemo(
+    () => buildReturnSummary(filteredRows, (row) => (row.agreement === true ? row.honmei : null)),
+    [filteredRows]
+  );
   const calendarRows = useMemo(() => rows.filter((row) => matchesFilters(row, filters, { ignoreDate: true })), [filters, rows]);
   const calendarMonths = useMemo(() => groupCalendarByMonth(buildCalendarDays(calendarRows)), [calendarRows]);
   const selectedRow = useMemo(() => filteredRows.find((row) => row.key === selectedKey) ?? rows.find((row) => row.key === selectedKey) ?? null, [filteredRows, rows, selectedKey]);
@@ -606,6 +726,70 @@ export default function ArchivePage() {
             </div>
           </div>
         </header>
+
+        <section className="mb-6 grid gap-3 lg:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-lg border border-slate-200 bg-white p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-bold text-slate-900">表示中の結果確定レース</p>
+                <p className="mt-1 text-xs text-slate-500">{formatCount(filteredReturnSummary.raceCount)}R / 単複各100円</p>
+              </div>
+              <div className="text-right text-xs text-slate-500">
+                <p>単 {filteredReturnSummary.tanHitCount}/{filteredReturnSummary.raceCount}</p>
+                <p>複 {filteredReturnSummary.fukuHitCount}/{filteredReturnSummary.raceCount}</p>
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="rounded-md bg-slate-50 p-3">
+                <p className="text-xs font-semibold text-slate-500">単勝回収率</p>
+                <p className="mt-1 text-2xl font-bold text-slate-900">{formatRate(filteredReturnSummary.tanRoi)}</p>
+                <p className="mt-1 text-xs text-slate-500">的中率 {formatRate(filteredReturnSummary.tanRate)}</p>
+              </div>
+              <div className="rounded-md bg-slate-50 p-3">
+                <p className="text-xs font-semibold text-slate-500">複勝回収率</p>
+                <p className="mt-1 text-2xl font-bold text-slate-900">{formatRate(filteredReturnSummary.fukuRoi)}</p>
+                <p className="mt-1 text-xs text-slate-500">的中率 {formatRate(filteredReturnSummary.fukuRate)}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-slate-200 bg-white p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-bold text-slate-900">全結果確定レース</p>
+                <p className="mt-1 text-xs text-slate-500">{formatCount(totalReturnSummary.raceCount)}R / 単複各100円</p>
+              </div>
+              <div className="text-right text-xs text-slate-500">
+                <p>単 {totalReturnSummary.tanHitCount}/{totalReturnSummary.raceCount}</p>
+                <p>複 {totalReturnSummary.fukuHitCount}/{totalReturnSummary.raceCount}</p>
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="rounded-md bg-slate-50 p-3">
+                <p className="text-xs font-semibold text-slate-500">単勝回収率</p>
+                <p className="mt-1 text-2xl font-bold text-slate-900">{formatRate(totalReturnSummary.tanRoi)}</p>
+                <p className="mt-1 text-xs text-slate-500">的中率 {formatRate(totalReturnSummary.tanRate)}</p>
+              </div>
+              <div className="rounded-md bg-slate-50 p-3">
+                <p className="text-xs font-semibold text-slate-500">複勝回収率</p>
+                <p className="mt-1 text-2xl font-bold text-slate-900">{formatRate(totalReturnSummary.fukuRoi)}</p>
+                <p className="mt-1 text-xs text-slate-500">的中率 {formatRate(totalReturnSummary.fukuRate)}</p>
+              </div>
+            </div>
+          </div>
+
+          <ReturnSummaryCard
+            title="総合試走1位（表示中・払戻あり）"
+            summary={filteredSimLeaderReturnSummary}
+            note="総合試走1位が保存済みの馬券候補に含まれ、公式払戻がある行のみ集計"
+          />
+
+          <ReturnSummaryCard
+            title="試走1位=馬券本命（表示中）"
+            summary={filteredAgreementReturnSummary}
+            note="総合試走1位と馬券推奨本命が一致した行のみ集計"
+          />
+        </section>
 
         <section className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
           <div className="mb-4 flex items-center justify-between gap-3">
