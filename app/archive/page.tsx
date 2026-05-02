@@ -26,6 +26,7 @@ type PerformanceLookupResponse = {
   settlementsByRaceId: Record<string, unknown>;
   settlementsByCourseId: Record<string, unknown>;
   summary: unknown;
+  categoryReturnStats?: CategoryReturnStat[];
 };
 
 type ArchiveSourceRace = Partial<GeneratedReviewRace> & {
@@ -119,6 +120,19 @@ type ReturnSummarySource = {
   fukuOutcome?: string | null;
   tanPayout?: number | null;
   fukuPayout?: number | null;
+};
+
+type CategoryReturnStat = {
+  key: string;
+  label: string;
+  raceCount: number;
+  tanHitCount: number;
+  fukuHitCount: number;
+  tanPayout: number;
+  fukuPayout: number;
+  tanReturnRate: number;
+  fukuReturnRate: number;
+  combinedReturnRate: number;
 };
 
 const EMPTY_FILTERS: Filters = {
@@ -622,9 +636,53 @@ function ReturnSummaryCard({
   );
 }
 
+function CategoryReturnStatsTable({ stats }: { stats: CategoryReturnStat[] }) {
+  return (
+    <section className="mb-6 overflow-hidden rounded-lg border border-slate-200 bg-white">
+      <div className="border-b border-slate-100 px-4 py-3">
+        <p className="text-sm font-bold text-slate-900">カテゴリ別 単複回収率</p>
+        <p className="mt-1 text-xs text-slate-500">単勝100円・複勝100円、公式払戻で確定済みの本命推奨のみ集計</p>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-slate-100 text-sm">
+          <thead className="bg-slate-50 text-xs font-bold text-slate-500">
+            <tr>
+              <th className="px-4 py-3 text-left">区分</th>
+              <th className="px-4 py-3 text-right">対象</th>
+              <th className="px-4 py-3 text-right">単勝</th>
+              <th className="px-4 py-3 text-right">複勝</th>
+              <th className="px-4 py-3 text-right">単複合算</th>
+              <th className="px-4 py-3 text-right">的中</th>
+              <th className="px-4 py-3 text-right">払戻</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {stats.map((stat) => (
+              <tr key={stat.key}>
+                <td className="px-4 py-3 font-semibold text-slate-900">{stat.label}</td>
+                <td className="px-4 py-3 text-right text-slate-700">{formatCount(stat.raceCount)}R</td>
+                <td className="px-4 py-3 text-right font-bold text-slate-900">{formatRate(stat.tanReturnRate)}</td>
+                <td className="px-4 py-3 text-right font-bold text-slate-900">{formatRate(stat.fukuReturnRate)}</td>
+                <td className="px-4 py-3 text-right text-slate-700">{formatRate(stat.combinedReturnRate)}</td>
+                <td className="px-4 py-3 text-right text-slate-700">
+                  単{stat.tanHitCount}/{stat.raceCount}・複{stat.fukuHitCount}/{stat.raceCount}
+                </td>
+                <td className="px-4 py-3 text-right text-slate-700">
+                  単{formatPayout(stat.tanPayout)} / 複{formatPayout(stat.fukuPayout)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
 export default function ArchivePage() {
   const [snapshotsByRaceId, setSnapshotsByRaceId] = useState<Record<string, PredictionSnapshot>>({});
   const [reviewRecordsByRaceId, setReviewRecordsByRaceId] = useState<Record<string, RaceReviewRecord>>({});
+  const [categoryReturnStats, setCategoryReturnStats] = useState<CategoryReturnStat[]>([]);
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -650,6 +708,7 @@ export default function ArchivePage() {
       if (cancelled) return;
       setSnapshotsByRaceId(snapshotJson.snapshotsByRaceId ?? {});
       setReviewRecordsByRaceId(performanceJson.reviewRecordsByRaceId ?? {});
+      setCategoryReturnStats(performanceJson.categoryReturnStats ?? []);
       setIsLoading(false);
     };
 
@@ -790,6 +849,8 @@ export default function ArchivePage() {
             note="総合試走1位と馬券推奨本命が一致した行のみ集計"
           />
         </section>
+
+        {categoryReturnStats.length > 0 ? <CategoryReturnStatsTable stats={categoryReturnStats} /> : null}
 
         <section className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
           <div className="mb-4 flex items-center justify-between gap-3">

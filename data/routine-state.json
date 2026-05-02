@@ -14,15 +14,15 @@
       "fukuPayout": 0
     },
     "total": {
-      "bets": 2,
-      "tanHits": 0,
-      "fukuHits": 1,
-      "tanStake": 200,
-      "tanPayout": 0,
-      "fukuStake": 200,
-      "fukuPayout": 390
+      "bets": 4,
+      "tanHits": 1,
+      "fukuHits": 3,
+      "tanStake": 400,
+      "tanPayout": 220,
+      "fukuStake": 400,
+      "fukuPayout": 680
     },
-    "updatedAt": "2026-04-26T08:14:53.506Z"
+    "updatedAt": "2026-05-02T13:31:50.129Z"
   },
   "tanpukuRecommendations": [
     {
@@ -4006,16 +4006,23 @@
       "runnerUpPlaceScore": 0.556,
       "runnerUpPlaceProb": 0.662,
       "overbetLabel": null,
-      "settlementStatus": "pending_result",
-      "tanOutcome": "not_settled",
-      "fukuOutcome": "not_settled",
-      "actualWinnerHorseId": null,
-      "actualTop3HorseIds": [],
-      "tanPayoutSource": "missing",
-      "fukuPayoutSource": "missing",
-      "resolved": false,
-      "tanPayout": 0,
-      "fukuPayout": 0
+      "settlementStatus": "settled",
+      "tanOutcome": "hit",
+      "fukuOutcome": "hit",
+      "actualWinnerHorseId": "5",
+      "actualTop3HorseIds": [
+        "5",
+        "13",
+        "7"
+      ],
+      "tanPayoutSource": "official",
+      "fukuPayoutSource": "official",
+      "resolved": true,
+      "tanPayout": 220,
+      "fukuPayout": 110,
+      "settledAt": "2026-05-02T13:31:50.128Z",
+      "tanHit": true,
+      "fukuHit": true
     },
     {
       "weekOf": "2026-04-20",
@@ -4042,16 +4049,23 @@
       "runnerUpPlaceScore": 0.462,
       "runnerUpPlaceProb": 0.579,
       "overbetLabel": null,
-      "settlementStatus": "pending_result",
-      "tanOutcome": "not_settled",
-      "fukuOutcome": "not_settled",
-      "actualWinnerHorseId": null,
-      "actualTop3HorseIds": [],
-      "tanPayoutSource": "missing",
-      "fukuPayoutSource": "missing",
-      "resolved": false,
+      "settlementStatus": "settled",
+      "tanOutcome": "miss",
+      "fukuOutcome": "hit",
+      "actualWinnerHorseId": "5",
+      "actualTop3HorseIds": [
+        "5",
+        "13",
+        "7"
+      ],
+      "tanPayoutSource": "official",
+      "fukuPayoutSource": "official",
+      "resolved": true,
       "tanPayout": 0,
-      "fukuPayout": 0
+      "fukuPayout": 180,
+      "settledAt": "2026-05-02T13:31:50.129Z",
+      "tanHit": false,
+      "fukuHit": true
     },
     {
       "weekOf": "2026-04-27",

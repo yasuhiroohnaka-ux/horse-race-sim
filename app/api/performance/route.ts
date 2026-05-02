@@ -1,8 +1,14 @@
+import fs from "node:fs/promises";
+import path from "node:path";
 import { NextResponse } from "next/server";
+import { buildCategoryReturnStatsFromReviewRecords } from "@/lib/categoryReturnStats.mjs";
 import { buildWeeklyDiagnostics, loadWeeklyDiagnosticsContext } from "@/lib/weeklyDiagnostics";
 import { loadReviewRecords } from "@/lib/reviewRecords";
 import { formatMissingReason, isReviewComplete, normalizeLegacyReviewStatus } from "@/lib/reviewStatus";
 import type { DiagnosticsAggregationScope, RaceReviewRecord, ReviewLegacyValueSelection, ReviewSelectionHorse } from "@/lib/types";
+
+const ROOT = process.cwd();
+const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
 
 type GapBucket = {
   label: string;
@@ -492,13 +498,23 @@ function filterScope(records: RaceReviewRecord[], scope: DiagnosticsAggregationS
   return records.filter((record) => record.snapshot?.predictionOrigin !== "backfill");
 }
 
+async function readJsonFile<T>(filePath: string, fallback: T): Promise<T> {
+  try {
+    const raw = await fs.readFile(filePath, "utf8");
+    return JSON.parse(raw.replace(/^\uFEFF/, "")) as T;
+  } catch {
+    return fallback;
+  }
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const scope = normalizeScope(searchParams.get("scope"));
-    const [reviewRecordsByRaceId, diagnosticsContext] = await Promise.all([
+    const [reviewRecordsByRaceId, diagnosticsContext, weeklyRaces] = await Promise.all([
       loadReviewRecords(),
       loadWeeklyDiagnosticsContext(scope),
+      readJsonFile(WEEKLY_RACES_PATH, { currentWeek: null, archives: [] }),
     ]);
 
     const filteredRecords = filterScope(Object.values(reviewRecordsByRaceId), scope).sort((a, b) =>
@@ -510,6 +526,7 @@ export async function GET(request: Request) {
     const weeklyPerf = accumulateWeeklyPerformance(weeklyRecords);
     const summary = buildSummary(filteredRecords);
     const diagnostics = buildWeeklyDiagnostics(diagnosticsContext);
+    const categoryReturnStats = buildCategoryReturnStatsFromReviewRecords(filteredRecords, weeklyRaces);
 
     return NextResponse.json({
       scope,
@@ -531,6 +548,7 @@ export async function GET(request: Request) {
       ),
       summary,
       diagnostics,
+      categoryReturnStats,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "failed to load performance";
@@ -544,6 +562,7 @@ export async function GET(request: Request) {
         settlementsByCourseId: {},
         summary: null,
         diagnostics: null,
+        categoryReturnStats: [],
         error: message,
       },
       { status: 500 }

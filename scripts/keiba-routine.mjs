@@ -11,6 +11,10 @@ import {
   buildReviewPostPayload,
   buildWeeklySummaryPostPayload,
 } from "../lib/xPostPayload.mjs";
+import {
+  buildCategoryReturnStats,
+  buildCategoryReturnStatsFromReviewRecords,
+} from "../lib/categoryReturnStats.mjs";
 
 const ROOT = process.cwd();
 
@@ -21,6 +25,7 @@ const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
 const STATE_PATH = path.join(ROOT, "data", "routine-state.json");
 const PENDING_POSTS_PATH = path.join(ROOT, "data", "pending-posts.jsonl");
 const GENERATED_REVIEWS_PATH = path.join(ROOT, "data", "generated-reviews.json");
+const REVIEW_RECORDS_PATH = path.join(ROOT, "data", "review-records.json");
 const DEFAULT_SCORING_VERSION = TANPUKU_SCORING_VERSION;
 
 const X_POST_WEBHOOK_URL = process.env.X_POST_WEBHOOK_URL || "";
@@ -90,6 +95,38 @@ async function writeJson(filePath, value) {
 
 function reviewKeyForRace(race) {
   return String(race?.raceId ?? race?.courseId ?? "");
+}
+
+function listKnownWeeklyRaces(weekly) {
+  const races = [];
+  for (const race of weekly?.currentWeek?.races ?? []) {
+    races.push({ ...race, weekOf: race.weekOf ?? weekly.currentWeek?.weekOf ?? null });
+  }
+  for (const archive of weekly?.archives ?? []) {
+    for (const race of archive?.races ?? []) {
+      races.push({ ...race, weekOf: race.weekOf ?? archive?.weekOf ?? null });
+    }
+  }
+  return races;
+}
+
+function findRaceForRecommendation(weekly, rec) {
+  const raceId = String(rec.raceId ?? "").trim();
+  const courseId = String(rec.courseId ?? "").trim();
+  const label = String(rec.raceLabel ?? "").trim();
+  const weekOf = String(rec.weekOf ?? "").trim();
+
+  return (
+    listKnownWeeklyRaces(weekly).find((race) => {
+      const candidateRaceId = String(race.raceId ?? "").trim();
+      const candidateCourseId = String(race.courseId ?? "").trim();
+      const candidateLabel = String(race.label ?? "").trim();
+      const candidateWeekOf = String(race.weekOf ?? "").trim();
+      if (raceId && candidateRaceId === raceId) return true;
+      if (courseId && candidateCourseId === courseId) return true;
+      return Boolean(weekOf && label && candidateWeekOf === weekOf && candidateLabel === label);
+    }) ?? null
+  );
 }
 
 async function publishOrQueuePost(stage, text, structuredPayload = null) {
@@ -622,10 +659,10 @@ async function handleSundaySettle() {
   ensurePerf(state, weekOf);
 
   const recs = state.tanpukuRecommendations || [];
-  const unresolved = recs.filter((r) => r.weekOf === weekOf && !r.resolved);
+  const unresolved = recs.filter((r) => !r.resolved);
 
   for (const rec of unresolved) {
-    const race = (weekly.currentWeek?.races || []).find((r) => r.courseId === rec.courseId && r.label === rec.raceLabel);
+    const race = findRaceForRecommendation(weekly, rec);
     if (!race) continue;
 
     const result = race.result;
@@ -694,13 +731,15 @@ async function handleSundaySettle() {
       continue;
     }
 
-    state.performance.weekly.bets += 1;
-    state.performance.weekly.tanHits += tanHit ? 1 : 0;
-    state.performance.weekly.fukuHits += fukuHit ? 1 : 0;
-    state.performance.weekly.tanStake += tanStake;
-    state.performance.weekly.tanPayout += tanPayout;
-    state.performance.weekly.fukuStake += fukuStake;
-    state.performance.weekly.fukuPayout += fukuPayout;
+    if (rec.weekOf === weekOf) {
+      state.performance.weekly.bets += 1;
+      state.performance.weekly.tanHits += tanHit ? 1 : 0;
+      state.performance.weekly.fukuHits += fukuHit ? 1 : 0;
+      state.performance.weekly.tanStake += tanStake;
+      state.performance.weekly.tanPayout += tanPayout;
+      state.performance.weekly.fukuStake += fukuStake;
+      state.performance.weekly.fukuPayout += fukuPayout;
+    }
 
     state.performance.total.bets += 1;
     state.performance.total.tanHits += tanHit ? 1 : 0;
@@ -718,11 +757,18 @@ async function handleSundaySettle() {
 
   state.performance.updatedAt = new Date().toISOString();
   await writeJson(STATE_PATH, state);
+  const reviewRecordStore = await readJson(REVIEW_RECORDS_PATH, { records: null });
+  const reviewRecords = reviewRecordStore?.records ? Object.values(reviewRecordStore.records) : [];
+  const categoryReturnStats =
+    reviewRecords.length > 0
+      ? buildCategoryReturnStatsFromReviewRecords(reviewRecords, weekly)
+      : buildCategoryReturnStats(recs, weekly);
 
   const summary = buildWeeklySummaryPostPayload({
     weeklyPerf: state.performance.weekly,
     recs,
     weekOf,
+    categoryReturnStats,
   });
   await publishOrQueuePost("sun_16", summary.text, summary);
 }

@@ -1,0 +1,2318 @@
+﻿{
+  "generatedAt": "2026-05-02T12:48:53.493Z",
+  "runs": 10000,
+  "dataUpdatedAt": "2026-04-27T22:41:04.643Z",
+  "races": [
+    {
+      "race": {
+        "label": "ユニコーンＳ",
+        "date": "2026-05-02",
+        "venue": "京都",
+        "raceNumber": 11,
+        "grade": "G3",
+        "surface": "Dirt",
+        "distance": 1900,
+        "straightLength": 329.1,
+        "runners": 16,
+        "oddsSource": "forecast"
+      },
+      "condition": {
+        "courseId": "kyoto-dirt-1900-202608030311",
+        "trackBias": {
+          "innerOuter": -1,
+          "frontBack": 0
+        },
+        "groundCondition": "Firm",
+        "weather": "Sunny",
+        "windDirection": "Crosswind",
+        "windSpeed": 3,
+        "paceScenario": "Average"
+      },
+      "topRows": [
+        {
+          "rank": 1,
+          "name": "サイモンゼスト",
+          "gate": 6,
+          "jockey": "谷",
+          "style": "Oikomi",
+          "ability": 68.9,
+          "simWinRate": 9.9,
+          "fairOdds": 10.1,
+          "officialOdds": 133.8,
+          "officialRank": 12,
+          "officialGap": 9.2,
+          "expertRank": 14,
+          "signal": "市場盲点",
+          "traits": {
+            "pedigree": 72.1,
+            "courseFit": 66.5,
+            "distanceFit": 75.4,
+            "groundFit": 73.5,
+            "paceFit": 75.6
+          },
+          "raw": {
+            "speed": 68,
+            "stamina": 76,
+            "power": 71,
+            "guts": 73,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.9,
+            "speedModifier": 1.001,
+            "staminaModifier": 1.007,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 2,
+          "name": "セイントエルモズ",
+          "gate": 11,
+          "jockey": "小島",
+          "style": "Senko",
+          "ability": 68.4,
+          "simWinRate": 8.6,
+          "fairOdds": 11.6,
+          "officialOdds": 72.1,
+          "officialRank": 8,
+          "officialGap": 7.2,
+          "expertRank": 8,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 70.9,
+            "courseFit": 78.2,
+            "distanceFit": 68.4,
+            "groundFit": 72.3,
+            "paceFit": 78.3
+          },
+          "raw": {
+            "speed": 71,
+            "stamina": 72,
+            "power": 70,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.4,
+            "speedModifier": 1.009,
+            "staminaModifier": 1,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 3,
+          "name": "ケイアイアギト",
+          "gate": 4,
+          "jockey": "鮫島駿",
+          "style": "Oikomi",
+          "ability": 68.8,
+          "simWinRate": 8.5,
+          "fairOdds": 11.8,
+          "officialOdds": 5.6,
+          "officialRank": 3,
+          "officialGap": -9.4,
+          "expertRank": 3,
+          "signal": "能力漏れ注目",
+          "traits": {
+            "pedigree": 71.9,
+            "courseFit": 66.5,
+            "distanceFit": 75.1,
+            "groundFit": 73.3,
+            "paceFit": 75.4
+          },
+          "raw": {
+            "speed": 70,
+            "stamina": 74,
+            "power": 72,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.8,
+            "speedModifier": 1.001,
+            "staminaModifier": 1.006,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 4,
+          "name": "シルバーレシオ",
+          "gate": 9,
+          "jockey": "岩田望",
+          "style": "Sashi",
+          "ability": 69,
+          "simWinRate": 7.5,
+          "fairOdds": 13.3,
+          "officialOdds": 3.2,
+          "officialRank": 2,
+          "officialGap": -23.8,
+          "expertRank": 2,
+          "signal": "能力漏れ注目",
+          "traits": {
+            "pedigree": 71.3,
+            "courseFit": 66.7,
+            "distanceFit": 75.2,
+            "groundFit": 72.7,
+            "paceFit": 77.4
+          },
+          "raw": {
+            "speed": 71,
+            "stamina": 74,
+            "power": 70,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 69,
+            "speedModifier": 1.003,
+            "staminaModifier": 1.008,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 5,
+          "name": "ガムラスタン",
+          "gate": 3,
+          "jockey": "斎藤誠",
+          "style": "Senko",
+          "ability": 67.7,
+          "simWinRate": 7.4,
+          "fairOdds": 13.5,
+          "officialOdds": 108.5,
+          "officialRank": 10,
+          "officialGap": 6.5,
+          "expertRank": 13,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 70.1,
+            "courseFit": 77.8,
+            "distanceFit": 67,
+            "groundFit": 71.7,
+            "paceFit": 78
+          },
+          "raw": {
+            "speed": 72,
+            "stamina": 68,
+            "power": 70,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 67.7,
+            "speedModifier": 1.006,
+            "staminaModifier": 0.998,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 6,
+          "name": "ガウラディスコ",
+          "gate": 2,
+          "jockey": "松若",
+          "style": "Senko",
+          "ability": 66.8,
+          "simWinRate": 7.3,
+          "fairOdds": 13.7,
+          "officialOdds": 50.1,
+          "officialRank": 6,
+          "officialGap": 5.3,
+          "expertRank": 6,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 69.4,
+            "courseFit": 77.1,
+            "distanceFit": 66.5,
+            "groundFit": 71.1,
+            "paceFit": 77.9
+          },
+          "raw": {
+            "speed": 70,
+            "stamina": 69,
+            "power": 69,
+            "guts": 70,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 66.8,
+            "speedModifier": 1.005,
+            "staminaModifier": 0.997,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 7,
+          "name": "コロナドブリッジ",
+          "gate": 5,
+          "jockey": "松山",
+          "style": "Senko",
+          "ability": 66.8,
+          "simWinRate": 7,
+          "fairOdds": 14.3,
+          "officialOdds": 6.7,
+          "officialRank": 4,
+          "officialGap": -7.9,
+          "expertRank": 4,
+          "signal": "やや過熱",
+          "traits": {
+            "pedigree": 69.4,
+            "courseFit": 77.1,
+            "distanceFit": 66.5,
+            "groundFit": 71.1,
+            "paceFit": 77.9
+          },
+          "raw": {
+            "speed": 70,
+            "stamina": 69,
+            "power": 69,
+            "guts": 70,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 66.8,
+            "speedModifier": 1.005,
+            "staminaModifier": 0.997,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 8,
+          "name": "ヴィエントデコラ",
+          "gate": 1,
+          "jockey": "寺島",
+          "style": "Sashi",
+          "ability": 67.1,
+          "simWinRate": 6.7,
+          "fairOdds": 14.9,
+          "officialOdds": 158.4,
+          "officialRank": 15,
+          "officialGap": 6.1,
+          "expertRank": 12,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 69.7,
+            "courseFit": 65.5,
+            "distanceFit": 73.1,
+            "groundFit": 71.3,
+            "paceFit": 77
+          },
+          "raw": {
+            "speed": 69,
+            "stamina": 71,
+            "power": 69,
+            "guts": 70,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 67.1,
+            "speedModifier": 0.999,
+            "staminaModifier": 1.004,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 9,
+          "name": "デールエルバハリ",
+          "gate": 13,
+          "jockey": "杉山佳",
+          "style": "Sashi",
+          "ability": 67.4,
+          "simWinRate": 6.1,
+          "fairOdds": 16.4,
+          "officialOdds": 139.2,
+          "officialRank": 13,
+          "officialGap": 5.4,
+          "expertRank": 9,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 70.4,
+            "courseFit": 65.8,
+            "distanceFit": 73.8,
+            "groundFit": 72,
+            "paceFit": 77.2
+          },
+          "raw": {
+            "speed": 67,
+            "stamina": 74,
+            "power": 70,
+            "guts": 70,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 67.4,
+            "speedModifier": 1.001,
+            "staminaModifier": 1.005,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 10,
+          "name": "シャローファースト",
+          "gate": 8,
+          "jockey": "菱田",
+          "style": "Senko",
+          "ability": 67.1,
+          "simWinRate": 5.7,
+          "fairOdds": 17.5,
+          "officialOdds": 102.1,
+          "officialRank": 9,
+          "officialGap": 4.7,
+          "expertRank": 16,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 70,
+            "courseFit": 77.6,
+            "distanceFit": 66.5,
+            "groundFit": 71.7,
+            "paceFit": 78
+          },
+          "raw": {
+            "speed": 70,
+            "stamina": 68,
+            "power": 70,
+            "guts": 72,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 67.1,
+            "speedModifier": 1.006,
+            "staminaModifier": 0.997,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        }
+      ],
+      "focusRows": [
+        {
+          "rank": 4,
+          "name": "シルバーレシオ",
+          "gate": 9,
+          "jockey": "岩田望",
+          "style": "Sashi",
+          "ability": 69,
+          "simWinRate": 7.5,
+          "fairOdds": 13.3,
+          "officialOdds": 3.2,
+          "officialRank": 2,
+          "officialGap": -23.8,
+          "expertRank": 2,
+          "signal": "能力漏れ注目",
+          "traits": {
+            "pedigree": 71.3,
+            "courseFit": 66.7,
+            "distanceFit": 75.2,
+            "groundFit": 72.7,
+            "paceFit": 77.4
+          },
+          "raw": {
+            "speed": 71,
+            "stamina": 74,
+            "power": 70,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 69,
+            "speedModifier": 1.003,
+            "staminaModifier": 1.008,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 12,
+          "name": "メルカントゥール",
+          "gate": 15,
+          "jockey": "川田",
+          "style": "Sashi",
+          "ability": 68.9,
+          "simWinRate": 4.9,
+          "fairOdds": 20.4,
+          "officialOdds": 1.9,
+          "officialRank": 1,
+          "officialGap": -47.7,
+          "expertRank": 1,
+          "signal": "能力漏れ注目",
+          "traits": {
+            "pedigree": 71.6,
+            "courseFit": 67,
+            "distanceFit": 74.6,
+            "groundFit": 73,
+            "paceFit": 77.3
+          },
+          "raw": {
+            "speed": 71,
+            "stamina": 72,
+            "power": 72,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.9,
+            "speedModifier": 1.004,
+            "staminaModifier": 1.007,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 3,
+          "name": "ケイアイアギト",
+          "gate": 4,
+          "jockey": "鮫島駿",
+          "style": "Oikomi",
+          "ability": 68.8,
+          "simWinRate": 8.5,
+          "fairOdds": 11.8,
+          "officialOdds": 5.6,
+          "officialRank": 3,
+          "officialGap": -9.4,
+          "expertRank": 3,
+          "signal": "能力漏れ注目",
+          "traits": {
+            "pedigree": 71.9,
+            "courseFit": 66.5,
+            "distanceFit": 75.1,
+            "groundFit": 73.3,
+            "paceFit": 75.4
+          },
+          "raw": {
+            "speed": 70,
+            "stamina": 74,
+            "power": 72,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.8,
+            "speedModifier": 1.001,
+            "staminaModifier": 1.006,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        }
+      ],
+      "tanpuku": {
+        "scoringVersion": "tanpuku-place-v2.3",
+        "winPick": {
+          "name": "メルカントゥール",
+          "gate": 15,
+          "jockey": "川田",
+          "style": "Sashi",
+          "odds": 1.9,
+          "placeOdds": 1.7,
+          "winProb": 47.9,
+          "placeProb": 78.9,
+          "placeScore": 0.701,
+          "valueScore": 0.539,
+          "top3Stability": 64.2,
+          "overbetLabel": null,
+          "scoreGap": 0.117,
+          "tanRoi": 91,
+          "fukuRoi": 131.4,
+          "classificationHint": {
+            "classification": "win",
+            "confidence": 0.95,
+            "reason": "勝ち切り期待が高い: 勝率48%・単ROI91%・次点差0.117"
+          },
+          "selectionReason": "複勝確率79%・市場支持100%を重視して複勝軸に選出。 2位差0.117"
+        },
+        "opponentPick": {
+          "name": "シルバーレシオ",
+          "gate": 9,
+          "jockey": "岩田望",
+          "style": "Sashi",
+          "odds": 3.2,
+          "placeOdds": 2.1,
+          "winProb": 43.7,
+          "placeProb": 67.5,
+          "placeScore": 0.584,
+          "valueScore": 0.509,
+          "top3Stability": 53.6,
+          "overbetLabel": null,
+          "scoreGap": 0.117,
+          "tanRoi": 139.9,
+          "fukuRoi": 143.1,
+          "selectionReason": "単複本命を除いた中で、placeProb を最優先に top3Stability・placeScore・simWinProb を比較し、安定次点として相手候補に選出 (placeProb 67% / top3安定 54% / placeScore 0.584 / simWinProb 44% / 本命差 0.117)。"
+        },
+        "widePick": {
+          "name": "ソルチェリア",
+          "gate": 12,
+          "jockey": "幸",
+          "style": "Sashi",
+          "odds": 13.2,
+          "placeOdds": 5.6,
+          "winProb": 36.8,
+          "placeProb": 52.6,
+          "placeScore": 0.397,
+          "valueScore": 0.63,
+          "top3Stability": 41,
+          "overbetLabel": null,
+          "scoreGap": 0.054,
+          "tanRoi": 485.8,
+          "fukuRoi": 295.7,
+          "selectionReason": "本命次点ではなく、複勝寄り期待値87% / valueScore 0.630 / 複勝率53% / 次点差0.054を見てワイド高配当狙いに選出。"
+        },
+        "winRunnerUp": {
+          "winProb": 43.7,
+          "placeProb": 67.5,
+          "placeScore": 0.584,
+          "valueScore": 0.509,
+          "top3Stability": 53.6,
+          "scoreGap": 0,
+          "tanRoi": 0,
+          "fukuRoi": 0
+        },
+        "valueRunnerUp": {
+          "winProb": 0,
+          "placeProb": 57.4,
+          "placeScore": 0.456,
+          "valueScore": 0.576,
+          "top3Stability": 0,
+          "scoreGap": 0,
+          "tanRoi": 0,
+          "fukuRoi": 0
+        },
+        "marketHeatSummary": {
+          "honmeiOverbetLabel": null,
+          "overbetHorseCount": 0,
+          "maxOverbetGap": 0.047
+        }
+      }
+    },
+    {
+      "race": {
+        "label": "京王杯ＳＣ",
+        "date": "2026-05-02",
+        "venue": "東京",
+        "raceNumber": 11,
+        "grade": "G2",
+        "surface": "Turf",
+        "distance": 1400,
+        "straightLength": 525.9,
+        "runners": 20,
+        "oddsSource": "forecast"
+      },
+      "condition": {
+        "courseId": "tokyo-turf-1400-202605020311",
+        "trackBias": {
+          "innerOuter": 0,
+          "frontBack": -2
+        },
+        "groundCondition": "Firm",
+        "weather": "Sunny",
+        "windDirection": "Crosswind",
+        "windSpeed": 3,
+        "paceScenario": "Average"
+      },
+      "topRows": [
+        {
+          "rank": 1,
+          "name": "シリウスコルト",
+          "gate": 6,
+          "jockey": "田辺",
+          "style": "Senko",
+          "ability": 68.5,
+          "simWinRate": 10.7,
+          "fairOdds": 9.3,
+          "officialOdds": 83.7,
+          "officialRank": 17,
+          "officialGap": 9.5,
+          "expertRank": 17,
+          "signal": "市場盲点",
+          "traits": {
+            "pedigree": 71.2,
+            "courseFit": 71.2,
+            "distanceFit": 71.9,
+            "groundFit": 72.3,
+            "paceFit": 78.4
+          },
+          "raw": {
+            "speed": 71,
+            "stamina": 71,
+            "power": 70,
+            "guts": 73,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.5,
+            "speedModifier": 1.006,
+            "staminaModifier": 1.005,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 2,
+          "name": "ワールズエンド",
+          "gate": 20,
+          "jockey": "津村",
+          "style": "Senko",
+          "ability": 68.8,
+          "simWinRate": 9,
+          "fairOdds": 11.1,
+          "officialOdds": 11.7,
+          "officialRank": 4,
+          "officialGap": 0.5,
+          "expertRank": 4,
+          "signal": "概ね妥当",
+          "traits": {
+            "pedigree": 71.5,
+            "courseFit": 71.5,
+            "distanceFit": 71.9,
+            "groundFit": 72.7,
+            "paceFit": 78.3
+          },
+          "raw": {
+            "speed": 70,
+            "stamina": 72,
+            "power": 73,
+            "guts": 72,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.8,
+            "speedModifier": 1.006,
+            "staminaModifier": 1.005,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 3,
+          "name": "マイネルチケット",
+          "gate": 13,
+          "jockey": "横山武",
+          "style": "Senko",
+          "ability": 69,
+          "simWinRate": 9,
+          "fairOdds": 11.1,
+          "officialOdds": 27.4,
+          "officialRank": 10,
+          "officialGap": 5.4,
+          "expertRank": 12,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 71.6,
+            "courseFit": 71.5,
+            "distanceFit": 72.4,
+            "groundFit": 72.7,
+            "paceFit": 78.2
+          },
+          "raw": {
+            "speed": 72,
+            "stamina": 72,
+            "power": 72,
+            "guts": 70,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 69,
+            "speedModifier": 1.006,
+            "staminaModifier": 1.005,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 4,
+          "name": "ウイントワイライト",
+          "gate": 3,
+          "jockey": "横山典",
+          "style": "Senko",
+          "ability": 67.4,
+          "simWinRate": 7.1,
+          "fairOdds": 14.1,
+          "officialOdds": 17.9,
+          "officialRank": 6,
+          "officialGap": 1.5,
+          "expertRank": 7,
+          "signal": "概ね妥当",
+          "traits": {
+            "pedigree": 70,
+            "courseFit": 70.4,
+            "distanceFit": 70.8,
+            "groundFit": 71.4,
+            "paceFit": 78
+          },
+          "raw": {
+            "speed": 71,
+            "stamina": 68,
+            "power": 70,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 67.4,
+            "speedModifier": 1.003,
+            "staminaModifier": 1.002,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 5,
+          "name": "セフィロ",
+          "gate": 8,
+          "jockey": "三浦",
+          "style": "Oikomi",
+          "ability": 68.7,
+          "simWinRate": 6.8,
+          "fairOdds": 14.7,
+          "officialOdds": 82.2,
+          "officialRank": 16,
+          "officialGap": 5.6,
+          "expertRank": 16,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 72.1,
+            "courseFit": 76.3,
+            "distanceFit": 65.9,
+            "groundFit": 73,
+            "paceFit": 75.6
+          },
+          "raw": {
+            "speed": 69,
+            "stamina": 75,
+            "power": 72,
+            "guts": 73,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.7,
+            "speedModifier": 1.003,
+            "staminaModifier": 0.995,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 6,
+          "name": "アサカラキング",
+          "gate": 1,
+          "jockey": "戸崎圭",
+          "style": "Senko",
+          "ability": 67.9,
+          "simWinRate": 6.6,
+          "fairOdds": 15.2,
+          "officialOdds": 37.5,
+          "officialRank": 12,
+          "officialGap": 3.9,
+          "expertRank": 11,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 70.4,
+            "courseFit": 70.7,
+            "distanceFit": 71.4,
+            "groundFit": 71.8,
+            "paceFit": 77.9
+          },
+          "raw": {
+            "speed": 73,
+            "stamina": 68,
+            "power": 71,
+            "guts": 69,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 67.9,
+            "speedModifier": 1.004,
+            "staminaModifier": 1.003,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 7,
+          "name": "アルセナール",
+          "gate": 2,
+          "jockey": "木村",
+          "style": "Nige",
+          "ability": 68.4,
+          "simWinRate": 5.8,
+          "fairOdds": 17.2,
+          "officialOdds": 58.3,
+          "officialRank": 13,
+          "officialGap": 4.1,
+          "expertRank": 13,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 71.1,
+            "courseFit": 70.6,
+            "distanceFit": 72.2,
+            "groundFit": 72.4,
+            "paceFit": 77
+          },
+          "raw": {
+            "speed": 75,
+            "stamina": 66,
+            "power": 71,
+            "guts": 72,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.4,
+            "speedModifier": 1.003,
+            "staminaModifier": 1.004,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 8,
+          "name": "レッドシュヴェルト",
+          "gate": 18,
+          "jockey": "尾関",
+          "style": "Oikomi",
+          "ability": 69,
+          "simWinRate": 4.9,
+          "fairOdds": 20.4,
+          "officialOdds": 148.6,
+          "officialRank": 18,
+          "officialGap": 4.2,
+          "expertRank": 18,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 72.4,
+            "courseFit": 76.5,
+            "distanceFit": 66.2,
+            "groundFit": 73.2,
+            "paceFit": 75.7
+          },
+          "raw": {
+            "speed": 69,
+            "stamina": 76,
+            "power": 72,
+            "guts": 73,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 69,
+            "speedModifier": 1.004,
+            "staminaModifier": 0.995,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 9,
+          "name": "ダノンマッキンリー",
+          "gate": 10,
+          "jockey": "高杉",
+          "style": "Oikomi",
+          "ability": 68.1,
+          "simWinRate": 4.6,
+          "fairOdds": 21.7,
+          "officialOdds": 14.7,
+          "officialRank": 5,
+          "officialGap": -2.2,
+          "expertRank": 5,
+          "signal": "概ね妥当",
+          "traits": {
+            "pedigree": 71.4,
+            "courseFit": 75.7,
+            "distanceFit": 65.6,
+            "groundFit": 72.3,
+            "paceFit": 75.5
+          },
+          "raw": {
+            "speed": 69,
+            "stamina": 76,
+            "power": 69,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.1,
+            "speedModifier": 1.002,
+            "staminaModifier": 0.994,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 10,
+          "name": "フリームファクシ",
+          "gate": 12,
+          "jockey": "佐々木",
+          "style": "Sashi",
+          "ability": 68.4,
+          "simWinRate": 4.2,
+          "fairOdds": 23.8,
+          "officialOdds": 71.5,
+          "officialRank": 14,
+          "officialGap": 2.8,
+          "expertRank": 14,
+          "signal": "概ね妥当",
+          "traits": {
+            "pedigree": 71.3,
+            "courseFit": 76.3,
+            "distanceFit": 65.7,
+            "groundFit": 72.3,
+            "paceFit": 77.3
+          },
+          "raw": {
+            "speed": 71,
+            "stamina": 74,
+            "power": 70,
+            "guts": 69,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.4,
+            "speedModifier": 1.005,
+            "staminaModifier": 0.996,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        }
+      ],
+      "focusRows": [
+        {
+          "rank": 5,
+          "name": "セフィロ",
+          "gate": 8,
+          "jockey": "三浦",
+          "style": "Oikomi",
+          "ability": 68.7,
+          "simWinRate": 6.8,
+          "fairOdds": 14.7,
+          "officialOdds": 82.2,
+          "officialRank": 16,
+          "officialGap": 5.6,
+          "expertRank": 16,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 72.1,
+            "courseFit": 76.3,
+            "distanceFit": 65.9,
+            "groundFit": 73,
+            "paceFit": 75.6
+          },
+          "raw": {
+            "speed": 69,
+            "stamina": 75,
+            "power": 72,
+            "guts": 73,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.7,
+            "speedModifier": 1.003,
+            "staminaModifier": 0.995,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 2,
+          "name": "ワールズエンド",
+          "gate": 20,
+          "jockey": "津村",
+          "style": "Senko",
+          "ability": 68.8,
+          "simWinRate": 9,
+          "fairOdds": 11.1,
+          "officialOdds": 11.7,
+          "officialRank": 4,
+          "officialGap": 0.5,
+          "expertRank": 4,
+          "signal": "概ね妥当",
+          "traits": {
+            "pedigree": 71.5,
+            "courseFit": 71.5,
+            "distanceFit": 71.9,
+            "groundFit": 72.7,
+            "paceFit": 78.3
+          },
+          "raw": {
+            "speed": 70,
+            "stamina": 72,
+            "power": 73,
+            "guts": 72,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.8,
+            "speedModifier": 1.006,
+            "staminaModifier": 1.005,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 3,
+          "name": "マイネルチケット",
+          "gate": 13,
+          "jockey": "横山武",
+          "style": "Senko",
+          "ability": 69,
+          "simWinRate": 9,
+          "fairOdds": 11.1,
+          "officialOdds": 27.4,
+          "officialRank": 10,
+          "officialGap": 5.4,
+          "expertRank": 12,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 71.6,
+            "courseFit": 71.5,
+            "distanceFit": 72.4,
+            "groundFit": 72.7,
+            "paceFit": 78.2
+          },
+          "raw": {
+            "speed": 72,
+            "stamina": 72,
+            "power": 72,
+            "guts": 70,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 69,
+            "speedModifier": 1.006,
+            "staminaModifier": 1.005,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        }
+      ],
+      "tanpuku": {
+        "scoringVersion": "tanpuku-place-v2.3",
+        "winPick": {
+          "name": "ダノンセンチュリー",
+          "gate": 9,
+          "jockey": "レーン",
+          "style": "Sashi",
+          "odds": 2.4,
+          "placeOdds": 1.8,
+          "winProb": 44.7,
+          "placeProb": 72.1,
+          "placeScore": 0.654,
+          "valueScore": 0.508,
+          "top3Stability": 58.4,
+          "overbetLabel": null,
+          "scoreGap": 0.098,
+          "tanRoi": 107.3,
+          "fukuRoi": 132.6,
+          "classificationHint": {
+            "classification": "win",
+            "confidence": 0.95,
+            "reason": "勝ち切り期待が高い: 勝率45%・単ROI107%・次点差0.098"
+          },
+          "selectionReason": "複勝確率72%・市場支持94%を重視して複勝軸に選出。 2位差0.098"
+        },
+        "opponentPick": {
+          "name": "ファンダム",
+          "gate": 11,
+          "jockey": "ルメール",
+          "style": "Sashi",
+          "odds": 3.5,
+          "placeOdds": 2.2,
+          "winProb": 41.8,
+          "placeProb": 64.7,
+          "placeScore": 0.556,
+          "valueScore": 0.496,
+          "top3Stability": 51.7,
+          "overbetLabel": null,
+          "scoreGap": 0.098,
+          "tanRoi": 146.4,
+          "fukuRoi": 144,
+          "selectionReason": "単複本命を除いた中で、placeProb を最優先に top3Stability・placeScore・simWinProb を比較し、安定次点として相手候補に選出 (placeProb 65% / top3安定 52% / placeScore 0.556 / simWinProb 42% / 本命差 0.098)。"
+        },
+        "widePick": {
+          "name": "ワールズエンド",
+          "gate": 20,
+          "jockey": "津村",
+          "style": "Senko",
+          "odds": 11.7,
+          "placeOdds": 5.1,
+          "winProb": 38.8,
+          "placeProb": 54.9,
+          "placeScore": 0.415,
+          "valueScore": 0.655,
+          "top3Stability": 42.1,
+          "overbetLabel": null,
+          "scoreGap": 0.039,
+          "tanRoi": 454.1,
+          "fukuRoi": 279.5,
+          "selectionReason": "本命次点ではなく、複勝寄り期待値91% / valueScore 0.655 / 複勝率55% / 次点差0.039を見てワイド高配当狙いに選出。"
+        },
+        "winRunnerUp": {
+          "winProb": 41.8,
+          "placeProb": 64.7,
+          "placeScore": 0.556,
+          "valueScore": 0.496,
+          "top3Stability": 51.7,
+          "scoreGap": 0,
+          "tanRoi": 0,
+          "fukuRoi": 0
+        },
+        "valueRunnerUp": {
+          "winProb": 0,
+          "placeProb": 52.1,
+          "placeScore": 0.39,
+          "valueScore": 0.616,
+          "top3Stability": 0,
+          "scoreGap": 0,
+          "tanRoi": 0,
+          "fukuRoi": 0
+        },
+        "marketHeatSummary": {
+          "honmeiOverbetLabel": null,
+          "overbetHorseCount": 0,
+          "maxOverbetGap": 0
+        }
+      }
+    },
+    {
+      "race": {
+        "label": "天皇賞（春）",
+        "date": "2026-05-03",
+        "venue": "京都",
+        "raceNumber": 11,
+        "grade": "G1",
+        "surface": "Turf",
+        "distance": 3200,
+        "straightLength": 403.7,
+        "runners": 16,
+        "oddsSource": "forecast"
+      },
+      "condition": {
+        "courseId": "kyoto-turf-3200-202608030411",
+        "trackBias": {
+          "innerOuter": -1,
+          "frontBack": 0
+        },
+        "groundCondition": "Firm",
+        "weather": "Sunny",
+        "windDirection": "Crosswind",
+        "windSpeed": 3,
+        "paceScenario": "Average"
+      },
+      "topRows": [
+        {
+          "rank": 1,
+          "name": "アクアヴァーナル",
+          "gate": 1,
+          "jockey": "松山",
+          "style": "Sashi",
+          "ability": 68.5,
+          "simWinRate": 9.7,
+          "fairOdds": 10.3,
+          "officialOdds": 36.3,
+          "officialRank": 5,
+          "officialGap": 6.9,
+          "expertRank": 7,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 70.9,
+            "courseFit": 71.1,
+            "distanceFit": 77.1,
+            "groundFit": 72.1,
+            "paceFit": 77.3
+          },
+          "raw": {
+            "speed": 69,
+            "stamina": 73,
+            "power": 71,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.5,
+            "speedModifier": 1.007,
+            "staminaModifier": 1.01,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 2,
+          "name": "ヴェルミセル",
+          "gate": 4,
+          "jockey": "鮫島駿",
+          "style": "Sashi",
+          "ability": 68.1,
+          "simWinRate": 9,
+          "fairOdds": 11.1,
+          "officialOdds": 118.3,
+          "officialRank": 9,
+          "officialGap": 8.2,
+          "expertRank": 9,
+          "signal": "市場盲点",
+          "traits": {
+            "pedigree": 70.6,
+            "courseFit": 70.8,
+            "distanceFit": 77.3,
+            "groundFit": 71.7,
+            "paceFit": 77.4
+          },
+          "raw": {
+            "speed": 67,
+            "stamina": 74,
+            "power": 70,
+            "guts": 72,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.1,
+            "speedModifier": 1.007,
+            "staminaModifier": 1.01,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 3,
+          "name": "ケイアイサンデラ",
+          "gate": 7,
+          "jockey": "小林",
+          "style": "Sashi",
+          "ability": 68.6,
+          "simWinRate": 7.7,
+          "fairOdds": 13,
+          "officialOdds": 277.5,
+          "officialRank": 14,
+          "officialGap": 7.3,
+          "expertRank": 12,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 71.1,
+            "courseFit": 71.3,
+            "distanceFit": 77.6,
+            "groundFit": 72.3,
+            "paceFit": 77.4
+          },
+          "raw": {
+            "speed": 67,
+            "stamina": 74,
+            "power": 73,
+            "guts": 72,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.6,
+            "speedModifier": 1.008,
+            "staminaModifier": 1.01,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 4,
+          "name": "サンライズソレイユ",
+          "gate": 8,
+          "jockey": "矢作",
+          "style": "Sashi",
+          "ability": 68.7,
+          "simWinRate": 7.2,
+          "fairOdds": 13.9,
+          "officialOdds": 292.4,
+          "officialRank": 15,
+          "officialGap": 6.9,
+          "expertRank": 15,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 71.1,
+            "courseFit": 71.2,
+            "distanceFit": 77.9,
+            "groundFit": 72.2,
+            "paceFit": 77.3
+          },
+          "raw": {
+            "speed": 69,
+            "stamina": 75,
+            "power": 71,
+            "guts": 69,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.7,
+            "speedModifier": 1.008,
+            "staminaModifier": 1.011,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 5,
+          "name": "プレシャスデイ",
+          "gate": 12,
+          "jockey": "吉村",
+          "style": "Senko",
+          "ability": 69.4,
+          "simWinRate": 7.2,
+          "fairOdds": 13.9,
+          "officialOdds": 399.1,
+          "officialRank": 16,
+          "officialGap": 6.9,
+          "expertRank": 16,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 71.9,
+            "courseFit": 76.9,
+            "distanceFit": 71.4,
+            "groundFit": 72.8,
+            "paceFit": 78.3
+          },
+          "raw": {
+            "speed": 74,
+            "stamina": 72,
+            "power": 70,
+            "guts": 70,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 69.4,
+            "speedModifier": 1.011,
+            "staminaModifier": 1.004,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 6,
+          "name": "クロワデュノール",
+          "gate": 6,
+          "jockey": "北村友",
+          "style": "Senko",
+          "ability": 69.1,
+          "simWinRate": 7.1,
+          "fairOdds": 14.1,
+          "officialOdds": 2.2,
+          "officialRank": 2,
+          "officialGap": -38.4,
+          "expertRank": 1,
+          "signal": "能力漏れ注目",
+          "traits": {
+            "pedigree": 71.7,
+            "courseFit": 76.9,
+            "distanceFit": 69.7,
+            "groundFit": 73,
+            "paceFit": 78.2
+          },
+          "raw": {
+            "speed": 74,
+            "stamina": 68,
+            "power": 73,
+            "guts": 72,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 69.1,
+            "speedModifier": 1.009,
+            "staminaModifier": 1.002,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 7,
+          "name": "ヴェルテンベルク",
+          "gate": 3,
+          "jockey": "松若",
+          "style": "Nige",
+          "ability": 68.4,
+          "simWinRate": 6.2,
+          "fairOdds": 16.1,
+          "officialOdds": 251.9,
+          "officialRank": 13,
+          "officialGap": 5.8,
+          "expertRank": 14,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 70.9,
+            "courseFit": 75.6,
+            "distanceFit": 69.2,
+            "groundFit": 72.1,
+            "paceFit": 77
+          },
+          "raw": {
+            "speed": 75,
+            "stamina": 68,
+            "power": 70,
+            "guts": 69,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.4,
+            "speedModifier": 1.005,
+            "staminaModifier": 1,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 8,
+          "name": "アドマイヤテラ",
+          "gate": 2,
+          "jockey": "武豊",
+          "style": "Oikomi",
+          "ability": 67.6,
+          "simWinRate": 6.1,
+          "fairOdds": 16.4,
+          "officialOdds": 2.2,
+          "officialRank": 1,
+          "officialGap": -39.4,
+          "expertRank": 2,
+          "signal": "能力漏れ注目",
+          "traits": {
+            "pedigree": 70.3,
+            "courseFit": 70,
+            "distanceFit": 77.5,
+            "groundFit": 71.4,
+            "paceFit": 75.4
+          },
+          "raw": {
+            "speed": 67,
+            "stamina": 75,
+            "power": 68,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 67.6,
+            "speedModifier": 1.003,
+            "staminaModifier": 1.007,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 9,
+          "name": "ホーエリート",
+          "gate": 14,
+          "jockey": "戸崎圭",
+          "style": "Oikomi",
+          "ability": 68.5,
+          "simWinRate": 6,
+          "fairOdds": 16.7,
+          "officialOdds": 47.3,
+          "officialRank": 7,
+          "officialGap": 3.9,
+          "expertRank": 6,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 71.3,
+            "courseFit": 70.8,
+            "distanceFit": 77.4,
+            "groundFit": 72.4,
+            "paceFit": 75.5
+          },
+          "raw": {
+            "speed": 69,
+            "stamina": 73,
+            "power": 70,
+            "guts": 74,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 68.5,
+            "speedModifier": 1.005,
+            "staminaModifier": 1.008,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 10,
+          "name": "エヒト",
+          "gate": 5,
+          "jockey": "森秀",
+          "style": "Sashi",
+          "ability": 67.7,
+          "simWinRate": 5.3,
+          "fairOdds": 18.9,
+          "officialOdds": 153.1,
+          "officialRank": 11,
+          "officialGap": 4.6,
+          "expertRank": 11,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 70.2,
+            "courseFit": 70.6,
+            "distanceFit": 75.9,
+            "groundFit": 71.5,
+            "paceFit": 77.1
+          },
+          "raw": {
+            "speed": 69,
+            "stamina": 71,
+            "power": 70,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 67.7,
+            "speedModifier": 1.005,
+            "staminaModifier": 1.007,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        }
+      ],
+      "focusRows": [
+        {
+          "rank": 10,
+          "name": "エヒト",
+          "gate": 5,
+          "jockey": "森秀",
+          "style": "Sashi",
+          "ability": 67.7,
+          "simWinRate": 5.3,
+          "fairOdds": 18.9,
+          "officialOdds": 153.1,
+          "officialRank": 11,
+          "officialGap": 4.6,
+          "expertRank": 11,
+          "signal": "やや妙味",
+          "traits": {
+            "pedigree": 70.2,
+            "courseFit": 70.6,
+            "distanceFit": 75.9,
+            "groundFit": 71.5,
+            "paceFit": 77.1
+          },
+          "raw": {
+            "speed": 69,
+            "stamina": 71,
+            "power": 70,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 67.7,
+            "speedModifier": 1.005,
+            "staminaModifier": 1.007,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 8,
+          "name": "アドマイヤテラ",
+          "gate": 2,
+          "jockey": "武豊",
+          "style": "Oikomi",
+          "ability": 67.6,
+          "simWinRate": 6.1,
+          "fairOdds": 16.4,
+          "officialOdds": 2.2,
+          "officialRank": 1,
+          "officialGap": -39.4,
+          "expertRank": 2,
+          "signal": "能力漏れ注目",
+          "traits": {
+            "pedigree": 70.3,
+            "courseFit": 70,
+            "distanceFit": 77.5,
+            "groundFit": 71.4,
+            "paceFit": 75.4
+          },
+          "raw": {
+            "speed": 67,
+            "stamina": 75,
+            "power": 68,
+            "guts": 71,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 67.6,
+            "speedModifier": 1.003,
+            "staminaModifier": 1.007,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 6,
+          "name": "クロワデュノール",
+          "gate": 6,
+          "jockey": "北村友",
+          "style": "Senko",
+          "ability": 69.1,
+          "simWinRate": 7.1,
+          "fairOdds": 14.1,
+          "officialOdds": 2.2,
+          "officialRank": 2,
+          "officialGap": -38.4,
+          "expertRank": 1,
+          "signal": "能力漏れ注目",
+          "traits": {
+            "pedigree": 71.7,
+            "courseFit": 76.9,
+            "distanceFit": 69.7,
+            "groundFit": 73,
+            "paceFit": 78.2
+          },
+          "raw": {
+            "speed": 74,
+            "stamina": 68,
+            "power": 73,
+            "guts": 72,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 69.1,
+            "speedModifier": 1.009,
+            "staminaModifier": 1.002,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        },
+        {
+          "rank": 15,
+          "name": "ヘデントール",
+          "gate": 13,
+          "jockey": "ルメール",
+          "style": "Oikomi",
+          "ability": 67.7,
+          "simWinRate": 4.4,
+          "fairOdds": 22.7,
+          "officialOdds": 4.6,
+          "officialRank": 3,
+          "officialGap": -17.3,
+          "expertRank": 3,
+          "signal": "能力漏れ注目",
+          "traits": {
+            "pedigree": 70.5,
+            "courseFit": 70.2,
+            "distanceFit": 76.5,
+            "groundFit": 71.7,
+            "paceFit": 75.4
+          },
+          "raw": {
+            "speed": 68,
+            "stamina": 72,
+            "power": 69,
+            "guts": 74,
+            "condition": 5,
+            "recentFormScore": 0,
+            "lastRaceDistance": 0,
+            "distanceChange": 0
+          },
+          "scenario": {
+            "abilityScore": 67.7,
+            "speedModifier": 1.003,
+            "staminaModifier": 1.006,
+            "volatility": 0.72
+          },
+          "tanpukuScore": {
+            "winProb": 0,
+            "placeProb": 0,
+            "placeScore": 0,
+            "valueScore": 0,
+            "top3Stability": 0,
+            "placeReturnEdge": 0,
+            "tanRoi": 0,
+            "fukuRoi": 0,
+            "overbetRisk": 0
+          }
+        }
+      ],
+      "tanpuku": {
+        "scoringVersion": "tanpuku-place-v2.3",
+        "winPick": {
+          "name": "クロワデュノール",
+          "gate": 6,
+          "jockey": "北村友",
+          "style": "Senko",
+          "odds": 2.2,
+          "placeOdds": 1.8,
+          "winProb": 46.9,
+          "placeProb": 75.5,
+          "placeScore": 0.687,
+          "valueScore": 0.529,
+          "top3Stability": 60.8,
+          "overbetLabel": null,
+          "scoreGap": 0.006,
+          "tanRoi": 103.2,
+          "fukuRoi": 133.6,
+          "classificationHint": {
+            "classification": "win",
+            "confidence": 0.8,
+            "reason": "勝ち切り期待が高い: 勝率47%・単ROI103%"
+          },
+          "selectionReason": "複勝確率75%・市場支持100%を重視して複勝軸に選出。 2位差0.006"
+        },
+        "opponentPick": {
+          "name": "アドマイヤテラ",
+          "gate": 2,
+          "jockey": "武豊",
+          "style": "Oikomi",
+          "odds": 2.2,
+          "placeOdds": 1.8,
+          "winProb": 45.9,
+          "placeProb": 74.5,
+          "placeScore": 0.68,
+          "valueScore": 0.519,
+          "top3Stability": 60.4,
+          "overbetLabel": null,
+          "scoreGap": 0.006,
+          "tanRoi": 100.9,
+          "fukuRoi": 131.8,
+          "selectionReason": "単複本命を除いた中で、placeProb を最優先に top3Stability・placeScore・simWinProb を比較し、安定次点として相手候補に選出 (placeProb 74% / top3安定 60% / placeScore 0.680 / simWinProb 46% / 本命差 0.006)。"
+        },
+        "widePick": {
+          "name": "スティンガーグラス",
+          "gate": 10,
+          "jockey": "レーン",
+          "style": "Oikomi",
+          "odds": 10.4,
+          "placeOdds": 4.6,
+          "winProb": 38.2,
+          "placeProb": 54.6,
+          "placeScore": 0.418,
+          "valueScore": 0.663,
+          "top3Stability": 42.3,
+          "overbetLabel": null,
+          "scoreGap": 0.142,
+          "tanRoi": 397,
+          "fukuRoi": 253.5,
+          "selectionReason": "本命次点ではなく、複勝寄り期待値94% / valueScore 0.663 / 複勝率55% / 次点差0.142を見てワイド高配当狙いに選出。"
+        },
+        "winRunnerUp": {
+          "winProb": 45.9,
+          "placeProb": 74.5,
+          "placeScore": 0.68,
+          "valueScore": 0.519,
+          "top3Stability": 60.4,
+          "scoreGap": 0,
+          "tanRoi": 0,
+          "fukuRoi": 0
+        },
+        "valueRunnerUp": {
+          "winProb": 0,
+          "placeProb": 61.6,
+          "placeScore": 0.51,
+          "valueScore": 0.521,
+          "top3Stability": 0,
+          "scoreGap": 0,
+          "tanRoi": 0,
+          "fukuRoi": 0
+        },
+        "marketHeatSummary": {
+          "honmeiOverbetLabel": null,
+          "overbetHorseCount": 0,
+          "maxOverbetGap": 0
+        }
+      }
+    }
+  ]
+}
