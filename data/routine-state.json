@@ -4,7 +4,7 @@
   "drawConfirmedAt": "2026-05-01T05:09:30.705Z",
   "performance": {
     "weekly": {
-      "weekOf": "2026-04-20",
+      "weekOf": "2026-04-27",
       "bets": 0,
       "tanHits": 0,
       "fukuHits": 0,
@@ -22,7 +22,7 @@
       "fukuStake": 400,
       "fukuPayout": 680
     },
-    "updatedAt": "2026-05-02T13:31:50.129Z"
+    "updatedAt": "2026-05-03T08:44:53.139Z"
   },
   "tanpukuRecommendations": [
     {
@@ -4099,7 +4099,9 @@
       "actualTop3HorseIds": [],
       "tanPayoutSource": "missing",
       "fukuPayoutSource": "missing",
-      "resolved": false
+      "resolved": false,
+      "tanPayout": 0,
+      "fukuPayout": 0
     },
     {
       "weekOf": "2026-04-27",
@@ -4133,7 +4135,9 @@
       "actualTop3HorseIds": [],
       "tanPayoutSource": "missing",
       "fukuPayoutSource": "missing",
-      "resolved": false
+      "resolved": false,
+      "tanPayout": 0,
+      "fukuPayout": 0
     }
   ],
   "reviewPosts": {
