@@ -247,6 +247,24 @@ function formatOdds(value: number | null) {
   return value && value > 0 ? value.toFixed(1) : "-";
 }
 
+function getSampleReliability(raceCount: number): { label: string; className: string; note: string } | null {
+  if (raceCount < 10) {
+    return {
+      label: "参考値",
+      className: "border-amber-200 bg-amber-50 text-amber-700",
+      note: "対象Rが10未満のため、回収率は跳ねやすい参考値です。",
+    };
+  }
+  if (raceCount < 30) {
+    return {
+      label: "検証中",
+      className: "border-sky-200 bg-sky-50 text-sky-700",
+      note: "対象Rが30未満のため、傾向はまだ検証中です。",
+    };
+  }
+  return null;
+}
+
 function formatScoreGap(value: number | null) {
   return Number.isFinite(Number(value)) ? Number(value).toFixed(3) : "-";
 }
@@ -607,11 +625,19 @@ function ReturnSummaryCard({
   summary: ReturnSummary;
   note?: string;
 }) {
+  const reliability = getSampleReliability(summary.raceCount);
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-bold text-slate-900">{title}</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-sm font-bold text-slate-900">{title}</p>
+            {reliability && (
+              <span className={`rounded-full border px-2 py-0.5 text-[11px] font-bold ${reliability.className}`}>
+                {reliability.label}
+              </span>
+            )}
+          </div>
           <p className="mt-1 text-xs text-slate-500">{formatCount(summary.raceCount)}R / 単複各100円</p>
         </div>
         <div className="text-right text-xs text-slate-500">
@@ -631,11 +657,14 @@ function ReturnSummaryCard({
           <p className="mt-1 text-xs text-slate-500">的中率 {formatRate(summary.fukuRate)}</p>
         </div>
       </div>
+      {reliability ? <p className="mt-3 text-xs leading-5 text-amber-700">{reliability.note}</p> : null}
       {note ? <p className="mt-3 text-xs leading-5 text-slate-500">{note}</p> : null}
     </div>
   );
 }
 
+// Kept temporarily to avoid disturbing the older mojibake-heavy markup block while the reliability table replaces it below.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function CategoryReturnStatsTable({ stats }: { stats: CategoryReturnStat[] }) {
   return (
     <section className="mb-6 overflow-hidden rounded-lg border border-slate-200 bg-white">
@@ -672,6 +701,65 @@ function CategoryReturnStatsTable({ stats }: { stats: CategoryReturnStat[] }) {
                 </td>
               </tr>
             ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function CategoryReturnStatsTableWithReliability({ stats }: { stats: CategoryReturnStat[] }) {
+  return (
+    <section className="mb-6 overflow-hidden rounded-lg border border-slate-200 bg-white">
+      <div className="border-b border-slate-100 px-4 py-3">
+        <p className="text-sm font-bold text-slate-900">カテゴリ別 単複回収率</p>
+        <p className="mt-1 text-xs text-slate-500">単勝100円・複勝100円、公式払戻で確定済みの本命推奨のみ集計</p>
+        <p className="mt-1 text-xs text-amber-700">
+          対象Rが10未満は参考値、30未満は検証中。少サンプルの高回収率だけでロジックは変更しません。
+        </p>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-slate-100 text-sm">
+          <thead className="bg-slate-50 text-xs font-bold text-slate-500">
+            <tr>
+              <th className="px-4 py-3 text-left">区分</th>
+              <th className="px-4 py-3 text-right">対象</th>
+              <th className="px-4 py-3 text-right">単勝</th>
+              <th className="px-4 py-3 text-right">複勝</th>
+              <th className="px-4 py-3 text-right">単複合算</th>
+              <th className="px-4 py-3 text-right">的中</th>
+              <th className="px-4 py-3 text-right">払戻</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {stats.map((stat) => {
+              const reliability = getSampleReliability(stat.raceCount);
+              return (
+                <tr key={stat.key}>
+                  <td className="px-4 py-3 font-semibold text-slate-900">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span>{stat.label}</span>
+                      {reliability && (
+                        <span className={`rounded-full border px-2 py-0.5 text-[11px] font-bold ${reliability.className}`}>
+                          {reliability.label}
+                        </span>
+                      )}
+                    </div>
+                    {reliability && <p className="mt-1 text-[11px] font-normal text-slate-500">{reliability.note}</p>}
+                  </td>
+                  <td className="px-4 py-3 text-right font-semibold text-slate-700">{formatCount(stat.raceCount)}R</td>
+                  <td className="px-4 py-3 text-right font-bold text-slate-900">{formatRate(stat.tanReturnRate)}</td>
+                  <td className="px-4 py-3 text-right font-bold text-slate-900">{formatRate(stat.fukuReturnRate)}</td>
+                  <td className="px-4 py-3 text-right text-slate-700">{formatRate(stat.combinedReturnRate)}</td>
+                  <td className="px-4 py-3 text-right text-slate-700">
+                    単{stat.tanHitCount}/{stat.raceCount}・複{stat.fukuHitCount}/{stat.raceCount}
+                  </td>
+                  <td className="px-4 py-3 text-right text-slate-700">
+                    単{formatPayout(stat.tanPayout)} / 複{formatPayout(stat.fukuPayout)}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -850,7 +938,7 @@ export default function ArchivePage() {
           />
         </section>
 
-        {categoryReturnStats.length > 0 ? <CategoryReturnStatsTable stats={categoryReturnStats} /> : null}
+        {categoryReturnStats.length > 0 ? <CategoryReturnStatsTableWithReliability stats={categoryReturnStats} /> : null}
 
         <section className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
           <div className="mb-4 flex items-center justify-between gap-3">

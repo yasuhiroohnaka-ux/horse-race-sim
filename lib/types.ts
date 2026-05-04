@@ -49,8 +49,18 @@ export interface Horse {
   recentFormScore?: number;
   recentAverageFinish?: number;
   recentTimeIndex?: number;
+  previousRaceName?: string;
+  previousRaceDisplayName?: string;
+  previousRaceNames?: string[];
+  previousFinish?: number;
+  previousRaceCourse?: string;
+  previousRaceDistance?: number;
+  previousRaceTrackType?: "芝" | "ダート" | "障害" | string;
+  previousRaceGrade?: string;
+  previousRaceDate?: string;
   lastRaceGradeScore?: number;
   lastRaceGradeLabel?: string;
+  lastRaceName?: string;
   lastRaceDistance?: number;
   distanceChange?: number;
   condition?: number;
@@ -68,6 +78,90 @@ export interface Horse {
   distanceFitScore?: number;
   groundFitScore?: number;
   paceFitScore?: number;
+}
+
+export type TrendHintType =
+  | "previousRace"
+  | "drawBias"
+  | "gateBias"
+  | "frameBias"
+  | "previousRaceFinishPattern";
+
+export interface TrendHintCondition {
+  previousRaceNames?: string[];
+  previousFinish?: number;
+  gateNumberMin?: number;
+  gateNumberMax?: number;
+  frameNumbers?: number[];
+}
+
+export interface TrendHintRecord {
+  win: number;
+  second: number;
+  third: number;
+  out: number;
+}
+
+export interface TrendHintStats {
+  record: TrendHintRecord;
+  winRate: number;
+  place2Rate: number;
+  place3Rate: number;
+}
+
+export interface TrendHint {
+  id: string;
+  type: TrendHintType;
+  label: string;
+  condition: TrendHintCondition;
+  stats: TrendHintStats;
+  adjustment: number;
+  adjustmentMode?: "score" | "explanationOnly";
+  confidence: number;
+  explanation: string;
+}
+
+export interface RaceTrendAdjustmentPolicy {
+  maxPositiveAdjustment: number;
+  maxNegativeAdjustment: number;
+  defaultConfidence: number;
+}
+
+export interface RaceTrendProfile {
+  raceKey: string;
+  raceName: string;
+  course: string;
+  courseIds?: string[];
+  matchRaceNames?: string[];
+  notes: string[];
+  trendHints: TrendHint[];
+  adjustmentPolicy: RaceTrendAdjustmentPolicy;
+}
+
+export interface TrendHintMatchResult {
+  id: string;
+  type: TrendHintType;
+  label: string;
+  rawAdjustment: number;
+  adjustment: number;
+  confidence: number;
+  sampleSize: number;
+  sampleWeight: number;
+  evidenceLabel?: string;
+  explanation: string;
+}
+
+export interface RaceTrendScoreResult {
+  baseScore: number;
+  trendAdjustment: number;
+  adjustedScore: number;
+  matchedTrendHints: TrendHintMatchResult[];
+}
+
+export interface RaceTrendRankedScoreResult extends RaceTrendScoreResult {
+  horseId: string;
+  originalRank: number;
+  adjustedRank: number;
 }
 
 export interface CourseSegment {
@@ -146,6 +240,12 @@ export interface PredictionSnapshotRow {
   rank: number;
   score: number;
   winProb: number;
+  baseScore?: number;
+  trendAdjustment?: number;
+  adjustedScore?: number;
+  originalRank?: number;
+  adjustedRank?: number;
+  matchedTrendHints?: TrendHintMatchResult[];
   fairOdds: number | null;
   realOdds: number | null;
   edge: number;

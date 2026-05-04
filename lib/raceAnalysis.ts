@@ -1,5 +1,8 @@
 ﻿import { Course, Horse, RaceCondition, RunningStyle } from "./types";
 
+import { applyRaceTrendHintsToResults, findRaceTrendProfile } from "./raceTrendHints";
+import type { TrendHintMatchResult } from "./types";
+
 export interface ResolvedTraitScores {
   pedigree: number;
   courseFit: number;
@@ -41,6 +44,12 @@ export interface RaceAnalysisRow {
   expertRank: number;
   buzzShare: number;
   favoriteCount: number;
+  baseScore?: number;
+  trendAdjustment?: number;
+  adjustedScore?: number;
+  originalRank?: number;
+  adjustedRank?: number;
+  matchedTrendHints?: TrendHintMatchResult[];
   officialGap: number;
   expertGap: number;
   marketExpertGap: number;
@@ -580,6 +589,10 @@ export function buildRaceAnalysisRows(
   const crowdWinMap = calculateCrowdWinRate(horses);
   const resultById = new Map(results.map((result) => [result.horseId, result]));
   const profileById = new Map(horses.map((horse) => [horse.id, getScenarioProfile(horse, course, condition)]));
+  const trendProfile = findRaceTrendProfile(course);
+  const trendRowsById = trendProfile
+    ? new Map(applyRaceTrendHintsToResults(results, horses, trendProfile).map((row) => [row.horseId, row]))
+    : null;
 
   const totalExpertSignal = Math.max(
     1,
@@ -622,6 +635,7 @@ export function buildRaceAnalysisRows(
       const officialRank = officialRankMap.get(horse.id) ?? horses.length;
       const expertRank = expertRankMap.get(horse.id) ?? horses.length;
       const abilityRank = abilityRankMap.get(horse.id) ?? horses.length;
+      const trendRow = trendRowsById?.get(horse.id);
       const signalInsight = getSignalInsight({
         horse,
         profile,
@@ -656,6 +670,12 @@ export function buildRaceAnalysisRows(
         expertRank,
         buzzShare: crowdWinMap.get(horse.id) ?? 0,
         favoriteCount: horse.favoriteCount ?? 0,
+        baseScore: trendRow?.baseScore,
+        trendAdjustment: trendRow?.trendAdjustment,
+        adjustedScore: trendRow?.adjustedScore,
+        originalRank: trendRow?.originalRank,
+        adjustedRank: trendRow?.adjustedRank,
+        matchedTrendHints: trendRow?.matchedTrendHints,
         officialGap,
         expertGap,
         marketExpertGap,
