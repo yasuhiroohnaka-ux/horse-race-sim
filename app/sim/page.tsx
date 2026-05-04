@@ -16,8 +16,8 @@ import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
 import { MONTE_CARLO_RUNS, MONTE_CARLO_RUNS_LABEL } from "@/lib/simulationConfig";
 import { calculateOdds, runMonteCarlo } from "@/lib/simulation";
 import { pickTanpukuPair } from "@/lib/tanpukuSelection.mjs";
-import { buildPickExplanations, buildDisagreementExplanation } from "@/lib/pickExplanations";
-import { buildManualPreRacePayload } from "@/lib/xPostPayload.mjs";
+import { buildPickExplanations } from "@/lib/pickExplanations";
+import { buildTanpukuPreRacePostText, type CategoryReturnStatForPost } from "@/lib/tanpukuXPost";
 import { Course, Horse, PredictionSnapshotExpectation, RaceCondition } from "@/lib/types";
 
 const groundLabels: Record<RaceCondition["groundCondition"], string> = {
@@ -100,6 +100,10 @@ type LiveRaceConditionsPayload = {
 
 type RunningStylePayload = {
   runningStyles?: Record<string, Horse["runningStyle"]>;
+};
+
+type PerformancePayload = {
+  categoryReturnStats?: CategoryReturnStatForPost[];
 };
 
 function createDefaultCondition(courseId: string): RaceCondition {
@@ -209,6 +213,18 @@ function GradeBadge({ label, grade }: { label: string; grade: ExpectationGrade }
       <span className="text-sm leading-none">{grade}</span>
     </span>
   );
+}
+
+async function loadCategoryReturnStatsForPost(): Promise<CategoryReturnStatForPost[] | null> {
+  try {
+    const response = await fetch("/api/performance", { cache: "no-store" });
+    if (!response.ok) return null;
+
+    const payload = (await response.json()) as PerformancePayload;
+    return Array.isArray(payload.categoryReturnStats) ? payload.categoryReturnStats : null;
+  } catch {
+    return null;
+  }
 }
 
 export default function SimulatorPage() {
@@ -679,44 +695,17 @@ function SimulatorContent() {
 
   // --- structured X post handler (Issue 8: unified builder) ---
 
-  const handlePostPreRaceToX = () => {
+  const handlePostPreRaceToX = async () => {
     if (!results || !selectedCourse) return;
 
-    // tanpukuPair-based structured posting (builder priority)
-    if (tanpukuPair?.winPick) {
-      const rows = buildRaceAnalysisRows(results, horses, selectedCourse, condition);
-      const simBest = rows[0] ?? null;
-      const simHorseId = simBest?.horseId ?? null;
-      const agreementStatus: "agree" | "disagree" | "unknown" =
-        simHorseId && tanpukuPair.winPick
-          ? simHorseId === tanpukuPair.winPick.horse.id ? "agree" : "disagree"
-          : "unknown";
-      const simEntry = simHorseId
-        ? tanpukuPair.scored.find((e: { horse: { id: string } }) => e.horse.id === simHorseId) ?? null
-        : null;
-      const selectionComment = buildDisagreementExplanation(agreementStatus, simEntry, tanpukuPair.winPick) ?? "";
-
-      const payload = buildManualPreRacePayload({
-        raceName: selectedCourse.name,
-        hashtag: selectedCourse.hashtag,
-        tanpukuPair,
-        simBest: simBest ? { horseId: simBest.horseId, horseName: simBest.name, winProb: simBest.simWinRate / 100 } : null,
-        selectionComment,
-      });
-
-      console.log("[Issue8] pre_race payload", payload);
-      window.open(`https://twitter.com/intent/tweet?text=${payload.encodedText ?? encodeURIComponent(payload.text)}`, "_blank");
-      return;
-    }
-
-    // Fallback: legacy format when tanpukuPair not available
     const rows = buildRaceAnalysisRows(results, horses, selectedCourse, condition);
-    const strongest = rows[0];
-    const text = [
-      `${selectedCourse.name} ${MONTE_CARLO_RUNS_LABEL}シミュレーション`,
-      `軸候補 ${strongest?.name ?? "-"} 勝率${strongest?.simWinRate?.toFixed(1) ?? "-"}%`,
-      selectedCourse.hashtag,
-    ].join("\n");
+    const categoryReturnStats = await loadCategoryReturnStatsForPost();
+    const text = buildTanpukuPreRacePostText({
+      raceName: selectedCourse.displayName ?? selectedCourse.name,
+      hashtag: selectedCourse.hashtag,
+      topHorses: rows.slice(0, 3).map((row) => ({ horseName: row.name })),
+      categoryReturnStats,
+    });
 
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
   };

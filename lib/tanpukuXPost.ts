@@ -1,0 +1,148 @@
+export interface CategoryReturnStatForPost {
+  key: string;
+  raceCount: number;
+  tanReturnRate: number;
+  fukuReturnRate: number;
+}
+
+export interface TanpukuPostHorse {
+  horseName: string;
+}
+
+export interface BuildTanpukuPreRacePostParams {
+  raceName?: string | null;
+  hashtag?: string | null;
+  topHorses: TanpukuPostHorse[];
+  categoryReturnStats?: CategoryReturnStatForPost[] | null;
+  maxLength?: number;
+}
+
+interface PickedReturnStats {
+  g1: CategoryReturnStatForPost | null;
+  stakes: CategoryReturnStatForPost | null;
+}
+
+const DEFAULT_X_POST_LIMIT = 280;
+
+function countTextChars(text: string): number {
+  return Array.from(text).length;
+}
+
+function cleanLine(value: string | null | undefined): string {
+  return String(value ?? "").trim();
+}
+
+function buildHashtag(raceName?: string | null, hashtag?: string | null): string {
+  const explicit = cleanLine(hashtag);
+  if (explicit) return explicit.startsWith("#") ? explicit : `#${explicit}`;
+
+  const fallback = cleanLine(raceName).replace(/\s+/g, "");
+  return fallback ? `#${fallback}` : "#競馬予想";
+}
+
+function formatRoi(value: number): string {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric.toFixed(1) : "0.0";
+}
+
+export function getG1SamplePhrase(raceCount: number): string {
+  if (raceCount < 10) return "参考値ながら";
+  if (raceCount < 30) return "検証中データで";
+  return "集計で";
+}
+
+function getG1ShortSampleLabel(raceCount: number): string {
+  if (raceCount < 10) return "参考値";
+  if (raceCount < 30) return "検証中";
+  return "集計";
+}
+
+export function pickReturnStats(stats?: CategoryReturnStatForPost[] | null): PickedReturnStats {
+  const list = stats ?? [];
+  return {
+    g1: list.find((stat) => stat.key === "g1_only") ?? null,
+    stakes:
+      list.find((stat) => stat.key === "open_extended") ??
+      list.find((stat) => stat.key === "graded_only") ??
+      null,
+  };
+}
+
+function buildMarks(topHorses: TanpukuPostHorse[]): string[] {
+  const [top, second, third] = topHorses;
+  return [
+    `◎${cleanLine(top?.horseName) || "-"} ※試走1位`,
+    `○${cleanLine(second?.horseName) || "-"}`,
+    `▲${cleanLine(third?.horseName) || "-"}`,
+  ];
+}
+
+function buildBaseLines(params: BuildTanpukuPreRacePostParams): string[] {
+  return [
+    buildHashtag(params.raceName, params.hashtag),
+    "",
+    "AI予想エンジン週中チェック",
+    "",
+    ...buildMarks(params.topHorses),
+  ];
+}
+
+function buildNoStatsPost(params: BuildTanpukuPreRacePostParams): string {
+  return [
+    ...buildBaseLines(params),
+    "",
+    "単複回収率重視のエンジンです。",
+    "人気より条件適性。",
+  ].join("\n");
+}
+
+function buildFullPost(params: BuildTanpukuPreRacePostParams, picked: PickedReturnStats): string {
+  const { g1, stakes } = picked;
+  if (!g1 || !stakes) return buildNoStatsPost(params);
+
+  return [
+    ...buildBaseLines(params),
+    "",
+    "単複回収率重視のエンジンです。",
+    "",
+    "現時点の集計では、",
+    `G1のみは${g1.raceCount}Rの${getG1SamplePhrase(g1.raceCount)}`,
+    `単勝${formatRoi(g1.tanReturnRate)}% / 複勝${formatRoi(g1.fukuReturnRate)}%。`,
+    "",
+    "重賞・OP以上では",
+    `${stakes.raceCount}R集計で`,
+    `単勝${formatRoi(stakes.tanReturnRate)}% / 複勝${formatRoi(stakes.fukuReturnRate)}%。`,
+    "",
+    "人気より条件適性。",
+  ].join("\n");
+}
+
+function buildShortPost(params: BuildTanpukuPreRacePostParams, picked: PickedReturnStats): string {
+  const { g1, stakes } = picked;
+  if (!g1 || !stakes) return buildNoStatsPost(params);
+
+  return [
+    ...buildBaseLines(params),
+    "",
+    "単複回収率重視。",
+    `現時点でG1のみ${g1.raceCount}R${getG1ShortSampleLabel(g1.raceCount)}:`,
+    `単勝${formatRoi(g1.tanReturnRate)}% / 複勝${formatRoi(g1.fukuReturnRate)}%`,
+    "",
+    "重賞・OP以上:",
+    `単勝${formatRoi(stakes.tanReturnRate)}% / 複勝${formatRoi(stakes.fukuReturnRate)}%`,
+    "",
+    "人気より条件適性。",
+  ].join("\n");
+}
+
+export function buildTanpukuPreRacePostText(params: BuildTanpukuPreRacePostParams): string {
+  const maxLength = params.maxLength ?? DEFAULT_X_POST_LIMIT;
+  const picked = pickReturnStats(params.categoryReturnStats);
+  const full = buildFullPost(params, picked);
+  if (countTextChars(full) <= maxLength) return full;
+
+  const short = buildShortPost(params, picked);
+  if (countTextChars(short) <= maxLength) return short;
+
+  return buildNoStatsPost(params);
+}
