@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test tests/tanpukuXPost.test.ts",
+    "test": "tsx --test tests/*.test.ts",
     "refresh:weekly-races": "node scripts/refresh-weekly-races.mjs",
     "update:keiba-data": "node scripts/weekly-keiba-update.mjs",
     "update:race-results": "node scripts/update-race-results.mjs",

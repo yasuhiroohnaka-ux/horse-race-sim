@@ -30,7 +30,7 @@ export const RACE_TREND_PROFILES: RaceTrendProfile[] = [
     raceKey: "nhk-mile-c",
     raceName: "NHKマイルC",
     course: "東京芝1600",
-    courseIds: ["nhk-mile-c"],
+    courseIds: ["nhk-mile-c", "tokyo-turf-1600-202605020611"],
     matchRaceNames: ["NHKマイル", "NHKマイルC", "ＮＨＫマイル", "ＮＨＫマイルＣ"],
     notes: [
       "Aコース最終週で行われるため、内の傷みや外差し傾向に注意。ただし枠だけで大きく評価を変えない。",
