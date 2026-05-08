@@ -6,9 +6,9 @@ import {
 } from "../lib/tanpukuXPost";
 
 const horses = [
-  { horseName: "ダイヤモンドノット", markNote: "単複本命" },
-  { horseName: "カヴァレリッツォ", markNote: "相手候補" },
-  { horseName: "ロデオドライブ", markNote: "ワイド妙味" },
+  { horseName: "ダイヤモンドノット", mark: "◎" as const, markNote: "単複本命" },
+  { horseName: "カヴァレリッツォ", mark: "○" as const, markNote: "相手候補" },
+  { horseName: "ロデオドライブ", mark: "▲" as const, markNote: "試走1位" },
 ];
 
 function stats(g1RaceCount: number): CategoryReturnStatForPost[] {
@@ -57,7 +57,7 @@ test("top three tanpuku selections are inserted as marks", () => {
   const text = build();
   assert.match(text, /◎ダイヤモンドノット ※単複本命/);
   assert.match(text, /○カヴァレリッツォ ※相手候補/);
-  assert.match(text, /▲ロデオドライブ ※ワイド妙味/);
+  assert.match(text, /▲ロデオドライブ ※試走1位/);
 });
 
 test("post does not use decisive conclusion wording", () => {
@@ -89,16 +89,29 @@ test("long full post falls back to short template", () => {
   assert.ok(Array.from(text).length <= 280);
 });
 
-test("trial rank wording is not used for tanpuku post marks", () => {
+test("trial rank wording is used only for the distinct trial leader mark", () => {
   const text = build();
-  assert.equal(text.includes("試走1位"), false);
 
   const markedLines = text.split("\n").filter((line) => /[◎○▲]/.test(line));
   assert.deepEqual(markedLines, [
     "◎ダイヤモンドノット ※単複本命",
     "○カヴァレリッツォ ※相手候補",
-    "▲ロデオドライブ ※ワイド妙味",
+    "▲ロデオドライブ ※試走1位",
   ]);
+});
+
+test("trial leader mark can be omitted without rendering a placeholder", () => {
+  const text = build({
+    topHorses: horses.slice(0, 2),
+  });
+
+  const markedLines = text.split("\n").filter((line) => /[◎○▲]/.test(line));
+  assert.deepEqual(markedLines, [
+    "◎ダイヤモンドノット ※単複本命",
+    "○カヴァレリッツォ ※相手候補",
+  ]);
+  assert.equal(text.includes("▲"), false);
+  assert.equal(text.includes("試走1位"), false);
 });
 
 test("post ending does not add popularity-over-fit slogan", () => {

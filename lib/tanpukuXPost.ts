@@ -7,6 +7,7 @@ export interface CategoryReturnStatForPost {
 
 export interface TanpukuPostHorse {
   horseName: string;
+  mark?: "◎" | "○" | "▲" | null;
   markNote?: string | null;
 }
 
@@ -70,17 +71,18 @@ export function pickReturnStats(stats?: CategoryReturnStatForPost[] | null): Pic
 }
 
 function buildMarks(topHorses: TanpukuPostHorse[]): string[] {
-  const [top, second, third] = topHorses;
-  return [
-    buildMarkLine("◎", top),
-    buildMarkLine("○", second),
-    buildMarkLine("▲", third),
-  ];
+  const defaultMarks: NonNullable<TanpukuPostHorse["mark"]>[] = ["◎", "○", "▲"];
+  return topHorses
+    .slice(0, 3)
+    .map((horse, index) => buildMarkLine(horse.mark ?? defaultMarks[index], horse))
+    .filter(Boolean);
 }
 
 function buildMarkLine(mark: string, horse?: TanpukuPostHorse): string {
+  const horseName = cleanLine(horse?.horseName);
+  if (!horseName) return "";
   const note = cleanLine(horse?.markNote);
-  return `${mark}${cleanLine(horse?.horseName) || "-"}${note ? ` ※${note}` : ""}`;
+  return `${mark}${horseName}${note ? ` ※${note}` : ""}`;
 }
 
 function buildBaseLines(params: BuildTanpukuPreRacePostParams): string[] {

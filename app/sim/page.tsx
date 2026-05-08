@@ -117,6 +117,7 @@ function buildTopHorsesForTanpukuPost(
 
   const addPick = (
     entry: { horse?: { id?: string | null; name?: string | null } } | null | undefined,
+    mark: NonNullable<TanpukuPostHorse["mark"]>,
     markNote: string
   ) => {
     const horseName = String(entry?.horse?.name ?? "").trim();
@@ -124,21 +125,19 @@ function buildTopHorsesForTanpukuPost(
     const key = String(entry?.horse?.id ?? horseName);
     if (seen.has(key)) return;
     seen.add(key);
-    picked.push({ horseName, markNote });
+    picked.push({ horseName, mark, markNote });
   };
 
-  addPick(pair?.winPick, "単複本命");
-  addPick(pair?.opponentPick, "相手候補");
-  addPick(pair?.widePick ?? pair?.valuePick, "ワイド妙味");
+  addPick(pair?.winPick, "◎", "単複本命");
+  addPick(pair?.opponentPick, "○", "相手候補");
 
-  for (const row of fallbackRows) {
-    if (picked.length >= 3) break;
-    if (seen.has(row.horseId)) continue;
-    seen.add(row.horseId);
-    picked.push({ horseName: row.name });
+  const trialLeader = fallbackRows[0];
+  if (trialLeader && !seen.has(trialLeader.horseId)) {
+    seen.add(trialLeader.horseId);
+    picked.push({ horseName: trialLeader.name, mark: "▲", markNote: "試走1位" });
   }
 
-  return picked.slice(0, 3);
+  return picked;
 }
 
 function createDefaultCondition(courseId: string): RaceCondition {
