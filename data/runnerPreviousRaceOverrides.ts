@@ -79,6 +79,16 @@ export const RUNNER_PREVIOUS_RACE_OVERRIDES: Record<
       previousRaceGrade: "G3",
       previousRaceDate: "2026-03-21",
     },
+    アスクイキゴミ: {
+      previousRaceName: "チャーチルダウンズC",
+      previousRaceDisplayName: "チャーチルダウンズC",
+      previousFinish: 1,
+      previousRaceCourse: "阪神芝1600",
+      previousRaceDistance: 1600,
+      previousRaceTrackType: "芝",
+      previousRaceGrade: "G3",
+      previousRaceDate: "2026-04-04",
+    },
     アンドゥーリル: {
       previousRaceName: "チャーチルダウンズC",
       previousRaceDisplayName: "チャーチルダウンズC",

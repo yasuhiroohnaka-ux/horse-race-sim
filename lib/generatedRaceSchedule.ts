@@ -25,6 +25,14 @@ export interface GeneratedHorseSeed {
   recentFormScore: number;
   recentAverageFinish: number;
   recentTimeIndex: number;
+  previousRaceName?: string;
+  previousRaceDisplayName?: string;
+  previousFinish?: number;
+  previousRaceCourse?: string;
+  previousRaceDistance?: number;
+  previousRaceTrackType?: string;
+  previousRaceGrade?: string;
+  previousRaceDate?: string;
   lastRaceGradeScore: number;
   lastRaceGradeLabel: string;
   lastRaceDistance: number;
@@ -74334,8 +74342,16 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         "recentFormScore": 5,
         "recentAverageFinish": 1,
         "recentTimeIndex": -0.8,
-        "lastRaceGradeScore": 0,
-        "lastRaceGradeLabel": "Maiden",
+        "previousRaceName": "チャーチルダウンズC",
+        "previousRaceDisplayName": "チャーチルダウンズC",
+        "previousFinish": 1,
+        "previousRaceCourse": "阪神芝1600",
+        "previousRaceDistance": 1600,
+        "previousRaceTrackType": "芝",
+        "previousRaceGrade": "G3",
+        "previousRaceDate": "2026-04-04",
+        "lastRaceGradeScore": 3,
+        "lastRaceGradeLabel": "G3",
         "lastRaceDistance": 1600,
         "distanceChange": 0,
         "condition": 5

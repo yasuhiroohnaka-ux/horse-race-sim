@@ -6,9 +6,9 @@ import {
 } from "../lib/tanpukuXPost";
 
 const horses = [
-  { horseName: "ダイヤモンドノット" },
-  { horseName: "カヴァレリッツォ" },
-  { horseName: "ロデオドライブ" },
+  { horseName: "ダイヤモンドノット", markNote: "単複本命" },
+  { horseName: "カヴァレリッツォ", markNote: "相手候補" },
+  { horseName: "ロデオドライブ", markNote: "ワイド妙味" },
 ];
 
 function stats(g1RaceCount: number): CategoryReturnStatForPost[] {
@@ -53,11 +53,11 @@ test("G1 count 30 or above is labeled as aggregated", () => {
   assert.match(text, /G1のみは30Rの集計で/);
 });
 
-test("top three trial ranks are inserted as marks", () => {
+test("top three tanpuku selections are inserted as marks", () => {
   const text = build();
-  assert.match(text, /◎ダイヤモンドノット ※試走1位/);
-  assert.match(text, /○カヴァレリッツォ/);
-  assert.match(text, /▲ロデオドライブ/);
+  assert.match(text, /◎ダイヤモンドノット ※単複本命/);
+  assert.match(text, /○カヴァレリッツォ ※相手候補/);
+  assert.match(text, /▲ロデオドライブ ※ワイド妙味/);
 });
 
 test("post does not use decisive conclusion wording", () => {
@@ -70,7 +70,7 @@ test("post does not use decisive conclusion wording", () => {
 test("post is generated without archive category stats", () => {
   const text = build({ categoryReturnStats: null });
   assert.match(text, /単複回収率重視のエンジンです。/);
-  assert.match(text, /人気より条件適性。/);
+  assert.equal(text.includes("人気より条件適性。"), false);
   assert.equal(text.includes("G1のみ"), false);
 });
 
@@ -89,11 +89,21 @@ test("long full post falls back to short template", () => {
   assert.ok(Array.from(text).length <= 280);
 });
 
-test("trial rank note is attached only to top horse line", () => {
+test("trial rank wording is not used for tanpuku post marks", () => {
   const text = build();
-  assert.equal(text.includes("シミュ1位"), false);
-  assert.equal(text.includes("試走1位"), true);
+  assert.equal(text.includes("試走1位"), false);
 
-  const markedLines = text.split("\n").filter((line) => line.includes("試走1位"));
-  assert.deepEqual(markedLines, ["◎ダイヤモンドノット ※試走1位"]);
+  const markedLines = text.split("\n").filter((line) => /[◎○▲]/.test(line));
+  assert.deepEqual(markedLines, [
+    "◎ダイヤモンドノット ※単複本命",
+    "○カヴァレリッツォ ※相手候補",
+    "▲ロデオドライブ ※ワイド妙味",
+  ]);
+});
+
+test("post ending does not add popularity-over-fit slogan", () => {
+  const text = build();
+  assert.equal(text.includes("人気より適正重視"), false);
+  assert.equal(text.includes("人気より条件適性。"), false);
+  assert.equal(text.includes("シミュ1位"), false);
 });

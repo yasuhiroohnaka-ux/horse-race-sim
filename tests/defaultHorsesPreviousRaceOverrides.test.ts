@@ -22,13 +22,14 @@ test("NHK Mile generated horses receive previous-race overrides by horse name", 
   const byName = new Map(horses.map((horse) => [horse.name, horse]));
 
   assert.deepEqual(
-    ["ダイヤモンドノット", "アンドゥーリル", "サンダーストラック"].map((name) => ({
+    ["ダイヤモンドノット", "アスクイキゴミ", "アンドゥーリル", "サンダーストラック"].map((name) => ({
       name,
       previousRaceName: byName.get(name)?.previousRaceName,
       previousFinish: byName.get(name)?.previousFinish,
     })),
     [
       { name: "ダイヤモンドノット", previousRaceName: "ファルコンS", previousFinish: 1 },
+      { name: "アスクイキゴミ", previousRaceName: "チャーチルダウンズC", previousFinish: 1 },
       { name: "アンドゥーリル", previousRaceName: "チャーチルダウンズC", previousFinish: 8 },
       { name: "サンダーストラック", previousRaceName: "チャーチルダウンズC", previousFinish: 12 },
     ]

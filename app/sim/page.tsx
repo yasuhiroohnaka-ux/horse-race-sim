@@ -12,12 +12,12 @@ import { dedupeHorses, findHorseDuplicates } from "@/lib/horseIntegrity";
 import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
 import { buildPredictionSnapshot } from "@/lib/predictionSnapshots";
 import { buildBettingExpectationView, type ExpectationGrade } from "@/lib/bettingExpectation";
-import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
+import { buildRaceAnalysisRows, type RaceAnalysisRow } from "@/lib/raceAnalysis";
 import { MONTE_CARLO_RUNS, MONTE_CARLO_RUNS_LABEL } from "@/lib/simulationConfig";
 import { calculateOdds, runMonteCarlo } from "@/lib/simulation";
 import { pickTanpukuPair } from "@/lib/tanpukuSelection.mjs";
 import { buildPickExplanations } from "@/lib/pickExplanations";
-import { buildTanpukuPreRacePostText, type CategoryReturnStatForPost } from "@/lib/tanpukuXPost";
+import { buildTanpukuPreRacePostText, type CategoryReturnStatForPost, type TanpukuPostHorse } from "@/lib/tanpukuXPost";
 import { Course, Horse, PredictionSnapshotExpectation, RaceCondition } from "@/lib/types";
 
 const groundLabels: Record<RaceCondition["groundCondition"], string> = {
@@ -105,6 +105,41 @@ type RunningStylePayload = {
 type PerformancePayload = {
   categoryReturnStats?: CategoryReturnStatForPost[];
 };
+
+type TanpukuPairForPost = ReturnType<typeof pickTanpukuPair>;
+
+function buildTopHorsesForTanpukuPost(
+  pair: TanpukuPairForPost | null,
+  fallbackRows: RaceAnalysisRow[]
+): TanpukuPostHorse[] {
+  const picked: TanpukuPostHorse[] = [];
+  const seen = new Set<string>();
+
+  const addPick = (
+    entry: { horse?: { id?: string | null; name?: string | null } } | null | undefined,
+    markNote: string
+  ) => {
+    const horseName = String(entry?.horse?.name ?? "").trim();
+    if (!horseName) return;
+    const key = String(entry?.horse?.id ?? horseName);
+    if (seen.has(key)) return;
+    seen.add(key);
+    picked.push({ horseName, markNote });
+  };
+
+  addPick(pair?.winPick, "単複本命");
+  addPick(pair?.opponentPick, "相手候補");
+  addPick(pair?.widePick ?? pair?.valuePick, "ワイド妙味");
+
+  for (const row of fallbackRows) {
+    if (picked.length >= 3) break;
+    if (seen.has(row.horseId)) continue;
+    seen.add(row.horseId);
+    picked.push({ horseName: row.name });
+  }
+
+  return picked.slice(0, 3);
+}
 
 function createDefaultCondition(courseId: string): RaceCondition {
   const course = COURSES.find((entry) => entry.id === courseId);
@@ -703,7 +738,7 @@ function SimulatorContent() {
     const text = buildTanpukuPreRacePostText({
       raceName: selectedCourse.displayName ?? selectedCourse.name,
       hashtag: selectedCourse.hashtag,
-      topHorses: rows.slice(0, 3).map((row) => ({ horseName: row.name })),
+      topHorses: buildTopHorsesForTanpukuPost(tanpukuPair, rows),
       categoryReturnStats,
     });
 

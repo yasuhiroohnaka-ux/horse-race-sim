@@ -7,6 +7,7 @@ export interface CategoryReturnStatForPost {
 
 export interface TanpukuPostHorse {
   horseName: string;
+  markNote?: string | null;
 }
 
 export interface BuildTanpukuPreRacePostParams {
@@ -71,10 +72,15 @@ export function pickReturnStats(stats?: CategoryReturnStatForPost[] | null): Pic
 function buildMarks(topHorses: TanpukuPostHorse[]): string[] {
   const [top, second, third] = topHorses;
   return [
-    `◎${cleanLine(top?.horseName) || "-"} ※試走1位`,
-    `○${cleanLine(second?.horseName) || "-"}`,
-    `▲${cleanLine(third?.horseName) || "-"}`,
+    buildMarkLine("◎", top),
+    buildMarkLine("○", second),
+    buildMarkLine("▲", third),
   ];
+}
+
+function buildMarkLine(mark: string, horse?: TanpukuPostHorse): string {
+  const note = cleanLine(horse?.markNote);
+  return `${mark}${cleanLine(horse?.horseName) || "-"}${note ? ` ※${note}` : ""}`;
 }
 
 function buildBaseLines(params: BuildTanpukuPreRacePostParams): string[] {
@@ -92,7 +98,6 @@ function buildNoStatsPost(params: BuildTanpukuPreRacePostParams): string {
     ...buildBaseLines(params),
     "",
     "単複回収率重視のエンジンです。",
-    "人気より条件適性。",
   ].join("\n");
 }
 
@@ -112,8 +117,6 @@ function buildFullPost(params: BuildTanpukuPreRacePostParams, picked: PickedRetu
     "重賞・OP以上では",
     `${stakes.raceCount}R集計で`,
     `単勝${formatRoi(stakes.tanReturnRate)}% / 複勝${formatRoi(stakes.fukuReturnRate)}%。`,
-    "",
-    "人気より条件適性。",
   ].join("\n");
 }
 
@@ -130,8 +133,6 @@ function buildShortPost(params: BuildTanpukuPreRacePostParams, picked: PickedRet
     "",
     "重賞・OP以上:",
     `単勝${formatRoi(stakes.tanReturnRate)}% / 複勝${formatRoi(stakes.fukuReturnRate)}%`,
-    "",
-    "人気より条件適性。",
   ].join("\n");
 }
 

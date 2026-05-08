@@ -52,6 +52,14 @@ function mapHorseSeed(h, race) {
     recentFormScore: Number(h.recentFormScore ?? 0),
     recentAverageFinish: Number(h.recentAverageFinish ?? 0),
     recentTimeIndex: Number(h.recentTimeIndex ?? 0),
+    previousRaceName: h.previousRaceName ? String(h.previousRaceName) : undefined,
+    previousRaceDisplayName: h.previousRaceDisplayName ? String(h.previousRaceDisplayName) : undefined,
+    previousFinish: h.previousFinish != null ? Number(h.previousFinish) : undefined,
+    previousRaceCourse: h.previousRaceCourse ? String(h.previousRaceCourse) : undefined,
+    previousRaceDistance: h.previousRaceDistance != null ? Number(h.previousRaceDistance) : undefined,
+    previousRaceTrackType: h.previousRaceTrackType ? String(h.previousRaceTrackType) : undefined,
+    previousRaceGrade: h.previousRaceGrade ? String(h.previousRaceGrade) : undefined,
+    previousRaceDate: h.previousRaceDate ? String(h.previousRaceDate) : undefined,
     lastRaceGradeScore: Number(h.lastRaceGradeScore ?? 2),
     lastRaceGradeLabel: String(h.lastRaceGradeLabel ?? "OP"),
     lastRaceDistance: Number(h.lastRaceDistance ?? 0),
@@ -245,6 +253,14 @@ export interface GeneratedHorseSeed {
   recentFormScore: number;
   recentAverageFinish: number;
   recentTimeIndex: number;
+  previousRaceName?: string;
+  previousRaceDisplayName?: string;
+  previousFinish?: number;
+  previousRaceCourse?: string;
+  previousRaceDistance?: number;
+  previousRaceTrackType?: string;
+  previousRaceGrade?: string;
+  previousRaceDate?: string;
   lastRaceGradeScore: number;
   lastRaceGradeLabel: string;
   lastRaceDistance: number;
