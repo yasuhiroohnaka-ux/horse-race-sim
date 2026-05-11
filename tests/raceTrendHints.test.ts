@@ -9,6 +9,7 @@ import {
 import type { Course, Horse, RaceTrendProfile } from "../lib/types";
 
 const nhkProfile = RACE_TREND_PROFILES.find((profile) => profile.raceKey === "nhk-mile-c");
+const vmProfile = RACE_TREND_PROFILES.find((profile) => profile.raceKey === "victoria-mile");
 
 function horse(overrides: Partial<Horse> = {}): Horse {
   return {
@@ -276,6 +277,130 @@ test("horse without previousFinish does not match finish-pattern hints", () => {
 
   assert.equal(finishPatternHints.length, 0);
   assert.ok(result.matchedTrendHints.some((hint) => hint.id === "nhk-mile-previous-race-nzt"));
+});
+
+test("Victoria Mile trend profile can be resolved by race name", () => {
+  const course: Course = {
+    id: "tokyo-turf-1600-sample",
+    name: "東京 芝 1600m (ヴィクトリアマイル)",
+    distance: 1600,
+    surface: "Turf",
+    segments: [],
+    straightLength: 525.9,
+    hashtag: "#ヴィクトリアマイル",
+  };
+
+  assert.equal(findRaceTrendProfile(course)?.raceKey, "victoria-mile");
+});
+
+test("Victoria Mile trend profile can be resolved by courseId", () => {
+  const course: Course = {
+    id: "tokyo-turf-1600-202605020811",
+    name: "東京 芝 1600m",
+    distance: 1600,
+    surface: "Turf",
+    segments: [],
+    straightLength: 525.9,
+    hashtag: "#VM",
+  };
+
+  assert.equal(findRaceTrendProfile(course)?.raceKey, "victoria-mile");
+});
+
+test("Victoria Mile: 阪神牝馬S horse matches hint with mild positive adjustment", () => {
+  assert.ok(vmProfile);
+
+  const result = applyRaceTrendHints(
+    horse({ previousRaceName: "阪神牝馬S" }),
+    0.2,
+    vmProfile
+  );
+
+  assert.ok(result.matchedTrendHints.some((hint) => hint.id === "vm-previous-race-hanshin-baba-s"));
+  assert.ok(result.trendAdjustment > 0);
+});
+
+test("Victoria Mile: 中山牝馬S horse matches hint with mild positive adjustment", () => {
+  assert.ok(vmProfile);
+
+  const result = applyRaceTrendHints(
+    horse({ previousRaceName: "中山牝馬S" }),
+    0.2,
+    vmProfile
+  );
+
+  assert.ok(result.matchedTrendHints.some((hint) => hint.id === "vm-previous-race-nakayama-baba-s"));
+  assert.ok(result.trendAdjustment > 0);
+});
+
+test("Victoria Mile: 金鯱賞組はexplanationOnlyで補正ゼロ", () => {
+  assert.ok(vmProfile);
+
+  const result = applyRaceTrendHints(
+    horse({ previousRaceName: "金鯱賞" }),
+    0.2,
+    vmProfile
+  );
+
+  const hint = result.matchedTrendHints.find((h) => h.id === "vm-previous-race-kinko-sho");
+  assert.ok(hint);
+  assert.equal(hint.adjustment, 0);
+  assert.equal(result.trendAdjustment, 0);
+});
+
+test("Victoria Mile: 中山記念組はexplanationOnlyで補正ゼロ", () => {
+  assert.ok(vmProfile);
+
+  const result = applyRaceTrendHints(
+    horse({ previousRaceName: "中山記念" }),
+    0.2,
+    vmProfile
+  );
+
+  const hint = result.matchedTrendHints.find((h) => h.id === "vm-previous-race-nakayama-kinen");
+  assert.ok(hint);
+  assert.equal(hint.adjustment, 0);
+  assert.equal(result.trendAdjustment, 0);
+});
+
+test("Victoria Mile: 愛知杯組はexplanationOnlyで補正ゼロ", () => {
+  assert.ok(vmProfile);
+
+  const result = applyRaceTrendHints(
+    horse({ previousRaceName: "愛知杯" }),
+    0.2,
+    vmProfile
+  );
+
+  const hint = result.matchedTrendHints.find((h) => h.id === "vm-previous-race-aichi-hai");
+  assert.ok(hint);
+  assert.equal(hint.adjustment, 0);
+  assert.equal(result.trendAdjustment, 0);
+});
+
+test("Victoria Mile: 福島牝馬S組はスコアが僅かに下がる", () => {
+  assert.ok(vmProfile);
+
+  const result = applyRaceTrendHints(
+    horse({ previousRaceName: "福島牝馬S" }),
+    0.2,
+    vmProfile
+  );
+
+  assert.ok(result.matchedTrendHints.some((hint) => hint.id === "vm-previous-race-fukushima-baba-s"));
+  assert.ok(result.trendAdjustment < 0);
+  assert.ok(result.trendAdjustment >= -0.04);
+});
+
+test("Victoria Mile: 前走なし馬は前走系hintにマッチしない", () => {
+  assert.ok(vmProfile);
+
+  const result = applyRaceTrendHints(horse(), 0.2, vmProfile);
+  const previousRaceHints = result.matchedTrendHints.filter(
+    (hint) => hint.type === "previousRace" || hint.type === "previousRaceFinishPattern"
+  );
+
+  assert.equal(previousRaceHints.length, 0);
 });
 
 test("draw-family hints are explanation-only and do not increase adjustment", () => {

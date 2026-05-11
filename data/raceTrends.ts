@@ -27,6 +27,107 @@ const CHURCHILL_DOWNS_ALIASES = [
 
 export const RACE_TREND_PROFILES: RaceTrendProfile[] = [
   {
+    raceKey: "victoria-mile",
+    raceName: "ヴィクトリアマイル",
+    course: "東京芝1600",
+    courseIds: ["victoria-mile", "tokyo-turf-1600-202605020811"],
+    matchRaceNames: ["ヴィクトリアマイル", "ヴィクトリアマイルＣ"],
+    notes: [
+      "東京芝1600m・牝馬限定G1。前半3F33〜34秒台の速い流れになりやすく、追走力と持続力が問われる。阪神牝馬Sとはペース特性が異なるため、ローテの見方に注意。",
+      "過去10年の好走馬の多くが、牡馬混合の重賞・リステッド以上で実績あり。ただし傾向の目安として扱い、強い加点材料にはしない。",
+      "過去10年の馬券圏内30頭中22頭が芝1800m以上で勝利（残り5頭は芝マイルG1馬）。底力・持続力の指標として参考にする。単純な距離延長適性ではなく、タフな条件への耐性として見る。",
+      "4歳・5歳が中心（各約40%）。6歳は複勝圏はあるが勝率はやや落ちる傾向。7歳は母数4なので勝率25%は参考値であり、強い評価材料にしない。",
+    ],
+    trendHints: [
+      {
+        id: "vm-previous-race-hanshin-baba-s",
+        type: "previousRace",
+        label: "前走阪神牝馬S組",
+        condition: {
+          previousRaceNames: ["阪神牝馬S", "阪神牝馬Ｓ", "阪神牝馬ステークス"],
+        },
+        stats: stats({ win: 4, second: 3, third: 5, out: 56 }, 0.059, 0.103, 0.176),
+        adjustment: 0.01,
+        confidence: 0.4,
+        explanation:
+          "阪神牝馬Sは出走数最多の主流ローテ。ただし阪神牝馬Sは前半3F35秒超のスロー寄り傾向があり、VM本番の33〜34秒台の速い流れとは条件が異なる。実績は評価しつつ、展開対応は個別判断。",
+      },
+      {
+        id: "vm-previous-race-nakayama-baba-s",
+        type: "previousRace",
+        label: "前走中山牝馬S組",
+        condition: {
+          previousRaceNames: ["中山牝馬S", "中山牝馬Ｓ", "中山牝馬ステークス"],
+        },
+        stats: stats({ win: 1, second: 2, third: 1, out: 10 }, 0.071, 0.214, 0.286),
+        adjustment: 0.015,
+        confidence: 0.4,
+        explanation:
+          "中山牝馬S組はサンプル14と少ないが複勝率が高め。タフな条件を経由した持続力を軽く加点。ただし少サンプルのため過信しない。",
+      },
+      {
+        id: "vm-previous-race-fukushima-baba-s",
+        type: "previousRace",
+        label: "前走福島牝馬S組",
+        condition: {
+          previousRaceNames: ["福島牝馬S", "福島牝馬Ｓ", "福島牝馬ステークス"],
+        },
+        stats: stats({ win: 0, second: 1, third: 0, out: 18 }, 0, 0.053, 0.053),
+        adjustment: -0.005,
+        confidence: 0.3,
+        explanation:
+          "福島牝馬S組は過去傾向で苦戦気味。ただし出走馬層の偏りも考えられるため、強い減点はしない。軽い注意程度。",
+      },
+      {
+        id: "vm-previous-race-kinko-sho",
+        type: "previousRace",
+        label: "前走金鯱賞組（参考値）",
+        condition: {
+          previousRaceNames: ["金鯱賞"],
+        },
+        stats: stats({ win: 0, second: 1, third: 0, out: 2 }, 0, 0.333, 0.333),
+        adjustment: 0,
+        adjustmentMode: "explanationOnly",
+        confidence: 0.2,
+        explanation:
+          "金鯱賞組はサンプル3の参考値。連対率33.3%に見えるが母数が極小のため信頼性は低い。スコアは動かさず説明タグのみ。",
+      },
+      {
+        id: "vm-previous-race-nakayama-kinen",
+        type: "previousRace",
+        label: "前走中山記念組（参考値）",
+        condition: {
+          previousRaceNames: ["中山記念"],
+        },
+        stats: stats({ win: 0, second: 0, third: 0, out: 2 }, 0, 0, 0),
+        adjustment: 0,
+        adjustmentMode: "explanationOnly",
+        confidence: 0.2,
+        explanation:
+          "中山記念組はサンプル2の参考値。好走例なしだが母数が少なすぎるため、評価の根拠にはしない。",
+      },
+      {
+        id: "vm-previous-race-aichi-hai",
+        type: "previousRace",
+        label: "前走愛知杯組（参考値）",
+        condition: {
+          previousRaceNames: ["愛知杯"],
+        },
+        stats: stats({ win: 0, second: 0, third: 0, out: 6 }, 0, 0, 0),
+        adjustment: 0,
+        adjustmentMode: "explanationOnly",
+        confidence: 0.25,
+        explanation:
+          "愛知杯（旧京都牝馬Sを含む）組は好走例なし。サンプル6と少なく出走馬層の偏りも考えられる。軽い注意タグのみ、強い減点はしない。",
+      },
+    ],
+    adjustmentPolicy: {
+      maxPositiveAdjustment: 0.04,
+      maxNegativeAdjustment: -0.04,
+      defaultConfidence: 0.4,
+    },
+  },
+  {
     raceKey: "nhk-mile-c",
     raceName: "NHKマイルC",
     course: "東京芝1600",
