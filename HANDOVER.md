@@ -98,3 +98,44 @@
 - `main` に push すると Vercel がデプロイされる運用
 - PowerShell で日本語が崩れて見えることがあるので、UI 文言変更時は build とブラウザ確認を優先
 - `eslint` はローカル依存の都合で未整備のまま
+
+## 2026-05-11 current state
+
+### 方針
+
+- `runMonteCarlo` / `runRace` は変更しない
+- trend hints は薄い補正・タグ・説明・参考順位に限定
+- G1高回収率は少サンプル警告つきの参考値として表現
+- NHKマイルC は荒れ要素あり、人気固定ではなく条件適性で見る
+- X投稿は単複回収率重視のエンジンとして表現
+
+### 重要コミット
+
+- `b524801 feat: add race trend hints to analysis`
+  - 新規: `lib/raceTrendHints.ts`, `data/raceTrends.ts`, `data/runnerPreviousRaceOverrides.ts`, `tests/raceTrendHints.test.ts`
+  - 拡張: `lib/types.ts`, `lib/raceAnalysis.ts`, `components/SimulationResults.tsx`, `app/archive/page.tsx`, `lib/defaultHorses.ts`, `lib/predictionSnapshots.ts`
+  - `applyRaceTrendHints` がベーススコアに薄い補正を加える。`adjustmentMode: "explanationOnly"` なら補正値 0 でタグと説明だけ付与
+  - サンプルサイズ `√(n/16)` で重みづけし、小サンプルの過大評価を抑制
+  - `RaceTrendAdjustmentPolicy` で正負の補正幅をプロファイル単位で制限
+  - `buildRaceAnalysisRows` でのみ `findRaceTrendProfile` + `applyRaceTrendHintsToResults` を呼ぶ。シミュレーション本体には影響しない
+  - 馬名のゆらぎ吸収用に `PREVIOUS_RACE_ALIAS_GROUPS`（NZT、アーリントンC↔チャーチルダウンズC など）を持つ
+- `803cfc3 feat: improve tanpuku X post copy`
+  - 新規: `lib/tanpukuXPost.ts`, `tests/tanpukuXPost.test.ts`
+  - 改修: `app/sim/page.tsx`
+  - `buildTanpukuPreRacePostText` が 280 文字制限内で full → short → noStats にフォールバック
+  - G1 サンプル数で警告フレーズ切替: `<10` → 「参考値ながら」 / `<30` → 「検証中データで」 / それ以上 → 「集計で」
+  - `TanpukuPostHorse` に `mark` / `markNote` を追加し、◎○▲の注釈表示に対応
+  - 「単複回収率重視のエンジンです。」を共通フッターとして固定
+
+### 次に触ってよい軽作業
+
+- `lib/predictionSnapshots.ts` の unused warning 解消
+- 未追跡の分析メモ・分析スクリプトは本体機能と混ぜない
+- `.claude/*` は基本 commit しない
+
+### Vault 連携
+
+- 想定 vault パス: `C:\Users\kouyu\OneDrive\デスクトップ\markdowns\HorseRaceSim`
+- 2026-05-11 時点、Linux サンドボックスの Claude セッションからは `/mnt/c/...` 経由で到達不可（OneDrive はマウントされていない）
+- vault 側に `horse-race-sim/decision-log` または `horse-race-sim/current-state` ノートを作る場合は、上記「方針」「重要コミット」「次に触ってよい軽作業」だけ転記すれば十分
+- セッション側からの読み書きが必要なときは、必要部分をリポジトリ内のファイルに反映するか、本ファイル末尾に追記する運用とする
