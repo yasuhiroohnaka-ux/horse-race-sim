@@ -63,12 +63,20 @@ function applyPreviousRaceOverrides(courseId: string, horses: Horse[], raceLabel
 
   return horses.map((horse) => {
     const override = overrideByHorseName.get(normalizeName(horse.name));
-    return override ? { ...horse, ...override } : horse;
+    return override
+      ? {
+          ...horse,
+          ...override,
+          previousRaceSource: "manual-override",
+          runnerPreviousRaceOverrideApplied: true,
+        }
+      : horse;
   });
 }
 
 function mapGeneratedHorse(courseId: string, h: GeneratedHorseSeed, index: number): Horse {
-  const previousRaceSeed = h as GeneratedHorseSeed & Partial<RunnerPreviousRaceOverride>;
+  const seed = h as GeneratedHorseSeed & Partial<RunnerPreviousRaceOverride> & Record<string, unknown>;
+  const previousRaceSeed = seed;
 
   return enrichHorse(courseId, {
     id: h.id,
@@ -81,6 +89,8 @@ function mapGeneratedHorse(courseId: string, h: GeneratedHorseSeed, index: numbe
     power: h.power,
     guts: h.guts,
     runningStyle: h.runningStyle,
+    runningStyleSource: typeof seed.runningStyleSource === "string" ? seed.runningStyleSource : undefined,
+    runningStyleInitialSource: typeof seed.runningStyleInitialSource === "string" ? seed.runningStyleInitialSource : undefined,
     favoriteCount: h.favoriteCount,
     xBuzzScore: h.xBuzzScore,
     predictionCount: h.predictionCount,
@@ -97,6 +107,8 @@ function mapGeneratedHorse(courseId: string, h: GeneratedHorseSeed, index: numbe
     previousRaceName: previousRaceSeed.previousRaceName,
     previousRaceDisplayName: previousRaceSeed.previousRaceDisplayName,
     previousFinish: previousRaceSeed.previousFinish,
+    previousRaceSource: typeof seed.previousRaceSource === "string" ? seed.previousRaceSource : undefined,
+    runnerPreviousRaceOverrideApplied: typeof seed.runnerPreviousRaceOverrideApplied === "boolean" ? seed.runnerPreviousRaceOverrideApplied : undefined,
     previousRaceCourse: previousRaceSeed.previousRaceCourse,
     previousRaceDistance: previousRaceSeed.previousRaceDistance,
     previousRaceTrackType: previousRaceSeed.previousRaceTrackType,
@@ -143,6 +155,7 @@ export function getDefaultHorses(courseId: string): Horse[] {
 
   const horses = getLegacyDefaultHorses(courseId).map((h, i) => {
     const g = generatedById.get(String(h.id));
+    const gSeed = g as (GeneratedHorseSeed & Record<string, unknown>) | undefined;
     const byName = drawByName.get(normalizeName(h.name));
     const gateNumber =
       Number.isFinite(byName) && (byName ?? 0) > 0
@@ -160,6 +173,11 @@ export function getDefaultHorses(courseId: string): Horse[] {
       favoriteCount: h.favoriteCount ?? g?.favoriteCount ?? 0,
       xBuzzScore: h.xBuzzScore ?? g?.xBuzzScore ?? 0,
       oddsSource: h.oddsSource ?? g?.oddsSource,
+      runningStyleSource:
+        h.runningStyleSource ?? (typeof gSeed?.runningStyleSource === "string" ? gSeed.runningStyleSource : undefined),
+      runningStyleInitialSource:
+        h.runningStyleInitialSource ??
+        (typeof gSeed?.runningStyleInitialSource === "string" ? gSeed.runningStyleInitialSource : undefined),
       condition: h.condition ?? 5,
       recentFormScore: h.recentFormScore ?? 0,
       recentAverageFinish: h.recentAverageFinish ?? 0,
@@ -167,6 +185,8 @@ export function getDefaultHorses(courseId: string): Horse[] {
       previousRaceName: h.previousRaceName,
       previousRaceDisplayName: h.previousRaceDisplayName,
       previousFinish: h.previousFinish,
+      previousRaceSource: h.previousRaceSource,
+      runnerPreviousRaceOverrideApplied: h.runnerPreviousRaceOverrideApplied,
       previousRaceCourse: h.previousRaceCourse,
       previousRaceDistance: h.previousRaceDistance,
       previousRaceTrackType: h.previousRaceTrackType,

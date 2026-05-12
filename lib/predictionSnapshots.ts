@@ -1,11 +1,18 @@
 import { buildRaceAnalysisRows, getScenarioProfile, round1 } from "./raceAnalysis";
 import {
+  buildRecommendedBetDecision,
+  buildUnknownRecommendedBetDecision,
+} from "@/lib/recommendedBetAction";
+import {
   Course,
   Horse,
   PredictionOrigin,
   PredictionSnapshot,
   PredictionSnapshotContributor,
   PredictionSnapshotContributorKey,
+  PredictionSnapshotSelectionLog,
+  PredictionSnapshotSelectionLogEntry,
+  PredictionSnapshotSourceStatus,
   PredictionSnapshotExpectation,
   RaceCondition,
 } from "./types";
@@ -97,6 +104,281 @@ function normalizeString(value: unknown): string | null {
   return normalized || null;
 }
 
+function normalizeNumber(value: unknown): number | null {
+  const normalized = Number(value);
+  return Number.isFinite(normalized) ? normalized : null;
+}
+
+function normalizeBoolean(value: unknown): boolean | null {
+  return typeof value === "boolean" ? value : null;
+}
+
+function normalizeCapturedAt(value: unknown): string {
+  const normalized = normalizeString(value);
+  const parsed = normalized ? new Date(normalized) : null;
+  return parsed && !Number.isNaN(parsed.getTime()) ? parsed.toISOString() : new Date().toISOString();
+}
+
+function parseTime(value: string | null | undefined): number | null {
+  const parsed = Date.parse(String(value ?? ""));
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+export function inferPredictionSnapshotSourceStatus(params: {
+  predictionOrigin: PredictionOrigin;
+  snapshotType?: "manual_snapshot" | "pre_race_final";
+  capturedAt: string;
+  scheduledStartTime?: string | null;
+}): PredictionSnapshotSourceStatus {
+  if (params.predictionOrigin === "backfill") return "retrospective";
+  if (params.predictionOrigin === "saved_manual" || params.snapshotType === "manual_snapshot") return "manual_snapshot";
+
+  const capturedTime = parseTime(params.capturedAt);
+  const scheduledTime = parseTime(params.scheduledStartTime);
+  if (capturedTime !== null && scheduledTime !== null) {
+    return capturedTime < scheduledTime ? "live_pre_race" : "retrospective";
+  }
+
+  return "unknown";
+}
+
+function derivePreviousRaceSource(horse: Horse & Record<string, unknown>): string | null {
+  const explicitSource = normalizeString(horse.previousRaceSource);
+  if (explicitSource) return explicitSource;
+  if (horse.runnerPreviousRaceOverrideApplied === true) return "manual-override";
+  if (normalizeString(horse.previousRaceName) || normalizeString(horse.previousRaceDisplayName)) return "generated";
+  return null;
+}
+
+function buildSelectionLogEntryFromRow(params: {
+  role: PredictionSnapshotSelectionLogEntry["role"];
+  row: ReturnType<typeof buildRaceAnalysisRows>[number] | null;
+  rank: number | null;
+  selectionMethod: PredictionSnapshotSelectionLogEntry["selectionMethod"];
+  selectionReason?: string | null;
+}): PredictionSnapshotSelectionLogEntry | null {
+  const { row } = params;
+  if (!row) return null;
+  return {
+    role: params.role,
+    horseId: row.horseId,
+    horseName: row.name,
+    rank: params.rank,
+    selectionMethod: params.selectionMethod,
+    selectionReason: normalizeString(params.selectionReason),
+    recommendedBetAction: "unknown",
+    recommendedBetDecision: buildUnknownRecommendedBetDecision(["missing_classification_hint"], ["selection_log_available"]),
+    score: normalizeNumber(row.abilityScore),
+    winProb: normalizeNumber(row.simWinRate),
+    realOdds: normalizeNumber(row.officialOdds),
+    placeOdds: null,
+    placeProb: null,
+    placeScore: null,
+    valueScore: null,
+    top3Stability: null,
+    overbetLabel: null,
+    scoreGap: null,
+    runnerUpHorseId: null,
+    runnerUpHorseName: null,
+    runnerUpPlaceScore: null,
+    runnerUpPlaceProb: null,
+  };
+}
+
+function buildSelectionLogEntryFromPair(params: {
+  role: PredictionSnapshotSelectionLogEntry["role"];
+  entry: Record<string, unknown> | null;
+  rank: number | null;
+  selectionMethod: PredictionSnapshotSelectionLogEntry["selectionMethod"];
+  runnerUp?: Record<string, unknown> | null;
+  sourceStatus: PredictionSnapshotSourceStatus;
+  livePreRaceEligible: boolean;
+  fieldSize: number | null;
+  oddsSource: string | null;
+  simulationLeaderHorseId?: string | null;
+}): PredictionSnapshotSelectionLogEntry | null {
+  const horse = (params.entry?.horse ?? null) as Record<string, unknown> | null;
+  const horseId = normalizeString(horse?.id ?? params.entry?.horseId);
+  if (!horseId) return null;
+  const runnerUp = params.runnerUp ?? null;
+  const classificationHint =
+    params.entry?.classificationHint && typeof params.entry.classificationHint === "object"
+      ? (params.entry.classificationHint as PredictionSnapshotSelectionLogEntry["classificationHint"])
+      : undefined;
+  const recommendedBetDecision = buildRecommendedBetDecision({
+    sourceStatus: params.sourceStatus,
+    livePreRaceEligible: params.livePreRaceEligible,
+    classificationHint,
+    explicitAction: params.entry?.recommendedBetAction,
+    winProb: normalizeNumber(params.entry?.winProb),
+    tanRoi: normalizeNumber(params.entry?.tanRoi),
+    scoreGap: normalizeNumber(params.entry?.scoreGap),
+    placeProb: normalizeNumber(params.entry?.placeProb),
+    top3Stability: normalizeNumber(params.entry?.top3Stability),
+    valueScore: normalizeNumber(params.entry?.valueScore),
+    fieldSize: params.fieldSize,
+    engineAgreement:
+      params.role === "honmei" && params.simulationLeaderHorseId
+        ? params.simulationLeaderHorseId === horseId
+        : null,
+    overbetLabel: normalizeString(params.entry?.overbetLabel),
+    oddsSource: normalizeString(horse?.oddsSource ?? params.entry?.oddsSource ?? params.oddsSource),
+    runningStyleSource: normalizeString(horse?.runningStyleSource),
+    previousRaceSource: normalizeString(horse?.previousRaceSource),
+    hasSelectionLog: true,
+  });
+  return {
+    role: params.role,
+    horseId,
+    horseName: normalizeString(horse?.name ?? params.entry?.horseName),
+    rank: params.rank,
+    selectionMethod: params.selectionMethod,
+    selectionReason: normalizeString(params.entry?.selectionReason),
+    classificationHint,
+    recommendedBetAction: recommendedBetDecision.action,
+    recommendedBetDecision,
+    score: normalizeNumber(params.entry?.score),
+    winProb: normalizeNumber(params.entry?.winProb),
+    realOdds: normalizeNumber(horse?.realOdds ?? params.entry?.realOdds),
+    placeOdds: normalizeNumber(params.entry?.placeOdds),
+    placeProb: normalizeNumber(params.entry?.placeProb),
+    placeScore: normalizeNumber(params.entry?.placeScore),
+    valueScore: normalizeNumber(params.entry?.valueScore),
+    top3Stability: normalizeNumber(params.entry?.top3Stability),
+    overbetLabel: normalizeString(params.entry?.overbetLabel),
+    scoreGap: normalizeNumber(params.entry?.scoreGap),
+    runnerUpHorseId: normalizeString(params.entry?.runnerUpHorseId ?? runnerUp?.horseId),
+    runnerUpHorseName: normalizeString(params.entry?.runnerUpHorseName ?? runnerUp?.horseName),
+    runnerUpPlaceScore: normalizeNumber(params.entry?.runnerUpPlaceScore ?? runnerUp?.placeScore),
+    runnerUpPlaceProb: normalizeNumber(params.entry?.runnerUpPlaceProb ?? runnerUp?.placeProb),
+  };
+}
+
+function createSelectionLog(params: {
+  capturedAt: string;
+  scoringVersion: string;
+  rows: ReturnType<typeof buildRaceAnalysisRows>;
+  honmeiHorseId: string | null;
+  watchHorseId: string | null;
+  tanpukuPair?: unknown;
+  opponentOverride?: {
+    horseId: string;
+    selectionMethod?: "rank2" | "light_adjusted" | "legacy_value" | "stable_next";
+  } | null;
+  valueHorseId?: string | null;
+  sourceStatus: PredictionSnapshotSourceStatus;
+  livePreRaceEligible: boolean;
+  fieldSize: number | null;
+  oddsSource: string | null;
+}): PredictionSnapshotSelectionLog {
+  const pair =
+    params.tanpukuPair && typeof params.tanpukuPair === "object"
+      ? (params.tanpukuPair as Record<string, unknown>)
+      : {};
+  const rankByHorseId = new Map(params.rows.map((row, index) => [row.horseId, index + 1]));
+  const rowByHorseId = new Map(params.rows.map((row) => [row.horseId, row]));
+  const entries: PredictionSnapshotSelectionLogEntry[] = [];
+
+  const simulationLeader = buildSelectionLogEntryFromRow({
+    role: "simulation_leader",
+    row: params.rows[0] ?? null,
+    rank: params.rows.length ? 1 : null,
+    selectionMethod: "simulation_rank",
+  });
+  if (simulationLeader) entries.push(simulationLeader);
+
+  const winPick = (pair.winPick ?? null) as Record<string, unknown> | null;
+  const opponentPick = (pair.opponentPick ?? null) as Record<string, unknown> | null;
+  const widePick = (pair.widePick ?? null) as Record<string, unknown> | null;
+  const valuePick = (pair.valuePick ?? null) as Record<string, unknown> | null;
+  const winRunnerUp = (pair.winRunnerUp ?? null) as Record<string, unknown> | null;
+  const valueRunnerUp = (pair.valueRunnerUp ?? null) as Record<string, unknown> | null;
+
+  const honmeiEntry =
+    buildSelectionLogEntryFromPair({
+      role: "honmei",
+      entry: winPick,
+      rank: rankByHorseId.get(normalizeString((winPick?.horse as Record<string, unknown> | undefined)?.id) ?? "") ?? null,
+      selectionMethod: "rank2",
+      runnerUp: winRunnerUp,
+      sourceStatus: params.sourceStatus,
+      livePreRaceEligible: params.livePreRaceEligible,
+      fieldSize: params.fieldSize,
+      oddsSource: params.oddsSource,
+      simulationLeaderHorseId: params.rows[0]?.horseId ?? null,
+    }) ??
+    buildSelectionLogEntryFromRow({
+      role: "honmei",
+      row: params.honmeiHorseId ? rowByHorseId.get(params.honmeiHorseId) ?? null : null,
+      rank: params.honmeiHorseId ? rankByHorseId.get(params.honmeiHorseId) ?? null : null,
+      selectionMethod: "simulation_rank",
+    });
+  if (honmeiEntry) entries.push(honmeiEntry);
+
+  const opponentEntry = buildSelectionLogEntryFromPair({
+    role: "opponent",
+    entry: opponentPick,
+    rank: rankByHorseId.get(normalizeString((opponentPick?.horse as Record<string, unknown> | undefined)?.id) ?? "") ?? null,
+    selectionMethod: params.opponentOverride?.selectionMethod ?? "stable_next",
+    sourceStatus: params.sourceStatus,
+    livePreRaceEligible: params.livePreRaceEligible,
+    fieldSize: params.fieldSize,
+    oddsSource: params.oddsSource,
+    simulationLeaderHorseId: params.rows[0]?.horseId ?? null,
+  });
+  if (opponentEntry) entries.push(opponentEntry);
+
+  const wideEntry = buildSelectionLogEntryFromPair({
+    role: "wide",
+    entry: widePick,
+    rank: rankByHorseId.get(normalizeString((widePick?.horse as Record<string, unknown> | undefined)?.id) ?? "") ?? null,
+    selectionMethod: "light_adjusted",
+    runnerUp: valueRunnerUp,
+    sourceStatus: params.sourceStatus,
+    livePreRaceEligible: params.livePreRaceEligible,
+    fieldSize: params.fieldSize,
+    oddsSource: params.oddsSource,
+    simulationLeaderHorseId: params.rows[0]?.horseId ?? null,
+  });
+  if (wideEntry) entries.push(wideEntry);
+
+  if (valuePick && valuePick !== widePick) {
+    const valueEntry = buildSelectionLogEntryFromPair({
+      role: "value",
+      entry: valuePick,
+      rank: rankByHorseId.get(normalizeString((valuePick?.horse as Record<string, unknown> | undefined)?.id) ?? "") ?? null,
+      selectionMethod: "legacy_value",
+      runnerUp: valueRunnerUp,
+      sourceStatus: params.sourceStatus,
+      livePreRaceEligible: params.livePreRaceEligible,
+      fieldSize: params.fieldSize,
+      oddsSource: params.oddsSource,
+      simulationLeaderHorseId: params.rows[0]?.horseId ?? null,
+    });
+    if (valueEntry) entries.push(valueEntry);
+  }
+
+  const watchRow = params.watchHorseId ? rowByHorseId.get(params.watchHorseId) ?? null : null;
+  const watchEntry = buildSelectionLogEntryFromRow({
+    role: "watch",
+    row: watchRow,
+    rank: params.watchHorseId ? rankByHorseId.get(params.watchHorseId) ?? null : null,
+    selectionMethod: "market_watch",
+  });
+  if (watchEntry) entries.push(watchEntry);
+
+  return {
+    createdAt: params.capturedAt,
+    scoringVersion: params.scoringVersion,
+    entries,
+    valueCandidateCount: normalizeNumber(pair.valueCandidateCount),
+    marketHeatSummary:
+      pair.marketHeatSummary && typeof pair.marketHeatSummary === "object"
+        ? (pair.marketHeatSummary as Record<string, unknown>)
+        : null,
+  };
+}
+
 export async function getScoringConfigHash(): Promise<string> {
   return sha256Hex(canonicalize(SCORING_CONFIG_SOURCE));
 }
@@ -167,6 +449,10 @@ export async function buildPredictionSnapshot(params: {
   venueKey?: string | null;
   raceNumber?: number | null;
   scheduledStartTime?: string | null;
+  capturedAt?: string | null;
+  sourceStatus?: PredictionSnapshotSourceStatus | null;
+  dataUpdatedAt?: string | null;
+  weeklyRacesUpdatedAt?: string | null;
   snapshotType?: "manual_snapshot" | "pre_race_final";
   oddsFetchedAt?: string | null;
   oddsSource?: string | null;
@@ -182,6 +468,8 @@ export async function buildPredictionSnapshot(params: {
   } | null;
   valueHorseId?: string | null;
   expectation?: PredictionSnapshotExpectation | null;
+  tanpukuPair?: unknown;
+  selectionLog?: PredictionSnapshotSelectionLog | null;
 }): Promise<PredictionSnapshot> {
   const {
     results,
@@ -196,6 +484,10 @@ export async function buildPredictionSnapshot(params: {
     venueKey = null,
     raceNumber = null,
     scheduledStartTime = null,
+    capturedAt: capturedAtParam = null,
+    sourceStatus: explicitSourceStatus = null,
+    dataUpdatedAt = null,
+    weeklyRacesUpdatedAt = null,
     snapshotType = "manual_snapshot",
     oddsFetchedAt = null,
     oddsSource = null,
@@ -204,10 +496,27 @@ export async function buildPredictionSnapshot(params: {
     opponentOverride = null,
     valueHorseId = null,
     expectation = null,
+    tanpukuPair = null,
+    selectionLog = null,
   } = params;
 
+  const capturedAt = normalizeCapturedAt(capturedAtParam);
   const rows = buildRaceAnalysisRows(results, horses, course, condition);
   const scoringConfigHash = await getScoringConfigHash();
+  const normalizedScoringVersion = normalizeScoringVersion(scoringVersion);
+  const resolvedOddsSource = resolveOddsSource(horses, oddsSource);
+  const sourceStatus =
+    explicitSourceStatus ??
+    inferPredictionSnapshotSourceStatus({
+      predictionOrigin,
+      snapshotType,
+      capturedAt,
+      scheduledStartTime,
+    });
+  const scheduledTime = parseTime(scheduledStartTime);
+  const capturedTime = parseTime(capturedAt);
+  const capturedBeforeScheduledStart =
+    scheduledTime !== null && capturedTime !== null ? capturedTime < scheduledTime : null;
   const honmeiHorseId = rows[0]?.horseId ?? null;
   const defaultOpponentRow = rows.find((row) => row.horseId !== honmeiHorseId) ?? null;
   const opponentHorseId = opponentOverride?.horseId ?? defaultOpponentRow?.horseId ?? null;
@@ -250,8 +559,17 @@ export async function buildPredictionSnapshot(params: {
       realOdds: row.officialOdds,
       edge: round1(row.simWinRate - row.officialImplied),
       runningStyle: horse.runningStyle,
+      runningStyleSource: normalizeString((horse as Horse & Record<string, unknown>).runningStyleSource),
+      runningStyleInitialSource: normalizeString((horse as Horse & Record<string, unknown>).runningStyleInitialSource),
       gateNumber: row.gateNumber,
       jockey: row.jockey,
+      oddsSource: resolveOddsSource([horse], resolvedOddsSource),
+      oddsFetchedAt,
+      previousRaceName: normalizeString(horse.previousRaceName),
+      previousRaceDisplayName: normalizeString(horse.previousRaceDisplayName),
+      previousFinish: normalizeNumber(horse.previousFinish),
+      previousRaceSource: derivePreviousRaceSource(horse as Horse & Record<string, unknown>),
+      runnerPreviousRaceOverrideApplied: normalizeBoolean((horse as Horse & Record<string, unknown>).runnerPreviousRaceOverrideApplied),
       majorContributors: pickMajorContributors({
         abilityScore: row.abilityScore,
         courseFit: profile.traitScores.courseFit,
@@ -263,12 +581,29 @@ export async function buildPredictionSnapshot(params: {
     };
   });
 
+  const finalSelectionLog =
+    selectionLog ??
+    createSelectionLog({
+      capturedAt,
+      scoringVersion: normalizedScoringVersion,
+      rows,
+      honmeiHorseId,
+      watchHorseId,
+      tanpukuPair,
+      opponentOverride,
+      valueHorseId,
+      sourceStatus,
+      livePreRaceEligible: sourceStatus === "live_pre_race",
+      fieldSize: horses.length,
+      oddsSource: resolvedOddsSource,
+    });
+
   return {
     snapshotId: createSnapshotId(),
     raceId: raceId ? String(raceId) : extractRaceId(course.id),
     courseId: course.id,
-    capturedAt: new Date().toISOString(),
-    snapshotTakenAt: new Date().toISOString(),
+    capturedAt,
+    snapshotTakenAt: capturedAt,
     snapshotType,
     raceDate,
     raceName: raceName ?? course.displayName ?? course.name,
@@ -276,8 +611,21 @@ export async function buildPredictionSnapshot(params: {
     venueKey,
     raceNumber: Number.isFinite(Number(raceNumber)) ? Number(raceNumber) : course.raceNumber ?? null,
     scheduledStartTime,
+    sourceStatus,
+    livePreRaceEligible: sourceStatus === "live_pre_race",
+    dataLineage: {
+      sourceStatus,
+      predictionOrigin,
+      capturedAt,
+      scheduledStartTime,
+      capturedBeforeScheduledStart,
+      dataUpdatedAt: normalizeString(dataUpdatedAt),
+      weeklyRacesUpdatedAt: normalizeString(weeklyRacesUpdatedAt),
+      oddsSource: resolvedOddsSource,
+      oddsFetchedAt,
+    },
     predictionOrigin,
-    scoringVersion: normalizeScoringVersion(scoringVersion),
+    scoringVersion: normalizedScoringVersion,
     modelFamily: PREDICTION_SNAPSHOT_MODEL_FAMILY,
     modelVersion: PREDICTION_SNAPSHOT_MODEL_VERSION,
     scoringConfigHash,
@@ -316,11 +664,12 @@ export async function buildPredictionSnapshot(params: {
     valueHorseId,
     watchHorseId,
     expectation,
+    selectionLog: finalSelectionLog,
     signalReasons,
     marketMeta: {
       fieldSize: horses.length,
       oddsFetchedAt,
-      oddsSource: resolveOddsSource(horses, oddsSource),
+      oddsSource: resolvedOddsSource,
     },
   };
 }

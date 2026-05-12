@@ -8,7 +8,8 @@ import {
 import type { DiagnosticsAggregationScope } from "@/lib/types";
 
 function normalizeAggregationScope(value: string | null): DiagnosticsAggregationScope {
-  return value === "all" ? "all" : "saved_only";
+  if (value === "all" || value === "live_pre_race_only") return value;
+  return "saved_only";
 }
 
 export async function GET(request: Request) {

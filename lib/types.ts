@@ -9,6 +9,17 @@ export type RunningStyle = "Nige" | "Senko" | "Sashi" | "Oikomi";
 // Values are UI-friendly so they can be displayed directly.
 // A separate confirmed classification may be introduced later for retrospective analysis.
 export type PickClassification = "win" | "place" | "skip";
+export type RecommendedBetAction = PickClassification | "unknown";
+export type RecommendedBetDecisionConfidence = "high" | "medium" | "low" | "unknown";
+export type RecommendedBetDecisionSource = "explicit_live_rule" | "safety_rule" | "fallback" | "unknown";
+
+export interface RecommendedBetDecision {
+  action: RecommendedBetAction;
+  confidence: RecommendedBetDecisionConfidence;
+  reasons: string[];
+  riskFlags: string[];
+  source: RecommendedBetDecisionSource;
+}
 
 export interface PickClassificationHint {
   classification: PickClassification;
@@ -21,8 +32,13 @@ export type Weather = "Sunny" | "Cloudy" | "Rain" | "Snow";
 export type WindDirection = "Headwind" | "Tailwind" | "Crosswind";
 export type PaceScenario = "Slow" | "Average" | "Fast";
 export type PredictionOrigin = "saved_live" | "saved_manual" | "backfill";
+export type PredictionSnapshotSourceStatus =
+  | "live_pre_race"
+  | "manual_snapshot"
+  | "retrospective"
+  | "unknown";
 export type ExpectationGrade = "S" | "A" | "B" | "C";
-export type DiagnosticsAggregationScope = "all" | "saved_only";
+export type DiagnosticsAggregationScope = "all" | "saved_only" | "live_pre_race_only";
 export type RaceSegment = "special" | "special_final12" | "final12" | "other";
 export type RaceDiagnosticsSegmentKey =
   | "special_only"
@@ -53,6 +69,8 @@ export interface Horse {
   previousRaceDisplayName?: string;
   previousRaceNames?: string[];
   previousFinish?: number;
+  previousRaceSource?: string;
+  runnerPreviousRaceOverrideApplied?: boolean;
   previousRaceCourse?: string;
   previousRaceDistance?: number;
   previousRaceTrackType?: "芝" | "ダート" | "障害" | string;
@@ -69,6 +87,9 @@ export interface Horse {
   favoriteCount?: number;
   xBuzzScore?: number;
   oddsSource?: string;
+  oddsFetchedAt?: string;
+  runningStyleSource?: string;
+  runningStyleInitialSource?: string;
   predictionCount: number;
   simulatedOdds?: number;
   expertOdds?: number;
@@ -248,10 +269,19 @@ export interface PredictionSnapshotRow {
   matchedTrendHints?: TrendHintMatchResult[];
   fairOdds: number | null;
   realOdds: number | null;
+  oddsSource?: string | null;
+  oddsFetchedAt?: string | null;
   edge: number;
   runningStyle: RunningStyle;
+  runningStyleSource?: string | null;
+  runningStyleInitialSource?: string | null;
   gateNumber: number;
   jockey: string;
+  previousRaceName?: string | null;
+  previousRaceDisplayName?: string | null;
+  previousFinish?: number | null;
+  previousRaceSource?: string | null;
+  runnerPreviousRaceOverrideApplied?: boolean | null;
   majorContributors: PredictionSnapshotContributor[];
 }
 
@@ -276,6 +306,60 @@ export interface PredictionSnapshotExpectation {
   };
 }
 
+export interface PredictionSnapshotDataLineage {
+  sourceStatus: PredictionSnapshotSourceStatus;
+  predictionOrigin: PredictionOrigin;
+  capturedAt: string;
+  scheduledStartTime: string | null;
+  capturedBeforeScheduledStart: boolean | null;
+  dataUpdatedAt: string | null;
+  weeklyRacesUpdatedAt?: string | null;
+  oddsSource: string | null;
+  oddsFetchedAt: string | null;
+}
+
+export type PredictionSnapshotSelectionRole =
+  | "simulation_leader"
+  | "honmei"
+  | "opponent"
+  | "wide"
+  | "value"
+  | "watch";
+
+export interface PredictionSnapshotSelectionLogEntry {
+  role: PredictionSnapshotSelectionRole;
+  horseId: string | null;
+  horseName: string | null;
+  rank: number | null;
+  selectionMethod: "rank2" | "light_adjusted" | "legacy_value" | "stable_next" | "simulation_rank" | "market_watch";
+  selectionReason: string | null;
+  classificationHint?: PickClassificationHint;
+  recommendedBetAction?: RecommendedBetAction;
+  recommendedBetDecision?: RecommendedBetDecision;
+  score: number | null;
+  winProb: number | null;
+  realOdds: number | null;
+  placeOdds: number | null;
+  placeProb: number | null;
+  placeScore: number | null;
+  valueScore: number | null;
+  top3Stability: number | null;
+  overbetLabel: string | null;
+  scoreGap: number | null;
+  runnerUpHorseId: string | null;
+  runnerUpHorseName: string | null;
+  runnerUpPlaceScore: number | null;
+  runnerUpPlaceProb: number | null;
+}
+
+export interface PredictionSnapshotSelectionLog {
+  createdAt: string;
+  scoringVersion: string;
+  entries: PredictionSnapshotSelectionLogEntry[];
+  valueCandidateCount: number | null;
+  marketHeatSummary: Record<string, unknown> | null;
+}
+
 export interface PredictionSnapshot {
   snapshotId: string;
   raceId: string;
@@ -289,6 +373,9 @@ export interface PredictionSnapshot {
   venueKey?: string | null;
   raceNumber?: number | null;
   scheduledStartTime?: string | null;
+  sourceStatus?: PredictionSnapshotSourceStatus;
+  livePreRaceEligible?: boolean;
+  dataLineage?: PredictionSnapshotDataLineage;
   predictionOrigin: PredictionOrigin;
   scoringVersion: string;
   modelFamily: string;
@@ -309,6 +396,7 @@ export interface PredictionSnapshot {
   valueHorseId: string | null;
   watchHorseId: string | null;
   expectation?: PredictionSnapshotExpectation | null;
+  selectionLog?: PredictionSnapshotSelectionLog;
   signalReasons: Record<string, PredictionSnapshotSignalReason>;
   marketMeta: PredictionSnapshotMarketMeta;
 }
@@ -375,6 +463,10 @@ export interface ReviewSelectionHorse {
   // This is set at prediction time and is NOT a retrospective confirmed label.
   // Legacy records without this field are treated as "unclassified".
   classificationHint?: PickClassificationHint;
+  // Display/evaluation betting action separated from legacy pickType/settlement buckets.
+  // Derived from prediction-time classificationHint when present; legacy records may be "unknown".
+  recommendedBetAction?: RecommendedBetAction;
+  recommendedBetDecision?: RecommendedBetDecision;
   tanOutcome?: "not_settled" | "hit" | "miss" | "hit_missing_payout";
   fukuOutcome?: "not_settled" | "hit" | "miss" | "hit_missing_payout";
   tanPayout?: number;
@@ -411,6 +503,8 @@ export interface RaceReviewRecord {
   createdAt: string;
   updatedAt: string;
   snapshotTakenAt: string | null;
+  snapshotSourceStatus?: PredictionSnapshotSourceStatus | null;
+  livePreRaceEligible?: boolean;
   resultFetchedAt: string | null;
   payoutFetchedAt: string | null;
   lastTriedAt: string | null;
@@ -443,6 +537,7 @@ export interface WeeklyDiagnosticsMeta {
   weekKey: string;
   generatedAt: string;
   aggregationScope: DiagnosticsAggregationScope;
+  sourceStatusSummary?: ReviewSourceStatusSummary;
   scoringVersion: string | null;
   modelVersion: string | null;
   scoringConfigHash: string | null;
@@ -663,20 +758,48 @@ export type WeeklyDiagnosticRecommendationCategory =
   | "value_core"
   | "agreement"
   | "ranking"
-  | "longshot";
+  | "longshot"
+  | "data_quality";
 
 export type WeeklyDiagnosticRecommendationTargetStyle =
   | "place_hit_rate"
   | "place_return_rate"
-  | "balanced";
+  | "balanced"
+  | "sample_quality";
 
 export type WeeklyDiagnosticRecommendationPriority = "high" | "medium" | "low";
+export type WeeklyDiagnosticRecommendationAction =
+  | "collect_live_pre_race_sample"
+  | "inspect_retrospective_only"
+  | "logic_review_candidate";
+
+export interface ReviewSourceStatusSummary {
+  totalRecords: number;
+  reviewReadyRecords: number;
+  livePreRaceRecords: number;
+  retrospectiveRecords: number;
+  manualSnapshotRecords: number;
+  unknownLegacyRecords: number;
+  livePreRaceEligibleTrue: number;
+  livePreRaceEligibleFalse: number;
+}
+
+export interface PredictionSnapshotSourceStatusSummary {
+  totalSnapshots: number;
+  livePreRaceSnapshots: number;
+  retrospectiveSnapshots: number;
+  manualSnapshotSnapshots: number;
+  unknownLegacySnapshots: number;
+  livePreRaceEligibleTrue: number;
+  livePreRaceEligibleFalse: number;
+}
 
 export interface WeeklyDiagnosticRecommendation {
   id: string;
   category: WeeklyDiagnosticRecommendationCategory;
   targetStyle: WeeklyDiagnosticRecommendationTargetStyle;
   priority: WeeklyDiagnosticRecommendationPriority;
+  recommendationAction?: WeeklyDiagnosticRecommendationAction;
   title: string;
   summary: string;
   evidence: Record<string, number | string | boolean | null>;

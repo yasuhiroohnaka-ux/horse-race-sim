@@ -12,7 +12,9 @@ import type {
   ExpectationGrade,
   PredictionOrigin,
   PredictionSnapshot,
+  PredictionSnapshotSourceStatus,
   RaceReviewRecord,
+  ReviewSourceStatusSummary,
   ReviewSelectionHorse,
 } from "@/lib/types";
 
@@ -25,7 +27,9 @@ type PerformanceLookupResponse = {
   reviewRecordsByRaceId: Record<string, RaceReviewRecord>;
   settlementsByRaceId: Record<string, unknown>;
   settlementsByCourseId: Record<string, unknown>;
-  summary: unknown;
+  summary?: {
+    sourceStatus?: ReviewSourceStatusSummary;
+  } | null;
   categoryReturnStats?: CategoryReturnStat[];
 };
 
@@ -39,10 +43,14 @@ type ArchiveSourceRace = Partial<GeneratedReviewRace> & {
 };
 
 type DataQualityFlag =
+  | "not live_pre_race"
+  | "retrospective"
+  | "legacy source unknown"
   | "backfill"
   | "saved_manual"
   | "odds missing"
   | "classification missing"
+  | "recommendedBetAction unknown"
   | "snapshot after race"
   | "payout fallback";
 
@@ -71,6 +79,8 @@ type ArchiveRow = {
   realOdds: number | null;
   snapshotTakenAt: string | null;
   snapshotOrigin: PredictionOrigin | null;
+  sourceStatus: PredictionSnapshotSourceStatus;
+  livePreRaceEligible: boolean;
   dataQualityFlags: DataQualityFlag[];
   record: RaceReviewRecord | null;
   snapshot: PredictionSnapshot | null;
@@ -81,6 +91,7 @@ type RaceBandFilter = "all" | "9-10" | "11" | "12";
 type HitFilter = "all" | "tan" | "fuku" | "miss";
 type AgreementFilter = "all" | "match" | "mismatch";
 type OriginFilter = "all" | PredictionOrigin;
+type SourceStatusFilter = "all" | PredictionSnapshotSourceStatus;
 
 type Filters = {
   from: string;
@@ -90,6 +101,7 @@ type Filters = {
   expectation: "all" | ExpectationGrade;
   hit: HitFilter;
   origin: OriginFilter;
+  sourceStatus: SourceStatusFilter;
   agreement: AgreementFilter;
   query: string;
 };
@@ -143,12 +155,14 @@ const EMPTY_FILTERS: Filters = {
   expectation: "all",
   hit: "all",
   origin: "all",
+  sourceStatus: "all",
   agreement: "all",
   query: "",
 };
 
 const GRADES: ExpectationGrade[] = ["S", "A", "B", "C"];
 const ORIGINS: PredictionOrigin[] = ["saved_live", "saved_manual", "backfill"];
+const SOURCE_STATUSES: PredictionSnapshotSourceStatus[] = ["live_pre_race", "retrospective", "manual_snapshot", "unknown"];
 const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
 
 function getRaceKey(race: { raceId?: string | null; courseId?: string | null }) {
@@ -285,6 +299,9 @@ function gradeTone(grade: ExpectationGrade | null) {
 }
 
 function qualityTone(flag: DataQualityFlag) {
+  if (flag === "not live_pre_race") return "bg-amber-100 text-amber-800";
+  if (flag === "retrospective") return "bg-rose-100 text-rose-700";
+  if (flag === "legacy source unknown") return "bg-slate-200 text-slate-700";
   if (flag === "backfill") return "bg-purple-100 text-purple-700";
   if (flag === "saved_manual") return "bg-cyan-100 text-cyan-800";
   if (flag === "snapshot after race") return "bg-rose-100 text-rose-700";
@@ -354,6 +371,30 @@ function isSnapshotAfterRace(snapshotTakenAt: string | null, raceDate: string, s
   return snapshotDate > raceDate;
 }
 
+function resolveRowSourceStatus(record: RaceReviewRecord | null, snapshot: PredictionSnapshot | null): PredictionSnapshotSourceStatus {
+  const explicit = record?.snapshotSourceStatus ?? snapshot?.sourceStatus ?? snapshot?.dataLineage?.sourceStatus;
+  if (explicit === "live_pre_race" || explicit === "retrospective" || explicit === "manual_snapshot" || explicit === "unknown") {
+    return explicit;
+  }
+  if (snapshot?.predictionOrigin === "backfill") return "retrospective";
+  if (snapshot?.predictionOrigin === "saved_manual" || snapshot?.snapshotType === "manual_snapshot") return "manual_snapshot";
+
+  const captured = Date.parse(String(record?.snapshotTakenAt ?? snapshot?.snapshotTakenAt ?? snapshot?.capturedAt ?? ""));
+  const scheduled = Date.parse(String(record?.meta.scheduledStartTime ?? snapshot?.scheduledStartTime ?? ""));
+  if (Number.isFinite(captured) && Number.isFinite(scheduled)) {
+    return captured < scheduled ? "live_pre_race" : "retrospective";
+  }
+  const raceDate = record?.meta.raceDate ?? snapshot?.raceDate ?? null;
+  if (Number.isFinite(captured) && raceDate && new Date(captured).toISOString().slice(0, 10) > raceDate) {
+    return "retrospective";
+  }
+  return "unknown";
+}
+
+function resolveLivePreRaceEligible(record: RaceReviewRecord | null, snapshot: PredictionSnapshot | null) {
+  return record?.livePreRaceEligible === true || snapshot?.livePreRaceEligible === true || resolveRowSourceStatus(record, snapshot) === "live_pre_race";
+}
+
 function getQualityFlags(params: {
   record: RaceReviewRecord | null;
   snapshot: PredictionSnapshot | null;
@@ -362,10 +403,15 @@ function getQualityFlags(params: {
 }): DataQualityFlag[] {
   const { record, snapshot, rowRealOdds, raceDate } = params;
   const flags: DataQualityFlag[] = [];
+  const sourceStatus = resolveRowSourceStatus(record, snapshot);
+  if (sourceStatus !== "live_pre_race") flags.push("not live_pre_race");
+  if (sourceStatus === "retrospective") flags.push("retrospective");
+  if (sourceStatus === "unknown") flags.push("legacy source unknown");
   if (snapshot?.predictionOrigin === "backfill") flags.push("backfill");
   if (snapshot?.predictionOrigin === "saved_manual") flags.push("saved_manual");
   if (!rowRealOdds || rowRealOdds <= 0) flags.push("odds missing");
   if (!record?.honmei?.classificationHint) flags.push("classification missing");
+  if (!record?.honmei?.recommendedBetAction || record.honmei.recommendedBetAction === "unknown") flags.push("recommendedBetAction unknown");
   if (isSnapshotAfterRace(record?.snapshotTakenAt ?? snapshot?.snapshotTakenAt ?? snapshot?.capturedAt ?? null, raceDate, record?.meta.scheduledStartTime)) {
     flags.push("snapshot after race");
   }
@@ -424,6 +470,7 @@ function buildArchiveRow(params: {
         : null;
   const realOdds = Number(honmei?.realOdds ?? honmeiRow?.realOdds ?? 0) || null;
   const date = getRaceDate(record, race, snapshot);
+  const sourceStatus = resolveRowSourceStatus(record, snapshot);
 
   return {
     key: raceId || courseId,
@@ -452,6 +499,8 @@ function buildArchiveRow(params: {
     realOdds,
     snapshotTakenAt: record?.snapshotTakenAt ?? snapshot?.snapshotTakenAt ?? snapshot?.capturedAt ?? null,
     snapshotOrigin: snapshot?.predictionOrigin ?? null,
+    sourceStatus,
+    livePreRaceEligible: resolveLivePreRaceEligible(record, snapshot),
     dataQualityFlags: getQualityFlags({ record, snapshot, rowRealOdds: realOdds, raceDate: date }),
     record,
     snapshot,
@@ -473,6 +522,7 @@ function matchesFilters(row: ArchiveRow, filters: Filters, options?: { ignoreDat
   if (filters.hit === "fuku" && row.fukuOutcome !== "hit") return false;
   if (filters.hit === "miss" && (row.tanOutcome === "hit" || row.fukuOutcome === "hit" || row.fukuOutcome === "not_settled")) return false;
   if (filters.origin !== "all" && row.snapshotOrigin !== filters.origin) return false;
+  if (filters.sourceStatus !== "all" && row.sourceStatus !== filters.sourceStatus) return false;
   if (filters.agreement === "match" && row.agreement !== true) return false;
   if (filters.agreement === "mismatch" && row.agreement !== false) return false;
   const query = filters.query.trim().toLowerCase();
@@ -771,6 +821,7 @@ export default function ArchivePage() {
   const [snapshotsByRaceId, setSnapshotsByRaceId] = useState<Record<string, PredictionSnapshot>>({});
   const [reviewRecordsByRaceId, setReviewRecordsByRaceId] = useState<Record<string, RaceReviewRecord>>({});
   const [categoryReturnStats, setCategoryReturnStats] = useState<CategoryReturnStat[]>([]);
+  const [sourceStatusSummary, setSourceStatusSummary] = useState<ReviewSourceStatusSummary | null>(null);
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -797,6 +848,7 @@ export default function ArchivePage() {
       setSnapshotsByRaceId(snapshotJson.snapshotsByRaceId ?? {});
       setReviewRecordsByRaceId(performanceJson.reviewRecordsByRaceId ?? {});
       setCategoryReturnStats(performanceJson.categoryReturnStats ?? []);
+      setSourceStatusSummary(performanceJson.summary?.sourceStatus ?? null);
       setIsLoading(false);
     };
 
@@ -873,6 +925,35 @@ export default function ArchivePage() {
             </div>
           </div>
         </header>
+
+        <section className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-sm font-bold text-amber-950">sourceStatus guard</p>
+              <p className="mt-1 text-xs text-amber-800">
+                live_pre_race only is valid for live prediction performance. Retrospective / manual / unknown rows are shown for review, not live ROI.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4 lg:min-w-[520px]">
+              <div className="rounded-md bg-white/70 p-2">
+                <p className="font-semibold text-slate-500">live_pre_race</p>
+                <p className="text-lg font-bold text-emerald-700">{sourceStatusSummary?.livePreRaceRecords ?? 0}</p>
+              </div>
+              <div className="rounded-md bg-white/70 p-2">
+                <p className="font-semibold text-slate-500">retrospective</p>
+                <p className="text-lg font-bold text-amber-800">{sourceStatusSummary?.retrospectiveRecords ?? 0}</p>
+              </div>
+              <div className="rounded-md bg-white/70 p-2">
+                <p className="font-semibold text-slate-500">manual</p>
+                <p className="text-lg font-bold text-slate-800">{sourceStatusSummary?.manualSnapshotRecords ?? 0}</p>
+              </div>
+              <div className="rounded-md bg-white/70 p-2">
+                <p className="font-semibold text-slate-500">unknown</p>
+                <p className="text-lg font-bold text-rose-700">{sourceStatusSummary?.unknownLegacyRecords ?? 0}</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section className="mb-6 grid gap-3 lg:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-lg border border-slate-200 bg-white p-4">
@@ -1034,7 +1115,7 @@ export default function ArchivePage() {
                   <SegmentButton active={filters.hit === "miss"} value="miss" label="外れ" onClick={(value) => updateFilter("hit", value)} />
                 </div>
               </div>
-              <div className="grid gap-3 lg:grid-cols-2">
+              <div className="grid gap-3 lg:grid-cols-3">
                 <label className="text-sm font-semibold text-slate-600">
                   snapshotOrigin
                   <select
@@ -1046,6 +1127,21 @@ export default function ArchivePage() {
                     {ORIGINS.map((origin) => (
                       <option key={origin} value={origin}>
                         {origin}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="text-sm font-semibold text-slate-600">
+                  sourceStatus
+                  <select
+                    value={filters.sourceStatus}
+                    onChange={(event) => updateFilter("sourceStatus", event.target.value as SourceStatusFilter)}
+                    className="mt-1 h-10 w-full rounded-md border border-slate-200 px-3 text-sm text-slate-900"
+                  >
+                    <option value="all">all</option>
+                    {SOURCE_STATUSES.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
                       </option>
                     ))}
                   </select>
@@ -1151,6 +1247,7 @@ export default function ArchivePage() {
                   <th className="px-3 py-3 text-right">scoreGap</th>
                   <th className="px-3 py-3 text-right">realOdds</th>
                   <th className="px-3 py-3">snapshotOrigin</th>
+                  <th className="px-3 py-3">sourceStatus</th>
                   <th className="px-3 py-3">dataQuality</th>
                 </tr>
               </thead>
@@ -1184,6 +1281,11 @@ export default function ArchivePage() {
                     <td className="px-3 py-3 text-right font-mono">{formatScoreGap(row.scoreGap)}</td>
                     <td className="px-3 py-3 text-right font-mono">{formatOdds(row.realOdds)}</td>
                     <td className="whitespace-nowrap px-3 py-3">{row.snapshotOrigin ?? "-"}</td>
+                    <td className="whitespace-nowrap px-3 py-3">
+                      <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${row.livePreRaceEligible ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-800"}`}>
+                        {row.sourceStatus}
+                      </span>
+                    </td>
                     <td className="px-3 py-3">
                       <div className="flex max-w-64 flex-wrap gap-1">
                         {row.dataQualityFlags.length ? row.dataQualityFlags.map((flag) => (
@@ -1237,8 +1339,14 @@ export default function ArchivePage() {
               <Field label="snapshotTakenAt" value={formatTimestamp(selectedRow.snapshotTakenAt)} />
               <Field label="raceDate" value={selectedRow.date || "-"} />
               <Field label="snapshotOrigin" value={selectedRow.snapshotOrigin ?? "-"} />
+              <Field label="sourceStatus" value={selectedRow.sourceStatus} />
+              <Field label="livePreRaceEligible" value={selectedRow.livePreRaceEligible ? "true" : "false"} />
               <Field label="dataQuality flags" value={selectedRow.dataQualityFlags.length ? selectedRow.dataQualityFlags.join(" / ") : "ok"} />
               <Field label="classificationHint" value={selectedRow.honmei?.classificationHint ? `${selectedRow.honmei.classificationHint.classification} (${Math.round(selectedRow.honmei.classificationHint.confidence * 100)}%) ${selectedRow.honmei.classificationHint.reason ?? ""}` : "-"} />
+              <Field label="recommendedBetAction" value={selectedRow.honmei?.recommendedBetAction ?? "-"} />
+              <Field label="recommendedBetDecision" value={selectedRow.honmei?.recommendedBetDecision ? `${selectedRow.honmei.recommendedBetDecision.action} / ${selectedRow.honmei.recommendedBetDecision.confidence} / ${selectedRow.honmei.recommendedBetDecision.source}` : "-"} />
+              <Field label="decision reasons" value={selectedRow.honmei?.recommendedBetDecision?.reasons?.length ? selectedRow.honmei.recommendedBetDecision.reasons.join(" / ") : "-"} />
+              <Field label="decision riskFlags" value={selectedRow.honmei?.recommendedBetDecision?.riskFlags?.length ? selectedRow.honmei.recommendedBetDecision.riskFlags.join(" / ") : "-"} />
               <Field label="selectionReason" value={selectedRow.honmei?.selectionReason ?? "-"} />
               <Field label="raceId" value={selectedRow.raceId || "-"} />
             </div>

@@ -17,7 +17,13 @@ import {
   normalizePredictionOrigin,
   normalizeScoringVersion,
 } from "@/lib/predictionSnapshots";
+import { normalizeRecommendedBetAction } from "@/lib/recommendedBetAction";
 import { loadReviewRecords } from "@/lib/reviewRecords";
+import {
+  buildReviewSourceStatusSummary,
+  isLivePreRaceEligible,
+  resolveSnapshotSourceStatus,
+} from "@/lib/sourceStatus";
 import {
   getWidePayoutByHorseNumbers,
   hasWidePayoutTable,
@@ -30,9 +36,13 @@ import {
 import type {
   DiagnosticsAggregationScope,
   ExpectationGrade,
+  PickClassificationHint,
   PredictionOrigin,
   PredictionSnapshot,
   RaceDiagnosticsSegmentKey,
+  RaceReviewRecord,
+  RecommendedBetAction,
+  ReviewSourceStatusSummary,
   WeeklyDiagnostics,
   WeeklyDiagnosticsEvaluation,
   WeeklyDiagnosticsExpectationGradeCounts,
@@ -96,6 +106,8 @@ type RecommendationRecord = {
   runnerUpPlaceScore?: unknown;
   runnerUpPlaceProb?: unknown;
   overbetLabel?: unknown;
+  classificationHint?: unknown;
+  recommendedBetAction?: unknown;
 };
 
 type RecommendationSettlement = {
@@ -131,6 +143,8 @@ type RecommendationSettlement = {
   runnerUpPlaceScore: number;
   runnerUpPlaceProb: number;
   overbetLabel: string | null;
+  classificationHint: PickClassificationHint | null;
+  recommendedBetAction: RecommendedBetAction;
 };
 
 type RecommendationSettlementBundle = {
@@ -157,6 +171,7 @@ type DiagnosticsContext = {
   reviewsByRaceId: Record<string, GeneratedReviewRecord>;
   widePayoutsByRaceId: Record<string, RaceWidePayouts>;
   horseLookupsByRaceId: Record<string, RaceHorseLookup>;
+  sourceStatusSummary: ReviewSourceStatusSummary;
 };
 
 type WeeklyDiagnosticsCore = Omit<WeeklyDiagnostics, "meta" | "segments" | "recommendations">;
@@ -203,8 +218,22 @@ function normalizePayoutSource(value: unknown): PayoutSource {
   return value === "official" ? "official" : "missing";
 }
 
+function normalizeClassificationHint(value: unknown): PickClassificationHint | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = value as Record<string, unknown>;
+  const classification = raw.classification;
+  if (classification !== "win" && classification !== "place" && classification !== "skip") return null;
+  const confidence = Number(raw.confidence);
+  return {
+    classification,
+    confidence: Number.isFinite(confidence) ? confidence : 0,
+    reason: normalizeString(raw.reason),
+  };
+}
+
 function normalizeAggregationScope(value: DiagnosticsAggregationScope | string | null | undefined): DiagnosticsAggregationScope {
-  return value === "saved_only" ? "saved_only" : "all";
+  if (value === "saved_only" || value === "live_pre_race_only") return value;
+  return "all";
 }
 
 function inferRecommendationOrigin(record: RecommendationRecord): PredictionOrigin {
@@ -215,6 +244,33 @@ function inferRecommendationOrigin(record: RecommendationRecord): PredictionOrig
 
 function includePredictionOrigin(origin: PredictionOrigin, scope: DiagnosticsAggregationScope) {
   return scope === "all" || origin !== "backfill";
+}
+
+function includeSnapshotInScope(
+  snapshot: PredictionSnapshot | null | undefined,
+  scope: DiagnosticsAggregationScope,
+  fallback?: {
+    raceDate?: unknown;
+    scheduledStartTime?: unknown;
+    snapshotTakenAt?: unknown;
+    livePreRaceEligible?: unknown;
+    snapshotSourceStatus?: unknown;
+  }
+) {
+  if (scope === "all") return true;
+  if (!snapshot) return false;
+  if (scope === "live_pre_race_only") {
+    return isLivePreRaceEligible(snapshot, fallback);
+  }
+  return includePredictionOrigin(normalizePredictionOrigin(snapshot.predictionOrigin, DEFAULT_PREDICTION_ORIGIN), scope);
+}
+
+function filterRecordsByScope(records: RaceReviewRecord[], scope: DiagnosticsAggregationScope) {
+  if (scope === "all") return records;
+  if (scope === "live_pre_race_only") {
+    return records.filter((record) => isLivePreRaceEligible(record.snapshot, record));
+  }
+  return records.filter((record) => record.snapshot?.predictionOrigin !== "backfill");
 }
 
 function extractRaceId(courseId: string): string | null {
@@ -295,6 +351,7 @@ function normalizeRecommendation(value: unknown): RecommendationSettlement | nul
   const horseId = normalizeString(record.horseId);
   const horseName = normalizeString(record.horseName);
   if (!courseId || !horseId || !horseName || !isRecommendationPickType(record.pickType)) return null;
+  const classificationHint = normalizeClassificationHint(record.classificationHint);
 
   return {
     courseId,
@@ -331,6 +388,8 @@ function normalizeRecommendation(value: unknown): RecommendationSettlement | nul
     runnerUpPlaceScore: normalizeNumber(record.runnerUpPlaceScore),
     runnerUpPlaceProb: normalizeNumber(record.runnerUpPlaceProb),
     overbetLabel: typeof record.overbetLabel === "string" ? record.overbetLabel : null,
+    classificationHint,
+    recommendedBetAction: normalizeRecommendedBetAction(record.recommendedBetAction),
   };
 }
 
@@ -358,7 +417,7 @@ async function loadLatestSnapshotsByRaceId(scope: DiagnosticsAggregationScope) {
   const latestByRaceId: Record<string, PredictionSnapshot> = {};
   const reviewRecords = await loadReviewRecords();
   for (const [raceId, record] of Object.entries(reviewRecords)) {
-    if (!record.snapshot || !includePredictionOrigin(record.snapshot.predictionOrigin, scope)) continue;
+    if (!record.snapshot || !includeSnapshotInScope(record.snapshot, scope, record)) continue;
     latestByRaceId[raceId] = toNormalizedSnapshot(record.snapshot);
   }
 
@@ -373,7 +432,7 @@ async function loadLatestSnapshotsByRaceId(scope: DiagnosticsAggregationScope) {
       }
       if (!isPredictionSnapshot(parsed)) continue;
       const normalized = toNormalizedSnapshot(parsed);
-      if (!normalized.raceId || !includePredictionOrigin(normalized.predictionOrigin, scope)) continue;
+      if (!normalized.raceId || !includeSnapshotInScope(normalized, scope)) continue;
       if (latestByRaceId[normalized.raceId]?.snapshotType === "pre_race_final") continue;
       const existing = latestByRaceId[normalized.raceId];
       if (!existing || toTimestamp(normalized.capturedAt) >= toTimestamp(existing.capturedAt)) {
@@ -394,7 +453,11 @@ async function loadSettlementsByRaceId(scope: DiagnosticsAggregationScope) {
 
   for (const record of Object.values(reviewRecords)) {
     const snapshotOrigin = record.snapshot?.predictionOrigin ?? "saved_live";
-    if (!includePredictionOrigin(snapshotOrigin, scope)) continue;
+    if (scope === "live_pre_race_only") {
+      if (!isLivePreRaceEligible(record.snapshot, record)) continue;
+    } else if (!includePredictionOrigin(snapshotOrigin, scope)) {
+      continue;
+    }
 
     const win = record.honmei
       ? {
@@ -430,6 +493,8 @@ async function loadSettlementsByRaceId(scope: DiagnosticsAggregationScope) {
           runnerUpPlaceScore: Number(record.honmei.runnerUpPlaceScore ?? 0),
           runnerUpPlaceProb: Number(record.honmei.runnerUpPlaceProb ?? 0),
           overbetLabel: record.honmei.overbetLabel ?? null,
+          classificationHint: record.honmei.classificationHint ?? null,
+          recommendedBetAction: normalizeRecommendedBetAction(record.honmei.recommendedBetAction),
         }
       : null;
 
@@ -471,6 +536,8 @@ async function loadSettlementsByRaceId(scope: DiagnosticsAggregationScope) {
           runnerUpPlaceScore: Number(normalizedValueSource.runnerUpPlaceScore ?? 0),
           runnerUpPlaceProb: Number(normalizedValueSource.runnerUpPlaceProb ?? 0),
           overbetLabel: normalizedValueSource.overbetLabel ?? null,
+          classificationHint: normalizedValueSource.classificationHint ?? null,
+          recommendedBetAction: normalizeRecommendedBetAction(normalizedValueSource.recommendedBetAction),
         }
       : null;
 
@@ -1067,13 +1134,15 @@ function toRepresentativeRace(
 
 export async function loadWeeklyDiagnosticsContext(scope: DiagnosticsAggregationScope = "all"): Promise<DiagnosticsContext> {
   const normalizedScope = normalizeAggregationScope(scope);
-  const [snapshotsByRaceId, settlementsByRaceId, reviewsByRaceId, widePayoutsByRaceId, horseLookupsByRaceId] = await Promise.all([
+  const [snapshotsByRaceId, settlementsByRaceId, reviewsByRaceId, widePayoutsByRaceId, horseLookupsByRaceId, reviewRecordsByRaceId] = await Promise.all([
     loadLatestSnapshotsByRaceId(normalizedScope),
     loadSettlementsByRaceId(normalizedScope),
     loadGeneratedReviewsByRaceId(),
     loadWidePayoutsByRaceId(),
     loadHorseLookupsByRaceId(),
+    loadReviewRecords(),
   ]);
+  const scopedReviewRecords = filterRecordsByScope(Object.values(reviewRecordsByRaceId), normalizedScope);
 
   return {
     scope: normalizedScope,
@@ -1083,6 +1152,7 @@ export async function loadWeeklyDiagnosticsContext(scope: DiagnosticsAggregation
     reviewsByRaceId,
     widePayoutsByRaceId,
     horseLookupsByRaceId,
+    sourceStatusSummary: buildReviewSourceStatusSummary(scopedReviewRecords),
   };
 }
 
@@ -1639,6 +1709,7 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
       weekKey,
       generatedAt: new Date().toISOString(),
       aggregationScope: context.scope,
+      sourceStatusSummary: context.sourceStatusSummary,
       scoringVersion: scoringVersions.length === 1 ? scoringVersions[0] : null,
       modelVersion: modelVersions.length === 1 ? modelVersions[0] : null,
       scoringConfigHash: scoringConfigHashes.length === 1 ? scoringConfigHashes[0] : null,

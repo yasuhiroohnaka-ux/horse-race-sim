@@ -4,6 +4,7 @@ import type {
   ExpectationGrade,
   PredictionSnapshot,
   PredictionSnapshotExpectation,
+  PredictionSnapshotSelectionLogEntry,
   RaceReviewRecord,
   ReviewPairMetrics,
   ReviewRaceMeta,
@@ -11,6 +12,12 @@ import type {
   ReviewSelectionHorse,
 } from "@/lib/types";
 import { normalizeLegacyReviewStatus } from "@/lib/reviewStatus";
+import { normalizeRecommendedBetAction, normalizeRecommendedBetDecision } from "@/lib/recommendedBetAction";
+import {
+  isLivePreRaceEligible,
+  normalizeSnapshotSourceStatus,
+  resolveSnapshotSourceStatus,
+} from "@/lib/sourceStatus";
 
 const ROOT = process.cwd();
 const DATA_DIR = path.join(ROOT, "data");
@@ -104,6 +111,18 @@ export function buildSelectionHorseFromSnapshot(snapshot: PredictionSnapshot | n
   if (!snapshot || !horseId) return null;
   const row = snapshot.rankedRows.find((entry) => String(entry.horseId) === String(horseId));
   if (!row) return null;
+  const logEntries = snapshot.selectionLog?.entries?.filter((entry) => String(entry.horseId ?? "") === String(horseId)) ?? [];
+  const rolePriority =
+    snapshot.opponentHorseId === horseId
+      ? ["opponent", "honmei", "simulation_leader"]
+      : snapshot.valueHorseId === horseId
+        ? ["wide", "value", "honmei", "simulation_leader"]
+        : snapshot.honmeiHorseId === horseId
+          ? ["honmei", "simulation_leader"]
+          : ["honmei", "opponent", "wide", "value", "simulation_leader", "watch"];
+  const logEntry = rolePriority
+    .flatMap((role) => logEntries.filter((entry) => entry.role === role))
+    .at(0) as PredictionSnapshotSelectionLogEntry | undefined;
   return {
     horseId: row.horseId,
     externalHorseId: normalizeString(row.externalHorseId),
@@ -112,21 +131,29 @@ export function buildSelectionHorseFromSnapshot(snapshot: PredictionSnapshot | n
     score: normalizeNumber(row.score),
     winProb: normalizeNumber(row.winProb),
     realOdds: normalizeNumber(row.realOdds),
-    placeOdds: null,
-    placeProb: null,
-    placeScore: null,
-    valueScore: null,
+    placeOdds: normalizeNumber(logEntry?.placeOdds),
+    placeProb: normalizeNumber(logEntry?.placeProb),
+    placeScore: normalizeNumber(logEntry?.placeScore),
+    valueScore: normalizeNumber(logEntry?.valueScore),
     selectionMethod:
-      snapshot.opponentHorseId && snapshot.opponentHorseId === row.horseId
-        ? snapshot.opponentSelectionMethod ?? "stable_next"
-        : undefined,
-    selectionReason: normalizeString(snapshot.signalReasons?.[row.horseId]?.signalReason),
-    overbetLabel: null,
-    scoreGap: null,
-    runnerUpHorseId: null,
-    runnerUpHorseName: null,
-    runnerUpPlaceScore: null,
-    runnerUpPlaceProb: null,
+      logEntry?.selectionMethod === "rank2" ||
+      logEntry?.selectionMethod === "light_adjusted" ||
+      logEntry?.selectionMethod === "legacy_value" ||
+      logEntry?.selectionMethod === "stable_next"
+        ? logEntry.selectionMethod
+        : snapshot.opponentHorseId && snapshot.opponentHorseId === row.horseId
+          ? snapshot.opponentSelectionMethod ?? "stable_next"
+          : undefined,
+    selectionReason: normalizeString(logEntry?.selectionReason ?? snapshot.signalReasons?.[row.horseId]?.signalReason),
+    overbetLabel: normalizeString(logEntry?.overbetLabel),
+    scoreGap: normalizeNumber(logEntry?.scoreGap),
+    runnerUpHorseId: normalizeString(logEntry?.runnerUpHorseId),
+    runnerUpHorseName: normalizeString(logEntry?.runnerUpHorseName),
+    runnerUpPlaceScore: normalizeNumber(logEntry?.runnerUpPlaceScore),
+    runnerUpPlaceProb: normalizeNumber(logEntry?.runnerUpPlaceProb),
+    classificationHint: logEntry?.classificationHint,
+    recommendedBetAction: normalizeRecommendedBetAction(logEntry?.recommendedBetAction),
+    recommendedBetDecision: normalizeRecommendedBetDecision(logEntry?.recommendedBetDecision) ?? undefined,
     settlementStatus: "pending_result",
     tanOutcome: "not_settled",
     fukuOutcome: "not_settled",
@@ -151,6 +178,11 @@ function emptyStore(): ReviewRecordStore {
 
 function normalizeSnapshot(snapshot: PredictionSnapshot | null | undefined, meta: ReviewRaceMeta): PredictionSnapshot | null {
   if (!snapshot) return null;
+  const sourceStatus = resolveSnapshotSourceStatus(snapshot, {
+    raceDate: meta.raceDate,
+    scheduledStartTime: meta.scheduledStartTime,
+    snapshotTakenAt: snapshot.snapshotTakenAt ?? snapshot.capturedAt,
+  });
   return {
     ...snapshot,
     raceId: extractRaceId(snapshot.raceId) ?? meta.raceId,
@@ -161,6 +193,12 @@ function normalizeSnapshot(snapshot: PredictionSnapshot | null | undefined, meta
     venueKey: normalizeString(snapshot.venueKey) ?? meta.venueKey,
     raceNumber: normalizeNumber(snapshot.raceNumber) ?? meta.raceNumber,
     scheduledStartTime: normalizeString(snapshot.scheduledStartTime) ?? meta.scheduledStartTime,
+    sourceStatus,
+    livePreRaceEligible: isLivePreRaceEligible(snapshot, {
+      raceDate: meta.raceDate,
+      scheduledStartTime: meta.scheduledStartTime,
+      snapshotTakenAt: snapshot.snapshotTakenAt ?? snapshot.capturedAt,
+    }),
     expectation: normalizeExpectation(snapshot.expectation),
   };
 }
@@ -187,6 +225,8 @@ function normalizeSelection(selection: ReviewSelectionHorse | null | undefined):
     runnerUpHorseName: normalizeString(selection.runnerUpHorseName),
     runnerUpPlaceScore: normalizeNumber(selection.runnerUpPlaceScore),
     runnerUpPlaceProb: normalizeNumber(selection.runnerUpPlaceProb),
+    recommendedBetAction: normalizeRecommendedBetAction(selection.recommendedBetAction),
+    recommendedBetDecision: normalizeRecommendedBetDecision(selection.recommendedBetDecision) ?? undefined,
     tanPayout: Number(selection.tanPayout ?? 0),
     fukuPayout: Number(selection.fukuPayout ?? 0),
   };
@@ -206,6 +246,12 @@ export function normalizeReviewRecord(record: RaceReviewRecord): RaceReviewRecor
     scheduledStartTime: record.meta?.scheduledStartTime ?? null,
   });
 
+  const normalizedSnapshot = normalizeSnapshot(record.snapshot, meta);
+  const snapshotSourceStatus =
+    normalizeSnapshotSourceStatus(record.snapshotSourceStatus) ??
+    normalizeSnapshotSourceStatus(normalizedSnapshot?.sourceStatus) ??
+    null;
+
   return {
     ...record,
     raceId: meta.raceId,
@@ -224,7 +270,17 @@ export function normalizeReviewRecord(record: RaceReviewRecord): RaceReviewRecor
     missingReasons: Array.isArray(record.missingReasons) ? record.missingReasons : [],
     lastError: normalizeString(record.lastError),
     meta,
-    snapshot: normalizeSnapshot(record.snapshot, meta),
+    snapshotSourceStatus,
+    livePreRaceEligible:
+      record.livePreRaceEligible === true ||
+      isLivePreRaceEligible(normalizedSnapshot, {
+        snapshotSourceStatus,
+        livePreRaceEligible: record.livePreRaceEligible,
+        raceDate: meta.raceDate,
+        scheduledStartTime: meta.scheduledStartTime,
+        snapshotTakenAt: record.snapshotTakenAt,
+      }),
+    snapshot: normalizedSnapshot,
     expectation: normalizeExpectation(record.expectation ?? record.snapshot?.expectation),
     honmei: normalizeSelection(record.honmei),
     opponent: normalizeSelection(record.opponent),
@@ -254,6 +310,8 @@ export function createDiscoveredReviewRecord(params: {
     createdAt: now,
     updatedAt: now,
     snapshotTakenAt: null,
+    snapshotSourceStatus: null,
+    livePreRaceEligible: false,
     resultFetchedAt: null,
     payoutFetchedAt: null,
     lastTriedAt: null,
@@ -392,6 +450,8 @@ export function createReviewRecordFromSnapshot(params: {
     createdAt: now,
     updatedAt: now,
     snapshotTakenAt: normalizeString(params.snapshot.snapshotTakenAt ?? params.snapshot.capturedAt),
+    snapshotSourceStatus: normalizeSnapshotSourceStatus(params.snapshot.sourceStatus),
+    livePreRaceEligible: params.snapshot.livePreRaceEligible === true || params.snapshot.sourceStatus === "live_pre_race",
     resultFetchedAt: null,
     payoutFetchedAt: null,
     lastTriedAt: now,

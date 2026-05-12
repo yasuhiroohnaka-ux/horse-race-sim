@@ -707,6 +707,7 @@ function SimulatorContent() {
               : null,
             valueHorseId: pair?.widePick?.horse?.id ?? pair?.valuePick?.horse?.id ?? null,
             expectation,
+            tanpukuPair: pair,
           });
 
           const response = await fetch("/api/prediction-snapshots", {

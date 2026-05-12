@@ -22,7 +22,12 @@ function addRecommendation(
   target: WeeklyDiagnosticRecommendation[],
   recommendation: WeeklyDiagnosticRecommendation | null
 ) {
-  if (recommendation) target.push(recommendation);
+  if (recommendation) {
+    target.push({
+      recommendationAction: "logic_review_candidate",
+      ...recommendation,
+    });
+  }
 }
 
 function getMissTagCount(
@@ -52,6 +57,33 @@ export function buildDiagnosticRecommendations(
   const routineReturnRate = diagnostics.placeCore.routineHonmei.placeReturnRate;
   const valuePlaceRate = diagnostics.valueCore.placeRate;
   const valueReturnRate = diagnostics.valueCore.placeReturnRate;
+  const sourceStatus = diagnostics.meta.sourceStatusSummary;
+
+  if (
+    sourceStatus &&
+    sourceStatus.reviewReadyRecords > 0 &&
+    sourceStatus.livePreRaceRecords < MIN_SAMPLE_MEDIUM &&
+    sourceStatus.retrospectiveRecords > 0
+  ) {
+    addRecommendation(recommendations, {
+      id: "collect_live_pre_race_before_logic_changes",
+      category: "data_quality",
+      targetStyle: "sample_quality",
+      priority: "high",
+      recommendationAction: "collect_live_pre_race_sample",
+      title: "live_pre_race 標本が不足しているため係数判断を保留",
+      summary:
+        "review_ready の多くが retrospective / legacy の可能性があります。予想ロジック変更前に、発走前保存の live_pre_race snapshot を集めて別集計してください。",
+      evidence: {
+        reviewReadyRecords: sourceStatus.reviewReadyRecords,
+        livePreRaceRecords: sourceStatus.livePreRaceRecords,
+        retrospectiveRecords: sourceStatus.retrospectiveRecords,
+        manualSnapshotRecords: sourceStatus.manualSnapshotRecords,
+        unknownLegacyRecords: sourceStatus.unknownLegacyRecords,
+      },
+      metricSignals: ["sourceStatus.livePreRaceRecords.low"],
+    });
+  }
 
   if (
     diagnostics.signals.snapshotHonmeiUnderperformsRoutineHonmei &&

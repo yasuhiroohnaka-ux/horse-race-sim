@@ -8,6 +8,7 @@ import {
   normalizeScoringVersion,
 } from "@/lib/predictionSnapshots";
 import { loadReviewRecords } from "@/lib/reviewRecords";
+import { isLivePreRaceEligible, resolveSnapshotSourceStatus } from "@/lib/sourceStatus";
 import type { PredictionSnapshot } from "@/lib/types";
 
 const ROOT = process.cwd();
@@ -35,10 +36,13 @@ function isPredictionSnapshot(value: unknown): value is PredictionSnapshot {
 }
 
 function toNormalizedSnapshot(value: PredictionSnapshot): PredictionSnapshot {
+  const sourceStatus = resolveSnapshotSourceStatus(value);
   return {
     ...value,
     predictionOrigin: normalizePredictionOrigin(value.predictionOrigin, DEFAULT_PREDICTION_ORIGIN),
     scoringVersion: normalizeScoringVersion(value.scoringVersion, DEFAULT_SCORING_VERSION),
+    sourceStatus,
+    livePreRaceEligible: isLivePreRaceEligible(value),
   };
 }
 

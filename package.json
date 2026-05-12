@@ -19,6 +19,7 @@
     "review:pipeline": "npx tsx scripts/process-review-records.ts --phase=all",
     "review:rebuild": "npx tsx scripts/process-review-records.ts --phase=all --include-archives --refresh-existing",
     "routine:keiba": "node scripts/keiba-routine.mjs",
+    "diagnose:selection-actions": "node scripts/diagnose-selection-actions.mjs",
     "audit:entry-data": "node scripts/daily-entry-check.mjs"
   },
   "dependencies": {

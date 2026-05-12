@@ -25,6 +25,10 @@ import {
 import { runMonteCarlo } from "@/lib/simulation";
 import { MONTE_CARLO_RUNS } from "@/lib/simulationConfig";
 import { filterRaceDayNoOddsHorses } from "@/lib/raceDayExclusions.mjs";
+import {
+  buildRecommendedBetDecision,
+  normalizeRecommendedBetDecision,
+} from "@/lib/recommendedBetAction";
 import type {
   PickClassificationHint,
   PredictionSnapshot,
@@ -73,16 +77,19 @@ type WeeklyRace = {
 type WeeklyRacesFile = {
   currentWeek?: {
     weekOf?: string;
+    updatedAt?: string;
     races?: WeeklyRace[];
   };
   archives?: Array<{
     weekOf?: string;
+    updatedAt?: string;
     races?: WeeklyRace[];
   }>;
 };
 
 type RaceScope = {
   weekOf: string | null;
+  dataUpdatedAt: string | null;
   race: WeeklyRace;
 };
 
@@ -239,9 +246,10 @@ async function readWeeklyRaces(): Promise<WeeklyRacesFile> {
 function collectRaceScopes(weekly: WeeklyRacesFile, includeArchives: boolean): RaceScope[] {
   const scopes: RaceScope[] = [];
   const currentWeekOf = normalizeString(weekly.currentWeek?.weekOf);
+  const currentUpdatedAt = normalizeString(weekly.currentWeek?.updatedAt);
   const currentRaces = Array.isArray(weekly.currentWeek?.races) ? weekly.currentWeek?.races ?? [] : [];
   for (const race of currentRaces) {
-    scopes.push({ weekOf: currentWeekOf, race });
+    scopes.push({ weekOf: currentWeekOf, dataUpdatedAt: currentUpdatedAt, race });
   }
 
   if (!includeArchives) {
@@ -251,9 +259,10 @@ function collectRaceScopes(weekly: WeeklyRacesFile, includeArchives: boolean): R
   const archives = Array.isArray(weekly.archives) ? weekly.archives : [];
   for (const archive of archives) {
     const archiveWeekOf = normalizeString(archive.weekOf);
+    const archiveUpdatedAt = normalizeString(archive.updatedAt);
     const archiveRaces = Array.isArray(archive.races) ? archive.races ?? [] : [];
     for (const race of archiveRaces) {
-      scopes.push({ weekOf: archiveWeekOf, race });
+      scopes.push({ weekOf: archiveWeekOf, dataUpdatedAt: archiveUpdatedAt, race });
     }
   }
 
@@ -333,6 +342,25 @@ function buildSelectionHorseFromPairEntry(
   const horse = (entry.horse ?? null) as Record<string, unknown> | null;
   const horseId = normalizeString(horse?.id);
   if (!horseId) return null;
+  const classificationHint = normalizeClassificationHint(entry.classificationHint);
+  const recommendedBetDecision =
+    normalizeRecommendedBetDecision(entry.recommendedBetDecision) ??
+    buildRecommendedBetDecision({
+      sourceStatus: "unknown",
+      livePreRaceEligible: false,
+      classificationHint,
+      explicitAction: entry.recommendedBetAction,
+      winProb: normalizeNumber(entry.winProb),
+      tanRoi: normalizeNumber(entry.tanRoi),
+      scoreGap: normalizeNumber(entry.scoreGap),
+      placeProb: normalizeNumber(entry.placeProb),
+      top3Stability: normalizeNumber(entry.top3Stability),
+      valueScore: normalizeNumber(entry.valueScore),
+      fieldSize: null,
+      overbetLabel: normalizeString(entry.overbetLabel),
+      oddsSource: null,
+      hasSelectionLog: false,
+    });
   return {
     horseId,
     externalHorseId: normalizeString(horse?.externalHorseId),
@@ -353,7 +381,9 @@ function buildSelectionHorseFromPairEntry(
     runnerUpHorseName: normalizeString(entry.runnerUpHorseName),
     runnerUpPlaceScore: normalizeNumber(entry.runnerUpPlaceScore),
     runnerUpPlaceProb: normalizeNumber(entry.runnerUpPlaceProb),
-    classificationHint: normalizeClassificationHint(entry.classificationHint),
+    classificationHint,
+    recommendedBetAction: recommendedBetDecision.action,
+    recommendedBetDecision,
     settlementStatus: "pending_result",
     tanOutcome: "not_settled",
     fukuOutcome: "not_settled",
@@ -364,8 +394,8 @@ function buildSelectionHorseFromPairEntry(
   };
 }
 
-async function buildSnapshotBundle(params: { race: WeeklyRace; weekOf: string | null }) {
-  const { race, weekOf } = params;
+async function buildSnapshotBundle(params: { race: WeeklyRace; weekOf: string | null; now: Date; dataUpdatedAt: string | null }) {
+  const { race, weekOf, now, dataUpdatedAt } = params;
   const raceId = extractRaceId(race.raceId ?? race.courseId);
   if (!raceId) return null;
 
@@ -446,10 +476,14 @@ async function buildSnapshotBundle(params: { race: WeeklyRace; weekOf: string | 
     venueKey: normalizeString(race.venueKey),
     raceNumber: normalizeNumber(race.raceNumber),
     scheduledStartTime: scheduledStart,
+    capturedAt: toIso(now),
+    dataUpdatedAt,
+    weeklyRacesUpdatedAt: dataUpdatedAt,
     snapshotType: "pre_race_final",
     oddsSource: normalizeString(race.oddsSource),
     predictionOrigin: "saved_live",
     expectation,
+    tanpukuPair,
   });
   const eligibleScoredRows = createTieBrokenScoredRows(
     scoredRows.filter((entry: Record<string, unknown>) => !isCancelledHorse((entry.horse ?? null) as Record<string, unknown> | null))
@@ -797,7 +831,7 @@ export async function runReviewPipeline(options: ReviewPipelineOptions): Promise
     let reviewsSettled = 0;
     let failedCount = 0;
 
-    for (const { race, weekOf } of races) {
+    for (const { race, weekOf, dataUpdatedAt } of races) {
       const raceId = extractRaceId(race.raceId ?? race.courseId);
       if (!raceId) continue;
       if (dayFilter && race.day !== dayFilter) continue;
@@ -876,7 +910,7 @@ export async function runReviewPipeline(options: ReviewPipelineOptions): Promise
 
       if ((phase === "snapshot" || phase === "all") && (!record.snapshot || refreshExisting) && retryDue) {
         if (shouldAttemptSnapshot({ race, weekOf, now, manual: forceRetryNow })) {
-          const built = await buildSnapshotBundle({ race, weekOf });
+          const built = await buildSnapshotBundle({ race, weekOf, now, dataUpdatedAt });
           if (built) {
             const rebuilt = normalizeReviewRecord(
               createReviewRecordFromSnapshot({

@@ -5,10 +5,26 @@ import { buildCategoryReturnStatsFromReviewRecords } from "@/lib/categoryReturnS
 import { buildWeeklyDiagnostics, loadWeeklyDiagnosticsContext } from "@/lib/weeklyDiagnostics";
 import { loadReviewRecords } from "@/lib/reviewRecords";
 import { formatMissingReason, isReviewComplete, normalizeLegacyReviewStatus } from "@/lib/reviewStatus";
-import type { DiagnosticsAggregationScope, RaceReviewRecord, ReviewLegacyValueSelection, ReviewSelectionHorse } from "@/lib/types";
+import { normalizeRecommendedBetAction } from "@/lib/recommendedBetAction";
+import {
+  buildPredictionSnapshotSourceStatusSummary,
+  buildReviewSourceStatusSummary,
+  isLivePreRaceEligible,
+  resolveReviewRecordSourceStatus,
+} from "@/lib/sourceStatus";
+import type {
+  DiagnosticsAggregationScope,
+  PredictionSnapshot,
+  PredictionSnapshotSourceStatusSummary,
+  RaceReviewRecord,
+  ReviewLegacyValueSelection,
+  ReviewSelectionHorse,
+  ReviewSourceStatusSummary,
+} from "@/lib/types";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
+const SNAPSHOT_PATH = path.join(ROOT, "data", "prediction-snapshots.jsonl");
 
 type GapBucket = {
   label: string;
@@ -55,6 +71,8 @@ type SummaryPayload = {
     failedCount: number;
     legacyCount: number;
   };
+  sourceStatus: ReviewSourceStatusSummary;
+  predictionSnapshotsSourceStatus: PredictionSnapshotSourceStatusSummary;
   honmei: HonmeiMetrics;
   opponent: {
     raceCount: number;
@@ -101,7 +119,8 @@ type SummaryPayload = {
 };
 
 function normalizeScope(value: string | null | undefined): DiagnosticsAggregationScope {
-  return value === "saved_only" ? "saved_only" : "all";
+  if (value === "saved_only" || value === "live_pre_race_only") return value;
+  return "all";
 }
 
 function pct(hit: number, total: number) {
@@ -180,6 +199,7 @@ function normalizeSelectionBundle(selection: ReviewSelectionHorse | ReviewLegacy
     runnerUpPlaceScore: Number(normalized.runnerUpPlaceScore ?? 0),
     runnerUpPlaceProb: Number(normalized.runnerUpPlaceProb ?? 0),
     overbetLabel: normalized.overbetLabel ?? null,
+    recommendedBetAction: normalizeRecommendedBetAction(normalized.recommendedBetAction),
   };
 }
 
@@ -215,6 +235,7 @@ function settlementBundle(record: RaceReviewRecord) {
           runnerUpPlaceProb: Number(record.honmei.runnerUpPlaceProb ?? 0),
           overbetLabel: record.honmei.overbetLabel ?? null,
           classificationHint: record.honmei.classificationHint ?? null,
+          recommendedBetAction: normalizeRecommendedBetAction(record.honmei.recommendedBetAction),
         }
       : null,
     opponent,
@@ -235,6 +256,8 @@ function settlementBundle(record: RaceReviewRecord) {
       lastRetryAt: record.lastRetryAt,
       nextRetryAt: record.nextRetryAt,
       lastError: record.lastError,
+      sourceStatus: resolveReviewRecordSourceStatus(record),
+      livePreRaceEligible: isLivePreRaceEligible(record.snapshot, record),
     },
   };
 }
@@ -264,7 +287,7 @@ function accumulateWeeklyPerformance(records: RaceReviewRecord[]) {
   return totals;
 }
 
-function buildSummary(records: RaceReviewRecord[]): SummaryPayload {
+function buildSummary(records: RaceReviewRecord[], snapshotSourceStatus: PredictionSnapshotSourceStatusSummary): SummaryPayload {
   const readyRecords = records.filter(isReadyRecord);
   const rankGapBuckets = buildGapBuckets(["1", "2", "3+", "unknown"]);
   const scoreGapBuckets = buildGapBuckets(["<0.02", "0.02-0.05", "0.05+", "unknown"]);
@@ -277,6 +300,8 @@ function buildSummary(records: RaceReviewRecord[]): SummaryPayload {
       failedCount: records.filter((record) => normalizeLegacyReviewStatus(record.status) === "review_failed").length,
       legacyCount: records.filter((record) => record.compatibilityMode === "legacy_value_candidate").length,
     },
+    sourceStatus: buildReviewSourceStatusSummary(records),
+    predictionSnapshotsSourceStatus: snapshotSourceStatus,
     honmei: {
       raceCount: 0,
       winCount: 0,
@@ -495,7 +520,32 @@ function getCurrentWeek(records: RaceReviewRecord[]) {
 
 function filterScope(records: RaceReviewRecord[], scope: DiagnosticsAggregationScope) {
   if (scope === "all") return records;
+  if (scope === "live_pre_race_only") {
+    return records.filter((record) => isLivePreRaceEligible(record.snapshot, record));
+  }
   return records.filter((record) => record.snapshot?.predictionOrigin !== "backfill");
+}
+
+async function readPredictionSnapshots(): Promise<PredictionSnapshot[]> {
+  try {
+    const raw = await fs.readFile(SNAPSHOT_PATH, "utf8");
+    return raw
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .flatMap((line) => {
+        try {
+          const parsed = JSON.parse(line) as PredictionSnapshot;
+          return parsed && typeof parsed === "object" ? [parsed] : [];
+        } catch {
+          return [];
+        }
+      });
+  } catch (error) {
+    const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";
+    if (code === "ENOENT") return [];
+    throw error;
+  }
 }
 
 async function readJsonFile<T>(filePath: string, fallback: T): Promise<T> {
@@ -511,10 +561,11 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const scope = normalizeScope(searchParams.get("scope"));
-    const [reviewRecordsByRaceId, diagnosticsContext, weeklyRaces] = await Promise.all([
+    const [reviewRecordsByRaceId, diagnosticsContext, weeklyRaces, predictionSnapshots] = await Promise.all([
       loadReviewRecords(),
       loadWeeklyDiagnosticsContext(scope),
       readJsonFile(WEEKLY_RACES_PATH, { currentWeek: null, archives: [] }),
+      readPredictionSnapshots(),
     ]);
 
     const filteredRecords = filterScope(Object.values(reviewRecordsByRaceId), scope).sort((a, b) =>
@@ -524,7 +575,7 @@ export async function GET(request: Request) {
     const weeklyRecords = filteredRecords.filter((record) => record.meta.weekOf === currentWeek);
     const totalPerf = accumulateWeeklyPerformance(filteredRecords);
     const weeklyPerf = accumulateWeeklyPerformance(weeklyRecords);
-    const summary = buildSummary(filteredRecords);
+    const summary = buildSummary(filteredRecords, buildPredictionSnapshotSourceStatusSummary(predictionSnapshots));
     const diagnostics = buildWeeklyDiagnostics(diagnosticsContext);
     const categoryReturnStats = buildCategoryReturnStatsFromReviewRecords(filteredRecords, weeklyRaces);
 

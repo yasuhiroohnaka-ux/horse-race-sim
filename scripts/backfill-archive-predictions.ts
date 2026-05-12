@@ -6,7 +6,17 @@ import { ARCHIVED_RACES as LEGACY_ARCHIVED_RACES } from "../lib/raceData";
 import { MONTE_CARLO_RUNS } from "../lib/simulationConfig";
 import { runMonteCarlo } from "../lib/simulation";
 import { pickTanpukuPair as pickRoutineTanpukuPair } from "../lib/tanpukuSelection.mjs";
-import type { Course, Horse, PredictionOrigin, PredictionSnapshot, PredictionSnapshotRow, RaceCondition } from "../lib/types";
+import type {
+  Course,
+  Horse,
+  PickClassificationHint,
+  PredictionOrigin,
+  PredictionSnapshot,
+  PredictionSnapshotRow,
+  RaceCondition,
+  RecommendedBetAction,
+  RecommendedBetDecision,
+} from "../lib/types";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -102,6 +112,9 @@ type BackfilledRecommendation = {
   raceId: string;
   raceLabel: string;
   pickType: "win" | "value";
+  classificationHint: PickClassificationHint | null;
+  recommendedBetAction: RecommendedBetAction;
+  recommendedBetDecision: RecommendedBetDecision;
   predictionOrigin: PredictionOrigin;
   scoringVersion: string;
   horseId: string;
@@ -490,6 +503,8 @@ function buildBackfilledRecommendation(params: {
     selectionReason?: string;
     scoreGap?: number;
     overbetLabel?: string | null;
+    classificationHint?: PickClassificationHint | null;
+    recommendedBetAction?: RecommendedBetAction;
   } | null;
   runnerUp?: {
     horseId?: string;
@@ -534,6 +549,15 @@ function buildBackfilledRecommendation(params: {
     raceId: normalizeHorseId(race.raceId),
     raceLabel: race.label,
     pickType,
+    classificationHint: scoredEntry?.classificationHint ?? null,
+    recommendedBetAction: "unknown",
+    recommendedBetDecision: {
+      action: "unknown",
+      confidence: "unknown",
+      reasons: [],
+      riskFlags: ["retrospective_only", "not_live_pre_race"],
+      source: "safety_rule",
+    },
     predictionOrigin: "backfill",
     scoringVersion: DEFAULT_SCORING_VERSION,
     horseId: row.horseId,
@@ -910,9 +934,14 @@ async function main() {
         condition,
         simulationCount: MONTE_CARLO_RUNS,
         raceId,
+        raceDate,
+        raceName: race.label,
+        venue: race.venue,
         oddsFetchedAt: race.result?.updatedAt ?? null,
         oddsSource: race.oddsSource ?? "official",
         predictionOrigin: "backfill",
+        sourceStatus: "retrospective",
+        dataUpdatedAt: race.result?.updatedAt ?? null,
         scoringVersion: DEFAULT_SCORING_VERSION,
         opponentOverride: routineOpponentEntry
           ? {
@@ -923,6 +952,7 @@ async function main() {
             }
           : null,
         valueHorseId: routineWideEntry?.horse?.id ?? null,
+        tanpukuPair: routinePair,
       });
       latestByRaceId[raceId] = snapshot;
       appendedSnapshotLines.push(JSON.stringify(snapshot));
@@ -933,6 +963,8 @@ async function main() {
       snapshot = {
         ...snapshot,
         predictionOrigin: "backfill",
+        sourceStatus: "retrospective",
+        livePreRaceEligible: false,
         scoringVersion: DEFAULT_SCORING_VERSION,
         opponentHorseId: routineOpponentEntry?.horse.id ?? snapshot.opponentHorseId ?? null,
         opponentSelectionMethod: routineOpponentEntry ? "stable_next" : snapshot.opponentSelectionMethod,
