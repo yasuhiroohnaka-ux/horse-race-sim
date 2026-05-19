@@ -244,6 +244,48 @@ function resolveSourceStatus(snapshot) {
   return "unknown";
 }
 
+function snapshotTimestamp(snapshot) {
+  const timestamp = Date.parse(String(snapshot?.capturedAt ?? snapshot?.snapshotTakenAt ?? ""));
+  return Number.isFinite(timestamp) ? timestamp : 0;
+}
+
+function getSnapshotEntries(snapshot) {
+  return Array.isArray(snapshot?.selectionLog?.entries) ? snapshot.selectionLog.entries : [];
+}
+
+function getSnapshotHonmeiEntry(snapshot) {
+  const entries = getSnapshotEntries(snapshot);
+  return entries.find((entry) => entry?.role === "honmei") ?? null;
+}
+
+function summarizeLatestSnapshot(snapshot) {
+  const entries = getSnapshotEntries(snapshot);
+  const honmei = getSnapshotHonmeiEntry(snapshot);
+  const decision = normalizeDecision(honmei?.recommendedBetDecision, honmei?.recommendedBetAction);
+  const sourceStatus = resolveSourceStatus(snapshot);
+  return {
+    snapshotId: snapshot?.snapshotId ?? null,
+    raceId: snapshot?.raceId ?? null,
+    raceName: snapshot?.raceName ?? null,
+    capturedAt: snapshot?.capturedAt ?? snapshot?.snapshotTakenAt ?? null,
+    scheduledStartTime: snapshot?.scheduledStartTime ?? null,
+    sourceStatus,
+    livePreRaceEligible:
+      typeof snapshot?.livePreRaceEligible === "boolean" ? snapshot.livePreRaceEligible : sourceStatus === "live_pre_race",
+    selectionLogEntries: entries.length,
+    honmeiHorseName: honmei?.horseName ?? honmei?.name ?? null,
+    honmeiClassification: normalizeClassification(honmei?.classificationHint?.classification),
+    honmeiRecommendedBetAction: normalizeRecommendedBetAction(honmei?.recommendedBetAction),
+    honmeiDecisionAction: decision.action,
+    honmeiDecisionConfidence: decision.confidence,
+    honmeiDecisionReasons: decision.reasons,
+    honmeiDecisionRiskFlags: decision.riskFlags,
+    oddsSource: honmei?.oddsSource ?? snapshot?.oddsSource ?? null,
+    runningStyleSource: honmei?.runningStyleSource ?? null,
+    previousRaceSource: honmei?.previousRaceSource ?? null,
+  };
+}
+
 function addSelectionSummary(summary, classification, recommendedBetAction, sourceStatus = "all") {
   inc(summary.byClassification, classification);
   inc(summary.byRecommendedBetAction, recommendedBetAction);
@@ -358,6 +400,7 @@ function summarizePredictionSnapshots() {
   const summary = {
     total: snapshots.length,
     withSelectionLog: 0,
+    withRecommendedBetDecision: 0,
     byClassification: {},
     byRecommendedBetAction: {},
     byRecommendedBetActionRaw: {},
@@ -370,9 +413,10 @@ function summarizePredictionSnapshots() {
   addDecisionFields(summary);
 
   for (const snapshot of snapshots) {
-    const entries = Array.isArray(snapshot.selectionLog?.entries) ? snapshot.selectionLog.entries : [];
+    const entries = getSnapshotEntries(snapshot);
     if (entries.length > 0) summary.withSelectionLog += 1;
-    const honmei = entries.find((entry) => entry?.role === "honmei") ?? null;
+    const honmei = getSnapshotHonmeiEntry(snapshot);
+    if (honmei?.recommendedBetDecision) summary.withRecommendedBetDecision += 1;
     const classification = normalizeClassification(honmei?.classificationHint?.classification);
     const recommendedBetAction = normalizeRecommendedBetAction(honmei?.recommendedBetAction);
     const decision = normalizeDecision(honmei?.recommendedBetDecision, recommendedBetAction);
@@ -396,6 +440,18 @@ function summarizePredictionSnapshots() {
     inc(summary.safetyScopedReasons, safety.reason);
     addDecisionSummary(summary, decision, recommendedBetAction);
   }
+
+  summary.latestSnapshots = snapshots
+    .slice()
+    .sort((left, right) => snapshotTimestamp(right) - snapshotTimestamp(left))
+    .slice(0, 8)
+    .map(summarizeLatestSnapshot);
+  summary.latestWithSelectionLog =
+    snapshots
+      .slice()
+      .sort((left, right) => snapshotTimestamp(right) - snapshotTimestamp(left))
+      .map(summarizeLatestSnapshot)
+      .find((snapshot) => snapshot.selectionLogEntries > 0) ?? null;
 
   return summary;
 }

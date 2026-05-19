@@ -924,6 +924,9 @@ async function main() {
     case "mon_10":
       await handleMonday10(now);
       break;
+    case "sat_09":
+      console.log("sat_09 pre-race snapshot capture is handled by the workflow.");
+      break;
     case "sun_09":
       await handleNextDayReview("Sat", stage);
       break;

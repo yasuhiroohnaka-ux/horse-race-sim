@@ -2,7 +2,8 @@
 
 on:
   schedule:
-    # JST: Sun 09:00 / Mon 09:00 / Mon 10:00 / Wed 12:00 / Thu 12:00 / Thu 15:00 / Fri 10:30 / Sat 15:00 / Sun 15:00 / Sun 16:00
+    # JST: Sat 09:00 / Sun 09:00 / Mon 09:00 / Mon 10:00 / Wed 12:00 / Thu 12:00 / Thu 15:00 / Fri 10:30 / Sat 15:00 / Sun 15:00 / Sun 16:00
+    - cron: "0 0 * * 6"
     - cron: "0 0 * * 0"
     - cron: "0 0 * * 1"
     - cron: "0 1 * * 1"
@@ -16,7 +17,7 @@ on:
   workflow_dispatch:
     inputs:
       stage:
-        description: "Optional manual stage (sun_09, mon_09, mon_10, wed_12, thu_12, thu_15, fri_10, sat_15, sun_15, sun_16)"
+        description: "Optional manual stage (sat_09, sun_09, mon_09, mon_10, wed_12, thu_12, thu_15, fri_10, sat_15, sun_15, sun_16)"
         required: false
         type: string
 
@@ -48,6 +49,7 @@ jobs:
           stage="${{ github.event.inputs.stage }}"
           if [ -z "$stage" ]; then
             case "${{ github.event.schedule }}" in
+              "0 0 * * 6") stage="sat_09" ;;
               "0 0 * * 0") stage="sun_09" ;;
               "0 0 * * 1") stage="mon_09" ;;
               "0 1 * * 1") stage="mon_10" ;;
@@ -68,6 +70,14 @@ jobs:
 
       - name: Run routine
         run: npm run routine:keiba -- --stage=${{ steps.resolve-stage.outputs.stage }}
+
+      - name: Capture Saturday live pre-race snapshots
+        if: steps.resolve-stage.outputs.stage == 'sat_09'
+        run: npm run review:snapshot -- --day=Sat --force-retry-now
+
+      - name: Capture Sunday live pre-race snapshots
+        if: steps.resolve-stage.outputs.stage == 'sun_09'
+        run: npm run review:snapshot -- --day=Sun --force-retry-now
 
       - name: Run review self-heal
         run: npm run review:pipeline -- --include-archives
