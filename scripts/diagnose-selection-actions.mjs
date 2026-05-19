@@ -258,9 +258,17 @@ function getSnapshotHonmeiEntry(snapshot) {
   return entries.find((entry) => entry?.role === "honmei") ?? null;
 }
 
+function getSnapshotHonmeiRow(snapshot, honmei) {
+  const rows = Array.isArray(snapshot?.rankedRows) ? snapshot.rankedRows : [];
+  const honmeiHorseId = honmei?.horseId ?? snapshot?.honmeiHorseId ?? null;
+  if (honmeiHorseId == null) return null;
+  return rows.find((row) => String(row?.horseId ?? "") === String(honmeiHorseId)) ?? null;
+}
+
 function summarizeLatestSnapshot(snapshot) {
   const entries = getSnapshotEntries(snapshot);
   const honmei = getSnapshotHonmeiEntry(snapshot);
+  const honmeiRow = getSnapshotHonmeiRow(snapshot, honmei);
   const decision = normalizeDecision(honmei?.recommendedBetDecision, honmei?.recommendedBetAction);
   const sourceStatus = resolveSourceStatus(snapshot);
   return {
@@ -280,9 +288,10 @@ function summarizeLatestSnapshot(snapshot) {
     honmeiDecisionConfidence: decision.confidence,
     honmeiDecisionReasons: decision.reasons,
     honmeiDecisionRiskFlags: decision.riskFlags,
-    oddsSource: honmei?.oddsSource ?? snapshot?.oddsSource ?? null,
-    runningStyleSource: honmei?.runningStyleSource ?? null,
-    previousRaceSource: honmei?.previousRaceSource ?? null,
+    oddsSource: honmei?.oddsSource ?? honmeiRow?.oddsSource ?? snapshot?.marketMeta?.oddsSource ?? snapshot?.dataLineage?.oddsSource ?? null,
+    oddsFetchedAt: honmei?.oddsFetchedAt ?? honmeiRow?.oddsFetchedAt ?? snapshot?.marketMeta?.oddsFetchedAt ?? snapshot?.dataLineage?.oddsFetchedAt ?? null,
+    runningStyleSource: honmei?.runningStyleSource ?? honmeiRow?.runningStyleSource ?? null,
+    previousRaceSource: honmei?.previousRaceSource ?? honmeiRow?.previousRaceSource ?? null,
   };
 }
 
