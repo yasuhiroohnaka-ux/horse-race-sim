@@ -55,7 +55,7 @@ export function CourseConfig({
   isRefreshingOdds,
   onRefreshOdds,
 }: CourseConfigProps) {
-  const [gradeFilter, setGradeFilter] = useState<CourseGradeFilter>(getCourseGrade(selectedCourse));
+  const [gradeFilter, setGradeFilter] = useState<CourseGradeFilter>("ALL");
   const selectedCourseGrade = getCourseGrade(selectedCourse);
   const effectiveGradeFilter =
     gradeFilter === "ALL" || gradeFilter === selectedCourseGrade ? gradeFilter : selectedCourseGrade;

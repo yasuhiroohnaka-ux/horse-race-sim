@@ -81,6 +81,24 @@ function isoDate(date) {
   return `${year}-${month}-${day}`;
 }
 
+function parseIsoDateParts(dateIso) {
+  const match = String(dateIso ?? "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+  const [, year, month, day] = match;
+  const parts = {
+    year: Number(year),
+    month: Number(month),
+    day: Number(day),
+  };
+  return [parts.year, parts.month, parts.day].every(Number.isFinite) ? parts : null;
+}
+
+function localDateFromIsoDate(dateIso) {
+  const parts = parseIsoDateParts(dateIso);
+  if (!parts) return null;
+  return new Date(parts.year, parts.month - 1, parts.day);
+}
+
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
@@ -182,12 +200,14 @@ function extractActiveRaceListSection(raceListHtml, dateYmd) {
 }
 
 function raceDateFromSeed(seed) {
-  return new Date(`${seed.dateIso}T00:00:00+09:00`);
+  return localDateFromIsoDate(seed.dateIso) ?? new Date(NaN);
 }
 
 function dayLabelFromDate(dateIso) {
-  const date = new Date(`${dateIso}T00:00:00+09:00`);
-  return date.getDay() === 0 ? "Sun" : "Sat";
+  const parts = parseIsoDateParts(dateIso);
+  if (!parts) return "Sat";
+  const day = new Date(Date.UTC(parts.year, parts.month - 1, parts.day)).getUTCDay();
+  return day === 0 ? "Sun" : "Sat";
 }
 
 function parseRaceMeta(raceId, shutubaHtml, dayLabel) {

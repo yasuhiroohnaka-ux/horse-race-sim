@@ -83,9 +83,17 @@ function yyyymmddFromDate(date) {
   return `${y}${m}${d}`;
 }
 
+function dateFromIsoDate(dateIso) {
+  const match = String(dateIso ?? "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+  const [, year, month, date] = match;
+  const parsed = new Date(Number(year), Number(month) - 1, Number(date));
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
 function dateForRaceDay(weekOfIso, day) {
-  const base = new Date(`${weekOfIso}T00:00:00+09:00`);
-  if (Number.isNaN(base.getTime())) return null;
+  const base = dateFromIsoDate(weekOfIso);
+  if (!base) return null;
   const offset = day === "Sat" ? 5 : day === "Sun" ? 6 : 0;
   const out = new Date(base);
   out.setDate(base.getDate() + offset);
@@ -157,7 +165,7 @@ async function fetchDrawEntriesByRace(weekOfIso, race) {
     }
   }
 
-  const raceDate = dateForRaceDay(weekOfIso, race.day);
+  const raceDate = dateFromIsoDate(race.raceDate) ?? dateForRaceDay(weekOfIso, race.day);
   if (!raceDate) return null;
   const trackCode = getTrackCodeFromCourseId(race.courseId);
   if (!trackCode) return null;
