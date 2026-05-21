@@ -4,7 +4,7 @@ import { ARCHIVED_COURSES, COURSES } from "../lib/courses";
 import { runMonteCarlo } from "../lib/simulation";
 import { buildRaceAnalysisRows } from "../lib/raceAnalysis";
 import { pickTanpukuPair } from "../lib/tanpukuSelection.mjs";
-import type { Course, Horse, RaceCondition } from "../lib/types";
+import type { Course, Horse, RaceCondition, TrackBias } from "../lib/types";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -15,13 +15,59 @@ const TARGETS: Array<{ key: string; courseId: string; label: string }> = [
   { key: "antares", courseId: "hanshin-dirt-1800-202609020711", label: "アンタレスS" },
 ];
 
-function findCourse(courseId: string, race: any): Course {
+type WeeklyRaceSeed = {
+  courseId: string;
+  label: string;
+  venue?: string;
+  day?: string;
+  grade?: string;
+  distance: number;
+  surface: Course["surface"];
+  straightLength: number;
+  trackBias?: TrackBias;
+  liveRaceCondition?: Partial<RaceCondition>;
+  horses: Horse[];
+};
+
+type WeeklyRaceStore = {
+  currentWeek?: {
+    races?: WeeklyRaceSeed[];
+  };
+};
+
+type TanpukuPick = {
+  horse?: Partial<Horse>;
+  odds?: number;
+  placeOdds?: number;
+  winProb?: number;
+  placeProb?: number;
+  placeScore?: number;
+  valueScore?: number;
+  top3Stability?: number;
+  overbetLabel?: string | null;
+  selectionReason?: string | null;
+  scoreGap?: number;
+  tanRoi?: number;
+  fukuRoi?: number;
+  classificationHint?: unknown;
+};
+
+type TanpukuResult = {
+  scoringVersion?: string;
+  winPick?: TanpukuPick | null;
+  opponentPick?: TanpukuPick | null;
+  widePick?: TanpukuPick | null;
+  winRunnerUp?: unknown;
+  marketHeatSummary?: unknown;
+};
+
+function findCourse(courseId: string, race: WeeklyRaceSeed): Course {
   const matched = COURSES.find((c) => c.id === courseId) ?? ARCHIVED_COURSES.find((c) => c.id === courseId);
   if (matched) return matched;
   return {
     id: race.courseId,
     name: `${race.venue} ${race.surface} ${race.distance}m (${race.label})`,
-    venue: race.venue,
+    venue: race.venue ?? "",
     day: race.day,
     grade: race.grade,
     distance: race.distance,
@@ -39,7 +85,7 @@ function findCourse(courseId: string, race: any): Course {
   } as Course;
 }
 
-function buildCondition(course: Course, race: any): RaceCondition {
+function buildCondition(course: Course, race: WeeklyRaceSeed): RaceCondition {
   const live = race.liveRaceCondition ?? null;
   return {
     courseId: course.id,
@@ -54,8 +100,8 @@ function buildCondition(course: Course, race: any): RaceCondition {
 
 async function main() {
   const raw = await fs.readFile(WEEKLY_RACES_PATH, "utf8");
-  const data = JSON.parse(raw.replace(/^\uFEFF/, ""));
-  const races: any[] = data?.currentWeek?.races ?? [];
+  const data = JSON.parse(raw.replace(/^\uFEFF/, "")) as WeeklyRaceStore;
+  const races = data.currentWeek?.races ?? [];
 
   const output: Record<string, unknown> = {};
 
@@ -73,14 +119,14 @@ async function main() {
     // Run Monte Carlo (default 100 iterations) — but for stable picture run more
     const mcResults = runMonteCarlo(horses, course, condition, 500);
     const rows = buildRaceAnalysisRows(mcResults, horses, course, condition);
-    const tanpuku: any = pickTanpukuPair(race, false, true);
+    const tanpuku = pickTanpukuPair(race, false, true) as TanpukuResult | null;
 
     const top5 = rows.slice(0, 8).map((r) => ({
       rank: r.simWinRate,
       name: r.name,
       gate: r.gateNumber,
       jockey: r.jockey,
-      ability: Number(r.displayAbilityScore?.toFixed?.(1) ?? r.displayAbilityScore),
+      ability: Number(r.displayAbilityScore.toFixed(1)),
       simWinRate: r.simWinRate,
       fairOdds: r.fairOdds,
       officialOdds: r.officialOdds,
@@ -119,7 +165,7 @@ async function main() {
   process.stdout.write(JSON.stringify(output, null, 2));
 }
 
-function pickSummary(p: any) {
+function pickSummary(p: TanpukuPick | null | undefined) {
   if (!p) return null;
   return {
     horseId: p.horse?.id,
