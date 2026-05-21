@@ -76,6 +76,24 @@ function normalizeName(name) {
     .replace(/[\\s縲繝ｻ\\-_.]/g, "");
 }
 
+function getHorseNameKeys(horse) {
+  return [horse?.name, ...(HORSE_NAME_ALIASES[horse?.name] ?? [])].map(normalizeName).filter(Boolean);
+}
+
+function countOfficialRosterMatches(horses, officialNameSet) {
+  return horses.reduce(
+    (count, horse) => (getHorseNameKeys(horse).some((key) => officialNameSet.has(key)) ? count + 1 : count),
+    0
+  );
+}
+
+function shouldApplyOfficialDrawRoster(horses, officialNameSet) {
+  if (!Array.isArray(horses) || horses.length === 0 || officialNameSet.size === 0) return false;
+  const minimumMatches = Math.max(1, Math.ceil(horses.length * 0.75));
+  if (officialNameSet.size < minimumMatches) return false;
+  return countOfficialRosterMatches(horses, officialNameSet) >= minimumMatches;
+}
+
 function yyyymmddFromDate(date) {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -245,6 +263,7 @@ async function main() {
 
   let changed = 0;
   let drawApplied = 0;
+  let rosterPruned = 0;
 
   const weekOf = weekly.currentWeek?.weekOf || "";
   const drawMapByCourse = new Map();
@@ -282,8 +301,21 @@ async function main() {
   await writeDrawOverridesTs(mergedDrawOverrides);
 
   for (const race of weekly.currentWeek?.races ?? []) {
-    const horses = Array.isArray(race.horses) ? race.horses : [];
+    let horses = Array.isArray(race.horses) ? race.horses : [];
     const localNameToGate = drawMapByCourse.get(race.courseId);
+    if (localNameToGate?.size > 0) {
+      const officialNameSet = new Set(localNameToGate.keys());
+      if (shouldApplyOfficialDrawRoster(horses, officialNameSet)) {
+        const retained = horses.filter((horse) => getHorseNameKeys(horse).some((key) => officialNameSet.has(key)));
+        if (retained.length !== horses.length) {
+          rosterPruned += horses.length - retained.length;
+          changed += horses.length - retained.length;
+          race.horses = retained;
+          horses = retained;
+        }
+      }
+    }
+
     horses.forEach((horse, idx) => {
       const aliasList = [horse.name, ...(HORSE_NAME_ALIASES[horse.name] ?? [])];
       let targetGateFromDraw = null;
@@ -323,7 +355,7 @@ async function main() {
   const totalHorses = (weekly.currentWeek?.races ?? []).flatMap((r) => r.horses ?? []).length;
 
   console.log(
-    `[daily-entry-check] changed=${changed}, drawApplied=${drawApplied}, totalHorses=${totalHorses}`
+    `[daily-entry-check] changed=${changed}, drawApplied=${drawApplied}, rosterPruned=${rosterPruned}, totalHorses=${totalHorses}`
   );
 }
 

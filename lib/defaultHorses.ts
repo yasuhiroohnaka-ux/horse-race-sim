@@ -14,6 +14,7 @@ import {
 import { RACE_TREND_PROFILES } from "../data/raceTrends";
 import { dedupeHorses } from "./horseIntegrity";
 import { applyNetkeibaRatings } from "./netkeibaRatings";
+import { filterToOfficialEntryRoster, normalizeHorseEntryKey } from "./officialEntryRoster";
 import { filterRaceDayNoOddsHorses } from "./raceDayExclusions.mjs";
 
 function enrichHorse(_courseId: string, horse: Horse): Horse {
@@ -21,12 +22,7 @@ function enrichHorse(_courseId: string, horse: Horse): Horse {
 }
 
 function normalizeName(name: string): string {
-  return String(name ?? "")
-    .normalize("NFKC")
-    .toLowerCase()
-    .replace(/\u3000/g, "")
-    .replace(/\s+/g, "")
-    .replace(/[\u30fb\uff65\-_.]/g, "");
+  return normalizeHorseEntryKey(name);
 }
 
 function normalizeRaceText(value: string): string {
@@ -125,12 +121,33 @@ function sortByGateNumber(horses: Horse[]): Horse[] {
   return [...horses].sort((a, b) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
 }
 
+function applyDrawOverrides(courseId: string, horses: Horse[]): Horse[] {
+  const drawOverrides = GENERATED_DRAW_OVERRIDES[courseId] ?? {};
+  const drawByName = new Map(Object.entries(drawOverrides).map(([name, gate]) => [normalizeName(name), Number(gate)]));
+  if (drawByName.size === 0) return horses;
+
+  const withDraws = horses.map((horse) => {
+    const gateNumber = drawByName.get(normalizeName(horse.name));
+    return Number.isFinite(gateNumber) && (gateNumber ?? 0) > 0
+      ? {
+          ...horse,
+          gateNumber: Number(gateNumber),
+        }
+      : horse;
+  });
+
+  return filterToOfficialEntryRoster(withDraws, drawByName.keys(), drawByName.size);
+}
+
 export function getDefaultHorses(courseId: string): Horse[] {
   const generated = GENERATED_WEEKLY_HORSES_MAP[courseId];
 
   if (generated && generated.length > 0) {
     const race = GENERATED_WEEKLY_RACES.find((entry) => entry.courseId === courseId);
-    const horses = generated.map((h, i) => mapGeneratedHorse(courseId, h, i));
+    const horses = applyDrawOverrides(
+      courseId,
+      generated.map((h, i) => mapGeneratedHorse(courseId, h, i))
+    );
     return sortByGateNumber(
       dedupeHorses(applyPreviousRaceOverrides(courseId, filterRaceDayNoOddsHorses(horses, race) as Horse[], race?.label))
     );
@@ -150,19 +167,14 @@ export function getDefaultHorses(courseId: string): Horse[] {
   }
 
   const generatedById = new Map((generated ?? []).map((g) => [String(g.id), g]));
-  const drawOverrides = GENERATED_DRAW_OVERRIDES[courseId] ?? {};
-  const drawByName = new Map(Object.entries(drawOverrides).map(([name, gate]) => [normalizeName(name), Number(gate)]));
 
   const horses = getLegacyDefaultHorses(courseId).map((h, i) => {
     const g = generatedById.get(String(h.id));
     const gSeed = g as (GeneratedHorseSeed & Record<string, unknown>) | undefined;
-    const byName = drawByName.get(normalizeName(h.name));
     const gateNumber =
-      Number.isFinite(byName) && (byName ?? 0) > 0
-        ? Number(byName)
-        : g && Number.isFinite(g.gateNumber) && g.gateNumber > 0
-          ? g.gateNumber
-          : h.gateNumber ?? i + 1;
+      g && Number.isFinite(g.gateNumber) && g.gateNumber > 0
+        ? g.gateNumber
+        : h.gateNumber ?? i + 1;
     const weight = g && Number.isFinite(g.weight) && g.weight > 0 ? g.weight : h.weight ?? 57;
 
     return enrichHorse(courseId, {
@@ -200,5 +212,5 @@ export function getDefaultHorses(courseId: string): Horse[] {
     });
   });
 
-  return sortByGateNumber(dedupeHorses(applyPreviousRaceOverrides(courseId, horses)));
+  return sortByGateNumber(dedupeHorses(applyPreviousRaceOverrides(courseId, applyDrawOverrides(courseId, horses))));
 }
