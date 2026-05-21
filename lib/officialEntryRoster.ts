@@ -37,9 +37,10 @@ export function shouldApplyOfficialEntryRoster(
   if (horses.length === 0 || keys.length === 0) return false;
 
   const matchCount = countOfficialEntryRosterMatches(horses, keys);
-  const comparableSize = Math.min(horses.length, keys.length);
-  const minimumMatches = Math.max(1, Math.ceil(comparableSize * 0.75));
+  const minimumMatches = Math.max(1, Math.ceil(horses.length * 0.75));
   const overlap = Number(sourceOverlap ?? matchCount);
+
+  if (keys.length < minimumMatches) return false;
 
   return matchCount >= minimumMatches && (!Number.isFinite(overlap) || overlap >= minimumMatches);
 }

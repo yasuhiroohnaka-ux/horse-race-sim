@@ -89,8 +89,8 @@ function countOfficialRosterMatches(horses, officialNameSet) {
 
 function shouldApplyOfficialDrawRoster(horses, officialNameSet) {
   if (!Array.isArray(horses) || horses.length === 0 || officialNameSet.size === 0) return false;
-  const comparableSize = Math.min(horses.length, officialNameSet.size);
-  const minimumMatches = Math.max(1, Math.ceil(comparableSize * 0.75));
+  const minimumMatches = Math.max(1, Math.ceil(horses.length * 0.75));
+  if (officialNameSet.size < minimumMatches) return false;
   return countOfficialRosterMatches(horses, officialNameSet) >= minimumMatches;
 }
 

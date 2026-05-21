@@ -27,6 +27,11 @@ test("official roster filtering is skipped when the source match is weak", () =>
   assert.equal(filterToOfficialEntryRoster(horses, ["alphacrown", "unknown", "other"], 1), horses);
 });
 
+test("official roster filtering is skipped when roster looks partial", () => {
+  assert.equal(shouldApplyOfficialEntryRoster(horses, ["alphacrown", "betagirl"], 2), false);
+  assert.equal(filterToOfficialEntryRoster(horses, ["alphacrown", "betagirl"], 2), horses);
+});
+
 test("horse entry keys normalize spacing, width, and separators", () => {
   assert.equal(normalizeHorseEntryKey("\uff21\uff4c\uff50\uff48\uff41\u30fb Crown"), "alphacrown");
   assert.equal(normalizeHorseEntryKey("Beta_Girl"), "betagirl");
