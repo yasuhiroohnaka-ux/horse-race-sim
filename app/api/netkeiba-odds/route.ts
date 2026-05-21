@@ -639,6 +639,11 @@ export async function GET(request: NextRequest) {
     const jockeyByHorseKey: Record<string, string> = {};
     const performanceByGate: Record<string, PerformancePayload> = {};
     const performanceByHorseKey: Record<string, PerformancePayload> = {};
+    const entryHorseNames = best.entries.map((entry) => entry.horseName).filter(Boolean);
+    const entryHorseKeys = best.entries.map((entry) => normalizeName(entry.horseName)).filter(Boolean);
+    const entryGateNumbers = best.entries
+      .map((entry) => Number(entry.gateNumber))
+      .filter((gateNumber) => Number.isFinite(gateNumber) && gateNumber > 0);
     const resolvedOddsByGate = new Map<string, number | null>();
     const weeklyHorseByGate = new Map(
       (race.horses ?? [])
@@ -745,6 +750,10 @@ export async function GET(request: NextRequest) {
         raceId: best.raceId,
         fetchedAt: new Date().toISOString(),
         overlap: best.overlap,
+        entryCount: best.entries.length,
+        entryHorseNames,
+        entryHorseKeys,
+        entryGateNumbers,
         oddsByGate,
         gateByHorseKey,
         oddsByHorseKey,

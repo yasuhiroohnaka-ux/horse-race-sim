@@ -10,6 +10,7 @@ import { ACTIVE_COURSES, COURSES } from "@/lib/courses";
 import { getDefaultHorses } from "@/lib/defaultHorses";
 import { dedupeHorses, findHorseDuplicates } from "@/lib/horseIntegrity";
 import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
+import { filterToOfficialEntryRoster, normalizeHorseEntryKey } from "@/lib/officialEntryRoster";
 import { buildPredictionSnapshot } from "@/lib/predictionSnapshots";
 import { buildBettingExpectationView, type ExpectationGrade } from "@/lib/bettingExpectation";
 import { buildRaceAnalysisRows, type RaceAnalysisRow } from "@/lib/raceAnalysis";
@@ -52,6 +53,11 @@ const WEEKEND_CONDITIONS_POLL_MS = 10 * 60 * 1000;
 
 type NetkeibaOddsPayload = {
   fetchedAt?: string;
+  overlap?: number;
+  entryCount?: number;
+  entryHorseNames?: string[];
+  entryHorseKeys?: string[];
+  entryGateNumbers?: number[];
   oddsByGate?: Record<string, number>;
   gateByHorseKey?: Record<string, number>;
   oddsByHorseKey?: Record<string, number>;
@@ -158,11 +164,7 @@ function buildInitialHorses(courseId: string): Horse[] {
 }
 
 function normalizeHorseKey(name: string) {
-  return String(name ?? "")
-    .toLowerCase()
-    .replace(/\u3000/g, "")
-    .replace(/\s+/g, "")
-    .replace(/[\u30fb\uff65\-_.]/g, "");
+  return normalizeHorseEntryKey(name);
 }
 
 function getCourseRaceDay(day?: string) {
@@ -361,6 +363,7 @@ function SimulatorContent() {
         const includedByNoOddsHorseKeys = new Set(payload.includedByNoOddsHorseKeys ?? []);
         const excludedByNoOddsGates = new Set((payload.excludedByNoOddsGates ?? []).map((gate) => String(gate)));
         const excludedByNoOddsHorseKeys = new Set(payload.excludedByNoOddsHorseKeys ?? []);
+        const officialEntryHorseKeys = payload.entryHorseKeys?.length ? payload.entryHorseKeys : Object.keys(gateByHorseKey);
         if (
           Object.keys(gateByHorseKey).length === 0 &&
           Object.keys(oddsByGate).length === 0 &&
@@ -381,18 +384,21 @@ function SimulatorContent() {
 
         setHorses((previous) => {
           let changed = false;
-          const retained = payload.raceDayNoOddsExclusionsActive
-            ? previous.filter((horse) => {
-                const horseKey = normalizeHorseKey(horse.name);
-                const gateKey = String(horse.gateNumber);
-                if (includedByNoOddsGates.size > 0 || includedByNoOddsHorseKeys.size > 0) {
-                  return includedByNoOddsGates.has(gateKey) || includedByNoOddsHorseKeys.has(horseKey);
-                }
-                return !excludedByNoOddsGates.has(gateKey) && !excludedByNoOddsHorseKeys.has(horseKey);
-              })
-            : previous;
-
+          let retained = filterToOfficialEntryRoster(previous, officialEntryHorseKeys, payload.overlap);
           if (retained.length !== previous.length) changed = true;
+
+          if (payload.raceDayNoOddsExclusionsActive) {
+            const beforeNoOddsFilter = retained;
+            retained = retained.filter((horse) => {
+              const horseKey = normalizeHorseKey(horse.name);
+              const gateKey = String(horse.gateNumber);
+              if (includedByNoOddsGates.size > 0 || includedByNoOddsHorseKeys.size > 0) {
+                return includedByNoOddsGates.has(gateKey) || includedByNoOddsHorseKeys.has(horseKey);
+              }
+              return !excludedByNoOddsGates.has(gateKey) && !excludedByNoOddsHorseKeys.has(horseKey);
+            });
+            if (retained.length !== beforeNoOddsFilter.length) changed = true;
+          }
 
           const updated = retained.map((horse) => {
             let nextHorse = horse;
@@ -405,8 +411,9 @@ function SimulatorContent() {
               touched = true;
               nextHorse = { ...nextHorse, gateNumber: Math.round(latestGate) };
             }
+            const latestGateKey = String(nextHorse.gateNumber);
 
-            const latestOdds = Number(oddsByHorseKey[horseKey] ?? oddsByGate[String(horse.gateNumber)]);
+            const latestOdds = Number(oddsByHorseKey[horseKey] ?? oddsByGate[latestGateKey] ?? oddsByGate[String(horse.gateNumber)]);
             if (Number.isFinite(latestOdds) && latestOdds > 0) {
               const roundedLatestOdds = Math.round(latestOdds * 10) / 10;
               const currentOdds = Number(horse.realOdds ?? 0);
@@ -418,21 +425,21 @@ function SimulatorContent() {
             }
 
             const latestPopularity = Math.round(
-              Number(popularityByHorseKey[horseKey] ?? popularityByGate[String(horse.gateNumber)])
+              Number(popularityByHorseKey[horseKey] ?? popularityByGate[latestGateKey] ?? popularityByGate[String(horse.gateNumber)])
             );
             if (Number.isFinite(latestPopularity) && latestPopularity > 0 && nextHorse.predictionCount !== latestPopularity) {
               touched = true;
               nextHorse = { ...nextHorse, predictionCount: latestPopularity };
             }
 
-            const latestJockey = String(jockeyByHorseKey[horseKey] ?? jockeyByGate[String(horse.gateNumber)] ?? "").trim();
+            const latestJockey = String(jockeyByHorseKey[horseKey] ?? jockeyByGate[latestGateKey] ?? jockeyByGate[String(horse.gateNumber)] ?? "").trim();
             if (latestJockey && nextHorse.jockey !== latestJockey) {
               touched = true;
               needsRatingsRecalc = true;
               nextHorse = { ...nextHorse, jockey: latestJockey };
             }
 
-            const latestPerformance = performanceByHorseKey[horseKey] ?? performanceByGate[String(horse.gateNumber)];
+            const latestPerformance = performanceByHorseKey[horseKey] ?? performanceByGate[latestGateKey] ?? performanceByGate[String(horse.gateNumber)];
             if (latestPerformance) {
               const nextFields: Partial<Horse> = {};
               const form = Number(latestPerformance.recentFormScore);
