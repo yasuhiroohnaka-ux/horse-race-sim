@@ -16,9 +16,11 @@ import {
   TABLE_HEADER_DESCRIPTIONS,
   getSignalDescription,
 } from "@/lib/analysisGlossary";
+import { RaceTrendNotesPanel } from "@/components/RaceTrendNotesPanel";
 import { Course, Horse, RaceCondition } from "@/lib/types";
 import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
 import { findRaceTrendProfile } from "@/lib/raceTrendHints";
+import { findRaceHeuristicHints, findRaceTrendNotes } from "@/lib/raceAnnotations";
 import { getFrameColor, getFrameNumber } from "@/lib/frameColor";
 
 interface SimulationResultsProps {
@@ -127,6 +129,8 @@ export function SimulationResults({
   const rows = buildRaceAnalysisRows(results, horses, course, condition);
   const hasTrendRows = rows.some((row) => row.adjustedRank !== undefined);
   const trendProfile = hasTrendRows ? findRaceTrendProfile(course) : null;
+  const raceTrendNotes = findRaceTrendNotes(course);
+  const raceHeuristicHints = findRaceHeuristicHints(course);
   const isNhkMile = trendProfile?.raceKey === "nhk-mile-c";
   const chartRows = rows.slice(0, Math.min(rows.length, 10)).map((row) => ({
     name: row.name.length > 8 ? `${row.name.slice(0, 8)}…` : row.name,
@@ -262,6 +266,8 @@ export function SimulationResults({
           </div>
         </div>
       )}
+
+      <RaceTrendNotesPanel notes={raceTrendNotes} heuristicHints={raceHeuristicHints} />
 
       <div className="mb-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
         <div className="mb-2 flex flex-wrap gap-2 text-[11px] text-slate-500">

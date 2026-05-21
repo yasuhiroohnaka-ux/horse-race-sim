@@ -185,6 +185,39 @@ export interface RaceTrendRankedScoreResult extends RaceTrendScoreResult {
   adjustedRank: number;
 }
 
+export type RaceTrendNoteCategory =
+  | "previousRace"
+  | "cornerPosition"
+  | "classicRelation"
+  | "longshot";
+
+export interface RaceTrendRow {
+  label: string;
+  record?: string;
+  winRate?: string;
+  quinellaRate?: string;
+  showRate?: string;
+  extra?: Record<string, string | number | null>;
+}
+
+export interface RaceTrendNote {
+  id: string;
+  raceKey: string;
+  title: string;
+  category: RaceTrendNoteCategory;
+  summary: string;
+  point: string;
+  rows?: RaceTrendRow[];
+  cautions?: string[];
+  sourceLabel?: string;
+}
+
+export interface RaceTrendHeuristicHint {
+  id: string;
+  label: string;
+  description: string;
+}
+
 export interface CourseSegment {
   distance: number;
   slope: number;
