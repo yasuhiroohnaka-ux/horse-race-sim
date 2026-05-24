@@ -4462,6 +4462,109 @@
       "tanPayoutSource": "missing",
       "fukuPayoutSource": "missing",
       "resolved": false
+    },
+    {
+      "weekOf": "2026-05-18",
+      "day": "Sun",
+      "stage": "sun_15",
+      "postedAt": "2026-05-24T08:39:19.655Z",
+      "predictionOrigin": "saved_live",
+      "scoringVersion": "tanpuku-place-v2.3",
+      "courseId": "tokyo-turf-2400-202605021011",
+      "raceLabel": "オークス",
+      "pickType": "win",
+      "classificationHint": {
+        "classification": "win",
+        "confidence": 0.95,
+        "reason": "勝ち切り期待が高い: 勝率53%・単ROI164%・次点差0.037"
+      },
+      "recommendedBetAction": "unknown",
+      "recommendedBetDecision": {
+        "action": "unknown",
+        "confidence": "unknown",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "classification_hint_win",
+          "valid_odds_source"
+        ],
+        "riskFlags": [
+          "missing_selection_log",
+          "large_field_size"
+        ],
+        "source": "safety_rule"
+      },
+      "horseId": "10",
+      "horseName": "スターアニス",
+      "realOdds": 3.1,
+      "placeOdds": 2.1,
+      "winProb": 0.53,
+      "placeProb": 0.767,
+      "placeScore": 0.674,
+      "valueScore": 0.601,
+      "selectionReason": "複勝確率77%・上位安定度72%を重視して複勝軸に選出。 2位差0.037",
+      "scoreGap": 0.037,
+      "runnerUpHorseId": "18",
+      "runnerUpHorseName": "ラフターラインズ",
+      "runnerUpPlaceScore": 0.637,
+      "runnerUpPlaceProb": 0.738,
+      "overbetLabel": null,
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
+    },
+    {
+      "weekOf": "2026-05-18",
+      "day": "Sun",
+      "stage": "sun_15",
+      "postedAt": "2026-05-24T08:39:19.655Z",
+      "predictionOrigin": "saved_live",
+      "scoringVersion": "tanpuku-place-v2.3",
+      "courseId": "tokyo-turf-2400-202605021011",
+      "raceLabel": "オークス",
+      "pickType": "value",
+      "classificationHint": null,
+      "recommendedBetAction": "unknown",
+      "recommendedBetDecision": {
+        "action": "unknown",
+        "confidence": "unknown",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "valid_odds_source"
+        ],
+        "riskFlags": [
+          "missing_classification_hint",
+          "missing_selection_log"
+        ],
+        "source": "safety_rule"
+      },
+      "horseId": "12",
+      "horseName": "ドリームコア",
+      "realOdds": 7.5,
+      "placeOdds": 3.6,
+      "winProb": 0.49,
+      "placeProb": 0.663,
+      "placeScore": 0.52,
+      "valueScore": 0.749,
+      "selectionReason": "本命次点ではなく、複勝寄り期待値100% / valueScore 0.749 / 複勝率66% / 次点差0.019を見てワイド高配当狙いに選出。",
+      "scoreGap": 0.019,
+      "runnerUpHorseId": "13",
+      "runnerUpHorseName": "エンネ",
+      "runnerUpPlaceScore": 0.546,
+      "runnerUpPlaceProb": 0.675,
+      "overbetLabel": null,
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
     }
   ],
   "reviewPosts": {
