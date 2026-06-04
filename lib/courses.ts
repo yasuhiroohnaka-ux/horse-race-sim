@@ -118,7 +118,10 @@ function surfaceLabel(surface: "Turf" | "Dirt") {
 
 function buildGeneratedCourse(race: {
   courseId: string;
+  raceId: string;
   label: string;
+  raceDate?: string;
+  scheduledStartTime?: string;
   grade: string;
   day: string;
   raceNumber: number;
@@ -135,6 +138,7 @@ function buildGeneratedCourse(race: {
 }, archived?: boolean): Course {
   return {
     id: race.courseId,
+    raceId: race.raceId,
     name: `${race.venue} ${surfaceLabel(race.surface)} ${race.distance}m (${race.label})`,
     displayName: buildCourseDisplayName({
       name: race.label,
@@ -151,6 +155,9 @@ function buildGeneratedCourse(race: {
       distance: race.distance,
     }),
     venue: race.venue,
+    venueKey: race.venueKey,
+    raceDate: race.raceDate,
+    scheduledStartTime: race.scheduledStartTime,
     day: race.day,
     grade: race.grade,
     raceNumber: race.raceNumber,

@@ -75,6 +75,7 @@ function mapRaceMeta(race) {
     raceId: String(race.raceId ?? ""),
     label: String(race.label ?? race.courseId),
     raceDate: race.raceDate ? String(race.raceDate) : undefined,
+    scheduledStartTime: race.scheduledStartTime ? String(race.scheduledStartTime) : undefined,
     grade: String(race.grade ?? "OTHER"),
     day: String(race.day ?? "Sat"),
     raceNumber: Number(race.raceNumber ?? flags.raceNumber ?? 0),
@@ -273,6 +274,7 @@ export interface GeneratedRaceMeta {
   raceId: string;
   label: string;
   raceDate?: string;
+  scheduledStartTime?: string;
   grade: string;
   day: string;
   raceNumber: number;

@@ -226,10 +226,14 @@ export interface CourseSegment {
 
 export interface Course {
   id: string;
+  raceId?: string;
   name: string;
   displayName?: string;
   shortComment?: string;
   venue?: string;
+  venueKey?: string;
+  raceDate?: string;
+  scheduledStartTime?: string;
   day?: string;
   grade?: string;
   raceNumber?: number;

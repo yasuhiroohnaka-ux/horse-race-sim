@@ -11,6 +11,7 @@ import { getDefaultHorses } from "@/lib/defaultHorses";
 import { dedupeHorses, findHorseDuplicates } from "@/lib/horseIntegrity";
 import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
 import { filterToOfficialEntryRoster, normalizeHorseEntryKey } from "@/lib/officialEntryRoster";
+import { buildSnapshotCourseMeta } from "@/lib/predictionSnapshotCourseMeta";
 import { buildPredictionSnapshot } from "@/lib/predictionSnapshots";
 import { buildBettingExpectationView, type ExpectationGrade } from "@/lib/bettingExpectation";
 import { buildRaceAnalysisRows, type RaceAnalysisRow } from "@/lib/raceAnalysis";
@@ -379,7 +380,8 @@ function SimulatorContent() {
           return;
         }
 
-        setOddsLastFetchedAt(payload.fetchedAt ?? new Date().toISOString());
+        const fetchedAt = payload.fetchedAt ?? new Date().toISOString();
+        setOddsLastFetchedAt(fetchedAt);
         setOddsRefreshError("");
 
         setHorses((previous) => {
@@ -421,6 +423,10 @@ function SimulatorContent() {
                 touched = true;
                 needsRatingsRecalc = true;
                 nextHorse = { ...nextHorse, realOdds: roundedLatestOdds };
+              }
+              if (nextHorse.oddsSource !== "official" || nextHorse.oddsFetchedAt !== fetchedAt) {
+                touched = true;
+                nextHorse = { ...nextHorse, oddsSource: "official", oddsFetchedAt: fetchedAt };
               }
             }
 
@@ -702,8 +708,12 @@ function SimulatorContent() {
             course: selectedCourse,
             condition,
             simulationCount: MONTE_CARLO_RUNS,
+            capturedAt: new Date().toISOString(),
+            ...buildSnapshotCourseMeta(selectedCourse),
             oddsFetchedAt: oddsLastFetchedAt || null,
-            oddsSource: horses.find((horse) => String(horse.oddsSource ?? "").trim())?.oddsSource ?? null,
+            oddsSource: oddsLastFetchedAt
+              ? "official"
+              : horses.find((horse) => String(horse.oddsSource ?? "").trim())?.oddsSource ?? null,
             opponentOverride: pair?.opponentPick
               ? {
                   horseId: pair.opponentPick.horse.id,
