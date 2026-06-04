@@ -155,11 +155,15 @@ export function getDefaultHorses(courseId: string): Horse[] {
 
   const generatedArchived = GENERATED_ARCHIVED_RACES.find((race) => race.courseId === courseId);
   if (generatedArchived?.horses?.length) {
+    const horses = applyDrawOverrides(
+      courseId,
+      generatedArchived.horses.map((h, i) => mapGeneratedHorse(courseId, h, i))
+    );
     return sortByGateNumber(
       dedupeHorses(
         applyPreviousRaceOverrides(
           courseId,
-          generatedArchived.horses.map((h, i) => mapGeneratedHorse(courseId, h, i)),
+          horses,
           generatedArchived.label
         )
       )
