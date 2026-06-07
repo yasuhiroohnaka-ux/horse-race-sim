@@ -10,6 +10,10 @@ const CATEGORY_LABELS: Record<RaceTrendNote["category"], string> = {
   cornerPosition: "前走4角",
   classicRelation: "クラシック連動",
   longshot: "人気薄",
+  age: "年齢",
+  courseExperience: "実績",
+  courseCondition: "馬場適性",
+  interval: "間隔",
 };
 
 function getExtraKeys(rows: RaceTrendRow[]): string[] {
@@ -78,11 +82,11 @@ export function RaceTrendNotesPanel({ notes, heuristicHints = [] }: RaceTrendNot
   return (
     <details className="mb-5 rounded-lg border border-emerald-200 bg-emerald-50/70 p-4" open>
       <summary className="cursor-pointer select-none text-sm font-bold text-emerald-950">
-        オークス傾向メモ
+        レース傾向メモ
       </summary>
 
       <p className="mt-2 text-xs leading-5 text-emerald-900">
-        スクショ由来の根拠メモです。印や買い目へ直接反映せず、前走・位置取り・距離延長の確認材料として表示します。
+        スクショ由来の根拠メモです。印や買い目へ直接反映せず、前走・馬場・ローテの確認材料として表示します。
       </p>
 
       {heuristicHints.length > 0 && (

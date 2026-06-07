@@ -25,6 +25,10 @@ const CHURCHILL_DOWNS_ALIASES = [
   "アーリントンカップ",
 ];
 
+const TENNO_SHO_SPRING_ALIASES = ["天皇賞・春", "天皇賞春", "天皇賞（春）", "天皇賞(春)"];
+
+const QEII_CUP_ALIASES = ["QEII世C", "QEII世Ｃ", "クイーンエリザベス2世C", "クイーンエリザベス2世Ｃ"];
+
 export const RACE_TREND_PROFILES: RaceTrendProfile[] = [
   {
     raceKey: "victoria-mile",
@@ -381,6 +385,126 @@ export const RACE_TREND_PROFILES: RaceTrendProfile[] = [
     adjustmentPolicy: {
       maxPositiveAdjustment: 0.05,
       maxNegativeAdjustment: -0.05,
+      defaultConfidence: 0.4,
+    },
+  },
+  {
+    raceKey: "takarazuka-kinen",
+    raceName: "宝塚記念",
+    course: "阪神芝2200",
+    courseIds: [
+      "takarazuka-kinen",
+      "hanshin-turf-2200-takarazuka-kinen",
+      "kyoto-turf-2200-takarazuka-kinen",
+    ],
+    matchRaceNames: ["宝塚記念"],
+    notes: [
+      "勝ち馬は4歳・5歳中心。6歳以上は馬券圏内例があるが、GI連対級の実績を条件に相手評価へ寄せる。",
+      "天皇賞・春と大阪杯が主流ローテ。QEII世Cは勝ち馬ありだが母数が小さいため参考値。",
+      "稍重・重の開催では、馬券圏内18頭中16頭に芝の良馬場以外での勝利実績があった。良馬場以外なら道悪適性を重視する。",
+      "中15週以上の長期休み明けは人気馬でも崩れているため、直行組は過信しない。",
+    ],
+    trendHints: [
+      {
+        id: "takarazuka-previous-race-tenno-sho-spring",
+        type: "previousRace",
+        label: "前走天皇賞・春組",
+        condition: {
+          previousRaceNames: TENNO_SHO_SPRING_ALIASES,
+        },
+        stats: stats({ win: 3, second: 2, third: 4, out: 30 }, 0.077, 0.128, 0.231),
+        adjustment: 0.012,
+        confidence: 0.4,
+        explanation:
+          "天皇賞・春組は主流ローテで複勝率23.1%。距離短縮で追走力が問われるため、長距離適性だけでなく中距離の機動力も見る。",
+      },
+      {
+        id: "takarazuka-previous-race-osaka-hai",
+        type: "previousRace",
+        label: "前走大阪杯組",
+        condition: {
+          previousRaceNames: ["大阪杯"],
+        },
+        stats: stats({ win: 2, second: 4, third: 2, out: 24 }, 0.063, 0.188, 0.25),
+        adjustment: 0.012,
+        confidence: 0.4,
+        explanation:
+          "大阪杯組は複勝率25.0%で安定。阪神内回り寄りの総合力を評価しつつ、間隔と前走負荷を確認する。",
+      },
+      {
+        id: "takarazuka-previous-race-qeii-cup",
+        type: "previousRace",
+        label: "前走QEII世C組（参考値）",
+        condition: {
+          previousRaceNames: QEII_CUP_ALIASES,
+        },
+        stats: stats({ win: 1, second: 0, third: 0, out: 6 }, 0.143, 0.143, 0.143),
+        adjustment: 0,
+        adjustmentMode: "explanationOnly",
+        confidence: 0.25,
+        explanation:
+          "QEII世C組は勝ち馬がいるがサンプル7の参考値。海外遠征帰りの状態面が大きいため、スコアは動かさず説明タグに留める。",
+      },
+      {
+        id: "takarazuka-previous-race-arima-kinen",
+        type: "previousRace",
+        label: "前走有馬記念組（直行注意）",
+        condition: {
+          previousRaceNames: ["有馬記念"],
+        },
+        stats: stats({ win: 0, second: 0, third: 0, out: 1 }, 0, 0, 0),
+        adjustment: 0,
+        adjustmentMode: "explanationOnly",
+        confidence: 0.2,
+        explanation:
+          "有馬記念からの直行は画像データ上サンプル1で好走なし。長期休み明けになりやすいため、調整過程と状態を優先確認する。",
+      },
+      {
+        id: "takarazuka-previous-race-nikkei-sho",
+        type: "previousRace",
+        label: "前走日経賞組（参考値）",
+        condition: {
+          previousRaceNames: ["日経賞"],
+        },
+        stats: stats({ win: 0, second: 0, third: 0, out: 4 }, 0, 0, 0),
+        adjustment: 0,
+        adjustmentMode: "explanationOnly",
+        confidence: 0.2,
+        explanation:
+          "日経賞組は画像データ上0-0-0-4。母数が小さいため強い減点にはせず、ローテ注意タグとして扱う。",
+      },
+      {
+        id: "takarazuka-previous-race-kinko-sho",
+        type: "previousRace",
+        label: "前走金鯱賞組（参考値）",
+        condition: {
+          previousRaceNames: ["金鯱賞"],
+        },
+        stats: stats({ win: 0, second: 0, third: 0, out: 1 }, 0, 0, 0),
+        adjustment: 0,
+        adjustmentMode: "explanationOnly",
+        confidence: 0.2,
+        explanation:
+          "金鯱賞組は画像データ上サンプル1。評価材料としては弱く、個別能力と状態を見る。",
+      },
+      {
+        id: "takarazuka-previous-race-niigata-daishoten",
+        type: "previousRace",
+        label: "前走新潟大賞典組（参考値）",
+        condition: {
+          previousRaceNames: ["新潟大賞典"],
+        },
+        stats: stats({ win: 0, second: 0, third: 0, out: 2 }, 0, 0, 0),
+        adjustment: 0,
+        adjustmentMode: "explanationOnly",
+        confidence: 0.2,
+        explanation:
+          "新潟大賞典組は画像データ上0-0-0-2。母数が小さいため強い減点にはせず、格と距離適性を個別確認する。",
+      },
+    ],
+    adjustmentPolicy: {
+      maxPositiveAdjustment: 0.04,
+      maxNegativeAdjustment: -0.04,
       defaultConfidence: 0.4,
     },
   },

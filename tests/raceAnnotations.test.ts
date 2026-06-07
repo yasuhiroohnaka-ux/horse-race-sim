@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { OAKS_2026_RACE_KEY } from "../data/annotations/oaks-2026";
+import { TAKARAZUKA_KINEN_2026_RACE_KEY } from "../data/annotations/takarazuka-kinen-2026";
 import { findRaceHeuristicHints, findRaceTrendNotes } from "../lib/raceAnnotations";
 import type { Course } from "../lib/types";
 
@@ -54,4 +55,35 @@ test("non-Oaks races do not receive Oaks notes", () => {
   );
 
   assert.equal(notes.length, 0);
+});
+
+test("Takarazuka Kinen trend notes resolve by race name", () => {
+  const notes = findRaceTrendNotes(
+    course({
+      id: "hanshin-turf-2200-sample",
+      name: "阪神 芝 2200m (宝塚記念)",
+      distance: 2200,
+      hashtag: "#宝塚記念",
+    })
+  );
+
+  assert.equal(notes.every((note) => note.raceKey === TAKARAZUKA_KINEN_2026_RACE_KEY), true);
+  assert.equal(notes.length, 8);
+  assert.equal(notes.find((note) => note.id === "takarazuka-2026-age-record")?.rows?.[0].record, "4-2-5-27");
+});
+
+test("Takarazuka Kinen heuristic hints resolve with notes", () => {
+  const hints = findRaceHeuristicHints(
+    course({
+      id: "hanshin-turf-2200-sample",
+      name: "阪神 芝 2200m (宝塚記念)",
+      distance: 2200,
+      hashtag: "#宝塚記念",
+    })
+  );
+
+  assert.deepEqual(
+    hints.map((hint) => hint.id),
+    ["takarazuka-age-core", "takarazuka-prev-race-core", "takarazuka-ground-core"]
+  );
 });

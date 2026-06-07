@@ -10,6 +10,7 @@ import type { Course, Horse, RaceTrendProfile } from "../lib/types";
 
 const nhkProfile = RACE_TREND_PROFILES.find((profile) => profile.raceKey === "nhk-mile-c");
 const vmProfile = RACE_TREND_PROFILES.find((profile) => profile.raceKey === "victoria-mile");
+const takarazukaProfile = RACE_TREND_PROFILES.find((profile) => profile.raceKey === "takarazuka-kinen");
 
 function horse(overrides: Partial<Horse> = {}): Horse {
   return {
@@ -417,5 +418,60 @@ test("draw-family hints are explanation-only and do not increase adjustment", ()
 
   assert.ok(drawFamilyHints.length > 0);
   assert.equal(drawFamilyHints.every((hint) => hint.adjustment === 0), true);
+  assert.equal(result.trendAdjustment, 0);
+});
+
+test("Takarazuka Kinen trend profile can be resolved by race name", () => {
+  const course: Course = {
+    id: "hanshin-turf-2200-sample",
+    name: "阪神 芝 2200m (宝塚記念)",
+    distance: 2200,
+    surface: "Turf",
+    segments: [],
+    straightLength: 473.6,
+    hashtag: "#宝塚記念",
+  };
+
+  assert.equal(findRaceTrendProfile(course)?.raceKey, "takarazuka-kinen");
+});
+
+test("Takarazuka Kinen: 天皇賞春 horse matches previousRace hint", () => {
+  assert.ok(takarazukaProfile);
+
+  const result = applyRaceTrendHints(
+    horse({ previousRaceName: "天皇賞春" }),
+    0.2,
+    takarazukaProfile
+  );
+
+  assert.ok(result.matchedTrendHints.some((hint) => hint.id === "takarazuka-previous-race-tenno-sho-spring"));
+  assert.ok(result.trendAdjustment > 0);
+});
+
+test("Takarazuka Kinen: 大阪杯 horse matches previousRace hint", () => {
+  assert.ok(takarazukaProfile);
+
+  const result = applyRaceTrendHints(
+    horse({ previousRaceName: "大阪杯" }),
+    0.2,
+    takarazukaProfile
+  );
+
+  assert.ok(result.matchedTrendHints.some((hint) => hint.id === "takarazuka-previous-race-osaka-hai"));
+  assert.ok(result.trendAdjustment > 0);
+});
+
+test("Takarazuka Kinen: 有馬記念 direct horse gets explanation-only tag", () => {
+  assert.ok(takarazukaProfile);
+
+  const result = applyRaceTrendHints(
+    horse({ previousRaceName: "有馬記念" }),
+    0.2,
+    takarazukaProfile
+  );
+
+  const hint = result.matchedTrendHints.find((h) => h.id === "takarazuka-previous-race-arima-kinen");
+  assert.ok(hint);
+  assert.equal(hint.adjustment, 0);
   assert.equal(result.trendAdjustment, 0);
 });

@@ -189,7 +189,11 @@ export type RaceTrendNoteCategory =
   | "previousRace"
   | "cornerPosition"
   | "classicRelation"
-  | "longshot";
+  | "longshot"
+  | "age"
+  | "courseExperience"
+  | "courseCondition"
+  | "interval";
 
 export interface RaceTrendRow {
   label: string;

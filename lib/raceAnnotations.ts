@@ -4,6 +4,12 @@ import {
   oaks2026TrendNotes,
   oaksHeuristicHints,
 } from "@/data/annotations/oaks-2026";
+import {
+  TAKARAZUKA_KINEN_2026_COURSE_IDS,
+  TAKARAZUKA_KINEN_2026_RACE_KEY,
+  takarazukaKinen2026TrendNotes,
+  takarazukaKinenHeuristicHints,
+} from "@/data/annotations/takarazuka-kinen-2026";
 import type { Course, RaceTrendHeuristicHint, RaceTrendNote } from "@/lib/types";
 
 interface RaceTrendNoteSet {
@@ -21,6 +27,13 @@ const RACE_TREND_NOTE_SETS: RaceTrendNoteSet[] = [
     matchRaceNames: ["オークス", "優駿牝馬"],
     notes: oaks2026TrendNotes,
     heuristicHints: oaksHeuristicHints,
+  },
+  {
+    raceKey: TAKARAZUKA_KINEN_2026_RACE_KEY,
+    courseIds: TAKARAZUKA_KINEN_2026_COURSE_IDS,
+    matchRaceNames: ["宝塚記念"],
+    notes: takarazukaKinen2026TrendNotes,
+    heuristicHints: takarazukaKinenHeuristicHints,
   },
 ];
 
