@@ -4933,6 +4933,108 @@
       "tanPayoutSource": "missing",
       "fukuPayoutSource": "missing",
       "resolved": false
+    },
+    {
+      "weekOf": "2026-06-01",
+      "day": "Sun",
+      "stage": "sun_15",
+      "postedAt": "2026-06-07T09:26:22.362Z",
+      "predictionOrigin": "saved_live",
+      "scoringVersion": "tanpuku-place-v2.3",
+      "courseId": "tokyo-turf-2000-202605030209",
+      "raceLabel": "香港ＪＣＴ(2勝クラス)",
+      "pickType": "win",
+      "classificationHint": {
+        "classification": "win",
+        "confidence": 0.95,
+        "reason": "勝ち切り期待が高い: 勝率58%・単ROI93%・次点差0.227"
+      },
+      "recommendedBetAction": "unknown",
+      "recommendedBetDecision": {
+        "action": "unknown",
+        "confidence": "unknown",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "classification_hint_win",
+          "valid_odds_source"
+        ],
+        "riskFlags": [
+          "missing_selection_log"
+        ],
+        "source": "safety_rule"
+      },
+      "horseId": "6",
+      "horseName": "ゴーラッキー",
+      "realOdds": 1.6,
+      "placeOdds": 1.6,
+      "winProb": 0.584,
+      "placeProb": 0.88,
+      "placeScore": 0.781,
+      "valueScore": 0.604,
+      "selectionReason": "複勝確率88%・上位安定度79%を重視して複勝軸に選出。 2位差0.227",
+      "scoreGap": 0.227,
+      "runnerUpHorseId": "7",
+      "runnerUpHorseName": "ビーオンザカバー",
+      "runnerUpPlaceScore": 0.554,
+      "runnerUpPlaceProb": 0.663,
+      "overbetLabel": null,
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
+    },
+    {
+      "weekOf": "2026-06-01",
+      "day": "Sun",
+      "stage": "sun_15",
+      "postedAt": "2026-06-07T09:26:22.362Z",
+      "predictionOrigin": "saved_live",
+      "scoringVersion": "tanpuku-place-v2.3",
+      "courseId": "tokyo-turf-2000-202605030209",
+      "raceLabel": "香港ＪＣＴ(2勝クラス)",
+      "pickType": "value",
+      "classificationHint": null,
+      "recommendedBetAction": "unknown",
+      "recommendedBetDecision": {
+        "action": "unknown",
+        "confidence": "unknown",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "valid_odds_source"
+        ],
+        "riskFlags": [
+          "missing_classification_hint",
+          "missing_selection_log"
+        ],
+        "source": "safety_rule"
+      },
+      "horseId": "1",
+      "horseName": "コンフォルツァ",
+      "realOdds": 12.9,
+      "placeOdds": 5.5,
+      "winProb": 0.422,
+      "placeProb": 0.578,
+      "placeScore": 0.455,
+      "valueScore": 0.666,
+      "selectionReason": "本命次点ではなく、複勝寄り期待値88% / valueScore 0.666 / 複勝率58% / 次点差0.051を見てワイド高配当狙いに選出。",
+      "scoreGap": 0.051,
+      "runnerUpHorseId": "5",
+      "runnerUpHorseName": "マイネルアレス",
+      "runnerUpPlaceScore": 0.437,
+      "runnerUpPlaceProb": 0.568,
+      "overbetLabel": null,
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
     }
   ],
   "reviewPosts": {
