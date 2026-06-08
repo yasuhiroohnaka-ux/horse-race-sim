@@ -1,7 +1,7 @@
 {
-  "lastMondayRollover": "2026-06-01T06:05:06.410Z",
+  "lastMondayRollover": "2026-06-08T05:52:37.345Z",
   "fieldConfirmedAt": "2026-06-04T09:55:31.298Z",
-  "drawConfirmedAt": "2026-06-05T06:00:10.858Z",
+  "drawConfirmedAt": null,
   "performance": {
     "weekly": {
       "weekOf": "2026-06-01",
