@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   buildPredictionSnapshotSourceStatusSummary,
   buildReviewSourceStatusSummary,
+  isPreferredPredictionSnapshot,
   resolveSnapshotSourceStatus,
 } from "../lib/sourceStatus";
 import type { PredictionSnapshot, RaceReviewRecord } from "../lib/types";
@@ -144,4 +145,37 @@ test("prediction snapshot summary counts source status without migration", () =>
   assert.equal(summary.retrospectiveSnapshots, 1);
   assert.equal(summary.manualSnapshotSnapshots, 1);
   assert.equal(summary.unknownLegacySnapshots, 1);
+});
+
+test("live pre-race snapshot is preferred over later retrospective pre-race-final snapshot", () => {
+  const live = snapshot({
+    snapshotId: "live",
+    capturedAt: "2099-01-01T06:30:00.000Z",
+    snapshotTakenAt: "2099-01-01T06:30:00.000Z",
+    sourceStatus: "live_pre_race",
+    livePreRaceEligible: true,
+  });
+  const late = snapshot({
+    snapshotId: "late",
+    capturedAt: "2099-01-01T07:00:01.000Z",
+    snapshotTakenAt: "2099-01-01T07:00:01.000Z",
+    sourceStatus: "retrospective",
+    livePreRaceEligible: false,
+  });
+
+  assert.equal(isPreferredPredictionSnapshot(live, late), true);
+  assert.equal(isPreferredPredictionSnapshot(late, live), false);
+});
+
+test("actual UTC instant for 09:00 JST remains before afternoon race start", () => {
+  assert.equal(
+    resolveSnapshotSourceStatus(
+      snapshot({
+        capturedAt: "2099-01-01T00:00:00.000Z",
+        snapshotTakenAt: "2099-01-01T00:00:00.000Z",
+        scheduledStartTime: "2099-01-01T15:45:00+09:00",
+      })
+    ),
+    "live_pre_race"
+  );
 });

@@ -12,10 +12,6 @@ function hasFlag(name: string) {
   return process.argv.includes(`--${name}`) || argValue(name) === "true";
 }
 
-function jstNow() {
-  return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Tokyo" }));
-}
-
 async function main() {
   const phase = (argValue("phase") ?? "all") as ReviewPipelinePhase;
   const dayFilter = (argValue("day") ?? "") as DayLabel | "";
@@ -25,7 +21,7 @@ async function main() {
   const refreshExisting = hasFlag("refresh-existing");
   const forceRetryNow = hasFlag("force-retry-now");
   const debug = hasFlag("debug");
-  const now = nowArg ? new Date(nowArg) : jstNow();
+  const now = nowArg ? new Date(nowArg) : new Date();
   if (Number.isNaN(now.getTime())) {
     throw new Error(`invalid --now value: ${nowArg}`);
   }

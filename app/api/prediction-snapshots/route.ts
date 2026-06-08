@@ -8,7 +8,11 @@ import {
   normalizeScoringVersion,
 } from "@/lib/predictionSnapshots";
 import { loadReviewRecords } from "@/lib/reviewRecords";
-import { isLivePreRaceEligible, resolveSnapshotSourceStatus } from "@/lib/sourceStatus";
+import {
+  isLivePreRaceEligible,
+  isPreferredPredictionSnapshot,
+  resolveSnapshotSourceStatus,
+} from "@/lib/sourceStatus";
 import type { PredictionSnapshot } from "@/lib/types";
 
 const ROOT = process.cwd();
@@ -44,11 +48,6 @@ function toNormalizedSnapshot(value: PredictionSnapshot): PredictionSnapshot {
     sourceStatus,
     livePreRaceEligible: isLivePreRaceEligible(value),
   };
-}
-
-function toIsoTime(value: string): number {
-  const parsed = Date.parse(String(value ?? ""));
-  return Number.isFinite(parsed) ? parsed : 0;
 }
 
 export async function GET() {
@@ -87,12 +86,7 @@ export async function GET() {
       if (!raceId) continue;
 
       const existing = latestByRaceId[raceId];
-      const preferExistingPreRace = existing?.snapshotType === "pre_race_final";
-      if (preferExistingPreRace) {
-        continue;
-      }
-
-      if (!existing || toIsoTime(normalized.capturedAt) >= toIsoTime(existing.capturedAt)) {
+      if (isPreferredPredictionSnapshot(normalized, existing)) {
         latestByRaceId[raceId] = normalized;
       }
     }

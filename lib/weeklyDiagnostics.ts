@@ -22,6 +22,7 @@ import { loadReviewRecords } from "@/lib/reviewRecords";
 import {
   buildReviewSourceStatusSummary,
   isLivePreRaceEligible,
+  isPreferredPredictionSnapshot,
   resolveSnapshotSourceStatus,
 } from "@/lib/sourceStatus";
 import {
@@ -433,9 +434,8 @@ async function loadLatestSnapshotsByRaceId(scope: DiagnosticsAggregationScope) {
       if (!isPredictionSnapshot(parsed)) continue;
       const normalized = toNormalizedSnapshot(parsed);
       if (!normalized.raceId || !includeSnapshotInScope(normalized, scope)) continue;
-      if (latestByRaceId[normalized.raceId]?.snapshotType === "pre_race_final") continue;
       const existing = latestByRaceId[normalized.raceId];
-      if (!existing || toTimestamp(normalized.capturedAt) >= toTimestamp(existing.capturedAt)) {
+      if (isPreferredPredictionSnapshot(normalized, existing)) {
         latestByRaceId[normalized.raceId] = normalized;
       }
     }

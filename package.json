@@ -18,6 +18,7 @@
     "review:settle": "npx tsx scripts/process-review-records.ts --phase=settle",
     "review:pipeline": "npx tsx scripts/process-review-records.ts --phase=all",
     "review:rebuild": "npx tsx scripts/process-review-records.ts --phase=all --include-archives --refresh-existing",
+    "repair:live-snapshot-timezone": "npx tsx scripts/repair-live-snapshot-timezone-shift.ts",
     "routine:keiba": "node scripts/keiba-routine.mjs",
     "diagnose:selection-actions": "node scripts/diagnose-selection-actions.mjs",
     "audit:entry-data": "node scripts/daily-entry-check.mjs"

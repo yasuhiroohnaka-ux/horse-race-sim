@@ -23,6 +23,10 @@ function toTimestamp(value: unknown): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+function snapshotTimestamp(snapshot: Partial<PredictionSnapshot> | null | undefined): number {
+  return toTimestamp(snapshot?.snapshotTakenAt ?? snapshot?.capturedAt) ?? 0;
+}
+
 function raceDateAfterSnapshotDate(capturedAt: unknown, raceDate: unknown): boolean | null {
   const captured = toTimestamp(capturedAt);
   const date = String(raceDate ?? "").trim();
@@ -77,6 +81,31 @@ export function isLivePreRaceEligible(
 ): boolean {
   if (fallback?.livePreRaceEligible === true || snapshot?.livePreRaceEligible === true) return true;
   return resolveSnapshotSourceStatus(snapshot, fallback) === "live_pre_race";
+}
+
+function snapshotPreferenceRank(snapshot: Partial<PredictionSnapshot> | null | undefined): number {
+  if (!snapshot) return -1;
+  if (isLivePreRaceEligible(snapshot)) return 4;
+  if (snapshot.snapshotType === "pre_race_final") return 3;
+
+  const status = resolveSnapshotSourceStatus(snapshot);
+  if (status === "manual_snapshot") return 2;
+  if (status === "retrospective") return 1;
+  return 0;
+}
+
+export function isPreferredPredictionSnapshot(
+  candidate: Partial<PredictionSnapshot> | null | undefined,
+  current: Partial<PredictionSnapshot> | null | undefined
+): boolean {
+  if (!candidate) return false;
+  if (!current) return true;
+
+  const candidateRank = snapshotPreferenceRank(candidate);
+  const currentRank = snapshotPreferenceRank(current);
+  if (candidateRank !== currentRank) return candidateRank > currentRank;
+
+  return snapshotTimestamp(candidate) >= snapshotTimestamp(current);
 }
 
 export function resolveReviewRecordSourceStatus(record: RaceReviewRecord): PredictionSnapshotSourceStatus {

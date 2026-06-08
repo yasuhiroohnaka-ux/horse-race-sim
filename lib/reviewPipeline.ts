@@ -29,10 +29,15 @@ import {
   buildRecommendedBetDecision,
   normalizeRecommendedBetDecision,
 } from "@/lib/recommendedBetAction";
+import {
+  isLivePreRaceEligible,
+  isPreferredPredictionSnapshot,
+} from "@/lib/sourceStatus";
 import type {
   PickClassificationHint,
   PredictionSnapshot,
   PredictionSnapshotExpectation,
+  PredictionSnapshotSourceStatus,
   RaceReviewRecord,
   ReviewSelectionHorse,
 } from "@/lib/types";
@@ -151,10 +156,6 @@ function normalizeClassificationHint(value: unknown): PickClassificationHint | u
     confidence: normalizeNumber(raw.confidence) ?? 0,
     reason: normalizeString(raw.reason),
   };
-}
-
-function jstNow() {
-  return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Tokyo" }));
 }
 
 function toIso(value: Date) {
@@ -303,10 +304,10 @@ function buildSnapshotIndex(snapshots: PredictionSnapshot[], records: Record<str
   for (const snapshot of candidates) {
     const raceId = extractRaceId(snapshot.raceId);
     const courseId = normalizeString(snapshot.courseId);
-    if (raceId && !byRaceId.has(raceId)) {
+    if (raceId && isPreferredPredictionSnapshot(snapshot, byRaceId.get(raceId))) {
       byRaceId.set(raceId, snapshot);
     }
-    if (courseId && !byCourseId.has(courseId)) {
+    if (courseId && isPreferredPredictionSnapshot(snapshot, byCourseId.get(courseId))) {
       byCourseId.set(courseId, snapshot);
     }
   }
@@ -336,7 +337,22 @@ function raceHorseById(race: WeeklyRace, horseId: string | null | undefined) {
 
 function buildSelectionHorseFromPairEntry(
   entry: Record<string, unknown> | null,
-  selectionMethod: "rank2" | "light_adjusted" | "stable_next"
+  selectionMethod: "rank2" | "light_adjusted" | "stable_next",
+  decisionContext: {
+    sourceStatus: PredictionSnapshotSourceStatus;
+    livePreRaceEligible: boolean;
+    fieldSize: number | null;
+    oddsSource: string | null;
+    hasSelectionLog: boolean;
+    engineAgreement?: boolean | null;
+  } = {
+    sourceStatus: "unknown",
+    livePreRaceEligible: false,
+    fieldSize: null,
+    oddsSource: null,
+    hasSelectionLog: false,
+    engineAgreement: null,
+  }
 ): ReviewSelectionHorse | null {
   if (!entry) return null;
   const horse = (entry.horse ?? null) as Record<string, unknown> | null;
@@ -346,8 +362,8 @@ function buildSelectionHorseFromPairEntry(
   const recommendedBetDecision =
     normalizeRecommendedBetDecision(entry.recommendedBetDecision) ??
     buildRecommendedBetDecision({
-      sourceStatus: "unknown",
-      livePreRaceEligible: false,
+      sourceStatus: decisionContext.sourceStatus,
+      livePreRaceEligible: decisionContext.livePreRaceEligible,
       classificationHint,
       explicitAction: entry.recommendedBetAction,
       winProb: normalizeNumber(entry.winProb),
@@ -356,10 +372,11 @@ function buildSelectionHorseFromPairEntry(
       placeProb: normalizeNumber(entry.placeProb),
       top3Stability: normalizeNumber(entry.top3Stability),
       valueScore: normalizeNumber(entry.valueScore),
-      fieldSize: null,
+      fieldSize: decisionContext.fieldSize,
+      engineAgreement: decisionContext.engineAgreement ?? null,
       overbetLabel: normalizeString(entry.overbetLabel),
-      oddsSource: null,
-      hasSelectionLog: false,
+      oddsSource: normalizeString(horse?.oddsSource ?? entry.oddsSource) ?? decisionContext.oddsSource,
+      hasSelectionLog: decisionContext.hasSelectionLog,
     });
   return {
     horseId,
@@ -489,9 +506,20 @@ async function buildSnapshotBundle(params: { race: WeeklyRace; weekOf: string | 
     scoredRows.filter((entry: Record<string, unknown>) => !isCancelledHorse((entry.horse ?? null) as Record<string, unknown> | null))
   );
   const rankMap = new Map(eligibleScoredRows.map((entry: Record<string, unknown>, index: number) => [String((entry.horse as Record<string, unknown>)?.id ?? ""), index + 1]));
+  const selectionDecisionContext = {
+    sourceStatus: snapshot.sourceStatus ?? "unknown",
+    livePreRaceEligible: snapshot.livePreRaceEligible === true,
+    fieldSize: horses.length,
+    oddsSource: normalizeString(race.oddsSource) ?? snapshot.marketMeta?.oddsSource ?? null,
+    hasSelectionLog: Boolean(snapshot.selectionLog?.entries?.length),
+  };
   const honmei = buildSelectionHorseFromPairEntry(
     tanpukuPair?.winPick ? { ...tanpukuPair.winPick, rank: rankMap.get(String(tanpukuPair.winPick.horse.id)) ?? 1 } : null,
-    "rank2"
+    "rank2",
+    {
+      ...selectionDecisionContext,
+      engineAgreement: String(tanpukuPair?.winPick?.horse?.id ?? "") === String(simHorseId ?? ""),
+    }
   );
   const fallbackOpponentEntry = tanpukuSelectionModule.pickOpponentEntry(
     scoredRows,
@@ -527,7 +555,7 @@ async function buildSnapshotBundle(params: { race: WeeklyRace; weekOf: string | 
             : null,
       }
     : null;
-  const opponent = buildSelectionHorseFromPairEntry(opponentBase, "stable_next");
+  const opponent = buildSelectionHorseFromPairEntry(opponentBase, "stable_next", selectionDecisionContext);
   const widePick = tanpukuPair?.widePick ?? tanpukuPair?.valuePick ?? null;
   const wide = buildSelectionHorseFromPairEntry(
     widePick
@@ -536,7 +564,8 @@ async function buildSnapshotBundle(params: { race: WeeklyRace; weekOf: string | 
           rank: rankMap.get(String(widePick.horse.id)) ?? null,
         }
       : null,
-    "light_adjusted"
+    "light_adjusted",
+    selectionDecisionContext
   );
 
   if (opponent?.horseId) {
@@ -766,6 +795,18 @@ function shouldAttemptSnapshot(params: {
   return hasConfirmedResult(params.race);
 }
 
+function isBeforeScheduledStart(params: {
+  race: WeeklyRace;
+  weekOf: string | null;
+  now: Date;
+}) {
+  const raceDate = safeRaceDate(params.race, params.weekOf);
+  const scheduledStart = combineRaceDateAndTime(raceDate, normalizeString(params.race.scheduledStartTime));
+  if (!scheduledStart) return false;
+  const scheduledTime = Date.parse(scheduledStart);
+  return Number.isFinite(scheduledTime) && params.now.getTime() < scheduledTime;
+}
+
 function pickExistingSnapshot(params: {
   raceId: string;
   courseId: string;
@@ -804,7 +845,7 @@ async function appendSnapshots(snapshots: PredictionSnapshot[]) {
 export async function runReviewPipeline(options: ReviewPipelineOptions): Promise<ReviewPipelineResult> {
   const {
     phase,
-    now = jstNow(),
+    now = new Date(),
     dayFilter = null,
     raceIdFilter = null,
     includeArchives = false,
@@ -876,9 +917,9 @@ export async function runReviewPipeline(options: ReviewPipelineOptions): Promise
       let changed = !wasExisting;
       let attemptedRepair = false;
 
-      if (!record.snapshot || refreshExisting) {
+      if (!record.snapshot || refreshExisting || !isLivePreRaceEligible(record.snapshot, record)) {
         const recovered = pickExistingSnapshot({ raceId, courseId: meta.courseId, index: snapshotIndex });
-        if (recovered.snapshot) {
+        if (recovered.snapshot && (!record.snapshot || refreshExisting || isPreferredPredictionSnapshot(recovered.snapshot, record.snapshot))) {
           record = normalizeReviewRecord({
             ...record,
             snapshot: recovered.snapshot,
@@ -908,7 +949,13 @@ export async function runReviewPipeline(options: ReviewPipelineOptions): Promise
         }
       }
 
-      if ((phase === "snapshot" || phase === "all") && (!record.snapshot || refreshExisting) && retryDue) {
+      const shouldRefreshNonLiveSnapshot =
+        forceRetryNow &&
+        record.snapshot !== null &&
+        !isLivePreRaceEligible(record.snapshot, record) &&
+        isBeforeScheduledStart({ race, weekOf, now });
+
+      if ((phase === "snapshot" || phase === "all") && (!record.snapshot || refreshExisting || shouldRefreshNonLiveSnapshot) && retryDue) {
         if (shouldAttemptSnapshot({ race, weekOf, now, manual: forceRetryNow })) {
           const built = await buildSnapshotBundle({ race, weekOf, now, dataUpdatedAt });
           if (built) {
