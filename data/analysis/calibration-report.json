@@ -1,0 +1,175 @@
+{
+  "generatedAt": "2026-06-10T14:55:35.335Z",
+  "sampleSize": 223,
+  "dateRange": {
+    "from": "2026-03-06",
+    "to": "2026-06-06"
+  },
+  "winCalibration": {
+    "coef": {
+      "a": -0.7356,
+      "b": 3.3361
+    },
+    "metrics": {
+      "rawModel": {
+        "logLoss": 0.6699,
+        "brier": 0.2384
+      },
+      "rawMarket": {
+        "logLoss": 0.5998,
+        "brier": 0.2056
+      },
+      "calibrated": {
+        "logLoss": 0.583,
+        "brier": 0.1981
+      }
+    }
+  },
+  "placeCalibration": {
+    "coef": {
+      "a": -0.7527,
+      "b": 1.2899
+    },
+    "metrics": {
+      "rawModel": {
+        "logLoss": 0.6604,
+        "brier": 0.2338
+      },
+      "calibrated": {
+        "logLoss": 0.635,
+        "brier": 0.2226
+      }
+    }
+  },
+  "winBuckets": [
+    {
+      "band": "0.3-0.45",
+      "n": 38,
+      "avgRaw": "43.4%",
+      "avgCalibrated": "16.7%",
+      "actual": "23.7%"
+    },
+    {
+      "band": "0.45-0.5",
+      "n": 109,
+      "avgRaw": "47.7%",
+      "avgCalibrated": "26.2%",
+      "actual": "22.9%"
+    },
+    {
+      "band": "0.5-0.6",
+      "n": 76,
+      "avgRaw": "53.1%",
+      "avgCalibrated": "42.2%",
+      "actual": "43.4%"
+    }
+  ],
+  "placeBuckets": [
+    {
+      "band": "0-0.6",
+      "n": 1,
+      "avgRaw": "59.6%",
+      "avgCalibrated": "43.8%",
+      "actual": "0.0%"
+    },
+    {
+      "band": "0.6-0.7",
+      "n": 85,
+      "avgRaw": "66.2%",
+      "avgCalibrated": "52.9%",
+      "actual": "50.6%"
+    },
+    {
+      "band": "0.7-0.8",
+      "n": 100,
+      "avgRaw": "74.1%",
+      "avgCalibrated": "64.7%",
+      "actual": "66.0%"
+    },
+    {
+      "band": "0.8-1.0",
+      "n": 37,
+      "avgRaw": "84.6%",
+      "avgCalibrated": "80.9%",
+      "actual": "83.8%"
+    }
+  ],
+  "overall": {
+    "n": 223,
+    "tanHit": "30.0%",
+    "fukuHit": "62.8%",
+    "tanRoi": "86.0%",
+    "fukuRoi": "90.2%",
+    "wideRoi": "106.5%"
+  },
+  "classificationBacktest": {
+    "place": {
+      "n": 162,
+      "tanHit": "29.0%",
+      "fukuHit": "63.6%",
+      "tanRoi": "87.0%",
+      "fukuRoi": "94.4%",
+      "wideRoi": "120.0%"
+    },
+    "win": {
+      "n": 27,
+      "tanHit": "48.1%",
+      "fukuHit": "70.4%",
+      "tanRoi": "121.9%",
+      "fukuRoi": "88.5%",
+      "wideRoi": "75.2%"
+    },
+    "skip": {
+      "n": 34,
+      "tanHit": "20.6%",
+      "fukuHit": "52.9%",
+      "tanRoi": "52.6%",
+      "fukuRoi": "71.8%",
+      "wideRoi": "67.4%"
+    }
+  },
+  "splitValidation": {
+    "train": {
+      "n": 111,
+      "winCoef": {
+        "a": -0.8686,
+        "b": 2.6416
+      },
+      "placeCoef": {
+        "a": -0.5875,
+        "b": 1.2138
+      }
+    },
+    "testWinLogLoss": {
+      "rawModel": 0.6702,
+      "rawMarket": 0.6081,
+      "trainFitCalibrated": 0.6048
+    },
+    "testClassification": {
+      "place": {
+        "n": 93,
+        "tanHit": "34.4%",
+        "fukuHit": "60.2%",
+        "tanRoi": "89.5%",
+        "fukuRoi": "85.6%",
+        "wideRoi": "81.1%"
+      },
+      "skip": {
+        "n": 11,
+        "tanHit": "18.2%",
+        "fukuHit": "63.6%",
+        "tanRoi": "30.9%",
+        "fukuRoi": "73.6%",
+        "wideRoi": "95.5%"
+      },
+      "win": {
+        "n": 8,
+        "tanHit": "37.5%",
+        "fukuHit": "75.0%",
+        "tanRoi": "92.5%",
+        "fukuRoi": "93.8%",
+        "wideRoi": "178.8%"
+      }
+    }
+  }
+}

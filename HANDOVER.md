@@ -137,5 +137,23 @@
 
 - 想定 vault パス: `C:\Users\kouyu\OneDrive\デスクトップ\markdowns\HorseRaceSim`
 - 2026-05-11 時点、Linux サンドボックスの Claude セッションからは `/mnt/c/...` 経由で到達不可（OneDrive はマウントされていない）
+- 2026-06-10 時点、Windows ネイティブの Claude セッションからは直接読み書き可能
 - vault 側に `horse-race-sim/decision-log` または `horse-race-sim/current-state` ノートを作る場合は、上記「方針」「重要コミット」「次に触ってよい軽作業」だけ転記すれば十分
 - セッション側からの読み書きが必要なときは、必要部分をリポジトリ内のファイルに反映するか、本ファイル末尾に追記する運用とする
+
+## 2026-06-10 current state
+
+### tanpuku-place-v2.4: 確率校正と分類ゲート再構築
+
+- 確定済み229レースの実績分析で、v2.3 の winProb (score/220) が約2倍過大、classificationHint が全件 "win" 化していたことが判明
+- 校正後のエンジンは市場単体を上回る (winProb logLoss 0.583 vs 市場 0.600)。選定順位 (placeScore/valueScore) は変更していない
+- 変更ファイル:
+  - `lib/generatedCalibration.mjs` (新規・自動生成): ロジスティック再校正係数
+  - `scripts/calibration-report.mjs` (新規): 校正レポート常設。`--write-coefficients` で係数再生成、`--vault` で vault 50_logs に複製
+  - `lib/tanpukuSelection.mjs`: v2.4。calWinProb/calPlaceProb/calTanRoi/calFukuRoi/fieldSize を scored entry に追加。classifyHonmeiPick を校正ゲートに書き換え (skip: <10頭 or calPlace<0.52∧calTanRoi<85 / win: calWin≥0.35∧calTanRoi≥95 / place: それ以外)
+  - `lib/predictionSnapshots.ts`: DEFAULT_SCORING_VERSION → v2.4
+  - `tests/tanpukuSelection.test.ts` (新規)
+- バックテスト (n=223): skip 34件 単ROI52.6%/複71.8% (out-of-sample 再現確認済)、win 27件 単ROI121.9% (少数・暫定)、place 162件 複ROI94.4%/ワイドROI120%
+- 詳細な根拠と見直し条件: vault `50_logs/2026-06-10-tanpuku-v24-calibration.md` と `data/analysis/calibration-report.md`
+- 次の改善候補: ワイド主力化 (place分類×ワイドROI120%)、MC top3分布の取得 (要方針判断)、複勝オッズ実値取得
+- 運用: レコード50件増ごとに `node scripts/calibration-report.mjs` で劣化確認 → 問題なければ `--write-coefficients` で係数更新

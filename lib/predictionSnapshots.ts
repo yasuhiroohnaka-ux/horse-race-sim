@@ -29,7 +29,7 @@ const CONTRIBUTOR_LABELS: Record<PredictionSnapshotContributorKey, string> = {
 export const PREDICTION_SNAPSHOT_MODEL_FAMILY = "manual-sim-montecarlo";
 export const PREDICTION_SNAPSHOT_MODEL_VERSION = "sim-page-v1";
 export const DEFAULT_PREDICTION_ORIGIN: PredictionOrigin = "saved_manual";
-export const DEFAULT_SCORING_VERSION = "tanpuku-place-v2.3";
+export const DEFAULT_SCORING_VERSION = "tanpuku-place-v2.4";
 
 const SCORING_CONFIG_SOURCE = {
   engine: "runMonteCarlo",
