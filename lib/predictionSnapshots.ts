@@ -29,7 +29,7 @@ const CONTRIBUTOR_LABELS: Record<PredictionSnapshotContributorKey, string> = {
 export const PREDICTION_SNAPSHOT_MODEL_FAMILY = "manual-sim-montecarlo";
 export const PREDICTION_SNAPSHOT_MODEL_VERSION = "sim-page-v1";
 export const DEFAULT_PREDICTION_ORIGIN: PredictionOrigin = "saved_manual";
-export const DEFAULT_SCORING_VERSION = "tanpuku-place-v2.4";
+export const DEFAULT_SCORING_VERSION = "tanpuku-place-v2.5";
 
 const SCORING_CONFIG_SOURCE = {
   engine: "runMonteCarlo",
@@ -549,6 +549,7 @@ export async function buildPredictionSnapshot(params: {
       rank: index + 1,
       score: row.abilityScore,
       winProb: row.simWinRate,
+      simTop3Rate: row.simTop3Rate ?? null,
       baseScore: row.baseScore,
       trendAdjustment: row.trendAdjustment,
       adjustedScore: row.adjustedScore,

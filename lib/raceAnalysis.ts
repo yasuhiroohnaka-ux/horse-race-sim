@@ -34,6 +34,9 @@ export interface RaceAnalysisRow {
   abilityScore: number;
   displayAbilityScore: number;
   simWinRate: number;
+  // Monte Carlo top-3 frequency (%). Optional: snapshot-reconstructed rows
+  // (e.g. backfill scripts) may not carry it.
+  simTop3Rate?: number;
   bestTime: number;
   fairOdds: number | null;
   officialOdds: number | null;
@@ -581,7 +584,7 @@ function getSignalInsight(params: {
 }
 
 export function buildRaceAnalysisRows(
-  results: { horseId: string; winCount: number; bestTime: number }[],
+  results: { horseId: string; winCount: number; bestTime: number; top3Count?: number }[],
   horses: Horse[],
   course: Course,
   condition: RaceCondition
@@ -660,6 +663,7 @@ export function buildRaceAnalysisRows(
         abilityScore: profile.abilityScore,
         displayAbilityScore: profile.displayAbilityScore,
         simWinRate,
+        simTop3Rate: round1(result?.top3Count ?? 0),
         bestTime: round1(result?.bestTime ?? 0),
         fairOdds,
         officialOdds: horse.realOdds ?? null,

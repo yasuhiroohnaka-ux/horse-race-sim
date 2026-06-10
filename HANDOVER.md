@@ -155,5 +155,14 @@
   - `tests/tanpukuSelection.test.ts` (新規)
 - バックテスト (n=223): skip 34件 単ROI52.6%/複71.8% (out-of-sample 再現確認済)、win 27件 単ROI121.9% (少数・暫定)、place 162件 複ROI94.4%/ワイドROI120%
 - 詳細な根拠と見直し条件: vault `50_logs/2026-06-10-tanpuku-v24-calibration.md` と `data/analysis/calibration-report.md`
-- 次の改善候補: ワイド主力化 (place分類×ワイドROI120%)、MC top3分布の取得 (要方針判断)、複勝オッズ実値取得
 - 運用: レコード50件増ごとに `node scripts/calibration-report.mjs` で劣化確認 → 問題なければ `--write-coefficients` で係数更新
+
+### tanpuku-place-v2.5: ワイド推奨・複勝オッズ実値近似・MC top3 取得 (2026-06-11)
+
+- `wideRecommendation`: place 分類 (ワイドROI 116%, n=167) のとき本命×相手ワイドを推奨として `pickTanpukuPair` が返す
+- `overbetLabel` を校正値化: officialImplied − 校正勝率 ≥0.05/0.15。市場15pt以上過熱は単ROI 33% (n=23)
+- `placeOdds` を実払戻OLSに置換: `max(1.0, odds×0.1649+0.8981)` (`PLACE_ODDS_MODEL`、自動生成)。旧近似は1.4-1.6倍過大だった
+- `runMonteCarlo` が `top3Count` (3着内率%) を返すようになった。動力学は不変、出力統計の追加のみ。「runMonteCarlo は変更しない」方針は「動力学を変えない」に読み替え
+- snapshot rankedRows に `simTop3Rate` を蓄積開始 (v2.5以降)
+- `scripts/validate-mc-top3.ts` の検証 (237レース): MC top3 は現行 placeProb 式に判別力で劣る (logLoss 0.484 vs 0.469) → **置換見送り**。ライブ snapshot が50レース超でブレンド再検証
+- 詳細: vault `50_logs/2026-06-11-tanpuku-v25-wide-placeodds-top3.md`、`data/analysis/mc-top3-validation.md`

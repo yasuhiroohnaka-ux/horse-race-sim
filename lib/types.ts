@@ -302,6 +302,10 @@ export interface PredictionSnapshotRow {
   rank: number;
   score: number;
   winProb: number;
+  // Monte Carlo top-3 frequency (%). Captured since tanpuku-place-v2.5 to
+  // validate replacing the linear placeProb approximation. Optional for
+  // backward compatibility with older snapshots.
+  simTop3Rate?: number | null;
   baseScore?: number;
   trendAdjustment?: number;
   adjustedScore?: number;

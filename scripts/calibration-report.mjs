@@ -44,6 +44,25 @@ function loadSettledRecords() {
     .sort((a, b) => String(a.meta?.raceDate ?? "").localeCompare(String(b.meta?.raceDate ?? "")));
 }
 
+// 複勝オッズの線形近似 placeOdds ≈ odds * slope + intercept を
+// 確定済み複勝的中の実払戻 (fukuPayout/100) に OLS でフィットする。
+// 注意: 的中サンプルのみで観測されるため軽い選択バイアスを含む。
+// 旧近似 odds*0.35+1.0 は実払戻比 1.4-1.6 倍過大だった (2026-06-11 検証)。
+function fitPlaceOddsModel(records) {
+  const hits = records.filter((x) => x.honmei.fukuOutcome === "hit" && x.honmei.fukuPayout > 0);
+  if (hits.length < 30) return null;
+  const xs = hits.map((x) => Number(x.honmei.realOdds));
+  const ys = hits.map((x) => x.honmei.fukuPayout / 100);
+  const n = xs.length;
+  const sx = xs.reduce((a, b) => a + b, 0);
+  const sy = ys.reduce((a, b) => a + b, 0);
+  const sxx = xs.reduce((a, b) => a + b * b, 0);
+  const sxy = xs.reduce((a, v, i) => a + v * ys[i], 0);
+  const slope = (n * sxy - sx * sy) / (n * sxx - sx * sx);
+  const intercept = (sy - slope * sx) / n;
+  return { slope: Number(slope.toFixed(4)), intercept: Number(intercept.toFixed(4)), sampleSize: n };
+}
+
 // 2パラメータのロジスティック再校正 p_cal = sigmoid(a + b * logit(p_model))
 function fitLogistic(data, iterations = 20000, lr = 0.05) {
   let a = 0;
@@ -251,6 +270,21 @@ const splitValidation = {
 
 const fullBacktest = classificationBacktest(records, winCoef, placeCoef);
 const overall = roiSummary(records);
+const placeOddsModel = fitPlaceOddsModel(records);
+
+// 市場ギャップ別成績 (officialImplied - 校正勝率)。overbetLabel 閾値の根拠
+const marketGapBands = [
+  [-1, -0.05, "校正側が高い"],
+  [-0.05, 0.05, "ほぼ一致"],
+  [0.05, 0.15, "市場が5-15pt高い"],
+  [0.15, 1, "市場が15pt以上高い"],
+].map(([lo, hi, label]) => {
+  const list = records.filter((x) => {
+    const gap = 1 / Number(x.honmei.realOdds) - sigmoid(winCoef.a + winCoef.b * logit(clamp(Number(x.honmei.winProb), 0.01, 0.99)));
+    return gap >= lo && gap < hi;
+  });
+  return { band: label, ...roiSummary(list) };
+});
 
 const generatedAt = new Date().toISOString();
 const reportJson = {
@@ -259,6 +293,8 @@ const reportJson = {
   dateRange: { from: dateFrom, to: dateTo },
   winCalibration: { coef: winCoef, metrics: winMetrics },
   placeCalibration: { coef: placeCoef, metrics: placeMetrics },
+  placeOddsModel,
+  marketGapBands,
   winBuckets: calibrationBuckets(records, "win", winCoef),
   placeBuckets: calibrationBuckets(records, "place", placeCoef),
   overall,
@@ -287,6 +323,16 @@ ${tableMd(reportJson.winBuckets, ["band", "n", "avgRaw", "avgCalibrated", "actua
 ## placeProb 校正バケット
 
 ${tableMd(reportJson.placeBuckets, ["band", "n", "avgRaw", "avgCalibrated", "actual"])}
+## 複勝オッズ近似モデル (実払戻 OLS フィット)
+
+${placeOddsModel ? `- placeOdds ≈ odds × ${placeOddsModel.slope} + ${placeOddsModel.intercept} (n=${placeOddsModel.sampleSize}、的中サンプルのみ)` : "- サンプル不足のためフィットなし"}
+- 旧近似 odds×0.35+1.0 は実払戻比で約1.4-1.6倍過大だった。
+
+## 市場ギャップ別成績 (officialImplied − 校正勝率)
+
+${tableMd(marketGapBands, ["band", "n", "tanRoi", "fukuRoi", "wideRoi"])}
+overbetLabel の閾値 (moderate ≥0.05 / high ≥0.15) はこの表が根拠。
+
 ## 全体成績
 
 | n | tanHit | fukuHit | tanRoi | fukuRoi | wideRoi |
@@ -341,6 +387,10 @@ export const CALIBRATION_META = Object.freeze({
 export const WIN_CALIBRATION = Object.freeze({ a: ${winCoef.a}, b: ${winCoef.b} });
 export const PLACE_CALIBRATION = Object.freeze({ a: ${placeCoef.a}, b: ${placeCoef.b} });
 
+// 複勝オッズの線形近似 (確定済み複勝的中の実払戻に OLS フィット)。
+// 旧近似 odds*0.35+1.0 は実払戻比 1.4-1.6 倍過大だった。
+export const PLACE_ODDS_MODEL = Object.freeze({ slope: ${placeOddsModel?.slope ?? 0.165}, intercept: ${placeOddsModel?.intercept ?? 0.898}, sampleSize: ${placeOddsModel?.sampleSize ?? 0} });
+
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
@@ -357,6 +407,12 @@ export function calibrateWinProb(prob) {
 
 export function calibratePlaceProb(prob) {
   return recalibrate(prob, PLACE_CALIBRATION);
+}
+
+export function estimatePlaceOdds(odds) {
+  const value = Number(odds);
+  if (!(value > 0)) return 1.0;
+  return Math.max(1.0, value * PLACE_ODDS_MODEL.slope + PLACE_ODDS_MODEL.intercept);
 }
 `;
   fs.writeFileSync(GENERATED_PATH, module, "utf8");

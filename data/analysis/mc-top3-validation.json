@@ -1,0 +1,27 @@
+{
+  "summary": {
+    "generatedAt": "2026-06-10T15:23:43.135Z",
+    "raceCount": 237,
+    "sampleCount": 3335,
+    "iterations": 500,
+    "mcTop3": {
+      "raw": 0.478,
+      "recalibratedFull": 0.4711,
+      "outOfSample": 0.4835,
+      "coef": {
+        "a": -0.3242,
+        "b": 0.7108
+      }
+    },
+    "formulaPlaceProb": {
+      "raw": 0.474,
+      "recalibratedFull": 0.4628,
+      "outOfSample": 0.4693,
+      "coef": {
+        "a": 0.355,
+        "b": 1.5735
+      }
+    },
+    "verdict": "現行 placeProb 式のほうが out-of-sample 判別力が高い"
+  }
+}

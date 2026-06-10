@@ -5,7 +5,13 @@ import {
   pickTanpukuPair,
   TANPUKU_SCORING_VERSION,
 } from "../lib/tanpukuSelection.mjs";
-import { calibrateWinProb, calibratePlaceProb } from "../lib/generatedCalibration.mjs";
+import {
+  calibrateWinProb,
+  calibratePlaceProb,
+  estimatePlaceOdds,
+} from "../lib/generatedCalibration.mjs";
+import { runMonteCarlo } from "../lib/simulation";
+import type { Course, RaceCondition } from "../lib/types";
 
 // --- calibration functions ---
 
@@ -136,11 +142,11 @@ function buildRace(horseCount: number) {
   };
 }
 
-test("pickTanpukuPair emits v2.4 version and calibrated fields", () => {
+test("pickTanpukuPair emits v2.5 version and calibrated fields", () => {
   const result = pickTanpukuPair(buildRace(14));
   assert.ok(result);
-  assert.equal(result.scoringVersion, "tanpuku-place-v2.4");
-  assert.equal(TANPUKU_SCORING_VERSION, "tanpuku-place-v2.4");
+  assert.equal(result.scoringVersion, "tanpuku-place-v2.5");
+  assert.equal(TANPUKU_SCORING_VERSION, "tanpuku-place-v2.5");
   const winPick = result.winPick;
   assert.ok(winPick.classificationHint);
   assert.ok(["win", "place", "skip"].includes(winPick.classificationHint.classification));
@@ -154,4 +160,89 @@ test("pickTanpukuPair on a small field yields skip classification", () => {
   const result = pickTanpukuPair(buildRace(8));
   assert.ok(result);
   assert.equal(result.winPick.classificationHint.classification, "skip");
+});
+
+// --- v2.5: placeOdds model / overbet label / wide recommendation ---
+
+test("estimatePlaceOdds is far below the old odds*0.35+1.0 approximation", () => {
+  // 実払戻フィット: 旧近似は1.4-1.6倍過大だった
+  const oldApprox = (odds: number) => Math.max(1.1, odds * 0.35 + 1.0);
+  for (const odds of [2, 4, 8, 20]) {
+    const estimated = estimatePlaceOdds(odds);
+    assert.ok(estimated >= 1.0, `floor violated at odds=${odds}`);
+    assert.ok(estimated < oldApprox(odds), `expected below old approx at odds=${odds}`);
+  }
+  // 単調増加
+  assert.ok(estimatePlaceOdds(3) < estimatePlaceOdds(10));
+});
+
+test("overbet label fires on calibrated market gap", () => {
+  // winProb 0.45 → calWin ≈ 0.20。odds 2.0 → implied 0.5 → gap ≈ 0.30 → overbet_high
+  const race = buildRace(14);
+  race.horses[0] = buildHorse(1, { realOdds: 2.0, speed: 78, stamina: 76, power: 74 });
+  const result = pickTanpukuPair(race);
+  assert.ok(result);
+  const entry = result.scored.find((e: { horse: { id: string } }) => e.horse.id === "h1");
+  assert.ok(entry);
+  assert.equal(entry.overbetLabel, "overbet_high");
+});
+
+test("wideRecommendation is emitted for place classification with opponent", () => {
+  const result = pickTanpukuPair(buildRace(14));
+  assert.ok(result);
+  assert.ok(result.wideRecommendation);
+  if (result.winPick.classificationHint.classification === "place") {
+    assert.equal(result.wideRecommendation.recommended, true);
+    const horseIds = result.wideRecommendation.horseIds;
+    assert.ok(horseIds);
+    assert.equal(horseIds.length, 2);
+    assert.equal(horseIds[0], result.winPick.horse.id);
+    assert.equal(horseIds[1], result.opponentPick.horse.id);
+  } else {
+    assert.equal(result.wideRecommendation.recommended, false);
+  }
+});
+
+test("wideRecommendation is not recommended for skip classification", () => {
+  const result = pickTanpukuPair(buildRace(8));
+  assert.ok(result);
+  assert.equal(result.winPick.classificationHint.classification, "skip");
+  assert.equal(result.wideRecommendation.recommended, false);
+});
+
+// --- v2.5: Monte Carlo top-3 frequency ---
+
+test("runMonteCarlo reports top3Count alongside winCount", () => {
+  const course: Course = {
+    id: "test-course",
+    name: "test",
+    displayName: "test",
+    distance: 1600,
+    surface: "Turf",
+    segments: [],
+    straightLength: 450,
+    hashtag: "#test",
+  } as unknown as Course;
+  const condition: RaceCondition = {
+    courseId: "test-course",
+    trackBias: { innerOuter: 0, frontBack: 0 },
+    groundCondition: "Good",
+    weather: "Sunny",
+    windDirection: "Crosswind",
+    windSpeed: 2,
+    paceScenario: "Average",
+  } as RaceCondition;
+  const horses = Array.from({ length: 10 }, (_, i) => buildHorse(i + 1)) as never[];
+  const results = runMonteCarlo(horses, course, condition, 60);
+  assert.equal(results.length, 10);
+  let top3Total = 0;
+  for (const row of results) {
+    assert.ok(Number.isFinite(row.top3Count), "top3Count must be finite");
+    assert.ok(row.top3Count >= 0 && row.top3Count <= 100);
+    // 3着内率は勝率以上になるはず (同一馬で top3 ⊇ win)
+    assert.ok(row.top3Count >= row.winCount - 0.11, `top3 ${row.top3Count} < win ${row.winCount}`);
+    top3Total += row.top3Count;
+  }
+  // 合計はおおよそ 300% (スムージングで多少ずれる)
+  assert.ok(top3Total > 250 && top3Total < 350, `top3 sum ${top3Total}`);
 });

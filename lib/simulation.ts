@@ -272,9 +272,9 @@ export function runMonteCarlo(
   course: Course,
   condition: RaceCondition,
   iterations = MONTE_CARLO_RUNS
-): { horseId: string; winCount: number; bestTime: number }[] {
-  const stats = new Map<string, { wins: number; bestTime: number }>();
-  horses.forEach((horse) => stats.set(horse.id, { wins: 0, bestTime: Number.POSITIVE_INFINITY }));
+): { horseId: string; winCount: number; bestTime: number; top3Count: number }[] {
+  const stats = new Map<string, { wins: number; top3: number; bestTime: number }>();
+  horses.forEach((horse) => stats.set(horse.id, { wins: 0, top3: 0, bestTime: Number.POSITIVE_INFINITY }));
 
   for (let index = 0; index < iterations; index += 1) {
     const horseConditions = horses.map((horse) => {
@@ -292,6 +292,11 @@ export function runMonteCarlo(
       stats.get(winnerId)!.wins += 1;
     }
 
+    for (const row of result.slice(0, 3)) {
+      const entry = stats.get(row.horseId);
+      if (entry) entry.top3 += 1;
+    }
+
     result.forEach((row) => {
       const currentBest = stats.get(row.horseId)?.bestTime ?? Number.POSITIVE_INFINITY;
       if (row.finishTime < currentBest && stats.has(row.horseId)) {
@@ -304,6 +309,8 @@ export function runMonteCarlo(
   const abilityTotal = Math.max(1, horses.reduce((sum, horse) => sum + (abilityById.get(horse.id) ?? 0), 0));
   const priorStrength = Math.max(3, Math.round(iterations * 0.04));
   const fieldMeanPct = 100 / Math.max(1, horses.length);
+  const top3SlotCount = Math.min(3, Math.max(1, horses.length));
+  const fieldMeanTop3Pct = (100 * top3SlotCount) / Math.max(1, horses.length);
 
   return Array.from(stats.entries())
     .map(([id, data]) => {
@@ -313,10 +320,15 @@ export function runMonteCarlo(
       const calibratedWinPct =
         smoothedWinPct * (1 - MONTE_CARLO_MEAN_REVERSION) +
         fieldMeanPct * MONTE_CARLO_MEAN_REVERSION;
+      const smoothedTop3Pct = ((data.top3 + prior * top3SlotCount) / (iterations + priorStrength)) * 100;
+      const calibratedTop3Pct =
+        smoothedTop3Pct * (1 - MONTE_CARLO_MEAN_REVERSION) +
+        fieldMeanTop3Pct * MONTE_CARLO_MEAN_REVERSION;
       return {
         horseId: id,
         winCount: round1(calibratedWinPct),
         bestTime: round1(data.bestTime),
+        top3Count: round1(clamp(calibratedTop3Pct, 0, 100)),
       };
     })
     .sort((a, b) => b.winCount - a.winCount);
