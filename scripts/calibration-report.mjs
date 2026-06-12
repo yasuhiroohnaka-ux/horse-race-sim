@@ -180,6 +180,7 @@ function roiSummary(list) {
     n,
     tanHit: pct(list.filter((x) => x.honmei.tanOutcome === "hit").length / n),
     fukuHit: pct(list.filter((x) => x.honmei.fukuOutcome === "hit").length / n),
+    wideHit: pct(list.filter((x) => x.pair?.wideOutcome === "hit").length / n),
     tanRoi: `${(list.reduce((s, x) => s + (x.honmei.tanPayout || 0), 0) / n).toFixed(1)}%`,
     fukuRoi: `${(list.reduce((s, x) => s + (x.honmei.fukuPayout || 0), 0) / n).toFixed(1)}%`,
     wideRoi: `${(list.reduce((s, x) => s + (x.pair?.widePayout || 0), 0) / n).toFixed(1)}%`,
@@ -207,7 +208,10 @@ function tableMd(rows, columns) {
 function objectTableMd(obj) {
   const keys = Object.keys(obj);
   if (!keys.length) return "(データなし)\n";
-  const cols = ["class", ...Object.keys(Object.values(obj)[0])];
+  const widest = Object.values(obj).reduce((best, v) =>
+    Object.keys(v).length > Object.keys(best).length ? v : best
+  );
+  const cols = ["class", ...Object.keys(widest)];
   const rows = keys.map((k) => ({ class: k, ...obj[k] }));
   return tableMd(rows, cols);
 }
@@ -272,12 +276,13 @@ const fullBacktest = classificationBacktest(records, winCoef, placeCoef);
 const overall = roiSummary(records);
 const placeOddsModel = fitPlaceOddsModel(records);
 
-// 市場ギャップ別成績 (officialImplied - 校正勝率)。overbetLabel 閾値の根拠
+// 市場ギャップ別成績 (officialImplied - 校正勝率)。
+// marketGapLabel / overbetLabel の閾値根拠 (v2.5: moderate≥0.05 / high≥0.15)
 const marketGapBands = [
-  [-1, -0.05, "校正側が高い"],
-  [-0.05, 0.05, "ほぼ一致"],
-  [0.05, 0.15, "市場が5-15pt高い"],
-  [0.15, 1, "市場が15pt以上高い"],
+  [-1, -0.05, "underbet (校正側が5pt以上高い)"],
+  [-0.05, 0.05, "fair_priced (±5pt一致)"],
+  [0.05, 0.15, "overbet_moderate (市場5-15pt高い)"],
+  [0.15, 1, "overbet_high (市場15pt以上高い)"],
 ].map(([lo, hi, label]) => {
   const list = records.filter((x) => {
     const gap = 1 / Number(x.honmei.realOdds) - sigmoid(winCoef.a + winCoef.b * logit(clamp(Number(x.honmei.winProb), 0.01, 0.99)));
@@ -285,6 +290,10 @@ const marketGapBands = [
   });
   return { band: label, ...roiSummary(list) };
 });
+
+// 直近50件の分類別成績 (skip 機会損失と wideRecommendation の鮮度監視)
+const recentRecords = records.slice(-50);
+const recentBacktest = classificationBacktest(recentRecords, winCoef, placeCoef);
 
 const generatedAt = new Date().toISOString();
 const reportJson = {
@@ -299,6 +308,7 @@ const reportJson = {
   placeBuckets: calibrationBuckets(records, "place", placeCoef),
   overall,
   classificationBacktest: fullBacktest,
+  recentClassificationBacktest: recentBacktest,
   splitValidation,
 };
 
@@ -342,6 +352,14 @@ overbetLabel の閾値 (moderate ≥0.05 / high ≥0.15) はこの表が根拠�
 ## 分類バックテスト (現行 CLASSIFY ゲート / 全期間係数)
 
 ${objectTableMd(fullBacktest)}
+- skip 行の tanRoi/fukuRoi はそのまま「見送りによる機会損失」(低いほど skip が正しい)。
+- wideRecommendation のゲートは place 分類なので、place 行の wideHit/wideRoi がワイド推奨の成績。
+
+## 直近50件の分類別成績 (鮮度監視)
+
+${objectTableMd(recentBacktest)}
+skip の ROI が継続的に80%超なら閾値の緩和を、place の wideRoi が100%割れなら wideRecommendation の見直しを検討する。
+
 ## 分割検証 (前半 ${splitValidation.train.n} 件でフィット → 後半 ${testRecords.length} 件で評価)
 
 - train係数 win: a=${trainWinCoef.a}, b=${trainWinCoef.b} / place: a=${trainPlaceCoef.a}, b=${trainPlaceCoef.b}

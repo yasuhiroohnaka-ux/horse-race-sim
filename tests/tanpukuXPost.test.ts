@@ -120,3 +120,40 @@ test("post ending does not add popularity-over-fit slogan", () => {
   assert.equal(text.includes("人気より条件適性。"), false);
   assert.equal(text.includes("シミュ1位"), false);
 });
+
+test("wide recommendation line appears in full post when recommended", () => {
+  const text = build({
+    wideRecommendation: {
+      recommended: true,
+      horseNames: ["ダイヤモンドノット", "カヴァレリッツォ"],
+      reason: "place分類",
+    },
+  });
+  assert.match(text, /ワイド: ◎ダイヤモンドノット×○カヴァレリッツォ/);
+});
+
+test("skip classification adds cautionary wording in full post", () => {
+  const text = build({
+    classificationHint: {
+      classification: "skip",
+      confidence: 0.65,
+      reason: "少頭数",
+    },
+  });
+  assert.match(text, /見送り寄りの読み/);
+});
+
+test("post with wide recommendation and skip still fits within 280 chars", () => {
+  const text = build({
+    wideRecommendation: {
+      recommended: true,
+      horseNames: ["ダイヤモンドノット", "カヴァレリッツォ"],
+      reason: "place分類",
+    },
+    classificationHint: {
+      classification: "place",
+      confidence: 0.6,
+    },
+  });
+  assert.ok(Array.from(text).length <= 280, `text length ${Array.from(text).length} exceeds 280`);
+});

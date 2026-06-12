@@ -108,65 +108,67 @@ test("decision builder only allows win when live pre-race audit data is present"
   assert.ok(decision.reasons.includes("classification_hint_win"));
 });
 
-test("decision builder does not allow win from classification alone", () => {
+// v2.5.1: 決定層は「品質ゲート + 分類そのまま」に簡素化された。
+// 旧確率系の二重ゲート (DECISION_THRESHOLDS) は撤廃 (旧 decision=win 単ROI34% の根拠)。
+
+test("decision builder follows classification once quality gates pass", () => {
   const decision = buildRecommendedBetDecision({
     sourceStatus: "live_pre_race",
     livePreRaceEligible: true,
     classificationHint: {
       classification: "win",
-      confidence: 0.8,
+      confidence: 0.45,
       reason: "test",
     },
     oddsSource: "forecast",
     hasSelectionLog: true,
   });
 
-  assert.equal(decision.action, "unknown");
-  assert.ok(decision.riskFlags.includes("missing_score_gap"));
-  assert.ok(decision.riskFlags.includes("missing_place_probability"));
+  assert.equal(decision.action, "win");
+  assert.equal(decision.source, "explicit_live_rule");
+  assert.ok(decision.reasons.includes("classification_aligned_action"));
 });
 
-test("decision builder downgrades a non-strict win hint to place when stability gate passes", () => {
-  const decision = buildRecommendedBetDecision({
+test("decision confidence maps from classification hint confidence", () => {
+  const lowConfidence = buildRecommendedBetDecision({
     sourceStatus: "live_pre_race",
     livePreRaceEligible: true,
-    classificationHint: {
-      classification: "win",
-      confidence: 0.8,
-      reason: "test",
-    },
-    scoreGap: 0.025,
-    placeProb: 0.6,
-    top3Stability: 0.4,
-    fieldSize: 14,
-    engineAgreement: false,
+    classificationHint: { classification: "win", confidence: 0.45, reason: "test" },
+    oddsSource: "forecast",
+    hasSelectionLog: true,
+  });
+  const mediumConfidence = buildRecommendedBetDecision({
+    sourceStatus: "live_pre_race",
+    livePreRaceEligible: true,
+    classificationHint: { classification: "place", confidence: 0.6, reason: "test" },
     oddsSource: "forecast",
     hasSelectionLog: true,
   });
 
-  assert.equal(decision.action, "place");
-  assert.ok(decision.reasons.includes("place_safety_gate"));
-  assert.ok(decision.riskFlags.includes("engine_disagreement"));
+  assert.equal(lowConfidence.confidence, "low");
+  assert.equal(mediumConfidence.confidence, "medium");
 });
 
-test("decision builder skips tiny-gap large-field races after safety gates pass", () => {
+test("decision builder keeps win action with informational risk flags", () => {
   const decision = buildRecommendedBetDecision({
     sourceStatus: "live_pre_race",
     livePreRaceEligible: true,
     classificationHint: {
       classification: "win",
-      confidence: 0.8,
+      confidence: 0.45,
       reason: "test",
     },
     scoreGap: 0.006,
     placeProb: 0.58,
     top3Stability: 0.38,
     fieldSize: 18,
-    engineAgreement: true,
+    engineAgreement: false,
     oddsSource: "forecast",
     hasSelectionLog: true,
   });
 
-  assert.equal(decision.action, "skip");
-  assert.ok(decision.reasons.includes("tiny_score_gap_large_field"));
+  assert.equal(decision.action, "win");
+  assert.ok(decision.riskFlags.includes("small_score_gap"));
+  assert.ok(decision.riskFlags.includes("large_field_size"));
+  assert.ok(decision.riskFlags.includes("engine_disagreement"));
 });

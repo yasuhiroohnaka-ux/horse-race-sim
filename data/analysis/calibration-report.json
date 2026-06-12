@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-10T15:22:56.436Z",
+  "generatedAt": "2026-06-12T16:52:11.201Z",
   "sampleSize": 231,
   "dateRange": {
     "from": "2026-03-06",
@@ -48,37 +48,41 @@
   },
   "marketGapBands": [
     {
-      "band": "校正側が高い",
+      "band": "underbet (校正側が5pt以上高い)",
       "n": 41,
       "tanHit": "22.0%",
       "fukuHit": "56.1%",
+      "wideHit": "24.4%",
       "tanRoi": "78.5%",
       "fukuRoi": "89.3%",
       "wideRoi": "106.6%"
     },
     {
-      "band": "ほぼ一致",
+      "band": "fair_priced (±5pt一致)",
       "n": 99,
       "tanHit": "32.3%",
       "fukuHit": "67.7%",
+      "wideHit": "30.3%",
       "tanRoi": "98.6%",
       "fukuRoi": "97.1%",
       "wideRoi": "107.1%"
     },
     {
-      "band": "市場が5-15pt高い",
+      "band": "overbet_moderate (市場5-15pt高い)",
       "n": 64,
       "tanHit": "37.5%",
       "fukuHit": "62.5%",
+      "wideHit": "31.3%",
       "tanRoi": "95.3%",
       "fukuRoi": "82.3%",
       "wideRoi": "76.6%"
     },
     {
-      "band": "市場が15pt以上高い",
+      "band": "overbet_high (市場15pt以上高い)",
       "n": 27,
       "tanHit": "18.5%",
       "fukuHit": "55.6%",
+      "wideHit": "37.0%",
       "tanRoi": "28.5%",
       "fukuRoi": "82.6%",
       "wideRoi": "144.1%"
@@ -141,6 +145,7 @@
     "n": 231,
     "tanHit": "30.3%",
     "fukuHit": "62.8%",
+    "wideHit": "30.3%",
     "tanRoi": "85.9%",
     "fukuRoi": "89.9%",
     "wideRoi": "102.9%"
@@ -150,6 +155,7 @@
       "n": 172,
       "tanHit": "28.5%",
       "fukuHit": "61.6%",
+      "wideHit": "29.7%",
       "tanRoi": "85.1%",
       "fukuRoi": "91.2%",
       "wideRoi": "113.0%"
@@ -158,6 +164,7 @@
       "n": 26,
       "tanHit": "50.0%",
       "fukuHit": "73.1%",
+      "wideHit": "30.8%",
       "tanRoi": "126.5%",
       "fukuRoi": "93.1%",
       "wideRoi": "78.1%"
@@ -166,9 +173,39 @@
       "n": 33,
       "tanHit": "24.2%",
       "fukuHit": "60.6%",
+      "wideHit": "33.3%",
       "tanRoi": "58.5%",
       "fukuRoi": "80.6%",
       "wideRoi": "69.4%"
+    }
+  },
+  "recentClassificationBacktest": {
+    "place": {
+      "n": 35,
+      "tanHit": "25.7%",
+      "fukuHit": "48.6%",
+      "wideHit": "17.1%",
+      "tanRoi": "65.4%",
+      "fukuRoi": "66.0%",
+      "wideRoi": "40.6%"
+    },
+    "win": {
+      "n": 9,
+      "tanHit": "55.6%",
+      "fukuHit": "88.9%",
+      "wideHit": "33.3%",
+      "tanRoi": "153.3%",
+      "fukuRoi": "112.2%",
+      "wideRoi": "86.7%"
+    },
+    "skip": {
+      "n": 6,
+      "tanHit": "50.0%",
+      "fukuHit": "83.3%",
+      "wideHit": "50.0%",
+      "tanRoi": "80.0%",
+      "fukuRoi": "95.0%",
+      "wideRoi": "111.7%"
     }
   },
   "splitValidation": {
@@ -193,6 +230,7 @@
         "n": 95,
         "tanHit": "32.6%",
         "fukuHit": "57.9%",
+        "wideHit": "24.2%",
         "tanRoi": "82.1%",
         "fukuRoi": "83.4%",
         "wideRoi": "76.5%"
@@ -201,6 +239,7 @@
         "n": 10,
         "tanHit": "30.0%",
         "fukuHit": "70.0%",
+        "wideHit": "40.0%",
         "tanRoi": "48.0%",
         "fukuRoi": "76.0%",
         "wideRoi": "70.0%"
@@ -209,6 +248,7 @@
         "n": 11,
         "tanHit": "36.4%",
         "fukuHit": "72.7%",
+        "wideHit": "45.5%",
         "tanRoi": "89.1%",
         "fukuRoi": "91.8%",
         "wideRoi": "130.0%"

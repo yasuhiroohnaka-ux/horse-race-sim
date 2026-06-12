@@ -210,6 +210,46 @@ test("wideRecommendation is not recommended for skip classification", () => {
   assert.equal(result.wideRecommendation.recommended, false);
 });
 
+// --- v2.5.1: marketGapLabel ---
+
+test("marketGapLabel classifies the four market-gap bands", () => {
+  const race = buildRace(14);
+  const result = pickTanpukuPair(race);
+  assert.ok(result);
+  for (const entry of result.scored) {
+    assert.ok(
+      ["overbet_high", "overbet_moderate", "fair_priced", "underbet"].includes(entry.marketGapLabel),
+      `unexpected label ${entry.marketGapLabel}`
+    );
+    // overbetLabel との整合: overbet 系は両ラベルで一致する
+    if (entry.overbetLabel) {
+      assert.equal(entry.marketGapLabel, entry.overbetLabel);
+    }
+  }
+});
+
+test("fair_priced honmei gets an explanatory note without confidence change", () => {
+  // calWin(0.5)≈0.32 → odds 3.2 で implied 0.31 → |gap|<0.05 → fair_priced
+  const fair = classifyHonmeiPick({
+    winProb: 0.5,
+    placeProb: 0.85,
+    odds: 3.2,
+    fieldSize: 14,
+  });
+  // 同条件で gap を overbet 側に大きくする (odds 1.6 → implied 0.63)
+  const overbet = classifyHonmeiPick({
+    winProb: 0.5,
+    placeProb: 0.85,
+    odds: 1.6,
+    fieldSize: 14,
+  });
+  assert.match(fair.reason ?? "", /適正評価帯/);
+  assert.doesNotMatch(overbet.reason ?? "", /適正評価帯/);
+  // fair_priced は confidence を変えない: place 分類の基準値 0.6 のまま
+  assert.equal(fair.classification, "place");
+  assert.equal(fair.confidence, 0.6);
+});
+
 // --- v2.5: Monte Carlo top-3 frequency ---
 
 test("runMonteCarlo reports top3Count alongside winCount", () => {

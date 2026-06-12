@@ -11,12 +11,26 @@ export interface TanpukuPostHorse {
   markNote?: string | null;
 }
 
+export interface TanpukuWideRecommendation {
+  recommended: boolean;
+  horseNames?: string[];
+  reason?: string;
+}
+
+export interface TanpukuClassificationHint {
+  classification: "win" | "place" | "skip";
+  confidence: number;
+  reason?: string;
+}
+
 export interface BuildTanpukuPreRacePostParams {
   raceName?: string | null;
   hashtag?: string | null;
   topHorses: TanpukuPostHorse[];
   categoryReturnStats?: CategoryReturnStatForPost[] | null;
   maxLength?: number;
+  wideRecommendation?: TanpukuWideRecommendation | null;
+  classificationHint?: TanpukuClassificationHint | null;
 }
 
 interface PickedReturnStats {
@@ -95,6 +109,19 @@ function buildBaseLines(params: BuildTanpukuPreRacePostParams): string[] {
   ];
 }
 
+function buildWideRecommendationLine(params: BuildTanpukuPreRacePostParams): string {
+  const wide = params.wideRecommendation;
+  if (!wide?.recommended || !wide.horseNames || wide.horseNames.length < 2) return "";
+  return `ワイド: ◎${wide.horseNames[0]}×○${wide.horseNames[1]}`;
+}
+
+function buildSkipLine(params: BuildTanpukuPreRacePostParams): string {
+  if (params.classificationHint?.classification === "skip") {
+    return "軸としては見送り寄りの読み (参考)";
+  }
+  return "";
+}
+
 function buildNoStatsPost(params: BuildTanpukuPreRacePostParams): string {
   return [
     ...buildBaseLines(params),
@@ -107,8 +134,13 @@ function buildFullPost(params: BuildTanpukuPreRacePostParams, picked: PickedRetu
   const { g1, stakes } = picked;
   if (!g1 || !stakes) return buildNoStatsPost(params);
 
+  const wideLine = buildWideRecommendationLine(params);
+  const skipLine = buildSkipLine(params);
+
   return [
     ...buildBaseLines(params),
+    ...(wideLine ? ["", wideLine] : []),
+    ...(skipLine ? ["", skipLine] : []),
     "",
     "単複回収率重視のエンジンです。",
     "",

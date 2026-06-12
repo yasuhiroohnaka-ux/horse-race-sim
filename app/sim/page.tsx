@@ -19,7 +19,7 @@ import { MONTE_CARLO_RUNS, MONTE_CARLO_RUNS_LABEL } from "@/lib/simulationConfig
 import { calculateOdds, runMonteCarlo } from "@/lib/simulation";
 import { pickTanpukuPair } from "@/lib/tanpukuSelection.mjs";
 import { buildPickExplanations } from "@/lib/pickExplanations";
-import { buildTanpukuPreRacePostText, type CategoryReturnStatForPost, type TanpukuPostHorse } from "@/lib/tanpukuXPost";
+import { buildTanpukuPreRacePostText, type CategoryReturnStatForPost, type TanpukuPostHorse, type TanpukuWideRecommendation, type TanpukuClassificationHint } from "@/lib/tanpukuXPost";
 import { Course, Horse, PredictionSnapshotExpectation, RaceCondition } from "@/lib/types";
 
 const groundLabels: Record<RaceCondition["groundCondition"], string> = {
@@ -757,6 +757,8 @@ function SimulatorContent() {
       hashtag: selectedCourse.hashtag,
       topHorses: buildTopHorsesForTanpukuPost(tanpukuPair, rows),
       categoryReturnStats,
+      wideRecommendation: tanpukuPair?.wideRecommendation as TanpukuWideRecommendation | null ?? null,
+      classificationHint: tanpukuPair?.winPick?.classificationHint as TanpukuClassificationHint | null ?? null,
     });
 
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
@@ -941,20 +943,32 @@ function SimulatorContent() {
                           </div>
                         )}
                         {winPick?.classificationHint && (
-                          <div className="mt-1.5 flex items-center gap-1.5">
-                            <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                              winPick.classificationHint.classification === "win" ? "bg-orange-100 text-orange-800"
-                                : winPick.classificationHint.classification === "place" ? "bg-blue-100 text-blue-800"
-                                : "bg-slate-200 text-slate-600"
-                            }`}>
-                              {winPick.classificationHint.classification === "win" ? "単勝向き"
-                                : winPick.classificationHint.classification === "place" ? "複勝向き"
-                                : "見送り"}
-                            </span>
-                            {winPick.classificationHint.reason && (
-                              <span className="text-[10px] text-slate-500">{winPick.classificationHint.reason}</span>
+                          <div className="mt-1.5 space-y-1">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                                winPick.classificationHint.classification === "win" ? "bg-orange-100 text-orange-800"
+                                  : winPick.classificationHint.classification === "place" ? "bg-blue-100 text-blue-800"
+                                  : "bg-slate-200 text-slate-600"
+                              }`}>
+                                {winPick.classificationHint.classification === "win" ? "勝ち切り型(暫定)"
+                                  : winPick.classificationHint.classification === "place" ? "複勝軸型"
+                                  : "見送り寄り"}
+                              </span>
+                              <span className="text-[11px] text-slate-500">
+                                確度 {Math.round(winPick.classificationHint.confidence * 100)}%
+                              </span>
+                            </div>
+                            {Number.isFinite(winPick.calWinProb) && Number.isFinite(winPick.calPlaceProb) && (
+                              <p className="text-[11px] text-slate-500">
+                                校正勝率 {Math.round(winPick.calWinProb * 100)}% / 校正複勝率 {Math.round(winPick.calPlaceProb * 100)}%
+                              </p>
                             )}
                           </div>
+                        )}
+                        {tanpukuPair.wideRecommendation?.recommended && tanpukuPair.wideRecommendation.horseNames?.length >= 2 && (
+                          <p className="mt-1.5 text-[11px] font-medium text-blue-700">
+                            ワイド推奨: {tanpukuPair.wideRecommendation.horseNames[0]} × {tanpukuPair.wideRecommendation.horseNames[1]}
+                          </p>
                         )}
                         <ul className="mt-2 space-y-1 text-xs leading-relaxed text-amber-700">
                           {expectationView.tanpukuHonmei.reasons.map((reason) => (
