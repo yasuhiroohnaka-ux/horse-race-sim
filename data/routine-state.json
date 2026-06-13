@@ -5071,6 +5071,109 @@
       "resolved": false,
       "tanPayout": 0,
       "fukuPayout": 0
+    },
+    {
+      "weekOf": "2026-06-08",
+      "day": "Sat",
+      "stage": "sat_15",
+      "postedAt": "2026-06-13T09:19:00.225Z",
+      "predictionOrigin": "saved_live",
+      "scoringVersion": "tanpuku-place-v2.5",
+      "courseId": "tokyo-dirt-2100-202605030309",
+      "raceLabel": "日野特別(2勝クラス)",
+      "pickType": "win",
+      "classificationHint": {
+        "classification": "place",
+        "confidence": 0.35,
+        "reason": "3着内安定寄り: 校正複勝率85% (実績帯: 複的中63-83%) (過熱リスク大)"
+      },
+      "recommendedBetAction": "unknown",
+      "recommendedBetDecision": {
+        "action": "unknown",
+        "confidence": "unknown",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "classification_hint_place",
+          "valid_odds_source"
+        ],
+        "riskFlags": [
+          "missing_selection_log",
+          "overbet_high"
+        ],
+        "source": "safety_rule"
+      },
+      "horseId": "9",
+      "horseName": "ビービーアジャイル",
+      "realOdds": 1.1,
+      "placeOdds": 1.1,
+      "winProb": 0.56,
+      "placeProb": 0.88,
+      "placeScore": 0.766,
+      "valueScore": 0.504,
+      "selectionReason": "複勝確率88%・上位安定度83%を重視して複勝軸に選出。 2位差0.363",
+      "scoreGap": 0.363,
+      "runnerUpHorseId": "10",
+      "runnerUpHorseName": "トレインザマインド",
+      "runnerUpPlaceScore": 0.403,
+      "runnerUpPlaceProb": 0.53,
+      "overbetLabel": "overbet_high",
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
+    },
+    {
+      "weekOf": "2026-06-08",
+      "day": "Sat",
+      "stage": "sat_15",
+      "postedAt": "2026-06-13T09:19:00.226Z",
+      "predictionOrigin": "saved_live",
+      "scoringVersion": "tanpuku-place-v2.5",
+      "courseId": "tokyo-dirt-2100-202605030309",
+      "raceLabel": "日野特別(2勝クラス)",
+      "pickType": "value",
+      "classificationHint": null,
+      "recommendedBetAction": "unknown",
+      "recommendedBetDecision": {
+        "action": "unknown",
+        "confidence": "unknown",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "valid_odds_source"
+        ],
+        "riskFlags": [
+          "missing_classification_hint",
+          "missing_selection_log"
+        ],
+        "source": "safety_rule"
+      },
+      "horseId": "14",
+      "horseName": "エイカイソウル",
+      "realOdds": 28.9,
+      "placeOdds": 5.7,
+      "winProb": 0.36,
+      "placeProb": 0.504,
+      "placeScore": 0.365,
+      "valueScore": 0.495,
+      "selectionReason": "本命次点ではなく、複勝寄り期待値48% / valueScore 0.495 / 複勝率50% / 次点差0.007を見てワイド高配当狙いに選出。",
+      "scoreGap": 0.007,
+      "runnerUpHorseId": "7",
+      "runnerUpHorseName": "インペリアルライン",
+      "runnerUpPlaceScore": 0.397,
+      "runnerUpPlaceProb": 0.536,
+      "overbetLabel": null,
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
     }
   ],
   "reviewPosts": {
