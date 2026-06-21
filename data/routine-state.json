@@ -5418,6 +5418,108 @@
       "tanPayoutSource": "missing",
       "fukuPayoutSource": "missing",
       "resolved": false
+    },
+    {
+      "weekOf": "2026-06-15",
+      "day": "Sun",
+      "stage": "sun_15",
+      "postedAt": "2026-06-21T09:59:03.900Z",
+      "predictionOrigin": "saved_live",
+      "scoringVersion": "tanpuku-place-v2.5",
+      "courseId": "hanshin-dirt-1800-202609030612",
+      "raceLabel": "３歳以上２勝クラス",
+      "pickType": "win",
+      "classificationHint": {
+        "classification": "place",
+        "confidence": 0.6,
+        "reason": "3着内安定寄り: 校正複勝率85% (実績帯: 複的中63-83%) (市場と校正が一致する適正評価帯 (実績単ROI 88-108%))"
+      },
+      "recommendedBetAction": "unknown",
+      "recommendedBetDecision": {
+        "action": "unknown",
+        "confidence": "unknown",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "classification_hint_place",
+          "valid_odds_source"
+        ],
+        "riskFlags": [
+          "missing_selection_log"
+        ],
+        "source": "safety_rule"
+      },
+      "horseId": "12",
+      "horseName": "タガノアバンドーネ",
+      "realOdds": 1.2,
+      "placeOdds": 1.1,
+      "winProb": 0.616,
+      "placeProb": 0.88,
+      "placeScore": 0.767,
+      "valueScore": 0.508,
+      "selectionReason": "複勝確率88%・上位安定度77%を重視して複勝軸に選出。 2位差0.348",
+      "scoreGap": 0.348,
+      "runnerUpHorseId": "2",
+      "runnerUpHorseName": "クリノフィガロ",
+      "runnerUpPlaceScore": 0.419,
+      "runnerUpPlaceProb": 0.551,
+      "overbetLabel": null,
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
+    },
+    {
+      "weekOf": "2026-06-15",
+      "day": "Sun",
+      "stage": "sun_15",
+      "postedAt": "2026-06-21T09:59:03.900Z",
+      "predictionOrigin": "saved_live",
+      "scoringVersion": "tanpuku-place-v2.5",
+      "courseId": "hanshin-dirt-1800-202609030612",
+      "raceLabel": "３歳以上２勝クラス",
+      "pickType": "value",
+      "classificationHint": null,
+      "recommendedBetAction": "unknown",
+      "recommendedBetDecision": {
+        "action": "unknown",
+        "confidence": "unknown",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "valid_odds_source"
+        ],
+        "riskFlags": [
+          "missing_classification_hint",
+          "missing_selection_log"
+        ],
+        "source": "safety_rule"
+      },
+      "horseId": "13",
+      "horseName": "レッドリベルタ",
+      "realOdds": 22.3,
+      "placeOdds": 4.6,
+      "winProb": 0.375,
+      "placeProb": 0.522,
+      "placeScore": 0.393,
+      "valueScore": 0.561,
+      "selectionReason": "本命次点ではなく、複勝寄り期待値64% / valueScore 0.561 / 複勝率52% / 次点差0.010を見てワイド高配当狙いに選出。",
+      "scoreGap": 0.01,
+      "runnerUpHorseId": "4",
+      "runnerUpHorseName": "クロノスバレット",
+      "runnerUpPlaceScore": 0.399,
+      "runnerUpPlaceProb": 0.52,
+      "overbetLabel": null,
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
     }
   ],
   "reviewPosts": {
