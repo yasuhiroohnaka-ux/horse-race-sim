@@ -2565,10 +2565,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 1,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 20,
+      "favoriteCount": 27,
       "xBuzzScore": 0,
-      "predictionCount": 66,
-      "realOdds": 10,
+      "predictionCount": 68,
+      "realOdds": 9.3,
       "oddsSource": "forecast",
       "speed": 68,
       "stamina": 73,
@@ -2595,8 +2595,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 57,
       "favoriteCount": 5,
       "xBuzzScore": 0,
-      "predictionCount": 37,
-      "realOdds": 34,
+      "predictionCount": 32,
+      "realOdds": 42.4,
       "oddsSource": "forecast",
       "speed": 72,
       "stamina": 68,
@@ -2621,10 +2621,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 3,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 41,
+      "favoriteCount": 57,
       "xBuzzScore": 0,
-      "predictionCount": 85,
-      "realOdds": 4.5,
+      "predictionCount": 87,
+      "realOdds": 4.1,
       "oddsSource": "forecast",
       "speed": 72,
       "stamina": 69,
@@ -2649,10 +2649,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 4,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 11,
+      "favoriteCount": 12,
       "xBuzzScore": 0,
-      "predictionCount": 53,
-      "realOdds": 17.5,
+      "predictionCount": 51,
+      "realOdds": 19.1,
       "oddsSource": "forecast",
       "speed": 72,
       "stamina": 68,
@@ -2677,10 +2677,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 5,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 5,
+      "favoriteCount": 6,
       "xBuzzScore": 0,
-      "predictionCount": 36,
-      "realOdds": 36,
+      "predictionCount": 34,
+      "realOdds": 39.2,
       "oddsSource": "forecast",
       "speed": 72,
       "stamina": 67,
@@ -2705,7 +2705,7 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 6,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 30,
+      "favoriteCount": 36,
       "xBuzzScore": 0,
       "predictionCount": 76,
       "realOdds": 6.6,
@@ -2735,8 +2735,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 57,
       "favoriteCount": 23,
       "xBuzzScore": 0,
-      "predictionCount": 73,
-      "realOdds": 7.5,
+      "predictionCount": 70,
+      "realOdds": 8.5,
       "oddsSource": "forecast",
       "speed": 68,
       "stamina": 76,
@@ -2761,10 +2761,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 8,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 91,
+      "favoriteCount": 122,
       "xBuzzScore": 0,
-      "predictionCount": 100,
-      "realOdds": 2.3,
+      "predictionCount": 102,
+      "realOdds": 2.2,
       "oddsSource": "forecast",
       "speed": 74,
       "stamina": 66,
@@ -2791,8 +2791,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 57,
       "favoriteCount": 2,
       "xBuzzScore": 0,
-      "predictionCount": 22,
-      "realOdds": 64.2,
+      "predictionCount": 18,
+      "realOdds": 78.9,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 68,
@@ -2819,8 +2819,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 55,
       "favoriteCount": 4,
       "xBuzzScore": 0,
-      "predictionCount": 32,
-      "realOdds": 42.2,
+      "predictionCount": 27,
+      "realOdds": 52.4,
       "oddsSource": "forecast",
       "speed": 66,
       "stamina": 75,
@@ -2845,10 +2845,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 11,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 10,
+      "favoriteCount": 13,
       "xBuzzScore": 0,
       "predictionCount": 50,
-      "realOdds": 20.1,
+      "realOdds": 19.8,
       "oddsSource": "forecast",
       "speed": 75,
       "stamina": 70,
@@ -2875,8 +2875,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 55,
       "favoriteCount": 5,
       "xBuzzScore": 0,
-      "predictionCount": 36,
-      "realOdds": 36,
+      "predictionCount": 33,
+      "realOdds": 40.2,
       "oddsSource": "forecast",
       "speed": 69,
       "stamina": 71,
@@ -2901,10 +2901,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 13,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 4,
+      "favoriteCount": 5,
       "xBuzzScore": 0,
-      "predictionCount": 41,
-      "realOdds": 28.5,
+      "predictionCount": 39,
+      "realOdds": 32,
       "oddsSource": "forecast",
       "speed": 72,
       "stamina": 72,
@@ -2931,8 +2931,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 57,
       "favoriteCount": 10,
       "xBuzzScore": 0,
-      "predictionCount": 51,
-      "realOdds": 18.9,
+      "predictionCount": 46,
+      "realOdds": 23,
       "oddsSource": "forecast",
       "speed": 74,
       "stamina": 69,
@@ -5041,10 +5041,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 1,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 5,
+      "favoriteCount": 6,
       "xBuzzScore": 0,
       "predictionCount": 38,
-      "realOdds": 32.6,
+      "realOdds": 33.6,
       "oddsSource": "forecast",
       "speed": 70,
       "stamina": 74,
@@ -5071,8 +5071,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 57,
       "favoriteCount": 4,
       "xBuzzScore": 0,
-      "predictionCount": 35,
-      "realOdds": 38.2,
+      "predictionCount": 30,
+      "realOdds": 47.3,
       "oddsSource": "forecast",
       "speed": 71,
       "stamina": 70,
@@ -5099,8 +5099,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 57,
       "favoriteCount": 3,
       "xBuzzScore": 0,
-      "predictionCount": 28,
-      "realOdds": 50.5,
+      "predictionCount": 23,
+      "realOdds": 62.1,
       "oddsSource": "forecast",
       "speed": 71,
       "stamina": 70,
@@ -5125,10 +5125,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 4,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 24,
+      "favoriteCount": 30,
       "xBuzzScore": 0,
       "predictionCount": 71,
-      "realOdds": 8.1,
+      "realOdds": 8,
       "oddsSource": "forecast",
       "speed": 70,
       "stamina": 75,
@@ -5155,8 +5155,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 57,
       "favoriteCount": 6,
       "xBuzzScore": 0,
-      "predictionCount": 43,
-      "realOdds": 27,
+      "predictionCount": 38,
+      "realOdds": 33.6,
       "oddsSource": "forecast",
       "speed": 71,
       "stamina": 70,
@@ -5183,8 +5183,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 57,
       "favoriteCount": 6,
       "xBuzzScore": 0,
-      "predictionCount": 45,
-      "realOdds": 24.6,
+      "predictionCount": 42,
+      "realOdds": 28.2,
       "oddsSource": "forecast",
       "speed": 74,
       "stamina": 71,
@@ -5211,8 +5211,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 57,
       "favoriteCount": 9,
       "xBuzzScore": 0,
-      "predictionCount": 50,
-      "realOdds": 19.7,
+      "predictionCount": 45,
+      "realOdds": 24.7,
       "oddsSource": "forecast",
       "speed": 71,
       "stamina": 70,
@@ -5237,10 +5237,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 8,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 22,
+      "favoriteCount": 28,
       "xBuzzScore": 0,
       "predictionCount": 72,
-      "realOdds": 7.8,
+      "realOdds": 7.7,
       "oddsSource": "forecast",
       "speed": 76,
       "stamina": 67,
@@ -5267,8 +5267,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 55,
       "favoriteCount": 2,
       "xBuzzScore": 0,
-      "predictionCount": 22,
-      "realOdds": 65.5,
+      "predictionCount": 17,
+      "realOdds": 80,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 72,
@@ -5293,10 +5293,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 10,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 8,
+      "favoriteCount": 9,
       "xBuzzScore": 0,
-      "predictionCount": 51,
-      "realOdds": 18.7,
+      "predictionCount": 50,
+      "realOdds": 19.8,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 72,
@@ -5321,10 +5321,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 11,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 16,
+      "favoriteCount": 18,
       "xBuzzScore": 0,
-      "predictionCount": 67,
-      "realOdds": 9.6,
+      "predictionCount": 66,
+      "realOdds": 10,
       "oddsSource": "forecast",
       "speed": 70,
       "stamina": 68,
@@ -5349,10 +5349,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 12,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 22,
+      "favoriteCount": 28,
       "xBuzzScore": 0,
       "predictionCount": 73,
-      "realOdds": 7.3,
+      "realOdds": 7.4,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 71,
@@ -5377,10 +5377,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 13,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 66,
+      "favoriteCount": 93,
       "xBuzzScore": 0,
-      "predictionCount": 95,
-      "realOdds": 2.9,
+      "predictionCount": 98,
+      "realOdds": 2.6,
       "oddsSource": "forecast",
       "speed": 67,
       "stamina": 72,
@@ -5407,8 +5407,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 55,
       "favoriteCount": 3,
       "xBuzzScore": 0,
-      "predictionCount": 34,
-      "realOdds": 39.6,
+      "predictionCount": 29,
+      "realOdds": 49,
       "oddsSource": "forecast",
       "speed": 74,
       "stamina": 72,
@@ -5433,10 +5433,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 15,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 37,
+      "favoriteCount": 46,
       "xBuzzScore": 0,
-      "predictionCount": 85,
-      "realOdds": 4.4,
+      "predictionCount": 86,
+      "realOdds": 4.3,
       "oddsSource": "forecast",
       "speed": 69,
       "stamina": 73,
@@ -7741,10 +7741,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 1,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 34,
+      "favoriteCount": 42,
       "xBuzzScore": 0,
-      "predictionCount": 59,
-      "realOdds": 13.3,
+      "predictionCount": 60,
+      "realOdds": 13.1,
       "oddsSource": "forecast",
       "speed": 67,
       "stamina": 72,
@@ -7769,10 +7769,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 2,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 11,
+      "favoriteCount": 13,
       "xBuzzScore": 0,
       "predictionCount": 37,
-      "realOdds": 34.9,
+      "realOdds": 34.3,
       "oddsSource": "forecast",
       "speed": 74,
       "stamina": 72,
@@ -7797,10 +7797,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 3,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 24,
+      "favoriteCount": 26,
       "xBuzzScore": 0,
-      "predictionCount": 54,
-      "realOdds": 16.6,
+      "predictionCount": 53,
+      "realOdds": 17.2,
       "oddsSource": "forecast",
       "speed": 72,
       "stamina": 70,
@@ -7825,10 +7825,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 4,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 10,
+      "favoriteCount": 11,
       "xBuzzScore": 0,
-      "predictionCount": 33,
-      "realOdds": 41,
+      "predictionCount": 31,
+      "realOdds": 44.2,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 67,
@@ -7853,10 +7853,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 5,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 8,
+      "favoriteCount": 9,
       "xBuzzScore": 0,
-      "predictionCount": 25,
-      "realOdds": 58,
+      "predictionCount": 23,
+      "realOdds": 62.1,
       "oddsSource": "forecast",
       "speed": 67,
       "stamina": 76,
@@ -7881,10 +7881,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 6,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 38,
+      "favoriteCount": 55,
       "xBuzzScore": 0,
-      "predictionCount": 60,
-      "realOdds": 12.8,
+      "predictionCount": 64,
+      "realOdds": 10.9,
       "oddsSource": "forecast",
       "speed": 66,
       "stamina": 75,
@@ -7912,7 +7912,7 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "favoriteCount": 2,
       "xBuzzScore": 0,
       "predictionCount": 12,
-      "realOdds": 133.7,
+      "realOdds": 107.5,
       "oddsSource": "forecast",
       "speed": 67,
       "stamina": 72,
@@ -7937,10 +7937,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 8,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 114,
+      "favoriteCount": 136,
       "xBuzzScore": 0,
-      "predictionCount": 89,
-      "realOdds": 3.8,
+      "predictionCount": 88,
+      "realOdds": 3.9,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 69,
@@ -7965,7 +7965,7 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 9,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 251,
+      "favoriteCount": 300,
       "xBuzzScore": 0,
       "predictionCount": 103,
       "realOdds": 2.1,
@@ -7993,10 +7993,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 10,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 7,
+      "favoriteCount": 6,
       "xBuzzScore": 0,
-      "predictionCount": 21,
-      "realOdds": 66.8,
+      "predictionCount": 16,
+      "realOdds": 83.2,
       "oddsSource": "forecast",
       "speed": 72,
       "stamina": 66,
@@ -8021,10 +8021,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 11,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 95,
+      "favoriteCount": 109,
       "xBuzzScore": 0,
-      "predictionCount": 82,
-      "realOdds": 5.1,
+      "predictionCount": 81,
+      "realOdds": 5.2,
       "oddsSource": "forecast",
       "speed": 74,
       "stamina": 72,
@@ -8049,10 +8049,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 12,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 35,
+      "favoriteCount": 42,
       "xBuzzScore": 0,
-      "predictionCount": 62,
-      "realOdds": 11.8,
+      "predictionCount": 63,
+      "realOdds": 11.4,
       "oddsSource": "forecast",
       "speed": 69,
       "stamina": 73,
@@ -8077,10 +8077,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 13,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 17,
+      "favoriteCount": 18,
       "xBuzzScore": 0,
-      "predictionCount": 44,
-      "realOdds": 25.2,
+      "predictionCount": 41,
+      "realOdds": 29.1,
       "oddsSource": "forecast",
       "speed": 69,
       "stamina": 73,
@@ -8257,6 +8257,14 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "popularity": 7,
           "odds": 59.2
         }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:37.587Z",
+      "summary": "ドリーミングアップは条件が噛み合って突き抜けた。近走内容の良さがそのまま結果につながった。",
+      "xPostText": "【長万部特別(1勝クラス)回顧】1着 ドリーミングアップ(2番人気 3.4倍) / 2着 ララバニュルス / 3着 ナオミライトニング。ドリーミングアップは条件が噛み合って突き抜けた。近走内容の良さがそのまま結果につながった。 #長万部特別(1勝クラス)",
+      "reasons": [
+        "近走内容の良さがそのまま結果につながった"
       ]
     },
     "horses": [
@@ -8695,6 +8703,16 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "popularity": 11,
           "odds": 134.9
         }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:38.036Z",
+      "summary": "ヨヒーンは能力と条件が噛み合って押し切った。相対的に軽い斤量が効いた、内目の枠からロスなく運べた、近走の能力水準がこの相手では上位だった。",
+      "xPostText": "【洞爺湖特別(2勝クラス)回顧】1着 ヨヒーン(3番人気 6倍) / 2着 ラブリーリディア / 3着 バルティカ。ヨヒーンは能力と条件が噛み合って押し切った。相対的に軽い斤量が効いた、内目の枠からロスなく運べた、近走の能力水準がこの相手では上位だった。 #洞爺湖特別(2勝クラス)",
+      "reasons": [
+        "相対的に軽い斤量が効いた",
+        "内目の枠からロスなく運べた",
+        "近走の能力水準がこの相手では上位だった"
       ]
     },
     "horses": [
@@ -9228,6 +9246,16 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "popularity": 8,
           "odds": 18.2
         }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:38.516Z",
+      "summary": "ブラックチャリスは条件が噛み合って突き抜けた。距離短縮で追走負荷が軽くなった、相対的に軽い斤量が効いた、先行力を生かしやすい舞台だった。",
+      "xPostText": "【青函ステークス回顧】1着 ブラックチャリス(1番人気 3.8倍) / 2着 ナムラクララ / 3着 アメリカンステージ。ブラックチャリスは条件が噛み合って突き抜けた。距離短縮で追走負荷が軽くなった、相対的に軽い斤量が効いた、先行力を生かしやすい舞台だった。 #青函ステークス",
+      "reasons": [
+        "距離短縮で追走負荷が軽くなった",
+        "相対的に軽い斤量が効いた",
+        "先行力を生かしやすい舞台だった"
       ]
     },
     "horses": [
@@ -9795,6 +9823,15 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:38.806Z",
+      "summary": "テイエムゴッホは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった、内目の枠からロスなく運べた。",
+      "xPostText": "【３歳以上１勝クラス回顧】1着 テイエムゴッホ(1番人気 1.8倍) / 2着 グレイスフルマーチ / 3着 アイファーシャドー。テイエムゴッホは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった、内目の枠からロスなく運べた。 #３歳以上１勝クラス",
+      "reasons": [
+        "先行力を生かしやすい舞台だった",
+        "内目の枠からロスなく運べた"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -10101,6 +10138,163 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "oddsSource": "official",
     "date": "2026-06-28",
     "archivedAt": "2026-06-28T22:55:42.594Z",
+    "result": {
+      "updatedAt": "2026-06-29T05:51:43.437Z",
+      "winnerHorseId": "1",
+      "winnerHorseName": "カムアップローゼス",
+      "top3HorseIds": [
+        "1",
+        "4",
+        "3"
+      ],
+      "top3HorseNames": [
+        "カムアップローゼス",
+        "ドッグウッド",
+        "ゴーゴータカシ"
+      ],
+      "finishers": [
+        {
+          "position": 1,
+          "horseId": "1",
+          "externalHorseId": "2023104386",
+          "gateNumber": 1,
+          "horseNumber": 1,
+          "name": "カムアップローゼス",
+          "jockey": "岩田望",
+          "finishTime": "1:46.9",
+          "margin": "",
+          "popularity": 1,
+          "odds": 1.8
+        },
+        {
+          "position": 2,
+          "horseId": "4",
+          "externalHorseId": "2023101382",
+          "gateNumber": 4,
+          "horseNumber": 4,
+          "name": "ドッグウッド",
+          "jockey": "斎藤",
+          "finishTime": "1:47.1",
+          "margin": "1.1/4",
+          "popularity": 2,
+          "odds": 3.9
+        },
+        {
+          "position": 3,
+          "horseId": "3",
+          "externalHorseId": "2022102135",
+          "gateNumber": 3,
+          "horseNumber": 3,
+          "name": "ゴーゴータカシ",
+          "jockey": "吉田隼",
+          "finishTime": "1:47.6",
+          "margin": "3",
+          "popularity": 3,
+          "odds": 7.6
+        },
+        {
+          "position": 4,
+          "horseId": "8",
+          "externalHorseId": "2022102896",
+          "gateNumber": 7,
+          "horseNumber": 8,
+          "name": "ハミルトン",
+          "jockey": "鮫島駿",
+          "finishTime": "1:47.7",
+          "margin": "3/4",
+          "popularity": 7,
+          "odds": 46.4
+        },
+        {
+          "position": 5,
+          "horseId": "10",
+          "externalHorseId": "2022105400",
+          "gateNumber": 8,
+          "horseNumber": 10,
+          "name": "ピティロディア",
+          "jockey": "丹内",
+          "finishTime": "1:47.7",
+          "margin": "アタマ",
+          "popularity": 8,
+          "odds": 60.5
+        },
+        {
+          "position": 6,
+          "horseId": "5",
+          "externalHorseId": "2023104690",
+          "gateNumber": 5,
+          "horseNumber": 5,
+          "name": "ネッタイヤライ",
+          "jockey": "坂井",
+          "finishTime": "1:47.7",
+          "margin": "クビ",
+          "popularity": 4,
+          "odds": 10.4
+        },
+        {
+          "position": 7,
+          "horseId": "7",
+          "externalHorseId": "2022104724",
+          "gateNumber": 7,
+          "horseNumber": 7,
+          "name": "ハルフロンティア",
+          "jockey": "舟山",
+          "finishTime": "1:47.8",
+          "margin": "クビ",
+          "popularity": 6,
+          "odds": 11.9
+        },
+        {
+          "position": 8,
+          "horseId": "2",
+          "externalHorseId": "2023106226",
+          "gateNumber": 2,
+          "horseNumber": 2,
+          "name": "ナムラヒナギク",
+          "jockey": "小沢",
+          "finishTime": "1:48.0",
+          "margin": "1.1/2",
+          "popularity": 5,
+          "odds": 11
+        },
+        {
+          "position": 9,
+          "horseId": "6",
+          "externalHorseId": "2019100907",
+          "gateNumber": 6,
+          "horseNumber": 6,
+          "name": "ゼアズノープレイス",
+          "jockey": "的場",
+          "finishTime": "1:48.1",
+          "margin": "クビ",
+          "popularity": 10,
+          "odds": 306.1
+        },
+        {
+          "position": 10,
+          "horseId": "9",
+          "externalHorseId": "2022106807",
+          "gateNumber": 8,
+          "horseNumber": 9,
+          "name": "マイネルイグザルト",
+          "jockey": "原",
+          "finishTime": "1:48.1",
+          "margin": "アタマ",
+          "popularity": 9,
+          "odds": 107.7
+        }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:43.437Z",
+      "summary": "カムアップローゼスは条件が噛み合って突き抜けた。距離短縮で追走負荷が軽くなった、内目の枠からロスなく運べた、近走内容の良さがそのまま結果につながった。",
+      "xPostText": "【臥牛山特別(1勝クラス)回顧】1着 カムアップローゼス(1番人気 1.8倍) / 2着 ドッグウッド / 3着 ゴーゴータカシ。カムアップローゼスは条件が噛み合って突き抜けた。距離短縮で追走負荷が軽くなった、内目の枠からロスなく運べた、近走内容の良さがそのまま結果につながった。 #臥牛山特別(1勝クラス)",
+      "reasons": [
+        "距離短縮で追走負荷が軽くなった",
+        "内目の枠からロスなく運べた",
+        "近走内容の良さがそのまま結果につながった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -10407,6 +10601,161 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "oddsSource": "official",
     "date": "2026-06-28",
     "archivedAt": "2026-06-28T22:55:42.594Z",
+    "result": {
+      "updatedAt": "2026-06-29T05:51:43.765Z",
+      "winnerHorseId": "1",
+      "winnerHorseName": "プリンセッサ",
+      "top3HorseIds": [
+        "1",
+        "10",
+        "6"
+      ],
+      "top3HorseNames": [
+        "プリンセッサ",
+        "ウインシャーガス",
+        "ユージュアーナ"
+      ],
+      "finishers": [
+        {
+          "position": 1,
+          "horseId": "1",
+          "externalHorseId": "2022102138",
+          "gateNumber": 1,
+          "horseNumber": 1,
+          "name": "プリンセッサ",
+          "jockey": "岩田望",
+          "finishTime": "1:44.9",
+          "margin": "",
+          "popularity": 1,
+          "odds": 3.1
+        },
+        {
+          "position": 2,
+          "horseId": "10",
+          "externalHorseId": "2022106209",
+          "gateNumber": 8,
+          "horseNumber": 10,
+          "name": "ウインシャーガス",
+          "jockey": "鮫島駿",
+          "finishTime": "1:45.0",
+          "margin": "1/2",
+          "popularity": 2,
+          "odds": 3.3
+        },
+        {
+          "position": 3,
+          "horseId": "6",
+          "externalHorseId": "2022102952",
+          "gateNumber": 6,
+          "horseNumber": 6,
+          "name": "ユージュアーナ",
+          "jockey": "武豊",
+          "finishTime": "1:45.0",
+          "margin": "クビ",
+          "popularity": 4,
+          "odds": 5.8
+        },
+        {
+          "position": 4,
+          "horseId": "7",
+          "externalHorseId": "2022105569",
+          "gateNumber": 6,
+          "horseNumber": 7,
+          "name": "ルージュマローネ",
+          "jockey": "佐々木",
+          "finishTime": "1:45.3",
+          "margin": "2",
+          "popularity": 8,
+          "odds": 35.4
+        },
+        {
+          "position": 5,
+          "horseId": "2",
+          "externalHorseId": "2021102219",
+          "gateNumber": 2,
+          "horseNumber": 2,
+          "name": "コパノエビータ",
+          "jockey": "長浜",
+          "finishTime": "1:46.2",
+          "margin": "5",
+          "popularity": 7,
+          "odds": 32.7
+        },
+        {
+          "position": 6,
+          "horseId": "3",
+          "externalHorseId": "2022103753",
+          "gateNumber": 3,
+          "horseNumber": 3,
+          "name": "ネクストダンサー",
+          "jockey": "黛",
+          "finishTime": "1:46.3",
+          "margin": "クビ",
+          "popularity": 10,
+          "odds": 91.4
+        },
+        {
+          "position": 7,
+          "horseId": "5",
+          "externalHorseId": "2022105981",
+          "gateNumber": 5,
+          "horseNumber": 5,
+          "name": "ブラックルビー",
+          "jockey": "北村友",
+          "finishTime": "1:46.4",
+          "margin": "1/2",
+          "popularity": 6,
+          "odds": 18
+        },
+        {
+          "position": 8,
+          "horseId": "9",
+          "externalHorseId": "2022104512",
+          "gateNumber": 7,
+          "horseNumber": 9,
+          "name": "タマモカンパネラ",
+          "jockey": "原",
+          "finishTime": "1:46.4",
+          "margin": "アタマ",
+          "popularity": 5,
+          "odds": 8.8
+        },
+        {
+          "position": 9,
+          "horseId": "11",
+          "externalHorseId": "2021105415",
+          "gateNumber": 8,
+          "horseNumber": 11,
+          "name": "ドーンコーラス",
+          "jockey": "丹内",
+          "finishTime": "1:46.7",
+          "margin": "2",
+          "popularity": 9,
+          "odds": 53.8
+        },
+        {
+          "position": 10,
+          "horseId": "8",
+          "externalHorseId": "2022102220",
+          "gateNumber": 7,
+          "horseNumber": 8,
+          "name": "ニシノラヴァンダ",
+          "jockey": "横山琉",
+          "finishTime": "1:51.3",
+          "margin": "大",
+          "popularity": 11,
+          "odds": 111.8
+        }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:43.766Z",
+      "summary": "プリンセッサは条件が噛み合って突き抜けた。内目の枠からロスなく運べた。",
+      "xPostText": "【渡島特別(2勝クラス)回顧】1着 プリンセッサ(1番人気 3.1倍) / 2着 ウインシャーガス / 3着 ユージュアーナ。プリンセッサは条件が噛み合って突き抜けた。内目の枠からロスなく運べた。 #渡島特別(2勝クラス)",
+      "reasons": [
+        "内目の枠からロスなく運べた"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -10741,6 +11090,228 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "oddsSource": "official",
     "date": "2026-06-28",
     "archivedAt": "2026-06-28T22:55:42.594Z",
+    "result": {
+      "updatedAt": "2026-06-29T05:51:44.144Z",
+      "winnerHorseId": "2",
+      "winnerHorseName": "ファウストラーゼン",
+      "top3HorseIds": [
+        "2",
+        "10",
+        "3"
+      ],
+      "top3HorseNames": [
+        "ファウストラーゼン",
+        "ケリフレッドアスク",
+        "ピースワンデュック"
+      ],
+      "finishers": [
+        {
+          "position": 1,
+          "horseId": "2",
+          "externalHorseId": "2022104218",
+          "gateNumber": 2,
+          "horseNumber": 2,
+          "name": "ファウストラーゼン",
+          "jockey": "小林美",
+          "finishTime": "1:57.7",
+          "margin": "",
+          "popularity": 10,
+          "odds": 14
+        },
+        {
+          "position": 2,
+          "horseId": "10",
+          "externalHorseId": "2022102296",
+          "gateNumber": 6,
+          "horseNumber": 10,
+          "name": "ケリフレッドアスク",
+          "jockey": "北村友",
+          "finishTime": "1:57.8",
+          "margin": "1/2",
+          "popularity": 7,
+          "odds": 10.3
+        },
+        {
+          "position": 3,
+          "horseId": "3",
+          "externalHorseId": "2021101134",
+          "gateNumber": 2,
+          "horseNumber": 3,
+          "name": "ピースワンデュック",
+          "jockey": "佐々木",
+          "finishTime": "1:57.8",
+          "margin": "アタマ",
+          "popularity": 9,
+          "odds": 12.2
+        },
+        {
+          "position": 4,
+          "horseId": "8",
+          "externalHorseId": "2019100318",
+          "gateNumber": 5,
+          "horseNumber": 8,
+          "name": "ケイアイセナ",
+          "jockey": "武豊",
+          "finishTime": "1:57.8",
+          "margin": "クビ",
+          "popularity": 6,
+          "odds": 9.1
+        },
+        {
+          "position": 5,
+          "horseId": "4",
+          "externalHorseId": "2022104772",
+          "gateNumber": 3,
+          "horseNumber": 4,
+          "name": "マジックサンズ",
+          "jockey": "横山和",
+          "finishTime": "1:58.1",
+          "margin": "1.1/2",
+          "popularity": 4,
+          "odds": 8
+        },
+        {
+          "position": 6,
+          "horseId": "5",
+          "externalHorseId": "2022100699",
+          "gateNumber": 3,
+          "horseNumber": 5,
+          "name": "イガッチ",
+          "jockey": "浜中",
+          "finishTime": "1:58.2",
+          "margin": "1/2",
+          "popularity": 1,
+          "odds": 6.1
+        },
+        {
+          "position": 7,
+          "horseId": "7",
+          "externalHorseId": "2018104609",
+          "gateNumber": 4,
+          "horseNumber": 7,
+          "name": "チャックネイト",
+          "jockey": "鮫島駿",
+          "finishTime": "1:58.3",
+          "margin": "1/2",
+          "popularity": 14,
+          "odds": 60.9
+        },
+        {
+          "position": 8,
+          "horseId": "6",
+          "externalHorseId": "2019101422",
+          "gateNumber": 4,
+          "horseNumber": 6,
+          "name": "サンストックトン",
+          "jockey": "松本",
+          "finishTime": "1:58.3",
+          "margin": "ハナ",
+          "popularity": 13,
+          "odds": 44.5
+        },
+        {
+          "position": 9,
+          "horseId": "12",
+          "externalHorseId": "2022105073",
+          "gateNumber": 7,
+          "horseNumber": 12,
+          "name": "エコロディノス",
+          "jockey": "池添",
+          "finishTime": "1:58.3",
+          "margin": "クビ",
+          "popularity": 3,
+          "odds": 7.5
+        },
+        {
+          "position": 10,
+          "horseId": "13",
+          "externalHorseId": "2017104756",
+          "gateNumber": 7,
+          "horseNumber": 13,
+          "name": "アラタ",
+          "jockey": "大野",
+          "finishTime": "1:58.4",
+          "margin": "1/2",
+          "popularity": 12,
+          "odds": 33.4
+        },
+        {
+          "position": 11,
+          "horseId": "15",
+          "externalHorseId": "2019104878",
+          "gateNumber": 8,
+          "horseNumber": 15,
+          "name": "デビットバローズ",
+          "jockey": "岩田望",
+          "finishTime": "1:58.5",
+          "margin": "1/2",
+          "popularity": 8,
+          "odds": 10.5
+        },
+        {
+          "position": 12,
+          "horseId": "9",
+          "externalHorseId": "2019104756",
+          "gateNumber": 5,
+          "horseNumber": 9,
+          "name": "オニャンコポン",
+          "jockey": "横山琉",
+          "finishTime": "1:58.5",
+          "margin": "ハナ",
+          "popularity": 15,
+          "odds": 68.9
+        },
+        {
+          "position": 13,
+          "horseId": "14",
+          "externalHorseId": "2022105175",
+          "gateNumber": 8,
+          "horseNumber": 14,
+          "name": "フィーリウス",
+          "jockey": "丹内",
+          "finishTime": "1:59.0",
+          "margin": "3",
+          "popularity": 2,
+          "odds": 6.9
+        },
+        {
+          "position": 14,
+          "horseId": "11",
+          "externalHorseId": "2022104813",
+          "gateNumber": 6,
+          "horseNumber": 11,
+          "name": "ジュタ",
+          "jockey": "坂井",
+          "finishTime": "1:59.1",
+          "margin": "クビ",
+          "popularity": 5,
+          "odds": 8.8
+        },
+        {
+          "position": 15,
+          "horseId": "1",
+          "externalHorseId": "2022106633",
+          "gateNumber": 1,
+          "horseNumber": 1,
+          "name": "バルナバ",
+          "jockey": "斎藤",
+          "finishTime": "1:59.2",
+          "margin": "3/4",
+          "popularity": 11,
+          "odds": 26.3
+        }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:44.145Z",
+      "summary": "ファウストラーゼンは能力と条件が噛み合って押し切った。先行力を生かしやすい舞台だった、内目の枠からロスなく運べた、近走の能力水準がこの相手では上位だった。",
+      "xPostText": "【函館記念回顧】1着 ファウストラーゼン(10番人気 14倍) / 2着 ケリフレッドアスク / 3着 ピースワンデュック。ファウストラーゼンは能力と条件が噛み合って押し切った。先行力を生かしやすい舞台だった、内目の枠からロスなく運べた、近走の能力水準がこの相手では上位だった。 #函館記念",
+      "reasons": [
+        "先行力を生かしやすい舞台だった",
+        "内目の枠からロスなく運べた",
+        "近走の能力水準がこの相手では上位だった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -11187,6 +11758,214 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "oddsSource": "official",
     "date": "2026-06-28",
     "archivedAt": "2026-06-28T22:55:42.594Z",
+    "result": {
+      "updatedAt": "2026-06-29T05:51:44.397Z",
+      "winnerHorseId": "12",
+      "winnerHorseName": "クリエープキー",
+      "top3HorseIds": [
+        "12",
+        "14",
+        "7"
+      ],
+      "top3HorseNames": [
+        "クリエープキー",
+        "ホワイトドラゴン",
+        "ビーコング"
+      ],
+      "finishers": [
+        {
+          "position": 1,
+          "horseId": "12",
+          "externalHorseId": "2023103355",
+          "gateNumber": 7,
+          "horseNumber": 12,
+          "name": "クリエープキー",
+          "jockey": "古川吉",
+          "finishTime": "1:09.1",
+          "margin": "",
+          "popularity": 8,
+          "odds": 16
+        },
+        {
+          "position": 2,
+          "horseId": "14",
+          "externalHorseId": "2023106104",
+          "gateNumber": 8,
+          "horseNumber": 14,
+          "name": "ホワイトドラゴン",
+          "jockey": "横山和",
+          "finishTime": "1:09.1",
+          "margin": "クビ",
+          "popularity": 2,
+          "odds": 3.9
+        },
+        {
+          "position": 3,
+          "horseId": "7",
+          "externalHorseId": "2021103595",
+          "gateNumber": 5,
+          "horseNumber": 7,
+          "name": "ビーコング",
+          "jockey": "松本",
+          "finishTime": "1:09.2",
+          "margin": "1/2",
+          "popularity": 14,
+          "odds": 118.6
+        },
+        {
+          "position": 4,
+          "horseId": "10",
+          "externalHorseId": "2023100214",
+          "gateNumber": 6,
+          "horseNumber": 10,
+          "name": "シーグルロス",
+          "jockey": "小林美",
+          "finishTime": "1:09.2",
+          "margin": "ハナ",
+          "popularity": 4,
+          "odds": 8.4
+        },
+        {
+          "position": 5,
+          "horseId": "9",
+          "externalHorseId": "2021110023",
+          "gateNumber": 6,
+          "horseNumber": 9,
+          "name": "エクストラバック",
+          "jockey": "鮫島駿",
+          "finishTime": "1:09.4",
+          "margin": "1.1/4",
+          "popularity": 6,
+          "odds": 9.9
+        },
+        {
+          "position": 6,
+          "horseId": "6",
+          "externalHorseId": "2021101595",
+          "gateNumber": 4,
+          "horseNumber": 6,
+          "name": "ヴィヴァクラウン",
+          "jockey": "大野",
+          "finishTime": "1:09.4",
+          "margin": "ハナ",
+          "popularity": 5,
+          "odds": 8.9
+        },
+        {
+          "position": 7,
+          "horseId": "3",
+          "externalHorseId": "2021110119",
+          "gateNumber": 3,
+          "horseNumber": 3,
+          "name": "サンドロナイト",
+          "jockey": "北村友",
+          "finishTime": "1:09.4",
+          "margin": "ハナ",
+          "popularity": 7,
+          "odds": 15.7
+        },
+        {
+          "position": 8,
+          "horseId": "8",
+          "externalHorseId": "2023102567",
+          "gateNumber": 5,
+          "horseNumber": 8,
+          "name": "フェアリーライズ",
+          "jockey": "黛",
+          "finishTime": "1:09.5",
+          "margin": "クビ",
+          "popularity": 11,
+          "odds": 40.6
+        },
+        {
+          "position": 9,
+          "horseId": "11",
+          "externalHorseId": "2022103527",
+          "gateNumber": 7,
+          "horseNumber": 11,
+          "name": "ライツユーアップ",
+          "jockey": "丹内",
+          "finishTime": "1:09.5",
+          "margin": "アタマ",
+          "popularity": 12,
+          "odds": 71.1
+        },
+        {
+          "position": 10,
+          "horseId": "5",
+          "externalHorseId": "2022103556",
+          "gateNumber": 4,
+          "horseNumber": 5,
+          "name": "キープサインオン",
+          "jockey": "岩田望",
+          "finishTime": "1:09.5",
+          "margin": "ハナ",
+          "popularity": 9,
+          "odds": 25.5
+        },
+        {
+          "position": 11,
+          "horseId": "4",
+          "externalHorseId": "2023106665",
+          "gateNumber": 3,
+          "horseNumber": 4,
+          "name": "ウチュウノセカイ",
+          "jockey": "原",
+          "finishTime": "1:09.5",
+          "margin": "ハナ",
+          "popularity": 1,
+          "odds": 3.7
+        },
+        {
+          "position": 12,
+          "horseId": "1",
+          "externalHorseId": "2020105073",
+          "gateNumber": 1,
+          "horseNumber": 1,
+          "name": "ガットネロ",
+          "jockey": "小沢",
+          "finishTime": "1:09.6",
+          "margin": "クビ",
+          "popularity": 10,
+          "odds": 34.3
+        },
+        {
+          "position": 13,
+          "horseId": "2",
+          "externalHorseId": "2022100933",
+          "gateNumber": 2,
+          "horseNumber": 2,
+          "name": "エルサトアナ",
+          "jockey": "池添",
+          "finishTime": "1:09.8",
+          "margin": "1.1/4",
+          "popularity": 3,
+          "odds": 6.8
+        },
+        {
+          "position": 14,
+          "horseId": "13",
+          "externalHorseId": "2020106623",
+          "gateNumber": 8,
+          "horseNumber": 13,
+          "name": "ゴキゲンサン",
+          "jockey": "岩田康",
+          "finishTime": "1:10.0",
+          "margin": "1.1/2",
+          "popularity": 13,
+          "odds": 83.3
+        }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:44.397Z",
+      "summary": "クリエープキーは能力上位で押し切った。近走の能力水準がこの相手では上位だった、人気以上に能力を出せる下地があった。",
+      "xPostText": "【湯の川温泉特別(2勝クラス)回顧】1着 クリエープキー(8番人気 16倍) / 2着 ホワイトドラゴン / 3着 ビーコング。クリエープキーは能力上位で押し切った。近走の能力水準がこの相手では上位だった、人気以上に能力を出せる下地があった。 #湯の川温泉特別(2勝クラス)",
+      "reasons": [
+        "近走の能力水準がこの相手では上位だった",
+        "人気以上に能力を出せる下地があった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -11830,6 +12609,14 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:39.135Z",
+      "summary": "アメリカンチケットは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった。",
+      "xPostText": "【さくらんぼ特別(2勝クラス)回顧】1着 アメリカンチケット(11番人気 61.6倍) / 2着 エコロシード / 3着 モリノセピア。アメリカンチケットは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった。 #さくらんぼ特別(2勝クラス)",
+      "reasons": [
+        "先行力を生かしやすい舞台だった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -12451,6 +13238,16 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:39.483Z",
+      "summary": "リフレックスは条件が噛み合って突き抜けた。距離延長でもスタミナが持続した、先行力を生かしやすい舞台だった、内目の枠からロスなく運べた。",
+      "xPostText": "【いわき特別(2勝クラス)回顧】1着 リフレックス(3番人気 4.9倍) / 2着 ハイクオリティ / 3着 ドゥマーヴェリック。リフレックスは条件が噛み合って突き抜けた。距離延長でもスタミナが持続した、先行力を生かしやすい舞台だった、内目の枠からロスなく運べた。 #いわき特別(2勝クラス)",
+      "reasons": [
+        "距離延長でもスタミナが持続した",
+        "先行力を生かしやすい舞台だった",
+        "内目の枠からロスなく運べた"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -12917,6 +13714,15 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "popularity": 3,
           "odds": 6.1
         }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:39.717Z",
+      "summary": "マリアイリダータは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。",
+      "xPostText": "【バーデンバーデンＣ(3勝クラス)回顧】1着 マリアイリダータ(1番人気 1.7倍) / 2着 フィオレストラーダ / 3着 ハニーコム。マリアイリダータは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。 #バーデンバーデンＣ(3勝クラス)",
+      "reasons": [
+        "近走の能力水準がこの相手では上位だった",
+        "近走内容の良さがそのまま結果につながった"
       ]
     },
     "horses": [
@@ -13422,6 +14228,16 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:40.343Z",
+      "summary": "デアリングエアは能力と条件が噛み合って押し切った。相対的に軽い斤量が効いた、先行力を生かしやすい舞台だった、近走の能力水準がこの相手では上位だった。",
+      "xPostText": "【３歳以上１勝クラス回顧】1着 デアリングエア(8番人気 15.5倍) / 2着 ルシェロアズーリ / 3着 ラブリーガール。デアリングエアは能力と条件が噛み合って押し切った。相対的に軽い斤量が効いた、先行力を生かしやすい舞台だった、近走の能力水準がこの相手では上位だった。 #３歳以上１勝クラス",
+      "reasons": [
+        "相対的に軽い斤量が効いた",
+        "先行力を生かしやすい舞台だった",
+        "近走の能力水準がこの相手では上位だった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -13896,6 +14712,201 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "oddsSource": "official",
     "date": "2026-06-28",
     "archivedAt": "2026-06-28T22:55:42.594Z",
+    "result": {
+      "updatedAt": "2026-06-29T05:51:44.638Z",
+      "winnerHorseId": "11",
+      "winnerHorseName": "クロシェットノエル",
+      "top3HorseIds": [
+        "11",
+        "1",
+        "7"
+      ],
+      "top3HorseNames": [
+        "クロシェットノエル",
+        "アリスメティーク",
+        "コスモイシュタル"
+      ],
+      "finishers": [
+        {
+          "position": 1,
+          "horseId": "11",
+          "externalHorseId": "2021101068",
+          "gateNumber": 7,
+          "horseNumber": 11,
+          "name": "クロシェットノエル",
+          "jockey": "武藤",
+          "finishTime": "1:57.4",
+          "margin": "",
+          "popularity": 6,
+          "odds": 18.9
+        },
+        {
+          "position": 2,
+          "horseId": "1",
+          "externalHorseId": "2022105796",
+          "gateNumber": 1,
+          "horseNumber": 1,
+          "name": "アリスメティーク",
+          "jockey": "荻野極",
+          "finishTime": "1:57.5",
+          "margin": "クビ",
+          "popularity": 3,
+          "odds": 7.3
+        },
+        {
+          "position": 3,
+          "horseId": "7",
+          "externalHorseId": "2022106825",
+          "gateNumber": 5,
+          "horseNumber": 7,
+          "name": "コスモイシュタル",
+          "jockey": "松岡",
+          "finishTime": "1:57.7",
+          "margin": "1.1/4",
+          "popularity": 4,
+          "odds": 7.9
+        },
+        {
+          "position": 4,
+          "horseId": "10",
+          "externalHorseId": "2021103533",
+          "gateNumber": 6,
+          "horseNumber": 10,
+          "name": "ホウオウシンデレラ",
+          "jockey": "丸田",
+          "finishTime": "1:57.7",
+          "margin": "ハナ",
+          "popularity": 5,
+          "odds": 17.2
+        },
+        {
+          "position": 5,
+          "horseId": "9",
+          "externalHorseId": "2022105032",
+          "gateNumber": 6,
+          "horseNumber": 9,
+          "name": "エバーグルーヴ",
+          "jockey": "高杉",
+          "finishTime": "1:57.7",
+          "margin": "クビ",
+          "popularity": 8,
+          "odds": 24.6
+        },
+        {
+          "position": 6,
+          "horseId": "14",
+          "externalHorseId": "2021106904",
+          "gateNumber": 8,
+          "horseNumber": 14,
+          "name": "レイピカケ",
+          "jockey": "団野",
+          "finishTime": "1:57.7",
+          "margin": "ハナ",
+          "popularity": 12,
+          "odds": 241.4
+        },
+        {
+          "position": 7,
+          "horseId": "3",
+          "externalHorseId": "2021102597",
+          "gateNumber": 3,
+          "horseNumber": 3,
+          "name": "ラビットアイ",
+          "jockey": "田口",
+          "finishTime": "1:57.8",
+          "margin": "クビ",
+          "popularity": 7,
+          "odds": 19.3
+        },
+        {
+          "position": 8,
+          "horseId": "4",
+          "externalHorseId": "2021106826",
+          "gateNumber": 3,
+          "horseNumber": 4,
+          "name": "レッセパッセ",
+          "jockey": "菊沢",
+          "finishTime": "1:57.8",
+          "margin": "クビ",
+          "popularity": 11,
+          "odds": 103.6
+        },
+        {
+          "position": 9,
+          "horseId": "13",
+          "externalHorseId": "2020103929",
+          "gateNumber": 8,
+          "horseNumber": 13,
+          "name": "オルノア",
+          "jockey": "小崎",
+          "finishTime": "1:58.0",
+          "margin": "1",
+          "popularity": 9,
+          "odds": 73.4
+        },
+        {
+          "position": 10,
+          "horseId": "12",
+          "externalHorseId": "2022105057",
+          "gateNumber": 7,
+          "horseNumber": 12,
+          "name": "ノビリシマビジョン",
+          "jockey": "津村",
+          "finishTime": "1:58.2",
+          "margin": "1.1/4",
+          "popularity": 2,
+          "odds": 4.9
+        },
+        {
+          "position": 11,
+          "horseId": "6",
+          "externalHorseId": "2022105002",
+          "gateNumber": 4,
+          "horseNumber": 6,
+          "name": "ボウウィンドウ",
+          "jockey": "戸崎圭",
+          "finishTime": "1:58.4",
+          "margin": "1.1/2",
+          "popularity": 1,
+          "odds": 1.8
+        },
+        {
+          "position": 12,
+          "horseId": "8",
+          "externalHorseId": "2022101925",
+          "gateNumber": 5,
+          "horseNumber": 8,
+          "name": "オデット",
+          "jockey": "石橋脩",
+          "finishTime": "1:58.8",
+          "margin": "2.1/2",
+          "popularity": 13,
+          "odds": 310.9
+        },
+        {
+          "position": 13,
+          "horseId": "5",
+          "externalHorseId": "2021105321",
+          "gateNumber": 4,
+          "horseNumber": 5,
+          "name": "エーデル",
+          "jockey": "Ｍデム",
+          "finishTime": "1:59.0",
+          "margin": "1",
+          "popularity": 10,
+          "odds": 90.6
+        }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:44.639Z",
+      "summary": "クロシェットノエルは能力上位で押し切った。近走内容の良さがそのまま結果につながった、人気以上に能力を出せる下地があった。",
+      "xPostText": "【松島特別(2勝クラス)回顧】1着 クロシェットノエル(6番人気 18.9倍) / 2着 アリスメティーク / 3着 コスモイシュタル。クロシェットノエルは能力上位で押し切った。近走内容の良さがそのまま結果につながった、人気以上に能力を出せる下地があった。 #松島特別(2勝クラス)",
+      "reasons": [
+        "近走内容の良さがそのまま結果につながった",
+        "人気以上に能力を出せる下地があった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -14314,6 +15325,175 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "oddsSource": "official",
     "date": "2026-06-28",
     "archivedAt": "2026-06-28T22:55:42.594Z",
+    "result": {
+      "updatedAt": "2026-06-29T05:51:44.860Z",
+      "winnerHorseId": "4",
+      "winnerHorseName": "エクリプスルバン",
+      "top3HorseIds": [
+        "4",
+        "10",
+        "9"
+      ],
+      "top3HorseNames": [
+        "エクリプスルバン",
+        "ゴールドアローン",
+        "ドバイブルース"
+      ],
+      "finishers": [
+        {
+          "position": 1,
+          "horseId": "4",
+          "externalHorseId": "2021106623",
+          "gateNumber": 4,
+          "horseNumber": 4,
+          "name": "エクリプスルバン",
+          "jockey": "戸崎圭",
+          "finishTime": "1:44.2",
+          "margin": "",
+          "popularity": 1,
+          "odds": 1.7
+        },
+        {
+          "position": 2,
+          "horseId": "10",
+          "externalHorseId": "2021106874",
+          "gateNumber": 8,
+          "horseNumber": 10,
+          "name": "ゴールドアローン",
+          "jockey": "石川",
+          "finishTime": "1:44.9",
+          "margin": "4",
+          "popularity": 9,
+          "odds": 38.5
+        },
+        {
+          "position": 3,
+          "horseId": "9",
+          "externalHorseId": "2021105182",
+          "gateNumber": 7,
+          "horseNumber": 9,
+          "name": "ドバイブルース",
+          "jockey": "横山武",
+          "finishTime": "1:45.2",
+          "margin": "2",
+          "popularity": 2,
+          "odds": 5.5
+        },
+        {
+          "position": 4,
+          "horseId": "8",
+          "externalHorseId": "2021103502",
+          "gateNumber": 7,
+          "horseNumber": 8,
+          "name": "アイウィル",
+          "jockey": "田口",
+          "finishTime": "1:45.2",
+          "margin": "アタマ",
+          "popularity": 10,
+          "odds": 44.8
+        },
+        {
+          "position": 5,
+          "horseId": "3",
+          "externalHorseId": "2022102987",
+          "gateNumber": 3,
+          "horseNumber": 3,
+          "name": "バギーウィップ",
+          "jockey": "武藤",
+          "finishTime": "1:45.3",
+          "margin": "クビ",
+          "popularity": 4,
+          "odds": 8.6
+        },
+        {
+          "position": 6,
+          "horseId": "6",
+          "externalHorseId": "2021101045",
+          "gateNumber": 6,
+          "horseNumber": 6,
+          "name": "タイセイミッション",
+          "jockey": "菊沢",
+          "finishTime": "1:45.5",
+          "margin": "1.1/4",
+          "popularity": 6,
+          "odds": 19.9
+        },
+        {
+          "position": 7,
+          "horseId": "5",
+          "externalHorseId": "2020104567",
+          "gateNumber": 5,
+          "horseNumber": 5,
+          "name": "ヴァナルガンド",
+          "jockey": "津村",
+          "finishTime": "1:45.9",
+          "margin": "2.1/2",
+          "popularity": 7,
+          "odds": 24.1
+        },
+        {
+          "position": 8,
+          "horseId": "11",
+          "externalHorseId": "2019105188",
+          "gateNumber": 8,
+          "horseNumber": 11,
+          "name": "クロースコンバット",
+          "jockey": "北村宏",
+          "finishTime": "1:46.4",
+          "margin": "2.1/2",
+          "popularity": 8,
+          "odds": 26.8
+        },
+        {
+          "position": 9,
+          "horseId": "7",
+          "externalHorseId": "2020104738",
+          "gateNumber": 6,
+          "horseNumber": 7,
+          "name": "ラフエイジアン",
+          "jockey": "ゴンサ",
+          "finishTime": "1:46.7",
+          "margin": "2",
+          "popularity": 5,
+          "odds": 12.8
+        },
+        {
+          "position": 10,
+          "horseId": "1",
+          "externalHorseId": "2022105694",
+          "gateNumber": 1,
+          "horseNumber": 1,
+          "name": "オリーブグリーン",
+          "jockey": "松山",
+          "finishTime": "1:47.3",
+          "margin": "3.1/2",
+          "popularity": 3,
+          "odds": 7.9
+        },
+        {
+          "position": 11,
+          "horseId": "2",
+          "externalHorseId": "2021104445",
+          "gateNumber": 2,
+          "horseNumber": 2,
+          "name": "メイショウフウドウ",
+          "jockey": "三浦",
+          "finishTime": "1:48.6",
+          "margin": "8",
+          "popularity": 11,
+          "odds": 101.2
+        }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:44.860Z",
+      "summary": "エクリプスルバンは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった、近走内容の良さがそのまま結果につながった。",
+      "xPostText": "【鶴ヶ城ステークス(3勝クラス)回顧】1着 エクリプスルバン(1番人気 1.7倍) / 2着 ゴールドアローン / 3着 ドバイブルース。エクリプスルバンは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった、近走内容の良さがそのまま結果につながった。 #鶴ヶ城ステークス(3勝クラス)",
+      "reasons": [
+        "先行力を生かしやすい舞台だった",
+        "近走内容の良さがそのまま結果につながった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -14648,6 +15828,240 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "oddsSource": "official",
     "date": "2026-06-28",
     "archivedAt": "2026-06-28T22:55:42.594Z",
+    "result": {
+      "updatedAt": "2026-06-29T05:51:45.416Z",
+      "winnerHorseId": "13",
+      "winnerHorseName": "サノノグレーター",
+      "top3HorseIds": [
+        "13",
+        "8",
+        "5"
+      ],
+      "top3HorseNames": [
+        "サノノグレーター",
+        "ディールメーカー",
+        "リッツパーティー"
+      ],
+      "finishers": [
+        {
+          "position": 1,
+          "horseId": "13",
+          "externalHorseId": "2023100724",
+          "gateNumber": 7,
+          "horseNumber": 13,
+          "name": "サノノグレーター",
+          "jockey": "田辺",
+          "finishTime": "1:45.2",
+          "margin": "",
+          "popularity": 1,
+          "odds": 5.4
+        },
+        {
+          "position": 2,
+          "horseId": "8",
+          "externalHorseId": "2023103326",
+          "gateNumber": 4,
+          "horseNumber": 8,
+          "name": "ディールメーカー",
+          "jockey": "高杉",
+          "finishTime": "1:45.4",
+          "margin": "1.1/4",
+          "popularity": 8,
+          "odds": 14
+        },
+        {
+          "position": 3,
+          "horseId": "5",
+          "externalHorseId": "2023104224",
+          "gateNumber": 3,
+          "horseNumber": 5,
+          "name": "リッツパーティー",
+          "jockey": "横山武",
+          "finishTime": "1:45.5",
+          "margin": "3/4",
+          "popularity": 2,
+          "odds": 5.6
+        },
+        {
+          "position": 4,
+          "horseId": "15",
+          "externalHorseId": "2023107278",
+          "gateNumber": 8,
+          "horseNumber": 15,
+          "name": "バドリナート",
+          "jockey": "津村",
+          "finishTime": "1:45.6",
+          "margin": "クビ",
+          "popularity": 13,
+          "odds": 29.1
+        },
+        {
+          "position": 5,
+          "horseId": "10",
+          "externalHorseId": "2023100681",
+          "gateNumber": 5,
+          "horseNumber": 10,
+          "name": "ガリレア",
+          "jockey": "石橋脩",
+          "finishTime": "1:45.6",
+          "margin": "アタマ",
+          "popularity": 16,
+          "odds": 151.8
+        },
+        {
+          "position": 6,
+          "horseId": "4",
+          "externalHorseId": "2023101569",
+          "gateNumber": 2,
+          "horseNumber": 4,
+          "name": "サイモンシャリオ",
+          "jockey": "田口",
+          "finishTime": "1:45.7",
+          "margin": "3/4",
+          "popularity": 14,
+          "odds": 59.5
+        },
+        {
+          "position": 7,
+          "horseId": "3",
+          "externalHorseId": "2023104885",
+          "gateNumber": 2,
+          "horseNumber": 3,
+          "name": "ジーネキング",
+          "jockey": "菊沢",
+          "finishTime": "1:45.8",
+          "margin": "クビ",
+          "popularity": 6,
+          "odds": 11.1
+        },
+        {
+          "position": 8,
+          "horseId": "6",
+          "externalHorseId": "2023105084",
+          "gateNumber": 3,
+          "horseNumber": 6,
+          "name": "コルテオソレイユ",
+          "jockey": "荻野極",
+          "finishTime": "1:45.8",
+          "margin": "ハナ",
+          "popularity": 4,
+          "odds": 7.8
+        },
+        {
+          "position": 9,
+          "horseId": "2",
+          "externalHorseId": "2023105684",
+          "gateNumber": 1,
+          "horseNumber": 2,
+          "name": "クカイリモク",
+          "jockey": "ゴンサ",
+          "finishTime": "1:45.8",
+          "margin": "アタマ",
+          "popularity": 10,
+          "odds": 18.6
+        },
+        {
+          "position": 10,
+          "horseId": "1",
+          "externalHorseId": "2023103386",
+          "gateNumber": 1,
+          "horseNumber": 1,
+          "name": "ルージュボヤージュ",
+          "jockey": "北村宏",
+          "finishTime": "1:45.9",
+          "margin": "3/4",
+          "popularity": 5,
+          "odds": 9
+        },
+        {
+          "position": 11,
+          "horseId": "12",
+          "externalHorseId": "2023107199",
+          "gateNumber": 6,
+          "horseNumber": 12,
+          "name": "ローベルクランツ",
+          "jockey": "松山",
+          "finishTime": "1:46.0",
+          "margin": "1/2",
+          "popularity": 3,
+          "odds": 6.3
+        },
+        {
+          "position": 12,
+          "horseId": "7",
+          "externalHorseId": "2023105332",
+          "gateNumber": 4,
+          "horseNumber": 7,
+          "name": "ショウナンガルフ",
+          "jockey": "丸山",
+          "finishTime": "1:46.0",
+          "margin": "アタマ",
+          "popularity": 15,
+          "odds": 79.2
+        },
+        {
+          "position": 13,
+          "horseId": "9",
+          "externalHorseId": "2023100021",
+          "gateNumber": 5,
+          "horseNumber": 9,
+          "name": "キンググローリー",
+          "jockey": "石川",
+          "finishTime": "1:46.1",
+          "margin": "クビ",
+          "popularity": 9,
+          "odds": 18.6
+        },
+        {
+          "position": 14,
+          "horseId": "16",
+          "externalHorseId": "2023107352",
+          "gateNumber": 8,
+          "horseNumber": 16,
+          "name": "スペルーチェ",
+          "jockey": "Ｍデム",
+          "finishTime": "1:46.3",
+          "margin": "1.1/4",
+          "popularity": 11,
+          "odds": 21.7
+        },
+        {
+          "position": 15,
+          "horseId": "11",
+          "externalHorseId": "2023107368",
+          "gateNumber": 6,
+          "horseNumber": 11,
+          "name": "コロナドブリッジ",
+          "jockey": "三浦",
+          "finishTime": "1:46.3",
+          "margin": "クビ",
+          "popularity": 12,
+          "odds": 27.2
+        },
+        {
+          "position": 16,
+          "horseId": "14",
+          "externalHorseId": "2023103907",
+          "gateNumber": 7,
+          "horseNumber": 14,
+          "name": "スカイスプレンダー",
+          "jockey": "戸崎圭",
+          "finishTime": "1:47.6",
+          "margin": "8",
+          "popularity": 7,
+          "odds": 13.8
+        }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:45.416Z",
+      "summary": "サノノグレーターは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、近走の能力水準がこの相手では上位だった。",
+      "xPostText": "【ラジオＮＩＫＫＥＩ賞回顧】1着 サノノグレーター(1番人気 5.4倍) / 2着 ディールメーカー / 3着 リッツパーティー。サノノグレーターは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、近走の能力水準がこの相手では上位だった。 #ラジオＮＩＫＫＥＩ賞",
+      "reasons": [
+        "距離短縮で追走負荷が軽くなった",
+        "近走の能力水準がこの相手では上位だった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -15122,6 +16536,215 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "oddsSource": "official",
     "date": "2026-06-28",
     "archivedAt": "2026-06-28T22:55:42.594Z",
+    "result": {
+      "updatedAt": "2026-06-29T05:51:45.762Z",
+      "winnerHorseId": "8",
+      "winnerHorseName": "スターランウェイ",
+      "top3HorseIds": [
+        "8",
+        "7",
+        "1"
+      ],
+      "top3HorseNames": [
+        "スターランウェイ",
+        "ソニックブレイカー",
+        "ロイヤルスパイア"
+      ],
+      "finishers": [
+        {
+          "position": 1,
+          "horseId": "8",
+          "externalHorseId": "2022106686",
+          "gateNumber": 5,
+          "horseNumber": 8,
+          "name": "スターランウェイ",
+          "jockey": "高杉吏",
+          "finishTime": "1:08.3",
+          "margin": "",
+          "popularity": 6,
+          "odds": 11.2
+        },
+        {
+          "position": 2,
+          "horseId": "7",
+          "externalHorseId": "2023100955",
+          "gateNumber": 5,
+          "horseNumber": 7,
+          "name": "ソニックブレイカー",
+          "jockey": "戸崎圭",
+          "finishTime": "1:08.3",
+          "margin": "クビ",
+          "popularity": 2,
+          "odds": 4.4
+        },
+        {
+          "position": 3,
+          "horseId": "1",
+          "externalHorseId": "2023101112",
+          "gateNumber": 1,
+          "horseNumber": 1,
+          "name": "ロイヤルスパイア",
+          "jockey": "松山",
+          "finishTime": "1:08.5",
+          "margin": "3/4",
+          "popularity": 5,
+          "odds": 9.1
+        },
+        {
+          "position": 4,
+          "horseId": "5",
+          "externalHorseId": "2023107095",
+          "gateNumber": 4,
+          "horseNumber": 5,
+          "name": "クアロアランチ",
+          "jockey": "荻野極",
+          "finishTime": "1:08.6",
+          "margin": "1/2",
+          "popularity": 7,
+          "odds": 13
+        },
+        {
+          "position": 5,
+          "horseId": "2",
+          "externalHorseId": "2023101516",
+          "gateNumber": 2,
+          "horseNumber": 2,
+          "name": "モズタンケ",
+          "jockey": "菊沢",
+          "finishTime": "1:08.6",
+          "margin": "クビ",
+          "popularity": 3,
+          "odds": 5.9
+        },
+        {
+          "position": 6,
+          "horseId": "11",
+          "externalHorseId": "2022105494",
+          "gateNumber": 7,
+          "horseNumber": 11,
+          "name": "フクチャンヒメ",
+          "jockey": "小崎",
+          "finishTime": "1:08.7",
+          "margin": "クビ",
+          "popularity": 10,
+          "odds": 67.9
+        },
+        {
+          "position": 7,
+          "horseId": "6",
+          "externalHorseId": "2020105525",
+          "gateNumber": 4,
+          "horseNumber": 6,
+          "name": "カツノテンス",
+          "jockey": "松岡",
+          "finishTime": "1:08.7",
+          "margin": "クビ",
+          "popularity": 12,
+          "odds": 138.1
+        },
+        {
+          "position": 8,
+          "horseId": "4",
+          "externalHorseId": "2023102545",
+          "gateNumber": 3,
+          "horseNumber": 4,
+          "name": "ミルトハーバー",
+          "jockey": "田辺",
+          "finishTime": "1:08.8",
+          "margin": "3/4",
+          "popularity": 4,
+          "odds": 7.2
+        },
+        {
+          "position": 9,
+          "horseId": "13",
+          "externalHorseId": "2023103802",
+          "gateNumber": 8,
+          "horseNumber": 13,
+          "name": "ブーケドリス",
+          "jockey": "横山武",
+          "finishTime": "1:09.0",
+          "margin": "1.1/4",
+          "popularity": 1,
+          "odds": 3.1
+        },
+        {
+          "position": 10,
+          "horseId": "9",
+          "externalHorseId": "2021109088",
+          "gateNumber": 6,
+          "horseNumber": 9,
+          "name": "アルニラム",
+          "jockey": "▲佐藤",
+          "finishTime": "1:09.1",
+          "margin": "クビ",
+          "popularity": 11,
+          "odds": 117.8
+        },
+        {
+          "position": 11,
+          "horseId": "12",
+          "externalHorseId": "2021103994",
+          "gateNumber": 7,
+          "horseNumber": 12,
+          "name": "タッカーバレット",
+          "jockey": "木幡巧",
+          "finishTime": "1:09.4",
+          "margin": "2",
+          "popularity": 9,
+          "odds": 52.6
+        },
+        {
+          "position": 12,
+          "horseId": "14",
+          "externalHorseId": "2023101792",
+          "gateNumber": 8,
+          "horseNumber": 14,
+          "name": "ジャスフォール",
+          "jockey": "石橋脩",
+          "finishTime": "1:09.5",
+          "margin": "1/2",
+          "popularity": 8,
+          "odds": 14.8
+        },
+        {
+          "position": 13,
+          "horseId": "10",
+          "externalHorseId": "2020106004",
+          "gateNumber": 6,
+          "horseNumber": 10,
+          "name": "ゴルトレオパルト",
+          "jockey": "野中",
+          "finishTime": "1:11.3",
+          "margin": "大",
+          "popularity": 14,
+          "odds": 390.2
+        },
+        {
+          "position": 14,
+          "horseId": "3",
+          "externalHorseId": "2023102819",
+          "gateNumber": 3,
+          "horseNumber": 3,
+          "name": "マーシャルアン",
+          "jockey": "▲上里",
+          "finishTime": "1:11.3",
+          "margin": "ハナ",
+          "popularity": 13,
+          "odds": 177.6
+        }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:45.762Z",
+      "summary": "スターランウェイは条件が噛み合って突き抜けた。相対的に軽い斤量が効いた、先行力を生かしやすい舞台だった、近走内容の良さがそのまま結果につながった。",
+      "xPostText": "【３歳以上１勝クラス回顧】1着 スターランウェイ(6番人気 11.2倍) / 2着 ソニックブレイカー / 3着 ロイヤルスパイア。スターランウェイは条件が噛み合って突き抜けた。相対的に軽い斤量が効いた、先行力を生かしやすい舞台だった、近走内容の良さがそのまま結果につながった。 #３歳以上１勝クラス",
+      "reasons": [
+        "相対的に軽い斤量が効いた",
+        "先行力を生かしやすい舞台だった",
+        "近走内容の良さがそのまま結果につながった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -15661,6 +17284,16 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:40.900Z",
+      "summary": "サヴォアフェールは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。",
+      "xPostText": "【八代特別(1勝クラス)回顧】1着 サヴォアフェール(1番人気 1.3倍) / 2着 ノンブルドール / 3着 デルシエロ。サヴォアフェールは能力と条件が噛み合って押し切った。距離短縮で追走負荷が軽くなった、近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。 #八代特別(1勝クラス)",
+      "reasons": [
+        "距離短縮で追走負荷が軽くなった",
+        "近走の能力水準がこの相手では上位だった",
+        "近走内容の良さがそのまま結果につながった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -16095,6 +17728,16 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "popularity": 13,
           "odds": 344.1
         }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:41.131Z",
+      "summary": "ジェニファーは能力と条件が噛み合って押し切った。先行力を生かしやすい舞台だった、内目の枠からロスなく運べた、近走の能力水準がこの相手では上位だった。",
+      "xPostText": "【宗像特別(2勝クラス)回顧】1着 ジェニファー(4番人気 10.1倍) / 2着 ロードトレゾール / 3着 スネーフリンガ。ジェニファーは能力と条件が噛み合って押し切った。先行力を生かしやすい舞台だった、内目の枠からロスなく運べた、近走の能力水準がこの相手では上位だった。 #宗像特別(2勝クラス)",
+      "reasons": [
+        "先行力を生かしやすい舞台だった",
+        "内目の枠からロスなく運べた",
+        "近走の能力水準がこの相手では上位だった"
       ]
     },
     "horses": [
@@ -16699,6 +18342,15 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:41.480Z",
+      "summary": "ゴッドブルービーは条件が噛み合って突き抜けた。距離延長でもスタミナが持続した、近走内容の良さがそのまま結果につながった。",
+      "xPostText": "【薩摩ステークス(3勝クラス)回顧】1着 ゴッドブルービー(3番人気 5.6倍) / 2着 シンビリーブ / 3着 ジューンエオス。ゴッドブルービーは条件が噛み合って突き抜けた。距離延長でもスタミナが持続した、近走内容の良さがそのまま結果につながった。 #薩摩ステークス(3勝クラス)",
+      "reasons": [
+        "距離延長でもスタミナが持続した",
+        "近走内容の良さがそのまま結果につながった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -17266,6 +18918,14 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:42.259Z",
+      "summary": "タナスーペルノーバは条件が噛み合って突き抜けた。近走内容の良さがそのまま結果につながった。",
+      "xPostText": "【３歳以上１勝クラス回顧】1着 タナスーペルノーバ(1番人気 2.1倍) / 2着 ピアストイヤーズ / 3着 リピ。タナスーペルノーバは条件が噛み合って突き抜けた。近走内容の良さがそのまま結果につながった。 #３歳以上１勝クラス",
+      "reasons": [
+        "近走内容の良さがそのまま結果につながった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -17516,6 +19176,137 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "oddsSource": "official",
     "date": "2026-06-28",
     "archivedAt": "2026-06-28T22:55:42.594Z",
+    "result": {
+      "updatedAt": "2026-06-29T05:51:46.006Z",
+      "winnerHorseId": "7",
+      "winnerHorseName": "ナリタエスペランサ",
+      "top3HorseIds": [
+        "7",
+        "5",
+        "1"
+      ],
+      "top3HorseNames": [
+        "ナリタエスペランサ",
+        "サラトガチップス",
+        "ビッグベルーガ"
+      ],
+      "finishers": [
+        {
+          "position": 1,
+          "horseId": "7",
+          "externalHorseId": "2023105046",
+          "gateNumber": 7,
+          "horseNumber": 7,
+          "name": "ナリタエスペランサ",
+          "jockey": "川田",
+          "finishTime": "2:43.3",
+          "margin": "",
+          "popularity": 1,
+          "odds": 2.3
+        },
+        {
+          "position": 2,
+          "horseId": "5",
+          "externalHorseId": "2021105002",
+          "gateNumber": 5,
+          "horseNumber": 5,
+          "name": "サラトガチップス",
+          "jockey": "田山",
+          "finishTime": "2:43.8",
+          "margin": "3",
+          "popularity": 2,
+          "odds": 3.6
+        },
+        {
+          "position": 3,
+          "horseId": "1",
+          "externalHorseId": "2020102760",
+          "gateNumber": 1,
+          "horseNumber": 1,
+          "name": "ビッグベルーガ",
+          "jockey": "菱田",
+          "finishTime": "2:44.0",
+          "margin": "1.1/4",
+          "popularity": 8,
+          "odds": 77.3
+        },
+        {
+          "position": 4,
+          "horseId": "6",
+          "externalHorseId": "2022101601",
+          "gateNumber": 6,
+          "horseNumber": 6,
+          "name": "ニュークレド",
+          "jockey": "幸",
+          "finishTime": "2:44.0",
+          "margin": "アタマ",
+          "popularity": 3,
+          "odds": 6
+        },
+        {
+          "position": 5,
+          "horseId": "8",
+          "externalHorseId": "2022104963",
+          "gateNumber": 8,
+          "horseNumber": 8,
+          "name": "マテンロウシルビア",
+          "jockey": "太宰",
+          "finishTime": "2:44.0",
+          "margin": "クビ",
+          "popularity": 4,
+          "odds": 7.3
+        },
+        {
+          "position": 6,
+          "horseId": "3",
+          "externalHorseId": "2021105434",
+          "gateNumber": 3,
+          "horseNumber": 3,
+          "name": "ショウナンガチ",
+          "jockey": "酒井",
+          "finishTime": "2:44.1",
+          "margin": "1/2",
+          "popularity": 6,
+          "odds": 11.9
+        },
+        {
+          "position": 7,
+          "horseId": "2",
+          "externalHorseId": "2018105073",
+          "gateNumber": 2,
+          "horseNumber": 2,
+          "name": "サトノスカイターフ",
+          "jockey": "吉村",
+          "finishTime": "2:44.3",
+          "margin": "1.1/4",
+          "popularity": 7,
+          "odds": 38.3
+        },
+        {
+          "position": 8,
+          "horseId": "4",
+          "externalHorseId": "2022105485",
+          "gateNumber": 4,
+          "horseNumber": 4,
+          "name": "ボンドロア",
+          "jockey": "角田和",
+          "finishTime": "2:44.3",
+          "margin": "クビ",
+          "popularity": 5,
+          "odds": 8.1
+        }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:46.006Z",
+      "summary": "ナリタエスペランサは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、先行力を生かしやすい舞台だった、近走の能力水準がこの相手では上位だった。",
+      "xPostText": "【帆柱山特別(2勝クラス)回顧】1着 ナリタエスペランサ(1番人気 2.3倍) / 2着 サラトガチップス / 3着 ビッグベルーガ。ナリタエスペランサは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、先行力を生かしやすい舞台だった、近走の能力水準がこの相手では上位だった。 #帆柱山特別(2勝クラス)",
+      "reasons": [
+        "距離延長でもスタミナが持続した",
+        "先行力を生かしやすい舞台だった",
+        "近走の能力水準がこの相手では上位だった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -17766,6 +19557,241 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "oddsSource": "official",
     "date": "2026-06-28",
     "archivedAt": "2026-06-28T22:55:42.594Z",
+    "result": {
+      "updatedAt": "2026-06-29T05:51:46.237Z",
+      "winnerHorseId": "9",
+      "winnerHorseName": "カルパ",
+      "top3HorseIds": [
+        "9",
+        "11",
+        "13"
+      ],
+      "top3HorseNames": [
+        "カルパ",
+        "アラナコア",
+        "コスモストーム"
+      ],
+      "finishers": [
+        {
+          "position": 1,
+          "horseId": "9",
+          "externalHorseId": "2021105736",
+          "gateNumber": 5,
+          "horseNumber": 9,
+          "name": "カルパ",
+          "jockey": "田山",
+          "finishTime": "1:45.0",
+          "margin": "",
+          "popularity": 8,
+          "odds": 19.5
+        },
+        {
+          "position": 2,
+          "horseId": "11",
+          "externalHorseId": "2021103002",
+          "gateNumber": 6,
+          "horseNumber": 11,
+          "name": "アラナコア",
+          "jockey": "菱田",
+          "finishTime": "1:45.2",
+          "margin": "1",
+          "popularity": 5,
+          "odds": 8.5
+        },
+        {
+          "position": 3,
+          "horseId": "13",
+          "externalHorseId": "2022104120",
+          "gateNumber": 7,
+          "horseNumber": 13,
+          "name": "コスモストーム",
+          "jockey": "秋山稔",
+          "finishTime": "1:45.2",
+          "margin": "クビ",
+          "popularity": 3,
+          "odds": 5.7
+        },
+        {
+          "position": 4,
+          "horseId": "3",
+          "externalHorseId": "2022110152",
+          "gateNumber": 2,
+          "horseNumber": 3,
+          "name": "レーティッシュ",
+          "jockey": "川田",
+          "finishTime": "1:45.7",
+          "margin": "3",
+          "popularity": 1,
+          "odds": 3.1
+        },
+        {
+          "position": 5,
+          "horseId": "7",
+          "externalHorseId": "2022103186",
+          "gateNumber": 4,
+          "horseNumber": 7,
+          "name": "テーオーライマン",
+          "jockey": "西村淳",
+          "finishTime": "1:45.8",
+          "margin": "3/4",
+          "popularity": 2,
+          "odds": 5.2
+        },
+        {
+          "position": 6,
+          "horseId": "4",
+          "externalHorseId": "2020106205",
+          "gateNumber": 2,
+          "horseNumber": 4,
+          "name": "メイショウクーガー",
+          "jockey": "中井",
+          "finishTime": "1:45.9",
+          "margin": "クビ",
+          "popularity": 4,
+          "odds": 7.1
+        },
+        {
+          "position": 7,
+          "horseId": "10",
+          "externalHorseId": "2022104413",
+          "gateNumber": 5,
+          "horseNumber": 10,
+          "name": "マハートマーベル",
+          "jockey": "吉村",
+          "finishTime": "1:46.5",
+          "margin": "3.1/2",
+          "popularity": 7,
+          "odds": 16
+        },
+        {
+          "position": 8,
+          "horseId": "1",
+          "externalHorseId": "2021100471",
+          "gateNumber": 1,
+          "horseNumber": 1,
+          "name": "シンコーナホチャン",
+          "jockey": "国分優",
+          "finishTime": "1:46.5",
+          "margin": "クビ",
+          "popularity": 9,
+          "odds": 33
+        },
+        {
+          "position": 9,
+          "horseId": "8",
+          "externalHorseId": "2021104622",
+          "gateNumber": 4,
+          "horseNumber": 8,
+          "name": "メイショウヘール",
+          "jockey": "酒井",
+          "finishTime": "1:46.5",
+          "margin": "アタマ",
+          "popularity": 15,
+          "odds": 104.7
+        },
+        {
+          "position": 10,
+          "horseId": "2",
+          "externalHorseId": "2020106491",
+          "gateNumber": 1,
+          "horseNumber": 2,
+          "name": "メイショウジェンマ",
+          "jockey": "今村",
+          "finishTime": "1:46.6",
+          "margin": "クビ",
+          "popularity": 11,
+          "odds": 54.4
+        },
+        {
+          "position": 11,
+          "horseId": "14",
+          "externalHorseId": "2020103967",
+          "gateNumber": 7,
+          "horseNumber": 14,
+          "name": "グレイスオブゴッド",
+          "jockey": "永島",
+          "finishTime": "1:46.9",
+          "margin": "1.1/2",
+          "popularity": 14,
+          "odds": 89.1
+        },
+        {
+          "position": 12,
+          "horseId": "5",
+          "externalHorseId": "2022103135",
+          "gateNumber": 3,
+          "horseNumber": 5,
+          "name": "コウジョリョウゾク",
+          "jockey": "森田",
+          "finishTime": "1:47.0",
+          "margin": "3/4",
+          "popularity": 16,
+          "odds": 216.5
+        },
+        {
+          "position": 13,
+          "horseId": "16",
+          "externalHorseId": "2021103939",
+          "gateNumber": 8,
+          "horseNumber": 16,
+          "name": "スマートプレシャス",
+          "jockey": "松若",
+          "finishTime": "1:47.9",
+          "margin": "5",
+          "popularity": 6,
+          "odds": 14.1
+        },
+        {
+          "position": 14,
+          "horseId": "15",
+          "externalHorseId": "2021105711",
+          "gateNumber": 8,
+          "horseNumber": 15,
+          "name": "ズバットマサムネ",
+          "jockey": "富田",
+          "finishTime": "1:48.5",
+          "margin": "3.1/2",
+          "popularity": 10,
+          "odds": 35.7
+        },
+        {
+          "position": 15,
+          "horseId": "12",
+          "externalHorseId": "2022104121",
+          "gateNumber": 6,
+          "horseNumber": 12,
+          "name": "カウンティフェア",
+          "jockey": "長岡",
+          "finishTime": "1:49.3",
+          "margin": "5",
+          "popularity": 13,
+          "odds": 83.2
+        },
+        {
+          "position": 16,
+          "horseId": "6",
+          "externalHorseId": "2020102326",
+          "gateNumber": 3,
+          "horseNumber": 6,
+          "name": "サンライズプルート",
+          "jockey": "角田和",
+          "finishTime": "1:49.7",
+          "margin": "2.1/2",
+          "popularity": 12,
+          "odds": 80.2
+        }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:46.237Z",
+      "summary": "カルパは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。",
+      "xPostText": "【西部日刊スポーツ杯(2勝クラス)回顧】1着 カルパ(8番人気 19.5倍) / 2着 アラナコア / 3着 コスモストーム。カルパは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。 #西部日刊スポーツ杯(2勝クラス)",
+      "reasons": [
+        "距離延長でもスタミナが持続した",
+        "近走の能力水準がこの相手では上位だった",
+        "近走内容の良さがそのまま結果につながった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -18240,6 +20266,135 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "oddsSource": "official",
     "date": "2026-06-28",
     "archivedAt": "2026-06-28T22:55:42.594Z",
+    "result": {
+      "updatedAt": "2026-06-29T05:51:46.485Z",
+      "winnerHorseId": "5",
+      "winnerHorseName": "テーオーダヴィンチ",
+      "top3HorseIds": [
+        "5",
+        "2",
+        "8"
+      ],
+      "top3HorseNames": [
+        "テーオーダヴィンチ",
+        "ベイビーキッス",
+        "スカイハイ"
+      ],
+      "finishers": [
+        {
+          "position": 1,
+          "horseId": "5",
+          "externalHorseId": "2018104633",
+          "gateNumber": 5,
+          "horseNumber": 5,
+          "name": "テーオーダヴィンチ",
+          "jockey": "幸",
+          "finishTime": "1:07.8",
+          "margin": "",
+          "popularity": 7,
+          "odds": 22.4
+        },
+        {
+          "position": 2,
+          "horseId": "2",
+          "externalHorseId": "2022102514",
+          "gateNumber": 2,
+          "horseNumber": 2,
+          "name": "ベイビーキッス",
+          "jockey": "藤懸",
+          "finishTime": "1:08.1",
+          "margin": "1.3/4",
+          "popularity": 5,
+          "odds": 15.3
+        },
+        {
+          "position": 3,
+          "horseId": "8",
+          "externalHorseId": "2021101412",
+          "gateNumber": 8,
+          "horseNumber": 8,
+          "name": "スカイハイ",
+          "jockey": "川田",
+          "finishTime": "1:08.1",
+          "margin": "クビ",
+          "popularity": 2,
+          "odds": 2.8
+        },
+        {
+          "position": 4,
+          "horseId": "3",
+          "externalHorseId": "2021107180",
+          "gateNumber": 3,
+          "horseNumber": 3,
+          "name": "ジュンヴァンケット",
+          "jockey": "富田",
+          "finishTime": "1:08.5",
+          "margin": "2.1/2",
+          "popularity": 3,
+          "odds": 12.5
+        },
+        {
+          "position": 5,
+          "horseId": "1",
+          "externalHorseId": "2021103977",
+          "gateNumber": 1,
+          "horseNumber": 1,
+          "name": "リチャードバローズ",
+          "jockey": "菱田",
+          "finishTime": "1:08.6",
+          "margin": "クビ",
+          "popularity": 8,
+          "odds": 25.2
+        },
+        {
+          "position": 6,
+          "horseId": "4",
+          "externalHorseId": "2021100157",
+          "gateNumber": 4,
+          "horseNumber": 4,
+          "name": "ロードトレイル",
+          "jockey": "田山",
+          "finishTime": "1:08.9",
+          "margin": "1.3/4",
+          "popularity": 4,
+          "odds": 12.8
+        },
+        {
+          "position": 7,
+          "horseId": "7",
+          "externalHorseId": "2022100791",
+          "gateNumber": 7,
+          "horseNumber": 7,
+          "name": "ブラックケリー",
+          "jockey": "西村淳",
+          "finishTime": "1:09.0",
+          "margin": "3/4",
+          "popularity": 6,
+          "odds": 20.6
+        },
+        {
+          "position": 8,
+          "horseId": "6",
+          "externalHorseId": "2022100547",
+          "gateNumber": 6,
+          "horseNumber": 6,
+          "name": "アサクサグレース",
+          "jockey": "杉原",
+          "finishTime": "1:09.9",
+          "margin": "5",
+          "popularity": 1,
+          "odds": 1.8
+        }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:46.485Z",
+      "summary": "テーオーダヴィンチは条件が噛み合って突き抜けた。距離短縮で追走負荷が軽くなった。",
+      "xPostText": "【紫川ステークス(3勝クラス)回顧】1着 テーオーダヴィンチ(7番人気 22.4倍) / 2着 ベイビーキッス / 3着 スカイハイ。テーオーダヴィンチは条件が噛み合って突き抜けた。距離短縮で追走負荷が軽くなった。 #紫川ステークス(3勝クラス)",
+      "reasons": [
+        "距離短縮で追走負荷が軽くなった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
@@ -18490,6 +20645,241 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
     "oddsSource": "official",
     "date": "2026-06-28",
     "archivedAt": "2026-06-28T22:55:42.594Z",
+    "result": {
+      "updatedAt": "2026-06-29T05:51:46.899Z",
+      "winnerHorseId": "7",
+      "winnerHorseName": "ニシノジェダイ",
+      "top3HorseIds": [
+        "7",
+        "13",
+        "12"
+      ],
+      "top3HorseNames": [
+        "ニシノジェダイ",
+        "モズプリヴェール",
+        "ブラックレジェンド"
+      ],
+      "finishers": [
+        {
+          "position": 1,
+          "horseId": "7",
+          "externalHorseId": "2022106998",
+          "gateNumber": 4,
+          "horseNumber": 7,
+          "name": "ニシノジェダイ",
+          "jockey": "△田山",
+          "finishTime": "1:45.4",
+          "margin": "",
+          "popularity": 3,
+          "odds": 5.5
+        },
+        {
+          "position": 2,
+          "horseId": "13",
+          "externalHorseId": "2022102916",
+          "gateNumber": 7,
+          "horseNumber": 13,
+          "name": "モズプリヴェール",
+          "jockey": "松若",
+          "finishTime": "1:45.9",
+          "margin": "3",
+          "popularity": 7,
+          "odds": 19.4
+        },
+        {
+          "position": 3,
+          "horseId": "12",
+          "externalHorseId": "2023100297",
+          "gateNumber": 6,
+          "horseNumber": 12,
+          "name": "ブラックレジェンド",
+          "jockey": "◇今村",
+          "finishTime": "1:46.2",
+          "margin": "2",
+          "popularity": 1,
+          "odds": 3.2
+        },
+        {
+          "position": 4,
+          "horseId": "1",
+          "externalHorseId": "2023102836",
+          "gateNumber": 1,
+          "horseNumber": 1,
+          "name": "ミランド",
+          "jockey": "西村淳",
+          "finishTime": "1:46.2",
+          "margin": "アタマ",
+          "popularity": 5,
+          "odds": 10.1
+        },
+        {
+          "position": 5,
+          "horseId": "6",
+          "externalHorseId": "2022104176",
+          "gateNumber": 3,
+          "horseNumber": 6,
+          "name": "チャチャピンク",
+          "jockey": "亀田",
+          "finishTime": "1:46.4",
+          "margin": "3/4",
+          "popularity": 11,
+          "odds": 37.9
+        },
+        {
+          "position": 6,
+          "horseId": "3",
+          "externalHorseId": "2023106788",
+          "gateNumber": 2,
+          "horseNumber": 3,
+          "name": "アンティーム",
+          "jockey": "国分恭",
+          "finishTime": "1:46.4",
+          "margin": "クビ",
+          "popularity": 2,
+          "odds": 4.3
+        },
+        {
+          "position": 7,
+          "horseId": "14",
+          "externalHorseId": "2022101473",
+          "gateNumber": 7,
+          "horseNumber": 14,
+          "name": "ライラックデューン",
+          "jockey": "長岡",
+          "finishTime": "1:46.9",
+          "margin": "3",
+          "popularity": 15,
+          "odds": 200
+        },
+        {
+          "position": 8,
+          "horseId": "5",
+          "externalHorseId": "2021101464",
+          "gateNumber": 3,
+          "horseNumber": 5,
+          "name": "ミッションルース",
+          "jockey": "◇永島",
+          "finishTime": "1:47.3",
+          "margin": "2.1/2",
+          "popularity": 14,
+          "odds": 67.7
+        },
+        {
+          "position": 9,
+          "horseId": "15",
+          "externalHorseId": "2022102639",
+          "gateNumber": 8,
+          "horseNumber": 15,
+          "name": "ロードシュヴァリエ",
+          "jockey": "太宰",
+          "finishTime": "1:47.4",
+          "margin": "クビ",
+          "popularity": 10,
+          "odds": 36.1
+        },
+        {
+          "position": 10,
+          "horseId": "11",
+          "externalHorseId": "2023105708",
+          "gateNumber": 6,
+          "horseNumber": 11,
+          "name": "バトゥカーダ",
+          "jockey": "秋山稔",
+          "finishTime": "1:47.5",
+          "margin": "1/2",
+          "popularity": 4,
+          "odds": 9.6
+        },
+        {
+          "position": 11,
+          "horseId": "16",
+          "externalHorseId": "2022107248",
+          "gateNumber": 8,
+          "horseNumber": 16,
+          "name": "ルシャリオ",
+          "jockey": "西塚",
+          "finishTime": "1:47.5",
+          "margin": "ハナ",
+          "popularity": 13,
+          "odds": 62.2
+        },
+        {
+          "position": 12,
+          "horseId": "4",
+          "externalHorseId": "2022104205",
+          "gateNumber": 2,
+          "horseNumber": 4,
+          "name": "ブルーカミング",
+          "jockey": "△柴田裕",
+          "finishTime": "1:48.1",
+          "margin": "4",
+          "popularity": 16,
+          "odds": 233.5
+        },
+        {
+          "position": 13,
+          "horseId": "10",
+          "externalHorseId": "2023107371",
+          "gateNumber": 5,
+          "horseNumber": 10,
+          "name": "クイノールト",
+          "jockey": "幸",
+          "finishTime": "1:48.5",
+          "margin": "2",
+          "popularity": 9,
+          "odds": 30.2
+        },
+        {
+          "position": 14,
+          "horseId": "9",
+          "externalHorseId": "2020102728",
+          "gateNumber": 5,
+          "horseNumber": 9,
+          "name": "ポルトドール",
+          "jockey": "角田和",
+          "finishTime": "1:48.5",
+          "margin": "アタマ",
+          "popularity": 12,
+          "odds": 52.8
+        },
+        {
+          "position": 15,
+          "horseId": "8",
+          "externalHorseId": "2023103092",
+          "gateNumber": 4,
+          "horseNumber": 8,
+          "name": "セルジュバローズ",
+          "jockey": "吉村",
+          "finishTime": "1:48.9",
+          "margin": "2.1/2",
+          "popularity": 6,
+          "odds": 10.2
+        },
+        {
+          "position": 16,
+          "horseId": "2",
+          "externalHorseId": "2023103213",
+          "gateNumber": 1,
+          "horseNumber": 2,
+          "name": "バロニアル",
+          "jockey": "藤懸",
+          "finishTime": "1:51.7",
+          "margin": "大",
+          "popularity": 8,
+          "odds": 25.5
+        }
+      ]
+    },
+    "review": {
+      "updatedAt": "2026-06-29T05:51:46.899Z",
+      "summary": "ニシノジェダイは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。",
+      "xPostText": "【３歳以上１勝クラス回顧】1着 ニシノジェダイ(3番人気 5.5倍) / 2着 モズプリヴェール / 3着 ブラックレジェンド。ニシノジェダイは能力と条件が噛み合って押し切った。距離延長でもスタミナが持続した、近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。 #３歳以上１勝クラス",
+      "reasons": [
+        "距離延長でもスタミナが持続した",
+        "近走の能力水準がこの相手では上位だった",
+        "近走内容の良さがそのまま結果につながった"
+      ]
+    },
     "horses": [
       {
         "id": "1",
