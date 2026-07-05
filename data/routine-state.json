@@ -5900,6 +5900,109 @@
       "tanPayoutSource": "missing",
       "fukuPayoutSource": "missing",
       "resolved": false
+    },
+    {
+      "weekOf": "2026-06-29",
+      "day": "Sun",
+      "stage": "sun_15",
+      "postedAt": "2026-07-05T09:15:17.867Z",
+      "predictionOrigin": "saved_live",
+      "scoringVersion": "tanpuku-place-v2.5",
+      "courseId": "fukushima-turf-1800-202603020410",
+      "raceLabel": "白河特別(2勝クラス)",
+      "pickType": "win",
+      "classificationHint": {
+        "classification": "place",
+        "confidence": 0.5,
+        "reason": "3着内安定寄り: 校正複勝率85% (実績帯: 複的中63-83%) (過熱リスク中)"
+      },
+      "recommendedBetAction": "unknown",
+      "recommendedBetDecision": {
+        "action": "unknown",
+        "confidence": "unknown",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "classification_hint_place",
+          "valid_odds_source"
+        ],
+        "riskFlags": [
+          "missing_selection_log",
+          "overbet_moderate"
+        ],
+        "source": "safety_rule"
+      },
+      "horseId": "5",
+      "horseName": "ベストミーエヴァー",
+      "realOdds": 1.6,
+      "placeOdds": 1.2,
+      "winProb": 0.555,
+      "placeProb": 0.88,
+      "placeScore": 0.783,
+      "valueScore": 0.515,
+      "selectionReason": "複勝確率88%・上位安定度83%を重視して複勝軸に選出。 2位差0.320",
+      "scoreGap": 0.32,
+      "runnerUpHorseId": "11",
+      "runnerUpHorseName": "グランカンタンテ",
+      "runnerUpPlaceScore": 0.463,
+      "runnerUpPlaceProb": 0.59,
+      "overbetLabel": "overbet_moderate",
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
+    },
+    {
+      "weekOf": "2026-06-29",
+      "day": "Sun",
+      "stage": "sun_15",
+      "postedAt": "2026-07-05T09:15:17.867Z",
+      "predictionOrigin": "saved_live",
+      "scoringVersion": "tanpuku-place-v2.5",
+      "courseId": "fukushima-turf-1800-202603020410",
+      "raceLabel": "白河特別(2勝クラス)",
+      "pickType": "value",
+      "classificationHint": null,
+      "recommendedBetAction": "unknown",
+      "recommendedBetDecision": {
+        "action": "unknown",
+        "confidence": "unknown",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "valid_odds_source"
+        ],
+        "riskFlags": [
+          "missing_classification_hint",
+          "missing_selection_log"
+        ],
+        "source": "safety_rule"
+      },
+      "horseId": "9",
+      "horseName": "バセリーナ",
+      "realOdds": 21,
+      "placeOdds": 4.4,
+      "winProb": 0.36,
+      "placeProb": 0.509,
+      "placeScore": 0.376,
+      "valueScore": 0.533,
+      "selectionReason": "本命次点ではなく、複勝寄り期待値59% / valueScore 0.533 / 複勝率51% / 次点差0.014を見てワイド高配当狙いに選出。",
+      "scoreGap": 0.014,
+      "runnerUpHorseId": "8",
+      "runnerUpHorseName": "シャイニースイフト",
+      "runnerUpPlaceScore": 0.357,
+      "runnerUpPlaceProb": 0.497,
+      "overbetLabel": null,
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
     }
   ],
   "reviewPosts": {
