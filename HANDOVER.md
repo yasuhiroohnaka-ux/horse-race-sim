@@ -166,3 +166,17 @@
 - snapshot rankedRows に `simTop3Rate` を蓄積開始 (v2.5以降)
 - `scripts/validate-mc-top3.ts` の検証 (237レース): MC top3 は現行 placeProb 式に判別力で劣る (logLoss 0.484 vs 0.469) → **置換見送り**。ライブ snapshot が50レース超でブレンド再検証
 - 詳細: vault `50_logs/2026-06-11-tanpuku-v25-wide-placeodds-top3.md`、`data/analysis/mc-top3-validation.md`
+
+## 2026-07-11 current state
+
+### live OOS 監視・タイミングゲート・ワイド推奨シャドー化 (Codex 作業を Claude が引き継ぎ完了)
+
+- commit `56ab22e` (branch `codex/model-pipeline-recovery`)。実装は Codex、検証とコミット・文書化は Claude
+- **ワイド推奨は停止 (shadowOnly)**: 配備係数の事後 live holdout 96件で place ワイドROI 60.0% (バックテスト116%と乖離)。UI・X投稿のワイド行は `recommended=false` で自動非表示。ペア決済のシャドー監視は継続し、復活判断は live 実測で行う
+- calibration-report を live/retro 分離に刷新: `livePreRaceEligible` な live_pre_race (238件) を成績評価の正とし、retrospective/backfill (89件) はフィット補助に限定。配備係数の事後 holdout と係数更新ゲート (直近50件取り置き) を常設。**現時点の更新ゲートは未通過** (win 候補が市場に勝てない) → 係数は 2026-06-07 学習のまま据え置き
+- keiba-routine: 発走5分前リード / 確定30分バッファのタイミングゲート、推奨レコードの live 系譜判定 (`lineageInvalidReason`)、performance の eligible-only 再構築。決済ステージを sun_16 → sun_18 に移動 (sun_16 は後方互換で残置)
+- refresh-weekly-races: 部分取得時に既存レース・確定結果を保全する `scripts/weekly-race-merge.mjs` を導入 (取得欠けでデータが消える事故の防止)
+- `lib/raceTiming.mjs` (新規): 発走時刻ゲートと live_pre_race / retrospective 判定の共通実装
+- MC top3 ライブ検証 (96レース): ライブ simTop3Rate は OOS 判別力で線形式に勝つ (logLoss 0.5164 vs 0.5189) が、ブレンド改善 0.003 < 採用基準 0.005 で**見送り**。snapshot 増加後の再検証は roadmap 側の判断による
+- 検証: tsc / npm test 100本 / build 全てグリーン
+- 補足: ローカル clone が古いと routine が止まって見えるが、GitHub Actions は稼働継続していた (origin/main に routine コミットあり)。作業前に `git fetch` を推奨
