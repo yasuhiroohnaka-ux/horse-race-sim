@@ -2,7 +2,7 @@
 
 on:
   schedule:
-    # JST: Sat 09:00 / Sun 09:00 / Mon 09:00 / Mon 10:00 / Wed 12:00 / Thu 12:00 / Thu 15:00 / Fri 10:30 / Sat 15:00 / Sun 15:00 / Sun 16:00
+    # JST: Sat 09:00 / Sun 09:00 / Mon 09:00 / Mon 10:00 / Wed 12:00 / Thu 12:00 / Thu 15:00 / Fri 10:30 / Sat 15:00 / Sun 15:00 / Sun 18:00
     - cron: "0 0 * * 6"
     - cron: "0 0 * * 0"
     - cron: "0 0 * * 1"
@@ -13,11 +13,11 @@ on:
     - cron: "30 1 * * 5"
     - cron: "0 6 * * 6"
     - cron: "0 6 * * 0"
-    - cron: "0 7 * * 0"
+    - cron: "0 9 * * 0"
   workflow_dispatch:
     inputs:
       stage:
-        description: "Optional manual stage (sat_09, sun_09, mon_09, mon_10, wed_12, thu_12, thu_15, fri_10, sat_15, sun_15, sun_16)"
+        description: "Optional manual stage (sat_09, sun_09, mon_09, mon_10, wed_12, thu_12, thu_15, fri_10, sat_15, sun_15, sun_18)"
         required: false
         type: string
 
@@ -59,7 +59,7 @@ jobs:
               "30 1 * * 5") stage="fri_10" ;;
               "0 6 * * 6") stage="sat_15" ;;
               "0 6 * * 0") stage="sun_15" ;;
-              "0 7 * * 0") stage="sun_16" ;;
+              "0 9 * * 0") stage="sun_18" ;;
               *)
                 echo "Unable to resolve stage from schedule: '${{ github.event.schedule }}'"
                 exit 1
@@ -86,7 +86,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/weekly-races.json data/routine-state.json data/pending-posts.jsonl data/review-records.json data/prediction-snapshots.jsonl lib/generatedNetkeibaData.ts lib/generatedTrainingData.ts lib/generatedRaceSchedule.ts lib/generatedRaceVolatility.ts lib/generatedDrawOverrides.ts
+          git add data/weekly-races.json data/routine-state.json data/pending-posts.jsonl data/review-records.json data/prediction-snapshots.jsonl data/analysis/calibration-report.md data/analysis/calibration-report.json lib/generatedNetkeibaData.ts lib/generatedTrainingData.ts lib/generatedRaceSchedule.ts lib/generatedRaceVolatility.ts lib/generatedDrawOverrides.ts
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0

@@ -10,6 +10,7 @@ import {
   readRunningStyleOverridesStore
 } from "../lib/runningStyleOverrides.mjs";
 import { filterRaceDayNoOddsHorses } from "../lib/raceDayExclusions.mjs";
+import { mergeRefreshedRaces } from "./weekly-race-merge.mjs";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -830,9 +831,9 @@ async function main() {
   const weekOf = isoDate(startOfWeekMonday(now));
   const seeds = await fetchCurrentWeekRaceSeeds();
   const built = await Promise.all(seeds.map((seed) => buildRace(seed)));
-  const races = built.filter(Boolean).sort((a, b) => a.raceId.localeCompare(b.raceId));
+  const refreshedRaces = built.filter(Boolean).sort((a, b) => a.raceId.localeCompare(b.raceId));
 
-  if (races.length === 0) {
+  if (refreshedRaces.length === 0) {
     throw new Error("No target races found for current week; skip write to avoid wiping data.");
   }
 
@@ -848,7 +849,7 @@ async function main() {
   }
 
   const previousRaces = prev.currentWeek?.races && Array.isArray(prev.currentWeek.races) ? prev.currentWeek.races : [];
-  for (const newRace of races) {
+  for (const newRace of refreshedRaces) {
     const oldRace = previousRaces.find(r => r.raceId === newRace.raceId);
     const raceManualOverrides = manualOverrides[newRace.courseId] ?? {};
     for (const newHorse of newRace.horses) {
@@ -876,8 +877,23 @@ async function main() {
     }
   }
 
+  const { races, missingRaces } = mergeRefreshedRaces({
+    previousWeekOf: prev.currentWeek?.weekOf,
+    weekOf,
+    previousRaces,
+    refreshedRaces
+  });
+  if (missingRaces.length > 0) {
+    const missingSummary = missingRaces
+      .map(({ raceId, label }) => `${raceId} ${label || "(label unavailable)"}`)
+      .join(", ");
+    console.warn(
+      `[refresh-weekly-races] partial fetch for weekOf=${weekOf}; preserving ${missingRaces.length} existing race(s): ${missingSummary}`
+    );
+  }
+
   if (RUNNING_STYLE_AUDIT_RACE_ID) {
-    const auditRace = races.find((race) => race.raceId === RUNNING_STYLE_AUDIT_RACE_ID);
+    const auditRace = refreshedRaces.find((race) => race.raceId === RUNNING_STYLE_AUDIT_RACE_ID);
     if (!auditRace) {
       throw new Error(`Audit race not found: ${RUNNING_STYLE_AUDIT_RACE_ID}`);
     }

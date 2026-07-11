@@ -1,27 +1,77 @@
 {
   "summary": {
-    "generatedAt": "2026-06-10T15:23:43.135Z",
-    "raceCount": 237,
-    "sampleCount": 3335,
-    "iterations": 500,
+    "generatedAt": "2026-07-11T11:39:11.060Z",
+    "source": "snapshots",
+    "sourceFiles": [
+      "data\\prediction-snapshots.jsonl",
+      "data\\review-records.json"
+    ],
+    "targetConditions": [
+      "predictionOrigin === saved_live",
+      "livePreRaceEligible === true",
+      "rankedRows に有限の simTop3Rate が1件以上あり、有限値の行だけを馬サンプルに使用",
+      "review-records の actualTop3HorseIds がちょうど3件",
+      "raceId ごとに preferred/latest snapshot へ dedupe",
+      "raceDate 昇順、次に capturedAt 昇順"
+    ],
+    "monteCarloExecution": "saved simTop3Rate (runMonteCarlo not called)",
+    "raceCount": 96,
+    "sampleCount": 1247,
+    "iterations": null,
+    "snapshotLoadStats": {
+      "totalSnapshots": 453,
+      "eligibleSnapshots": 107,
+      "dedupedRaces": 107,
+      "confirmedRaces": 96
+    },
+    "oosSplit": {
+      "strategy": "時系列前半で再校正し、後半を評価（分割点はレース境界のみ）",
+      "trainRaceCount": 48,
+      "trainSampleCount": 653,
+      "testRaceCount": 48,
+      "testSampleCount": 594,
+      "trainEnd": {
+        "raceId": "202609030612",
+        "raceDate": "2026-06-21",
+        "capturedAt": "2026-06-21T05:01:04.090Z"
+      },
+      "testStart": {
+        "raceId": "202602010509",
+        "raceDate": "2026-06-27",
+        "capturedAt": "2026-06-27T02:04:10.747Z"
+      }
+    },
     "mcTop3": {
-      "raw": 0.478,
-      "recalibratedFull": 0.4711,
-      "outOfSample": 0.4835,
+      "raw": 0.5181,
+      "recalibratedFull": 0.5016,
+      "outOfSample": 0.5164,
       "coef": {
-        "a": -0.3242,
-        "b": 0.7108
+        "a": -0.43,
+        "b": 0.592
       }
     },
     "formulaPlaceProb": {
-      "raw": 0.474,
-      "recalibratedFull": 0.4628,
-      "outOfSample": 0.4693,
+      "raw": 0.5033,
+      "recalibratedFull": 0.4998,
+      "outOfSample": 0.5189,
       "coef": {
-        "a": 0.355,
-        "b": 1.5735
+        "a": 0.0467,
+        "b": 1.211
       }
     },
-    "verdict": "現行 placeProb 式のほうが out-of-sample 判別力が高い"
+    "blendedPlaceProb": {
+      "formula": "sigmoid(w0 + w1*logit(formulaPlace) + w2*logit(mcTop3))",
+      "trainCoefficients": {
+        "w0": 0.0187,
+        "w1": 0.9567,
+        "w2": 0.2035
+      },
+      "outOfSample": 0.5159,
+      "improvementVsFormula": 0.003,
+      "adoptionCriterion": "improvementVsFormula >= 0.005",
+      "adoptionThreshold": 0.005,
+      "verdict": "見送り"
+    },
+    "verdict": "MC top3 頻度のほうが out-of-sample 判別力が高い"
   }
 }

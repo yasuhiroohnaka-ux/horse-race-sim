@@ -187,20 +187,34 @@ test("overbet label fires on calibrated market gap", () => {
   assert.equal(entry.overbetLabel, "overbet_high");
 });
 
-test("wideRecommendation is emitted for place classification with opponent", () => {
-  const result = pickTanpukuPair(buildRace(14));
+test("wideRecommendation keeps the place pair shadow-only after live OOS misses the threshold", () => {
+  const race = buildRace(14);
+  race.horses[0] = buildHorse(1, {
+    realOdds: 3.0,
+    speed: 90,
+    stamina: 90,
+    power: 90,
+    guts: 90,
+  });
+  const result = pickTanpukuPair(race);
   assert.ok(result);
   assert.ok(result.wideRecommendation);
-  if (result.winPick.classificationHint.classification === "place") {
-    assert.equal(result.wideRecommendation.recommended, true);
-    const horseIds = result.wideRecommendation.horseIds;
-    assert.ok(horseIds);
-    assert.equal(horseIds.length, 2);
-    assert.equal(horseIds[0], result.winPick.horse.id);
-    assert.equal(horseIds[1], result.opponentPick.horse.id);
-  } else {
-    assert.equal(result.wideRecommendation.recommended, false);
-  }
+  assert.equal(result.winPick.classificationHint.classification, "place");
+  assert.equal(result.wideRecommendation.recommended, false);
+  assert.equal(result.wideRecommendation.shadowOnly, true);
+  const horseIds = result.wideRecommendation.horseIds;
+  const horseNames = result.wideRecommendation.horseNames;
+  assert.ok(horseIds);
+  assert.ok(horseNames);
+  assert.equal(horseIds.length, 2);
+  assert.equal(horseNames.length, 2);
+  assert.equal(horseIds[0], result.winPick.horse.id);
+  assert.equal(horseIds[1], result.opponentPick.horse.id);
+  assert.equal(horseNames[0], result.winPick.horse.name);
+  assert.equal(horseNames[1], result.opponentPick.horse.name);
+  assert.match(result.wideRecommendation.reason, /live OOS基準未達/);
+  assert.match(result.wideRecommendation.reason, /推奨停止/);
+  assert.match(result.wideRecommendation.reason, /シャドー監視は継続/);
 });
 
 test("wideRecommendation is not recommended for skip classification", () => {
@@ -208,6 +222,7 @@ test("wideRecommendation is not recommended for skip classification", () => {
   assert.ok(result);
   assert.equal(result.winPick.classificationHint.classification, "skip");
   assert.equal(result.wideRecommendation.recommended, false);
+  assert.equal(result.wideRecommendation.shadowOnly, false);
 });
 
 // --- v2.5.1: marketGapLabel ---

@@ -19,6 +19,11 @@ import {
   buildRecommendedBetDecision,
   resolveRecommendedBetActionFromClassificationHint,
 } from "../lib/recommendedBetDecisionCore.mjs";
+import {
+  classifyRecommendationTiming,
+  isAfterRaceCompletionBuffer,
+  isBeforeRaceStart,
+} from "../lib/raceTiming.mjs";
 
 const ROOT = process.cwd();
 
@@ -69,7 +74,7 @@ function detectStageFromJst(now) {
   if (day === 5 && hour === 10) return "fri_10";
   if (day === 6 && hour === 15) return "sat_15";
   if (day === 0 && hour === 15) return "sun_15";
-  if (day === 0 && hour === 16) return "sun_16";
+  if (day === 0 && hour === 18) return "sun_18";
   return null;
 }
 
@@ -439,6 +444,50 @@ function ensurePerf(state, weekOf) {
   };
 }
 
+function summarizeEligibleRecommendations(recommendations, weekOf = null) {
+  const eligible = recommendations.filter(
+    (rec) =>
+      rec?.resolved === true &&
+      rec?.settlementStatus === "settled" &&
+      rec?.livePreRaceEligible === true &&
+      (!weekOf || rec?.weekOf === weekOf)
+  );
+
+  return eligible.reduce(
+    (summary, rec) => {
+      summary.bets += 1;
+      summary.tanHits += rec.tanHit === true ? 1 : 0;
+      summary.fukuHits += rec.fukuHit === true ? 1 : 0;
+      summary.tanStake += 100;
+      summary.tanPayout += Number(rec.tanPayout ?? 0);
+      summary.fukuStake += 100;
+      summary.fukuPayout += Number(rec.fukuPayout ?? 0);
+      return summary;
+    },
+    {
+      ...(weekOf ? { weekOf } : {}),
+      bets: 0,
+      tanHits: 0,
+      fukuHits: 0,
+      tanStake: 0,
+      tanPayout: 0,
+      fukuStake: 0,
+      fukuPayout: 0,
+    }
+  );
+}
+
+function rebuildRoutinePerformance(state, weekOf) {
+  const recommendations = Array.isArray(state.tanpukuRecommendations)
+    ? state.tanpukuRecommendations
+    : [];
+  state.performance = {
+    weekly: summarizeEligibleRecommendations(recommendations, weekOf),
+    total: summarizeEligibleRecommendations(recommendations),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 async function handleMonday10(now) {
   const state = await readJson(STATE_PATH, {});
   const weeklyBefore = await readJson(WEEKLY_RACES_PATH, { currentWeek: null, archives: [] });
@@ -554,6 +603,7 @@ async function handleDrawConfirmed() {
 
 async function handleRecommendation(day, stage) {
   const now = jstNow();
+  const captureInstant = new Date();
   const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { races: [] } });
   const state = await readJson(STATE_PATH, {});
   const includeBodyWeight = day === "Sat";
@@ -563,10 +613,17 @@ async function handleRecommendation(day, stage) {
     state.drawConfirmedAt = now.toISOString();
     await writeJson(STATE_PATH, state);
   }
-  const best = pickBestHorse(weekly.currentWeek?.races || [], day, includeBodyWeight, applyDraw);
+  const dayRaces = (weekly.currentWeek?.races || []).filter((race) => race.day === day && race.hasRace);
+  const eligibleRaces = dayRaces.filter((race) =>
+    isBeforeRaceStart(race, captureInstant, 5 * 60_000)
+  );
+  const best = pickBestHorse(eligibleRaces, day, includeBodyWeight, applyDraw);
 
   if (!best) {
-    console.log(`No target race for ${day}, skip posting.`);
+    console.warn(
+      `No unstarted target race for ${day}, skip posting ` +
+        `(dayRaces=${dayRaces.length}, eligibleWith5mLead=${eligibleRaces.length}).`
+    );
     return;
   }
 
@@ -600,16 +657,22 @@ async function handleRecommendation(day, stage) {
     });
 
     const weekOf = weekly.currentWeek?.weekOf || isoDate(startOfWeekMonday(jstNow()));
+    const recommendationCreatedAt = new Date().toISOString();
     state.tanpukuRecommendations = state.tanpukuRecommendations || [];
     state.tanpukuRecommendations.push({
       weekOf,
       day,
       stage,
-      postedAt: new Date().toISOString(),
+      postedAt: recommendationCreatedAt,
       predictionOrigin: "saved_live",
+      sourceStatus: "live_pre_race",
+      livePreRaceEligible: true,
       scoringVersion: DEFAULT_SCORING_VERSION,
+      raceId: race.raceId ?? null,
       courseId: race.courseId,
       raceLabel: race.label,
+      raceDate: race.raceDate ?? null,
+      scheduledStartTime: race.scheduledStartTime ?? null,
       pickType: "win",
       classificationHint: winPick.classificationHint ?? null,
       recommendedBetAction: winRecommendedBetDecision.action,
@@ -643,11 +706,16 @@ async function handleRecommendation(day, stage) {
         weekOf,
         day,
         stage,
-        postedAt: new Date().toISOString(),
+        postedAt: recommendationCreatedAt,
         predictionOrigin: "saved_live",
+        sourceStatus: "live_pre_race",
+        livePreRaceEligible: true,
         scoringVersion: DEFAULT_SCORING_VERSION,
+        raceId: race.raceId ?? null,
         courseId: race.courseId,
         raceLabel: race.label,
+        raceDate: race.raceDate ?? null,
+        scheduledStartTime: race.scheduledStartTime ?? null,
         pickType: "value",
         classificationHint: null,
         recommendedBetAction: "unknown",
@@ -687,13 +755,46 @@ async function handleRecommendation(day, stage) {
   }
 }
 
-async function handleSundaySettle() {
-  const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { weekOf: isoDate(startOfWeekMonday(jstNow())), races: [] } });
+async function handleSundaySettle(stage = "sun_18") {
+  let weekly = await readJson(WEEKLY_RACES_PATH, {
+    currentWeek: { weekOf: isoDate(startOfWeekMonday(jstNow())), races: [] },
+  });
+  const settlementInstant = new Date();
+  const sundayRaces = (weekly.currentWeek?.races || []).filter(
+    (race) => race.day === "Sun" && race.hasRace
+  );
+  const racesStillInsideCompletionBuffer = sundayRaces.filter(
+    (race) => !isAfterRaceCompletionBuffer(race, settlementInstant)
+  );
+  if (racesStillInsideCompletionBuffer.length > 0) {
+    console.warn(
+      `Sunday settlement skipped: ${racesStillInsideCompletionBuffer.length} race(s) are ` +
+        `unstarted or within the 30-minute completion buffer.`
+    );
+    return;
+  }
+
+  await runNodeScript("scripts/update-race-results.mjs", ["--day=Sun"]);
+  await runNodeScript("scripts/sync-race-schedule.mjs");
+  weekly = await readJson(WEEKLY_RACES_PATH, {
+    currentWeek: { weekOf: isoDate(startOfWeekMonday(jstNow())), races: [] },
+  });
   const state = await readJson(STATE_PATH, {});
   const weekOf = weekly.currentWeek?.weekOf || isoDate(startOfWeekMonday(jstNow()));
   ensurePerf(state, weekOf);
 
   const recs = state.tanpukuRecommendations || [];
+  for (const rec of recs) {
+    const race = findRaceForRecommendation(weekly, rec);
+    const timing = race ? classifyRecommendationTiming(race, rec.postedAt) : "unknown";
+    rec.sourceStatus = timing;
+    rec.livePreRaceEligible = timing === "live_pre_race";
+    if (timing !== "live_pre_race" && rec.predictionOrigin === "saved_live") {
+      rec.predictionOrigin = "retrospective";
+      rec.lineageInvalidReason =
+        timing === "retrospective" ? "posted_at_or_after_race_start" : "missing_race_timing";
+    }
+  }
   const unresolved = recs.filter((r) => !r.resolved);
 
   for (const rec of unresolved) {
@@ -720,9 +821,6 @@ async function handleSundaySettle() {
 
     const tanHit = winnerId === String(rec.horseId);
     const fukuHit = top3.includes(String(rec.horseId));
-    const tanStake = 100;
-    const fukuStake = 100;
-
     const hasTanshoTable = hasOfficialPayoutTable(result?.payouts?.tansho);
     const hasFukushoTable = hasOfficialPayoutTable(result?.payouts?.fukusho);
     const officialTanPayout = tanHit ? getOfficialTanshoPayoutForHorse(race, rec.horseId) : 0;
@@ -766,31 +864,13 @@ async function handleSundaySettle() {
       continue;
     }
 
-    if (rec.weekOf === weekOf) {
-      state.performance.weekly.bets += 1;
-      state.performance.weekly.tanHits += tanHit ? 1 : 0;
-      state.performance.weekly.fukuHits += fukuHit ? 1 : 0;
-      state.performance.weekly.tanStake += tanStake;
-      state.performance.weekly.tanPayout += tanPayout;
-      state.performance.weekly.fukuStake += fukuStake;
-      state.performance.weekly.fukuPayout += fukuPayout;
-    }
-
-    state.performance.total.bets += 1;
-    state.performance.total.tanHits += tanHit ? 1 : 0;
-    state.performance.total.fukuHits += fukuHit ? 1 : 0;
-    state.performance.total.tanStake += tanStake;
-    state.performance.total.tanPayout += tanPayout;
-    state.performance.total.fukuStake += fukuStake;
-    state.performance.total.fukuPayout += fukuPayout;
-
     rec.resolved = true;
     rec.settledAt = new Date().toISOString();
     rec.tanHit = tanHit;
     rec.fukuHit = fukuHit;
   }
 
-  state.performance.updatedAt = new Date().toISOString();
+  rebuildRoutinePerformance(state, weekOf);
   await writeJson(STATE_PATH, state);
   const reviewRecordStore = await readJson(REVIEW_RECORDS_PATH, { records: null });
   const reviewRecords = reviewRecordStore?.records ? Object.values(reviewRecordStore.records) : [];
@@ -805,18 +885,35 @@ async function handleSundaySettle() {
     weekOf,
     categoryReturnStats,
   });
-  await publishOrQueuePost("sun_16", summary.text, summary);
+  await publishOrQueuePost(stage, summary.text, summary);
 
   // 回顧完了後に校正レポートを実行 (best-effort)
   try {
     await runNodeScript("scripts/calibration-report.mjs");
     const calibReport = await readJson(path.join(ROOT, "data", "analysis", "calibration-report.json"), null);
     if (calibReport) {
-      const calibrated = calibReport?.winCalibration?.metrics?.calibrated?.logLoss;
-      const rawMarket = calibReport?.winCalibration?.metrics?.rawMarket?.logLoss;
-      if (typeof calibrated === "number" && typeof rawMarket === "number" && calibrated > rawMarket) {
+      const holdout = calibReport?.monitoring?.postCalibrationHoldout;
+      const deployedHoldout = holdout?.win?.deployed;
+      const holdoutMarket = holdout?.win?.rawMarket;
+      if (
+        Number(holdout?.n) >= 50 &&
+        typeof deployedHoldout === "number" &&
+        typeof holdoutMarket === "number" &&
+        deployedHoldout > holdoutMarket
+      ) {
         console.warn(
-          `⚠ 校正劣化警告: 校正後logLossが市場単体を上回っています (calibrated=${calibrated}, rawMarket=${rawMarket})。係数の再フィットを検討してください`
+          `⚠ 校正劣化警告: 配備係数の事後live holdoutで市場単体を下回っています ` +
+            `(n=${holdout.n}, deployed=${deployedHoldout}, rawMarket=${holdoutMarket})。` +
+            `係数は自動更新せず、時系列再フィット検証を確認してください`
+        );
+      }
+
+      const recentPlace = calibReport?.recentClassificationBacktest?.place;
+      const recentPlaceWideRoi = Number.parseFloat(String(recentPlace?.wideRoi ?? ""));
+      if (Number(recentPlace?.n) >= 30 && Number.isFinite(recentPlaceWideRoi) && recentPlaceWideRoi < 100) {
+        console.warn(
+          `⚠ ワイド劣化警告: 直近50件のplace分類でwideROIが100%未満です ` +
+            `(place n=${recentPlace.n}, wideROI=${recentPlace.wideRoi})。推奨ゲートを再検証してください`
         );
       }
     }
@@ -863,7 +960,8 @@ async function main() {
       await handleRecommendation("Sun", stage);
       break;
     case "sun_16":
-      await handleSundaySettle();
+    case "sun_18":
+      await handleSundaySettle(stage);
       break;
     default:
       console.log(`Unknown stage: ${stage}`);
