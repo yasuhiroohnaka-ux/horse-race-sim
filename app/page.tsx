@@ -35,6 +35,12 @@ export default function Home() {
                 >
                   レース回顧を見る
                 </Link>
+                <Link
+                  href="/monitor"
+                  className="rounded-full border border-slate-600 px-6 py-3 text-sm font-bold text-slate-100 transition hover:bg-slate-800"
+                >
+                  モデル監視
+                </Link>
               </div>
             </div>
 
