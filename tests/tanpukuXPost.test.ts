@@ -157,3 +157,77 @@ test("post with wide recommendation and skip still fits within 280 chars", () =>
   });
   assert.ok(Array.from(text).length <= 280, `text length ${Array.from(text).length} exceeds 280`);
 });
+
+// --- P4-B: 分類ドリブン文面 ---
+
+test("win classification renders calibrated win prob and odds", () => {
+  const text = build({
+    classificationHint: { classification: "win", confidence: 0.45 },
+    honmeiStats: { calWinProb: 0.38, calPlaceProb: 0.7, odds: 4.2 },
+  });
+  assert.match(text, /単勝勝負型: 校正勝率38%×4\.2倍 \(winゲートは検証中\)/);
+});
+
+test("place classification renders calibrated place prob", () => {
+  const text = build({
+    classificationHint: { classification: "place", confidence: 0.6 },
+    honmeiStats: { calWinProb: 0.2, calPlaceProb: 0.68, odds: 3.0 },
+  });
+  assert.match(text, /複勝軸型: 校正複勝率68%/);
+});
+
+test("classification line degrades gracefully without honmei stats", () => {
+  const text = build({
+    classificationHint: { classification: "win", confidence: 0.45 },
+  });
+  assert.match(text, /単勝勝負型 \(winゲートは検証中\)/);
+});
+
+// --- P4-C: ハッシュタグのサニタイズと優先度 ---
+
+test("race name with parentheses produces a sanitized leading hashtag", () => {
+  const text = build({ raceName: "垂水Ｓ(3勝クラス)", hashtag: null });
+  assert.equal(text.split("\n")[0], "#垂水Ｓ");
+  assert.equal(text.includes("(3勝クラス)"), false);
+});
+
+test("priority hashtags are appended as a trailing line when budget allows", () => {
+  const text = build({ maxLength: 280 });
+  const lastLine = text.trimEnd().split("\n").at(-1) ?? "";
+  assert.ok(lastLine.includes("#AI予想"), `expected trailing tags, got: ${lastLine}`);
+  assert.ok(Array.from(text).length <= 280);
+});
+
+test("graded race gains year and grade tags when provided", () => {
+  const text = build({
+    raceName: "宝塚記念",
+    hashtag: null,
+    raceGrade: "G1",
+    raceYear: 2026,
+    maxLength: 400,
+  });
+  const lastLine = text.trimEnd().split("\n").at(-1) ?? "";
+  assert.ok(lastLine.includes("#宝塚記念2026"), lastLine);
+  assert.ok(lastLine.includes("#G1"), lastLine);
+});
+
+test("skip classification keeps hashtags minimal", () => {
+  const text = build({
+    classificationHint: { classification: "skip", confidence: 0.65 },
+    raceGrade: "G1",
+    raceYear: 2026,
+    maxLength: 400,
+  });
+  assert.equal(text.includes("#競馬予想"), false);
+  assert.equal(text.includes("#G1"), false);
+  assert.ok(text.includes("#AI予想"));
+});
+
+test("trailing tags are dropped from lowest priority when budget is tight", () => {
+  const generous = build({ maxLength: 400, raceGrade: "G1", raceYear: 2026, raceName: "宝塚記念", hashtag: null });
+  const tight = build({ maxLength: 200, raceGrade: "G1", raceYear: 2026, raceName: "宝塚記念", hashtag: null });
+  assert.ok(Array.from(tight).length <= 200);
+  const generousTags = (generous.trimEnd().split("\n").at(-1) ?? "").split(" ").filter((t) => t.startsWith("#"));
+  const tightTags = (tight.trimEnd().split("\n").at(-1) ?? "").split(" ").filter((t) => t.startsWith("#"));
+  assert.ok(tightTags.length <= generousTags.length);
+});

@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { buildRaceHashtag } from "../lib/xTagSanitize.mjs";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -42,13 +43,8 @@ function raceDisplayLabel(race) {
 }
 
 function reviewHashtag(race) {
-  const raw = String(race?.hashtag ?? "").trim().replace(/出馬表/g, "").replace(/\s+/g, "");
-  if (raw && raw !== "#") {
-    return raw.startsWith("#") ? raw : `#${raw}`;
-  }
-
-  const label = raceDisplayLabel(race).replace(/\s+/g, "");
-  return label ? `#${label}` : "";
+  // X はタグ内の括弧・記号でタグが途切れる (実配信例: #垂水Ｓ(3勝クラス))。共通サニタイズを通す
+  return buildRaceHashtag(raceDisplayLabel(race), race?.hashtag ?? null);
 }
 
 async function fetchText(url) {

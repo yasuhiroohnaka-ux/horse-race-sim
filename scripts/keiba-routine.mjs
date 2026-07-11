@@ -637,11 +637,10 @@ async function handleRecommendation(day, stage) {
   await publishOrQueuePost(`${stage}_overvalued`, overvaluedText);
 
   if (tanpuku) {
-    const preRace = buildPreRacePostPayload({ day, race, tanpukuPair: tanpuku, simBestHorse: best });
-    await publishOrQueuePost(`${stage}_pre_race`, preRace.text, preRace);
-
     const winPick = tanpuku.winPick;
     const valuePick = tanpuku.valuePick;
+    // 決定を payload 生成より先に計算して winPick に載せる。
+    // 以前は payload 側のフォールバック (旧・生値閾値の複製) が毎回実行されていた。
     const winRecommendedBetDecision = buildRecommendedBetDecision({
       sourceStatus: "live_pre_race",
       livePreRaceEligible: true,
@@ -655,6 +654,10 @@ async function handleRecommendation(day, stage) {
       overbetLabel: winPick.overbetLabel ?? null,
       hasSelectionLog: false,
     });
+    winPick.recommendedBetDecision = winRecommendedBetDecision;
+
+    const preRace = buildPreRacePostPayload({ day, race, tanpukuPair: tanpuku, simBestHorse: best });
+    await publishOrQueuePost(`${stage}_pre_race`, preRace.text, preRace);
 
     const weekOf = weekly.currentWeek?.weekOf || isoDate(startOfWeekMonday(jstNow()));
     const recommendationCreatedAt = new Date().toISOString();
