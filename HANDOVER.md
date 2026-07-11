@@ -180,3 +180,10 @@
 - MC top3 ライブ検証 (96レース): ライブ simTop3Rate は OOS 判別力で線形式に勝つ (logLoss 0.5164 vs 0.5189) が、ブレンド改善 0.003 < 採用基準 0.005 で**見送り**。snapshot 増加後の再検証は roadmap 側の判断による
 - 検証: tsc / npm test 100本 / build 全てグリーン
 - 補足: ローカル clone が古いと routine が止まって見えるが、GitHub Actions は稼働継続していた (origin/main に routine コミットあり)。作業前に `git fetch` を推奨
+
+### /monitor モデル監視ダッシュボード (2026-07-11, commit b72087c)
+
+- `app/monitor/page.tsx` (新規): calibration-report.json の画面化。警告バナー (校正劣化 / ワイド劣化)、係数更新ゲートのチェックリスト、live holdout、分類バックテスト (全期間 + 直近50件)、データ構成 (live/遡及)、市場ギャップ、校正バケット、係数情報
+- `app/api/calibration-report/route.ts` (新規): レポート JSON の提供 + live_pre_race 限定の週次ROI推移 (単勝/複勝/ワイド、pair 決済ベース) を review-records から集計
+- トップページのヒーローに「モデル監視」ボタンを追加
+- 表示のみの変更でエンジンには不干渉。レポートは週次ルーチンが自動再生成するため、ダッシュボードは常に最新の監視値を映す
