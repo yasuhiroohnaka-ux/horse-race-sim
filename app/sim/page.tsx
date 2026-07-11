@@ -7,6 +7,7 @@ import { CourseConfig } from "@/components/CourseConfig";
 import { HorseInput } from "@/components/HorseInput";
 import { SimulationResults } from "@/components/SimulationResults";
 import { ACTIVE_COURSES, COURSES } from "@/lib/courses";
+import { getCourseGrade } from "@/lib/courseGrades";
 import { getDefaultHorses } from "@/lib/defaultHorses";
 import { dedupeHorses, findHorseDuplicates } from "@/lib/horseIntegrity";
 import { applyNetkeibaRatings } from "@/lib/netkeibaRatings";
@@ -759,6 +760,15 @@ function SimulatorContent() {
       categoryReturnStats,
       wideRecommendation: tanpukuPair?.wideRecommendation as TanpukuWideRecommendation | null ?? null,
       classificationHint: tanpukuPair?.winPick?.classificationHint as TanpukuClassificationHint | null ?? null,
+      honmeiStats: tanpukuPair?.winPick
+        ? {
+            calWinProb: Number(tanpukuPair.winPick.calWinProb ?? NaN),
+            calPlaceProb: Number(tanpukuPair.winPick.calPlaceProb ?? NaN),
+            odds: Number(tanpukuPair.winPick.horse?.realOdds ?? NaN),
+          }
+        : null,
+      raceGrade: getCourseGrade(selectedCourse),
+      raceYear: Number(String(selectedCourse.raceDate ?? "").slice(0, 4)) || null,
     });
 
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
@@ -864,6 +874,16 @@ function SimulatorContent() {
                 horses={horses}
                 course={selectedCourse}
                 condition={condition}
+                tanpukuEntries={
+                  (tanpukuPair?.scored ?? [])
+                    .map((entry: { horse?: { id?: string }; calWinProb?: number; calPlaceProb?: number; marketGapLabel?: string | null }) => ({
+                      horseId: String(entry?.horse?.id ?? ""),
+                      calWinProb: Number(entry?.calWinProb ?? 0),
+                      calPlaceProb: Number(entry?.calPlaceProb ?? 0),
+                      marketGapLabel: entry?.marketGapLabel ?? null,
+                    }))
+                    .filter((entry: { horseId: string }) => entry.horseId)
+                }
                 onReset={() => { setResults(null); setTanpukuPair(null); }}
                 onPostToMarketFocusToX={handlePostToMarketFocusToX}
                 onPostPreRaceToX={handlePostPreRaceToX}

@@ -23,17 +23,32 @@ import { findRaceTrendProfile } from "@/lib/raceTrendHints";
 import { findRaceHeuristicHints, findRaceTrendNotes } from "@/lib/raceAnnotations";
 import { getFrameColor, getFrameNumber } from "@/lib/frameColor";
 
+export interface TanpukuCalibratedEntry {
+  horseId: string;
+  calWinProb: number;
+  calPlaceProb: number;
+  marketGapLabel: string | null;
+}
+
 interface SimulationResultsProps {
   results: { horseId: string; winCount: number; bestTime: number }[];
   horses: Horse[];
   course: Course;
   condition: RaceCondition;
+  tanpukuEntries?: TanpukuCalibratedEntry[] | null;
   onReset: () => void;
   onPostToMarketFocusToX: () => void;
   onPostPreRaceToX: () => void;
   onRunAgain: () => void;
   isRunning: boolean;
 }
+
+const MARKET_GAP_BADGES: Record<string, { label: string; className: string }> = {
+  fair_priced: { label: "一致", className: "bg-emerald-50 text-emerald-700" },
+  overbet_moderate: { label: "過熱中", className: "bg-amber-50 text-amber-700" },
+  overbet_high: { label: "過熱大", className: "bg-rose-50 text-rose-700" },
+  underbet: { label: "過小", className: "bg-blue-50 text-blue-700" },
+};
 
 function getSignalTone(label: string): string {
   switch (label) {
@@ -120,6 +135,7 @@ export function SimulationResults({
   horses,
   course,
   condition,
+  tanpukuEntries,
   onReset,
   onPostToMarketFocusToX,
   onPostPreRaceToX,
@@ -128,6 +144,10 @@ export function SimulationResults({
 }: SimulationResultsProps) {
   const rows = buildRaceAnalysisRows(results, horses, course, condition);
   const hasTrendRows = rows.some((row) => row.adjustedRank !== undefined);
+  const calibratedByHorseId = new Map(
+    (tanpukuEntries ?? []).map((entry) => [entry.horseId, entry])
+  );
+  const hasCalibrated = calibratedByHorseId.size > 0;
   const trendProfile = hasTrendRows ? findRaceTrendProfile(course) : null;
   const raceTrendNotes = findRaceTrendNotes(course);
   const raceHeuristicHints = findRaceHeuristicHints(course);
@@ -298,7 +318,17 @@ export function SimulationResults({
       </div>
 
       <div className="overflow-x-auto">
-        <table className={`${hasTrendRows ? "min-w-[1360px]" : "min-w-[1180px]"} w-full border-collapse text-xs`}>
+        <table
+          className={`${
+            hasTrendRows
+              ? hasCalibrated
+                ? "min-w-[1560px]"
+                : "min-w-[1360px]"
+              : hasCalibrated
+                ? "min-w-[1380px]"
+                : "min-w-[1180px]"
+          } w-full border-collapse text-xs`}
+        >
           <thead>
             <tr className="border-y border-slate-200 bg-slate-50 text-slate-500">
               <th className="px-2 py-2 text-center">順位</th>
@@ -310,6 +340,19 @@ export function SimulationResults({
               <th className="px-2 py-2 text-right">
                 <MetricLabel label="試走勝率" help={TABLE_HEADER_DESCRIPTIONS.simWinRate} />
               </th>
+              {hasCalibrated && (
+                <>
+                  <th className="px-2 py-2 text-right">
+                    <MetricLabel label="校正勝率" help={TABLE_HEADER_DESCRIPTIONS.calWinProb} />
+                  </th>
+                  <th className="px-2 py-2 text-right">
+                    <MetricLabel label="校正複勝" help={TABLE_HEADER_DESCRIPTIONS.calPlaceProb} />
+                  </th>
+                  <th className="px-2 py-2 text-center">
+                    <MetricLabel label="市場評価" help={TABLE_HEADER_DESCRIPTIONS.marketGap} />
+                  </th>
+                </>
+              )}
               {hasTrendRows && (
                 <>
                   <th className="px-2 py-2 text-center">傾向補正</th>
@@ -372,6 +415,29 @@ export function SimulationResults({
                   </td>
                   <td className="px-2 py-2 text-right font-semibold text-slate-900">{row.displayAbilityScore.toFixed(1)}</td>
                   <td className="px-2 py-2 text-right font-semibold text-blue-600">{row.simWinRate.toFixed(1)}%</td>
+                  {hasCalibrated && (() => {
+                    const cal = calibratedByHorseId.get(row.horseId);
+                    const badge = cal?.marketGapLabel ? MARKET_GAP_BADGES[cal.marketGapLabel] : undefined;
+                    return (
+                      <>
+                        <td className="px-2 py-2 text-right font-semibold text-slate-900">
+                          {cal ? `${(cal.calWinProb * 100).toFixed(1)}%` : "-"}
+                        </td>
+                        <td className="px-2 py-2 text-right font-semibold text-slate-900">
+                          {cal ? `${(cal.calPlaceProb * 100).toFixed(1)}%` : "-"}
+                        </td>
+                        <td className="px-2 py-2 text-center">
+                          {badge ? (
+                            <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${badge.className}`}>
+                              {badge.label}
+                            </span>
+                          ) : (
+                            <span className="text-slate-300">-</span>
+                          )}
+                        </td>
+                      </>
+                    );
+                  })()}
                   {hasTrendRows && (
                     <>
                       <td className="px-2 py-2 text-center">

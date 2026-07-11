@@ -19,6 +19,35 @@ interface HorseInputProps {
 
 type TraitFieldKey = "pedigreeScore" | "courseFitScore" | "distanceFitScore" | "groundFitScore" | "paceFitScore";
 
+// 脚質ソースの可視化。推測(guessed_fallback)は展開補正の符号が反転しうるため注意喚起する
+const RUNNING_STYLE_SOURCE_BADGES: Record<string, { label: string; className: string; help: string }> = {
+  netkeiba_gate: {
+    label: "確定",
+    className: "bg-emerald-50 text-emerald-700",
+    help: "netkeiba 出馬表の脚質欄から取得した値です。",
+  },
+  saved_manual_override: {
+    label: "手動",
+    className: "bg-blue-50 text-blue-700",
+    help: "手動で修正済みの脚質です。次回のデータ更新でも保持されます。",
+  },
+  carried_forward_previous_value: {
+    label: "引継",
+    className: "bg-slate-100 text-slate-600",
+    help: "前回データから引き継いだ値です。",
+  },
+  guessed_fallback: {
+    label: "推測",
+    className: "bg-amber-50 text-amber-700",
+    help: "取得できず推測で埋めた脚質です。誤っていると展開補正が逆向きに働くため、分かる場合は修正してください。",
+  },
+  unknown: {
+    label: "出所不明",
+    className: "bg-amber-50 text-amber-700",
+    help: "脚質の出所が記録されていません。推測値の可能性があります。",
+  },
+};
+
 const TRAIT_FIELDS: Array<{ key: TraitFieldKey; label: string; title: string; tone: string }> = [
   { key: "pedigreeScore", label: "血統", title: "血統適性", tone: "text-rose-600" },
   { key: "courseFitScore", label: "コース", title: "競馬場・コース形状適性", tone: "text-sky-600" },
@@ -251,7 +280,13 @@ export function HorseInput({ horses, course, condition, onHorsesChange, onRunnin
                       onChange={(event) => {
                         const nextStyle = event.target.value as Horse["runningStyle"];
                         onRunningStyleChange?.();
-                        updateHorse(horse.id, "runningStyle", nextStyle);
+                        updateHorses(
+                          horses.map((current) =>
+                            current.id === horse.id
+                              ? { ...current, runningStyle: nextStyle, runningStyleSource: "saved_manual_override" }
+                              : current
+                          )
+                        );
                         if (course?.id && !course.archived) {
                           void fetch("/api/horse-running-style", {
                             method: "POST",
@@ -274,6 +309,19 @@ export function HorseInput({ horses, course, condition, onHorsesChange, onRunnin
                       <option value="Sashi">差し</option>
                       <option value="Oikomi">追込</option>
                     </select>
+                    {(() => {
+                      const badge =
+                        RUNNING_STYLE_SOURCE_BADGES[horse.runningStyleSource ?? "unknown"] ??
+                        RUNNING_STYLE_SOURCE_BADGES.unknown;
+                      return (
+                        <span
+                          title={badge.help}
+                          className={`mt-1 block cursor-help rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${badge.className}`}
+                        >
+                          {badge.label}
+                        </span>
+                      );
+                    })()}
                   </td>
                   {(["speed", "stamina", "power", "guts"] as const).map((field) => (
                     <td key={field} className="px-2 py-2 text-center">

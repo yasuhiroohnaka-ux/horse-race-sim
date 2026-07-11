@@ -12,6 +12,7 @@ import type {
   ExpectationGrade,
   PredictionOrigin,
   PredictionSnapshot,
+  PredictionSnapshotRow,
   PredictionSnapshotSourceStatus,
   RaceReviewRecord,
   ReviewSourceStatusSummary,
@@ -662,6 +663,102 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
     <div className="border-b border-slate-100 py-3">
       <p className="text-xs font-semibold text-slate-500">{label}</p>
       <div className="mt-1 text-sm font-medium text-slate-900">{value}</div>
+    </div>
+  );
+}
+
+function formatContributors(row: PredictionSnapshotRow | null): string {
+  if (!row || !Array.isArray(row.majorContributors) || row.majorContributors.length === 0) return "-";
+  return row.majorContributors
+    .map((contributor) => `${contributor.label} ${Number(contributor.value).toFixed(1)}`)
+    .join(" / ");
+}
+
+// 予測時スナップショットの上位と確定着順の突き合わせ (「なぜ外したか」用)
+function PredictionVsResult({
+  snapshot,
+  record,
+}: {
+  snapshot: PredictionSnapshot | null;
+  record: RaceReviewRecord | null;
+}) {
+  if (!snapshot || snapshot.rankedRows.length === 0) return null;
+
+  const rankedRows = [...snapshot.rankedRows].sort((a, b) => a.rank - b.rank);
+  const actualTop3 = (record?.actualTop3HorseIds ?? []).map(String);
+  const hasResult = actualTop3.length > 0;
+
+  const finishLabel = (horseId: string) => {
+    const finish = actualTop3.indexOf(String(horseId));
+    if (finish >= 0) return `${finish + 1}着`;
+    return hasResult ? "着外" : "-";
+  };
+
+  const honmeiRow = record?.honmei?.horseId
+    ? rankedRows.find((row) => String(row.horseId) === String(record.honmei?.horseId)) ?? null
+    : null;
+  const winnerRow = hasResult
+    ? rankedRows.find((row) => String(row.horseId) === actualTop3[0]) ?? null
+    : null;
+
+  return (
+    <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <p className="text-xs font-semibold tracking-[0.15em] text-slate-500">予測 vs 結果</p>
+      <table className="mt-2 w-full text-xs">
+        <thead>
+          <tr className="border-b border-slate-200 text-slate-500">
+            <th className="py-1.5 pr-2 text-left">予測</th>
+            <th className="py-1.5 pr-2 text-left">馬名</th>
+            <th className="py-1.5 pr-2 text-right">勝率</th>
+            <th className="py-1.5 text-right">結果</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rankedRows.slice(0, 5).map((row) => {
+            const finish = finishLabel(String(row.horseId));
+            const isHit = finish.endsWith("着") && finish !== "着外";
+            return (
+              <tr key={row.horseId} className="border-b border-slate-100">
+                <td className="py-1.5 pr-2 text-slate-500">{row.rank}位</td>
+                <td className="py-1.5 pr-2 font-semibold text-slate-900">{row.horseName}</td>
+                <td className="py-1.5 pr-2 text-right text-slate-600">{Number(row.winProb ?? 0).toFixed(1)}%</td>
+                <td className={`py-1.5 text-right font-semibold ${isHit ? "text-emerald-600" : "text-slate-500"}`}>{finish}</td>
+              </tr>
+            );
+          })}
+          {hasResult &&
+            actualTop3
+              .map((horseId, index) => ({ horseId, index }))
+              .filter(({ horseId }) => {
+                const row = rankedRows.find((candidate) => String(candidate.horseId) === horseId);
+                return !row || row.rank > 5;
+              })
+              .map(({ horseId, index }) => {
+                const row = rankedRows.find((candidate) => String(candidate.horseId) === horseId) ?? null;
+                return (
+                  <tr key={`actual-${horseId}`} className="border-b border-slate-100 bg-amber-50/60">
+                    <td className="py-1.5 pr-2 text-slate-500">{row ? `${row.rank}位` : "圏外"}</td>
+                    <td className="py-1.5 pr-2 font-semibold text-slate-900">{row?.horseName ?? horseId}</td>
+                    <td className="py-1.5 pr-2 text-right text-slate-600">
+                      {row ? `${Number(row.winProb ?? 0).toFixed(1)}%` : "-"}
+                    </td>
+                    <td className="py-1.5 text-right font-semibold text-amber-700">{index + 1}着</td>
+                  </tr>
+                );
+              })}
+        </tbody>
+      </table>
+      <div className="mt-3 space-y-1.5 text-[11px] leading-4 text-slate-600">
+        <p>
+          <span className="font-semibold text-slate-700">本命の寄与内訳:</span> {formatContributors(honmeiRow)}
+        </p>
+        {winnerRow && String(winnerRow.horseId) !== String(record?.honmei?.horseId ?? "") && (
+          <p>
+            <span className="font-semibold text-slate-700">勝ち馬の寄与内訳:</span> {formatContributors(winnerRow)}
+            {`(予測${winnerRow.rank}位)`}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
@@ -1349,6 +1446,7 @@ export default function ArchivePage() {
               <Field label="decision riskFlags" value={selectedRow.honmei?.recommendedBetDecision?.riskFlags?.length ? selectedRow.honmei.recommendedBetDecision.riskFlags.join(" / ") : "-"} />
               <Field label="selectionReason" value={selectedRow.honmei?.selectionReason ?? "-"} />
               <Field label="raceId" value={selectedRow.raceId || "-"} />
+              <PredictionVsResult snapshot={selectedRow.snapshot} record={selectedRow.record} />
             </div>
           </aside>
         </div>
