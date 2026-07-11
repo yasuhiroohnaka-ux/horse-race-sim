@@ -181,6 +181,18 @@
 - 検証: tsc / npm test 100本 / build 全てグリーン
 - 補足: ローカル clone が古いと routine が止まって見えるが、GitHub Actions は稼働継続していた (origin/main に routine コミットあり)。作業前に `git fetch` を推奨
 
+### P3 UI改善 + P4 X投稿最適化 (2026-07-11, commits 9f01917 / 9a2c3c6)
+
+- **P3-2**: `/sim` 結果テーブルに校正勝率・校正複勝・市場評価バッジ列 (`SimulationResults.tsx`、データは `pickTanpukuPair().scored` を horseId 紐付け)
+- **P3-3**: 馬テーブル脚質セルにソースバッジ (確定/手動/引継/推測/出所不明)。手動修正で `saved_manual_override` に更新 (`HorseInput.tsx`)
+- **P3-4**: `/archive` 詳細ドロワーに「予測 vs 結果」(予測上位5 + 圏外好走馬の突き合わせ、majorContributors 寄与内訳)
+- **P4-A**: `lib/xPostPayload.mjs` の旧・生値 DECISION_THRESHOLDS 複製を撤去し `recommendedBetDecisionCore.mjs` に統一。**routine の pre_race 投稿は決定計算前に payload を作っており旧フォールバックが毎回実行されていた**バグを修正 (決定を先に計算して winPick に添付)
+- **P4-B**: 分類ドリブン文面 (win=単勝勝負型/place=複勝軸型/skip=見送り宣言、校正値併記) — `lib/tanpukuXPost.ts`
+- **P4-C**: `lib/xTagSanitize.mjs` 新設。括弧付きレース名の壊れタグを全経路サニタイズ + 優先度付きタグ末尾行 (字数超過は下位から削除、skip はタグ最小)
+- **P4-D**: 回顧投稿に「分類→結果」行とサニタイズ済みタグ、週次サマリに分類内訳行
+- 検証: npm test 113本 / tsc / build / next start 本番ビルドでのブラウザ確認
+- 注意: ブラウザで /sim のシミュを回すと `data/prediction-snapshots.jsonl` に副産物が出る (コミット前に `git checkout --` で除外、既知)
+
 ### /monitor モデル監視ダッシュボード (2026-07-11, commit b72087c)
 
 - `app/monitor/page.tsx` (新規): calibration-report.json の画面化。警告バナー (校正劣化 / ワイド劣化)、係数更新ゲートのチェックリスト、live holdout、分類バックテスト (全期間 + 直近50件)、データ構成 (live/遡及)、市場ギャップ、校正バケット、係数情報
