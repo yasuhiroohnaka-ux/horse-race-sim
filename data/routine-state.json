@@ -4,25 +4,25 @@
   "drawConfirmedAt": "2026-07-10T05:28:11.417Z",
   "performance": {
     "weekly": {
-      "weekOf": "2026-06-29",
-      "bets": 2,
+      "weekOf": "2026-07-06",
+      "bets": 0,
       "tanHits": 0,
       "fukuHits": 0,
-      "tanStake": 200,
+      "tanStake": 0,
       "tanPayout": 0,
-      "fukuStake": 200,
+      "fukuStake": 0,
       "fukuPayout": 0
     },
     "total": {
-      "bets": 36,
-      "tanHits": 12,
-      "fukuHits": 21,
-      "tanStake": 3600,
-      "tanPayout": 2100,
-      "fukuStake": 3600,
-      "fukuPayout": 3110
+      "bets": 4,
+      "tanHits": 2,
+      "fukuHits": 3,
+      "tanStake": 400,
+      "tanPayout": 400,
+      "fukuStake": 400,
+      "fukuPayout": 400
     },
-    "updatedAt": "2026-07-05T09:40:02.066Z"
+    "updatedAt": "2026-07-12T10:38:03.353Z"
   },
   "tanpukuRecommendations": [
     {
@@ -68,7 +68,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -113,7 +115,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -158,7 +162,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -203,7 +209,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -248,7 +256,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -293,7 +303,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -338,7 +350,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -383,7 +397,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -428,7 +444,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -473,7 +491,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -518,7 +538,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -563,7 +585,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -608,7 +632,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -653,7 +679,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -698,7 +726,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -743,7 +773,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -788,7 +820,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -833,7 +867,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -878,7 +914,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -923,7 +961,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -968,7 +1008,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -1013,7 +1055,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -1058,7 +1102,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -1103,7 +1149,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -1148,7 +1196,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -1193,7 +1243,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -1238,7 +1290,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -1283,7 +1337,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -1328,7 +1384,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -1373,7 +1431,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-23",
@@ -1418,7 +1478,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-23",
@@ -1463,7 +1525,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-23",
@@ -1508,7 +1572,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-23",
@@ -1553,7 +1619,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-23",
@@ -1598,7 +1666,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-23",
@@ -1643,7 +1713,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-23",
@@ -1688,7 +1760,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-23",
@@ -1733,7 +1807,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-23",
@@ -1778,7 +1854,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-23",
@@ -1823,7 +1901,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-23",
@@ -1868,7 +1948,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-23",
@@ -1913,7 +1995,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -1958,7 +2042,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -2003,7 +2089,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -2048,7 +2136,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -2093,7 +2183,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -2138,7 +2230,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -2183,7 +2277,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -2228,7 +2324,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -2273,7 +2371,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -2318,7 +2418,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -2363,7 +2465,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -2408,7 +2512,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -2453,7 +2559,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -2498,7 +2606,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-16",
@@ -2543,7 +2653,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -2588,7 +2700,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -2633,7 +2747,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -2678,7 +2794,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -2723,7 +2841,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -2768,7 +2888,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -2813,7 +2935,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -2858,7 +2982,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -2903,7 +3029,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -2948,7 +3076,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -2993,7 +3123,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -3038,7 +3170,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -3083,7 +3217,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -3128,7 +3264,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-09",
@@ -3173,7 +3311,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-01",
@@ -3218,7 +3358,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-01",
@@ -3263,7 +3405,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-01",
@@ -3308,7 +3452,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-01",
@@ -3353,7 +3499,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-01",
@@ -3398,7 +3546,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-01",
@@ -3443,7 +3593,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-02-22",
@@ -3488,7 +3640,9 @@
       ],
       "resolved": true,
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-02-22",
@@ -3533,7 +3687,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-02-22",
@@ -3578,7 +3734,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-02-22",
@@ -3623,7 +3781,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-02-22",
@@ -3668,7 +3828,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-02-22",
@@ -3713,7 +3875,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-02-15",
@@ -3758,7 +3922,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-02-15",
@@ -3803,7 +3969,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -3848,7 +4016,9 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-03-30",
@@ -3893,14 +4063,16 @@
       ],
       "resolved": true,
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "unknown",
+      "livePreRaceEligible": false
     },
     {
       "weekOf": "2026-04-13",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-04-18T07:12:00.977Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "fukushima-turf-2000-202603010309",
       "raceLabel": "ひめさゆり賞(1勝クラス)",
@@ -3936,14 +4108,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-04-19T08:05:03.222Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-04-13",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-04-18T07:12:00.977Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "fukushima-turf-2000-202603010309",
       "raceLabel": "ひめさゆり賞(1勝クラス)",
@@ -3979,7 +4154,10 @@
       "fukuPayout": 390,
       "settledAt": "2026-04-19T08:05:03.222Z",
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-04-20",
@@ -4022,7 +4200,9 @@
       "fukuPayout": 110,
       "settledAt": "2026-05-02T13:31:50.128Z",
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "live_pre_race",
+      "livePreRaceEligible": true
     },
     {
       "weekOf": "2026-04-20",
@@ -4065,7 +4245,9 @@
       "fukuPayout": 180,
       "settledAt": "2026-05-02T13:31:50.129Z",
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "live_pre_race",
+      "livePreRaceEligible": true
     },
     {
       "weekOf": "2026-04-27",
@@ -4108,7 +4290,9 @@
       "fukuPayout": 110,
       "settledAt": "2026-05-10T08:51:46.273Z",
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "live_pre_race",
+      "livePreRaceEligible": true
     },
     {
       "weekOf": "2026-04-27",
@@ -4151,14 +4335,16 @@
       "fukuPayout": 0,
       "settledAt": "2026-05-10T08:51:46.274Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "live_pre_race",
+      "livePreRaceEligible": true
     },
     {
       "weekOf": "2026-05-04",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-05-09T07:59:12.575Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "niigata-dirt-1800-202604010312",
       "raceLabel": "４歳以上１勝クラス",
@@ -4194,14 +4380,17 @@
       "fukuPayout": 110,
       "settledAt": "2026-05-10T08:51:46.274Z",
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-05-04",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-05-09T07:59:12.575Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "niigata-dirt-1800-202604010312",
       "raceLabel": "４歳以上１勝クラス",
@@ -4237,14 +4426,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-05-10T08:51:46.274Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-05-11",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-05-16T08:06:24.182Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "kyoto-turf-1200-202608030711",
       "raceLabel": "鞍馬ステークス",
@@ -4300,14 +4492,17 @@
       "fukuPayout": 110,
       "settledAt": "2026-05-17T09:03:02.683Z",
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-05-11",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-05-16T08:06:24.182Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "kyoto-turf-1200-202608030711",
       "raceLabel": "鞍馬ステークス",
@@ -4358,14 +4553,17 @@
       "fukuPayout": 170,
       "settledAt": "2026-05-17T09:03:02.683Z",
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-05-18",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-05-23T08:21:55.633Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "tokyo-turf-1800-202605020909",
       "raceLabel": "カーネーションカップ(1勝クラス)",
@@ -4421,14 +4619,17 @@
       "fukuPayout": 110,
       "settledAt": "2026-05-24T09:20:35.226Z",
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-05-18",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-05-23T08:21:55.633Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "tokyo-turf-1800-202605020909",
       "raceLabel": "カーネーションカップ(1勝クラス)",
@@ -4479,14 +4680,17 @@
       "fukuPayout": 240,
       "settledAt": "2026-05-24T09:20:35.227Z",
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-05-18",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-05-24T08:39:19.655Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "tokyo-turf-2400-202605021011",
       "raceLabel": "オークス",
@@ -4542,14 +4746,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-05-31T09:45:54.405Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-05-18",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-05-24T08:39:19.655Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "tokyo-turf-2400-202605021011",
       "raceLabel": "オークス",
@@ -4600,14 +4807,17 @@
       "fukuPayout": 190,
       "settledAt": "2026-05-31T09:45:54.406Z",
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-05-25",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-05-30T08:29:50.897Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "kyoto-dirt-1800-202608031109",
       "raceLabel": "鳳雛ステークス",
@@ -4663,14 +4873,17 @@
       "fukuPayout": 110,
       "settledAt": "2026-05-31T09:45:54.406Z",
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-05-25",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-05-30T08:29:50.897Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "kyoto-dirt-1800-202608031109",
       "raceLabel": "鳳雛ステークス",
@@ -4721,14 +4934,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-05-31T09:45:54.406Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-05-25",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-05-31T08:55:38.060Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "tokyo-turf-2400-202605021211",
       "raceLabel": "日本ダービー",
@@ -4784,14 +5000,17 @@
       "fukuPayout": 130,
       "settledAt": "2026-06-07T09:58:23.159Z",
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-05-25",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-05-31T08:55:38.060Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "tokyo-turf-2400-202605021211",
       "raceLabel": "日本ダービー",
@@ -4842,14 +5061,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-06-07T09:58:23.160Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-01",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-06-06T08:35:27.753Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "tokyo-dirt-1600-202605030112",
       "raceLabel": "３歳以上１勝クラス",
@@ -4906,14 +5128,17 @@
       "fukuPayout": 110,
       "settledAt": "2026-06-07T09:58:23.160Z",
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-01",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-06-06T08:35:27.753Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "tokyo-dirt-1600-202605030112",
       "raceLabel": "３歳以上１勝クラス",
@@ -4964,14 +5189,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-06-07T09:58:23.161Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-01",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-06-07T09:26:22.362Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "tokyo-turf-2000-202605030209",
       "raceLabel": "香港ＪＣＴ(2勝クラス)",
@@ -5026,14 +5254,17 @@
       "fukuPayout": 110,
       "settledAt": "2026-06-14T10:22:57.639Z",
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-01",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-06-07T09:26:22.362Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.3",
       "courseId": "tokyo-turf-2000-202605030209",
       "raceLabel": "香港ＪＣＴ(2勝クラス)",
@@ -5084,14 +5315,17 @@
       "fukuPayout": 190,
       "settledAt": "2026-06-14T10:22:57.640Z",
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-08",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-06-13T09:19:00.225Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "tokyo-dirt-2100-202605030309",
       "raceLabel": "日野特別(2勝クラス)",
@@ -5147,14 +5381,17 @@
       "fukuPayout": 110,
       "settledAt": "2026-06-14T10:22:57.640Z",
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-08",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-06-13T09:19:00.226Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "tokyo-dirt-2100-202605030309",
       "raceLabel": "日野特別(2勝クラス)",
@@ -5205,14 +5442,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-06-14T10:22:57.641Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-08",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-06-14T09:48:10.992Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "hanshin-turf-2200-202609030411",
       "raceLabel": "宝塚記念",
@@ -5269,14 +5509,17 @@
       "fukuPayout": 120,
       "settledAt": "2026-06-21T10:27:35.742Z",
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-08",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-06-14T09:48:10.992Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "hanshin-turf-2200-202609030411",
       "raceLabel": "宝塚記念",
@@ -5327,14 +5570,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-06-21T10:27:35.743Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-15",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-06-20T09:17:58.651Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "hanshin-turf-1600-202609030512",
       "raceLabel": "３歳以上１勝クラス",
@@ -5391,14 +5637,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-06-21T10:27:35.743Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-15",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-06-20T09:17:58.651Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "hanshin-turf-1600-202609030512",
       "raceLabel": "３歳以上１勝クラス",
@@ -5449,14 +5698,17 @@
       "fukuPayout": 160,
       "settledAt": "2026-06-21T10:27:35.744Z",
       "tanHit": false,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-15",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-06-21T09:59:03.900Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "hanshin-dirt-1800-202609030612",
       "raceLabel": "３歳以上２勝クラス",
@@ -5511,14 +5763,17 @@
       "fukuPayout": 110,
       "settledAt": "2026-06-28T09:55:40.525Z",
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-15",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-06-21T09:59:03.900Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "hanshin-dirt-1800-202609030612",
       "raceLabel": "３歳以上２勝クラス",
@@ -5569,14 +5824,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-06-28T09:55:40.525Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-22",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-06-27T08:38:06.520Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "kokura-turf-2000-202610020109",
       "raceLabel": "八代特別(1勝クラス)",
@@ -5632,14 +5890,17 @@
       "fukuPayout": 110,
       "settledAt": "2026-06-28T09:55:40.526Z",
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-22",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-06-27T08:38:06.520Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "kokura-turf-2000-202610020109",
       "raceLabel": "八代特別(1勝クラス)",
@@ -5690,14 +5951,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-06-28T09:55:40.526Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-22",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-06-28T09:21:21.804Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "kokura-turf-2600-202610020209",
       "raceLabel": "帆柱山特別(2勝クラス)",
@@ -5752,14 +6016,17 @@
       "fukuPayout": 130,
       "settledAt": "2026-07-05T09:40:02.063Z",
       "tanHit": true,
-      "fukuHit": true
+      "fukuHit": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-22",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-06-28T09:21:21.804Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "kokura-turf-2600-202610020209",
       "raceLabel": "帆柱山特別(2勝クラス)",
@@ -5810,14 +6077,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-07-05T09:40:02.063Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-29",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-07-04T08:39:10.569Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "fukushima-turf-2000-202603020309",
       "raceLabel": "伊達特別(1勝クラス)",
@@ -5873,14 +6143,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-07-05T09:40:02.064Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-29",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-07-04T08:39:10.569Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "fukushima-turf-2000-202603020309",
       "raceLabel": "伊達特別(1勝クラス)",
@@ -5931,14 +6204,17 @@
       "fukuPayout": 0,
       "settledAt": "2026-07-05T09:40:02.065Z",
       "tanHit": false,
-      "fukuHit": false
+      "fukuHit": false,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start"
     },
     {
       "weekOf": "2026-06-29",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-07-05T09:15:17.867Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "fukushima-turf-1800-202603020410",
       "raceLabel": "白河特別(2勝クラス)",
@@ -5978,23 +6254,33 @@
       "runnerUpPlaceScore": 0.463,
       "runnerUpPlaceProb": 0.59,
       "overbetLabel": "overbet_moderate",
-      "settlementStatus": "pending_result",
-      "tanOutcome": "not_settled",
-      "fukuOutcome": "not_settled",
-      "actualWinnerHorseId": null,
-      "actualTop3HorseIds": [],
-      "tanPayoutSource": "missing",
-      "fukuPayoutSource": "missing",
-      "resolved": false,
-      "tanPayout": 0,
-      "fukuPayout": 0
+      "settlementStatus": "settled",
+      "tanOutcome": "hit",
+      "fukuOutcome": "hit",
+      "actualWinnerHorseId": "5",
+      "actualTop3HorseIds": [
+        "5",
+        "1",
+        "4"
+      ],
+      "tanPayoutSource": "official",
+      "fukuPayoutSource": "official",
+      "resolved": true,
+      "tanPayout": 130,
+      "fukuPayout": 110,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start",
+      "settledAt": "2026-07-12T10:38:03.352Z",
+      "tanHit": true,
+      "fukuHit": true
     },
     {
       "weekOf": "2026-06-29",
       "day": "Sun",
       "stage": "sun_15",
       "postedAt": "2026-07-05T09:15:17.867Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "fukushima-turf-1800-202603020410",
       "raceLabel": "白河特別(2勝クラス)",
@@ -6029,23 +6315,33 @@
       "runnerUpPlaceScore": 0.357,
       "runnerUpPlaceProb": 0.497,
       "overbetLabel": null,
-      "settlementStatus": "pending_result",
-      "tanOutcome": "not_settled",
-      "fukuOutcome": "not_settled",
-      "actualWinnerHorseId": null,
-      "actualTop3HorseIds": [],
-      "tanPayoutSource": "missing",
-      "fukuPayoutSource": "missing",
-      "resolved": false,
+      "settlementStatus": "settled",
+      "tanOutcome": "miss",
+      "fukuOutcome": "miss",
+      "actualWinnerHorseId": "5",
+      "actualTop3HorseIds": [
+        "5",
+        "1",
+        "4"
+      ],
+      "tanPayoutSource": "official",
+      "fukuPayoutSource": "official",
+      "resolved": true,
       "tanPayout": 0,
-      "fukuPayout": 0
+      "fukuPayout": 0,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start",
+      "settledAt": "2026-07-12T10:38:03.352Z",
+      "tanHit": false,
+      "fukuHit": false
     },
     {
       "weekOf": "2026-07-06",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-07-11T07:58:03.562Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "hakodate-dirt-1000-202602010912",
       "raceLabel": "３歳以上１勝クラス",
@@ -6085,21 +6381,33 @@
       "runnerUpPlaceScore": 0.525,
       "runnerUpPlaceProb": 0.622,
       "overbetLabel": "overbet_high",
-      "settlementStatus": "pending_result",
-      "tanOutcome": "not_settled",
-      "fukuOutcome": "not_settled",
-      "actualWinnerHorseId": null,
-      "actualTop3HorseIds": [],
-      "tanPayoutSource": "missing",
-      "fukuPayoutSource": "missing",
-      "resolved": false
+      "settlementStatus": "settled",
+      "tanOutcome": "hit",
+      "fukuOutcome": "hit",
+      "actualWinnerHorseId": "1",
+      "actualTop3HorseIds": [
+        "1",
+        "4",
+        "8"
+      ],
+      "tanPayoutSource": "official",
+      "fukuPayoutSource": "official",
+      "resolved": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start",
+      "tanPayout": 150,
+      "fukuPayout": 110,
+      "settledAt": "2026-07-12T10:38:03.353Z",
+      "tanHit": true,
+      "fukuHit": true
     },
     {
       "weekOf": "2026-07-06",
       "day": "Sat",
       "stage": "sat_15",
       "postedAt": "2026-07-11T07:58:03.562Z",
-      "predictionOrigin": "saved_live",
+      "predictionOrigin": "retrospective",
       "scoringVersion": "tanpuku-place-v2.5",
       "courseId": "hakodate-dirt-1000-202602010912",
       "raceLabel": "３歳以上１勝クラス",
@@ -6134,14 +6442,26 @@
       "runnerUpPlaceScore": 0.364,
       "runnerUpPlaceProb": 0.492,
       "overbetLabel": null,
-      "settlementStatus": "pending_result",
-      "tanOutcome": "not_settled",
-      "fukuOutcome": "not_settled",
-      "actualWinnerHorseId": null,
-      "actualTop3HorseIds": [],
-      "tanPayoutSource": "missing",
-      "fukuPayoutSource": "missing",
-      "resolved": false
+      "settlementStatus": "settled",
+      "tanOutcome": "miss",
+      "fukuOutcome": "miss",
+      "actualWinnerHorseId": "1",
+      "actualTop3HorseIds": [
+        "1",
+        "4",
+        "8"
+      ],
+      "tanPayoutSource": "official",
+      "fukuPayoutSource": "official",
+      "resolved": true,
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
+      "lineageInvalidReason": "posted_at_or_after_race_start",
+      "tanPayout": 0,
+      "fukuPayout": 0,
+      "settledAt": "2026-07-12T10:38:03.353Z",
+      "tanHit": false,
+      "fukuHit": false
     }
   ],
   "reviewPosts": {
