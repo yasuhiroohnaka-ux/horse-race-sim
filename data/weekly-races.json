@@ -1,7 +1,7 @@
 {
   "currentWeek": {
     "weekOf": "2026-07-13",
-    "updatedAt": "2026-07-18T22:39:59.113Z",
+    "updatedAt": "2026-07-19T03:30:46.580Z",
     "races": [
       {
         "courseId": "hakodate-turf-1800-202602011109",
@@ -441,7 +441,236 @@
             "lastRaceDistance": 1800,
             "distanceChange": 0
           }
-        ]
+        ],
+        "result": {
+          "updatedAt": "2026-07-19T03:30:41.037Z",
+          "winnerHorseId": "5",
+          "winnerHorseName": "ドッグウッド",
+          "top3HorseIds": [
+            "5",
+            "7",
+            "4"
+          ],
+          "top3HorseNames": [
+            "ドッグウッド",
+            "マイネルシンベリン",
+            "グランセゾン"
+          ],
+          "finishers": [
+            {
+              "position": 1,
+              "gateNumber": 4,
+              "horseNumber": 5,
+              "externalHorseId": "2023101382",
+              "name": "ドッグウッド",
+              "jockey": "斎藤",
+              "finishTime": "1:47.6",
+              "margin": "",
+              "popularity": 1,
+              "odds": 2.2,
+              "horseId": "5"
+            },
+            {
+              "position": 2,
+              "gateNumber": 5,
+              "horseNumber": 7,
+              "externalHorseId": "2023100207",
+              "name": "マイネルシンベリン",
+              "jockey": "丹内",
+              "finishTime": "1:47.7",
+              "margin": "クビ",
+              "popularity": 2,
+              "odds": 4.3,
+              "horseId": "7"
+            },
+            {
+              "position": 3,
+              "gateNumber": 4,
+              "horseNumber": 4,
+              "externalHorseId": "2022106645",
+              "name": "グランセゾン",
+              "jockey": "鮫島駿",
+              "finishTime": "1:47.8",
+              "margin": "1",
+              "popularity": 7,
+              "odds": 14.9,
+              "horseId": "4"
+            },
+            {
+              "position": 4,
+              "gateNumber": 2,
+              "horseNumber": 2,
+              "externalHorseId": "2021102708",
+              "name": "アドミラルシップ",
+              "jockey": "横山武",
+              "finishTime": "1:47.8",
+              "margin": "アタマ",
+              "popularity": 4,
+              "odds": 9.9,
+              "horseId": "2"
+            },
+            {
+              "position": 5,
+              "gateNumber": 7,
+              "horseNumber": 10,
+              "externalHorseId": "2023100521",
+              "name": "ディーリライズ",
+              "jockey": "浜中",
+              "finishTime": "1:47.8",
+              "margin": "ハナ",
+              "popularity": 3,
+              "odds": 8.7,
+              "horseId": "10"
+            },
+            {
+              "position": 6,
+              "gateNumber": 8,
+              "horseNumber": 12,
+              "externalHorseId": "2023104678",
+              "name": "コウギョク",
+              "jockey": "横山和",
+              "finishTime": "1:47.9",
+              "margin": "クビ",
+              "popularity": 8,
+              "odds": 20.6,
+              "horseId": "12"
+            },
+            {
+              "position": 7,
+              "gateNumber": 7,
+              "horseNumber": 11,
+              "externalHorseId": "2020100621",
+              "name": "マイバラード",
+              "jockey": "横山琉",
+              "finishTime": "1:48.3",
+              "margin": "2.1/2",
+              "popularity": 13,
+              "odds": 123.5,
+              "horseId": "11"
+            },
+            {
+              "position": 8,
+              "gateNumber": 1,
+              "horseNumber": 1,
+              "externalHorseId": "2023103875",
+              "name": "マカナアネラ",
+              "jockey": "松本",
+              "finishTime": "1:48.6",
+              "margin": "1.1/2",
+              "popularity": 6,
+              "odds": 13.4,
+              "horseId": "1"
+            },
+            {
+              "position": 9,
+              "gateNumber": 8,
+              "horseNumber": 13,
+              "externalHorseId": "2022102135",
+              "name": "ゴーゴータカシ",
+              "jockey": "吉田隼",
+              "finishTime": "1:48.6",
+              "margin": "アタマ",
+              "popularity": 5,
+              "odds": 11.1,
+              "horseId": "13"
+            },
+            {
+              "position": 10,
+              "gateNumber": 3,
+              "horseNumber": 3,
+              "externalHorseId": "2021105694",
+              "name": "ホウオウペトリュス",
+              "jockey": "岩田康",
+              "finishTime": "1:48.6",
+              "margin": "ハナ",
+              "popularity": 12,
+              "odds": 94.3,
+              "horseId": "3"
+            },
+            {
+              "position": 11,
+              "gateNumber": 5,
+              "horseNumber": 6,
+              "externalHorseId": "2022102397",
+              "name": "ビービーバザーク",
+              "jockey": "和田陽",
+              "finishTime": "1:49.1",
+              "margin": "3",
+              "popularity": 11,
+              "odds": 66.3,
+              "horseId": "6"
+            },
+            {
+              "position": 12,
+              "gateNumber": 6,
+              "horseNumber": 9,
+              "externalHorseId": "2022101102",
+              "name": "ウインポセイドン",
+              "jockey": "佐々木",
+              "finishTime": "1:49.1",
+              "margin": "クビ",
+              "popularity": 9,
+              "odds": 44.7,
+              "horseId": "9"
+            },
+            {
+              "position": 13,
+              "gateNumber": 6,
+              "horseNumber": 8,
+              "externalHorseId": "2022102896",
+              "name": "ハミルトン",
+              "jockey": "北村友",
+              "finishTime": "1:49.9",
+              "margin": "5",
+              "popularity": 10,
+              "odds": 56.9,
+              "horseId": "8"
+            }
+          ],
+          "payouts": {
+            "tansho": {
+              "resultNumbers": [
+                5
+              ],
+              "payouts": [
+                220
+              ]
+            },
+            "fukusho": {
+              "resultNumbers": [
+                5,
+                7,
+                4
+              ],
+              "payouts": [
+                120,
+                200,
+                230
+              ]
+            },
+            "wide": {
+              "resultNumbers": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  4,
+                  5
+                ],
+                [
+                  4,
+                  7
+                ]
+              ],
+              "payouts": [
+                330,
+                420,
+                1220
+              ]
+            }
+          }
+        }
       },
       {
         "courseId": "hakodate-turf-1200-202602011110",
@@ -785,7 +1014,197 @@
             "lastRaceDistance": 1200,
             "distanceChange": 0
           }
-        ]
+        ],
+        "result": {
+          "updatedAt": "2026-07-19T03:30:41.281Z",
+          "winnerHorseId": "10",
+          "winnerHorseName": "アパッシメント",
+          "top3HorseIds": [
+            "10",
+            "4",
+            "5"
+          ],
+          "top3HorseNames": [
+            "アパッシメント",
+            "マナボニート",
+            "フードマン"
+          ],
+          "finishers": [
+            {
+              "position": 1,
+              "gateNumber": 8,
+              "horseNumber": 10,
+              "externalHorseId": "2022104732",
+              "name": "アパッシメント",
+              "jockey": "佐々木",
+              "finishTime": "1:08.3",
+              "margin": "",
+              "popularity": 2,
+              "odds": 5.1,
+              "horseId": "10"
+            },
+            {
+              "position": 2,
+              "gateNumber": 4,
+              "horseNumber": 4,
+              "externalHorseId": "2023100617",
+              "name": "マナボニート",
+              "jockey": "丹内",
+              "finishTime": "1:08.8",
+              "margin": "3",
+              "popularity": 1,
+              "odds": 1.6,
+              "horseId": "4"
+            },
+            {
+              "position": 3,
+              "gateNumber": 5,
+              "horseNumber": 5,
+              "externalHorseId": "2022110056",
+              "name": "フードマン",
+              "jockey": "鮫島駿",
+              "finishTime": "1:09.1",
+              "margin": "1.3/4",
+              "popularity": 3,
+              "odds": 6.8,
+              "horseId": "5"
+            },
+            {
+              "position": 4,
+              "gateNumber": 6,
+              "horseNumber": 6,
+              "externalHorseId": "2019101643",
+              "name": "バシレウスシチー",
+              "jockey": "小沢",
+              "finishTime": "1:09.3",
+              "margin": "1.1/4",
+              "popularity": 8,
+              "odds": 32.7,
+              "horseId": "6"
+            },
+            {
+              "position": 5,
+              "gateNumber": 7,
+              "horseNumber": 8,
+              "externalHorseId": "2022104174",
+              "name": "マジカルフェアリー",
+              "jockey": "舟山",
+              "finishTime": "1:09.3",
+              "margin": "アタマ",
+              "popularity": 4,
+              "odds": 7.5,
+              "horseId": "8"
+            },
+            {
+              "position": 6,
+              "gateNumber": 7,
+              "horseNumber": 7,
+              "externalHorseId": "2021110119",
+              "name": "サンドロナイト",
+              "jockey": "北村友",
+              "finishTime": "1:09.3",
+              "margin": "ハナ",
+              "popularity": 6,
+              "odds": 26.8,
+              "horseId": "7"
+            },
+            {
+              "position": 7,
+              "gateNumber": 8,
+              "horseNumber": 9,
+              "externalHorseId": "2021110023",
+              "name": "エクストラバック",
+              "jockey": "横山琉",
+              "finishTime": "1:09.5",
+              "margin": "3/4",
+              "popularity": 7,
+              "odds": 28.8,
+              "horseId": "9"
+            },
+            {
+              "position": 8,
+              "gateNumber": 3,
+              "horseNumber": 3,
+              "externalHorseId": "2021104217",
+              "name": "ムチャスグラシアス",
+              "jockey": "吉田隼",
+              "finishTime": "1:09.6",
+              "margin": "1/2",
+              "popularity": 9,
+              "odds": 64.8,
+              "horseId": "3"
+            },
+            {
+              "position": 9,
+              "gateNumber": 1,
+              "horseNumber": 1,
+              "externalHorseId": "2020103218",
+              "name": "フミサウンド",
+              "jockey": "浜中",
+              "finishTime": "1:09.7",
+              "margin": "1/2",
+              "popularity": 5,
+              "odds": 18.4,
+              "horseId": "1"
+            },
+            {
+              "position": 10,
+              "gateNumber": 2,
+              "horseNumber": 2,
+              "externalHorseId": "2020102702",
+              "name": "ストリンジェンド",
+              "jockey": "斎藤",
+              "finishTime": "1:11.0",
+              "margin": "8",
+              "popularity": 10,
+              "odds": 124,
+              "horseId": "2"
+            }
+          ],
+          "payouts": {
+            "tansho": {
+              "resultNumbers": [
+                10
+              ],
+              "payouts": [
+                510
+              ]
+            },
+            "fukusho": {
+              "resultNumbers": [
+                10,
+                4,
+                5
+              ],
+              "payouts": [
+                160,
+                110,
+                140
+              ]
+            },
+            "wide": {
+              "resultNumbers": [
+                [
+                  4,
+                  10
+                ],
+                [
+                  5,
+                  10
+                ],
+                [
+                  4,
+                  5
+                ]
+              ],
+              "payouts": [
+                270,
+                630,
+                220
+              ]
+            }
+          }
+        }
       },
       {
         "courseId": "hakodate-dirt-1700-202602011111",
@@ -1225,7 +1644,236 @@
             "lastRaceDistance": 1600,
             "distanceChange": 100
           }
-        ]
+        ],
+        "result": {
+          "updatedAt": "2026-07-19T03:30:41.808Z",
+          "winnerHorseId": "10",
+          "winnerHorseName": "ウェイワードアクト",
+          "top3HorseIds": [
+            "10",
+            "12",
+            "11"
+          ],
+          "top3HorseNames": [
+            "ウェイワードアクト",
+            "レヴォントゥレット",
+            "ヒルノハンブルク"
+          ],
+          "finishers": [
+            {
+              "position": 1,
+              "gateNumber": 7,
+              "horseNumber": 10,
+              "externalHorseId": "2020110024",
+              "name": "ウェイワードアクト",
+              "jockey": "舟山",
+              "finishTime": "1:42.8",
+              "margin": "",
+              "popularity": 1,
+              "odds": 3.7,
+              "horseId": "10"
+            },
+            {
+              "position": 2,
+              "gateNumber": 8,
+              "horseNumber": 12,
+              "externalHorseId": "2021103717",
+              "name": "レヴォントゥレット",
+              "jockey": "北村友",
+              "finishTime": "1:43.4",
+              "margin": "3.1/2",
+              "popularity": 2,
+              "odds": 6.5,
+              "horseId": "12"
+            },
+            {
+              "position": 3,
+              "gateNumber": 7,
+              "horseNumber": 11,
+              "externalHorseId": "2022103614",
+              "name": "ヒルノハンブルク",
+              "jockey": "武豊",
+              "finishTime": "1:43.6",
+              "margin": "1",
+              "popularity": 3,
+              "odds": 7.1,
+              "horseId": "11"
+            },
+            {
+              "position": 4,
+              "gateNumber": 3,
+              "horseNumber": 3,
+              "externalHorseId": "2020106873",
+              "name": "オウギノカナメ",
+              "jockey": "丹内",
+              "finishTime": "1:43.9",
+              "margin": "2",
+              "popularity": 10,
+              "odds": 19.3,
+              "horseId": "3"
+            },
+            {
+              "position": 5,
+              "gateNumber": 4,
+              "horseNumber": 4,
+              "externalHorseId": "2018100664",
+              "name": "ホールシバン",
+              "jockey": "横山琉",
+              "finishTime": "1:43.9",
+              "margin": "ハナ",
+              "popularity": 12,
+              "odds": 55.9,
+              "horseId": "4"
+            },
+            {
+              "position": 6,
+              "gateNumber": 5,
+              "horseNumber": 6,
+              "externalHorseId": "2019101324",
+              "name": "テーオードレフォン",
+              "jockey": "古川吉",
+              "finishTime": "1:44.1",
+              "margin": "1.1/4",
+              "popularity": 11,
+              "odds": 50,
+              "horseId": "6"
+            },
+            {
+              "position": 7,
+              "gateNumber": 6,
+              "horseNumber": 8,
+              "externalHorseId": "2022106925",
+              "name": "ハグ",
+              "jockey": "鮫島駿",
+              "finishTime": "1:44.6",
+              "margin": "3",
+              "popularity": 6,
+              "odds": 10.3,
+              "horseId": "8"
+            },
+            {
+              "position": 8,
+              "gateNumber": 5,
+              "horseNumber": 7,
+              "externalHorseId": "2021102009",
+              "name": "ラタフォレスト",
+              "jockey": "横山武",
+              "finishTime": "1:44.6",
+              "margin": "アタマ",
+              "popularity": 4,
+              "odds": 7.8,
+              "horseId": "7"
+            },
+            {
+              "position": 9,
+              "gateNumber": 1,
+              "horseNumber": 1,
+              "externalHorseId": "2022102280",
+              "name": "チュウワクリスエス",
+              "jockey": "横山和",
+              "finishTime": "1:44.7",
+              "margin": "3/4",
+              "popularity": 7,
+              "odds": 10.8,
+              "horseId": "1"
+            },
+            {
+              "position": 10,
+              "gateNumber": 4,
+              "horseNumber": 5,
+              "externalHorseId": "2022100699",
+              "name": "イガッチ",
+              "jockey": "池添",
+              "finishTime": "1:45.2",
+              "margin": "3",
+              "popularity": 5,
+              "odds": 8.4,
+              "horseId": "5"
+            },
+            {
+              "position": 11,
+              "gateNumber": 6,
+              "horseNumber": 9,
+              "externalHorseId": "2021104824",
+              "name": "アスクデビューモア",
+              "jockey": "鷲頭",
+              "finishTime": "1:45.2",
+              "margin": "ハナ",
+              "popularity": 13,
+              "odds": 74.1,
+              "horseId": "9"
+            },
+            {
+              "position": 12,
+              "gateNumber": 8,
+              "horseNumber": 13,
+              "externalHorseId": "2020100960",
+              "name": "マーブルロック",
+              "jockey": "小沢",
+              "finishTime": "1:45.5",
+              "margin": "1.3/4",
+              "popularity": 8,
+              "odds": 12.7,
+              "horseId": "13"
+            },
+            {
+              "position": 13,
+              "gateNumber": 2,
+              "horseNumber": 2,
+              "externalHorseId": "2021103306",
+              "name": "コトホドサヨウニ",
+              "jockey": "佐々木",
+              "finishTime": "1:46.7",
+              "margin": "7",
+              "popularity": 9,
+              "odds": 14.3,
+              "horseId": "2"
+            }
+          ],
+          "payouts": {
+            "tansho": {
+              "resultNumbers": [
+                10
+              ],
+              "payouts": [
+                370
+              ]
+            },
+            "fukusho": {
+              "resultNumbers": [
+                10,
+                12,
+                11
+              ],
+              "payouts": [
+                150,
+                200,
+                180
+              ]
+            },
+            "wide": {
+              "resultNumbers": [
+                [
+                  10,
+                  12
+                ],
+                [
+                  10,
+                  11
+                ],
+                [
+                  11,
+                  12
+                ]
+              ],
+              "payouts": [
+                580,
+                580,
+                470
+              ]
+            }
+          }
+        }
       },
       {
         "courseId": "hakodate-turf-1200-202602011112",
@@ -1633,7 +2281,223 @@
             "lastRaceDistance": 1200,
             "distanceChange": 0
           }
-        ]
+        ],
+        "result": {
+          "updatedAt": "2026-07-19T03:30:42.202Z",
+          "winnerHorseId": "1",
+          "winnerHorseName": "ラミアメンテ",
+          "top3HorseIds": [
+            "1",
+            "3",
+            "7"
+          ],
+          "top3HorseNames": [
+            "ラミアメンテ",
+            "ハーモニーソング",
+            "ルージュベルベット"
+          ],
+          "finishers": [
+            {
+              "position": 1,
+              "gateNumber": 1,
+              "horseNumber": 1,
+              "externalHorseId": "2022105858",
+              "name": "ラミアメンテ",
+              "jockey": "丹内",
+              "finishTime": "1:09.4",
+              "margin": "",
+              "popularity": 4,
+              "odds": 6.9,
+              "horseId": "1"
+            },
+            {
+              "position": 2,
+              "gateNumber": 3,
+              "horseNumber": 3,
+              "externalHorseId": "2022104440",
+              "name": "ハーモニーソング",
+              "jockey": "北村友",
+              "finishTime": "1:09.5",
+              "margin": "3/4",
+              "popularity": 2,
+              "odds": 6.1,
+              "horseId": "3"
+            },
+            {
+              "position": 2,
+              "gateNumber": 6,
+              "horseNumber": 7,
+              "externalHorseId": "2021105749",
+              "name": "ルージュベルベット",
+              "jockey": "☆舟山",
+              "finishTime": "1:09.5",
+              "margin": "同着",
+              "popularity": 7,
+              "odds": 10.9,
+              "horseId": "7"
+            },
+            {
+              "position": 4,
+              "gateNumber": 5,
+              "horseNumber": 6,
+              "externalHorseId": "2023105817",
+              "name": "バレンタインビスタ",
+              "jockey": "佐々木",
+              "finishTime": "1:09.6",
+              "margin": "クビ",
+              "popularity": 1,
+              "odds": 3.5,
+              "horseId": "6"
+            },
+            {
+              "position": 5,
+              "gateNumber": 7,
+              "horseNumber": 9,
+              "externalHorseId": "2022105212",
+              "name": "エコロハート",
+              "jockey": "鮫島駿",
+              "finishTime": "1:09.7",
+              "margin": "3/4",
+              "popularity": 9,
+              "odds": 18.4,
+              "horseId": "9"
+            },
+            {
+              "position": 6,
+              "gateNumber": 8,
+              "horseNumber": 11,
+              "externalHorseId": "2020101920",
+              "name": "メラヴィリオーザ",
+              "jockey": "黛",
+              "finishTime": "1:09.8",
+              "margin": "3/4",
+              "popularity": 12,
+              "odds": 124.1,
+              "horseId": "11"
+            },
+            {
+              "position": 7,
+              "gateNumber": 7,
+              "horseNumber": 10,
+              "externalHorseId": "2023106780",
+              "name": "ランプローグ",
+              "jockey": "横山武",
+              "finishTime": "1:10.0",
+              "margin": "1.1/4",
+              "popularity": 3,
+              "odds": 6.5,
+              "horseId": "10"
+            },
+            {
+              "position": 8,
+              "gateNumber": 2,
+              "horseNumber": 2,
+              "externalHorseId": "2021105057",
+              "name": "オンザヴィーナス",
+              "jockey": "★河原田",
+              "finishTime": "1:10.1",
+              "margin": "クビ",
+              "popularity": 8,
+              "odds": 12.7,
+              "horseId": "2"
+            },
+            {
+              "position": 9,
+              "gateNumber": 4,
+              "horseNumber": 4,
+              "externalHorseId": "2022105162",
+              "name": "ルージュナリッシュ",
+              "jockey": "横山和",
+              "finishTime": "1:10.2",
+              "margin": "1/2",
+              "popularity": 6,
+              "odds": 9.7,
+              "horseId": "4"
+            },
+            {
+              "position": 10,
+              "gateNumber": 5,
+              "horseNumber": 5,
+              "externalHorseId": "2023105035",
+              "name": "メイショウハッケイ",
+              "jockey": "浜中",
+              "finishTime": "1:10.3",
+              "margin": "1",
+              "popularity": 5,
+              "odds": 7.3,
+              "horseId": "5"
+            },
+            {
+              "position": 11,
+              "gateNumber": 6,
+              "horseNumber": 8,
+              "externalHorseId": "2021105715",
+              "name": "アルバニー",
+              "jockey": "斎藤",
+              "finishTime": "1:10.6",
+              "margin": "1.3/4",
+              "popularity": 11,
+              "odds": 69.2,
+              "horseId": "8"
+            },
+            {
+              "position": 12,
+              "gateNumber": 8,
+              "horseNumber": 12,
+              "externalHorseId": "2020100759",
+              "name": "アルマロクザン",
+              "jockey": "▲遠藤",
+              "finishTime": "1:10.6",
+              "margin": "アタマ",
+              "popularity": 10,
+              "odds": 43.9,
+              "horseId": "12"
+            }
+          ],
+          "payouts": {
+            "tansho": {
+              "resultNumbers": [
+                1
+              ],
+              "payouts": [
+                690
+              ]
+            },
+            "fukusho": {
+              "resultNumbers": [
+                1,
+                3,
+                7
+              ],
+              "payouts": [
+                250,
+                190,
+                300
+              ]
+            },
+            "wide": {
+              "resultNumbers": [
+                [
+                  1,
+                  3
+                ],
+                [
+                  1,
+                  7
+                ],
+                [
+                  3,
+                  7
+                ]
+              ],
+              "payouts": [
+                800,
+                1310,
+                790
+              ]
+            }
+          }
+        }
       },
       {
         "courseId": "hakodate-turf-1800-202602011209",
@@ -3865,7 +4729,223 @@
             "lastRaceDistance": 1600,
             "distanceChange": 1000
           }
-        ]
+        ],
+        "result": {
+          "updatedAt": "2026-07-19T03:30:42.502Z",
+          "winnerHorseId": "8",
+          "winnerHorseName": "リュクスパトロール",
+          "top3HorseIds": [
+            "8",
+            "11",
+            "5"
+          ],
+          "top3HorseNames": [
+            "リュクスパトロール",
+            "ノリマル",
+            "ドリームプレミア"
+          ],
+          "finishers": [
+            {
+              "position": 1,
+              "gateNumber": 6,
+              "horseNumber": 8,
+              "externalHorseId": "2023105259",
+              "name": "リュクスパトロール",
+              "jockey": "丸田",
+              "finishTime": "2:41.6",
+              "margin": "",
+              "popularity": 7,
+              "odds": 30.1,
+              "horseId": "8"
+            },
+            {
+              "position": 2,
+              "gateNumber": 8,
+              "horseNumber": 11,
+              "externalHorseId": "2023106079",
+              "name": "ノリマル",
+              "jockey": "田辺",
+              "finishTime": "2:41.9",
+              "margin": "1.3/4",
+              "popularity": 2,
+              "odds": 3.6,
+              "horseId": "11"
+            },
+            {
+              "position": 3,
+              "gateNumber": 5,
+              "horseNumber": 5,
+              "externalHorseId": "2023105571",
+              "name": "ドリームプレミア",
+              "jockey": "坂井",
+              "finishTime": "2:41.9",
+              "margin": "クビ",
+              "popularity": 1,
+              "odds": 2,
+              "horseId": "5"
+            },
+            {
+              "position": 4,
+              "gateNumber": 4,
+              "horseNumber": 4,
+              "externalHorseId": "2021101088",
+              "name": "テイキットイージー",
+              "jockey": "菊沢",
+              "finishTime": "2:42.1",
+              "margin": "1",
+              "popularity": 6,
+              "odds": 27.5,
+              "horseId": "4"
+            },
+            {
+              "position": 5,
+              "gateNumber": 7,
+              "horseNumber": 10,
+              "externalHorseId": "2023100237",
+              "name": "オブラプリーマ",
+              "jockey": "荻野極",
+              "finishTime": "2:42.2",
+              "margin": "1/2",
+              "popularity": 3,
+              "odds": 4.7,
+              "horseId": "10"
+            },
+            {
+              "position": 6,
+              "gateNumber": 6,
+              "horseNumber": 7,
+              "externalHorseId": "2022105292",
+              "name": "オメガストリーム",
+              "jockey": "野中",
+              "finishTime": "2:42.6",
+              "margin": "2.1/2",
+              "popularity": 5,
+              "odds": 19.3,
+              "horseId": "7"
+            },
+            {
+              "position": 7,
+              "gateNumber": 5,
+              "horseNumber": 6,
+              "externalHorseId": "2022106770",
+              "name": "マイネルボス",
+              "jockey": "柴田大",
+              "finishTime": "2:42.7",
+              "margin": "クビ",
+              "popularity": 10,
+              "odds": 78.2,
+              "horseId": "6"
+            },
+            {
+              "position": 8,
+              "gateNumber": 7,
+              "horseNumber": 9,
+              "externalHorseId": "2022104930",
+              "name": "ビリングス",
+              "jockey": "嶋田",
+              "finishTime": "2:42.7",
+              "margin": "クビ",
+              "popularity": 8,
+              "odds": 32,
+              "horseId": "9"
+            },
+            {
+              "position": 9,
+              "gateNumber": 2,
+              "horseNumber": 2,
+              "externalHorseId": "2023107275",
+              "name": "パッセージピーク",
+              "jockey": "三浦",
+              "finishTime": "2:43.0",
+              "margin": "1.1/2",
+              "popularity": 4,
+              "odds": 12.5,
+              "horseId": "2"
+            },
+            {
+              "position": 10,
+              "gateNumber": 3,
+              "horseNumber": 3,
+              "externalHorseId": "2021103578",
+              "name": "ビーンスターク",
+              "jockey": "江田照",
+              "finishTime": "2:43.0",
+              "margin": "ハナ",
+              "popularity": 12,
+              "odds": 173.6,
+              "horseId": "3"
+            },
+            {
+              "position": 11,
+              "gateNumber": 1,
+              "horseNumber": 1,
+              "externalHorseId": "2021104927",
+              "name": "リリエンフェルト",
+              "jockey": "石田",
+              "finishTime": "2:43.0",
+              "margin": "クビ",
+              "popularity": 11,
+              "odds": 159.6,
+              "horseId": "1"
+            },
+            {
+              "position": 12,
+              "gateNumber": 8,
+              "horseNumber": 12,
+              "externalHorseId": "2022105116",
+              "name": "マーキュリーダイム",
+              "jockey": "木幡巧",
+              "finishTime": "2:49.0",
+              "margin": "大",
+              "popularity": 9,
+              "odds": 71.8,
+              "horseId": "12"
+            }
+          ],
+          "payouts": {
+            "tansho": {
+              "resultNumbers": [
+                8
+              ],
+              "payouts": [
+                3010
+              ]
+            },
+            "fukusho": {
+              "resultNumbers": [
+                8,
+                11,
+                5
+              ],
+              "payouts": [
+                400,
+                140,
+                110
+              ]
+            },
+            "wide": {
+              "resultNumbers": [
+                [
+                  8,
+                  11
+                ],
+                [
+                  5,
+                  8
+                ],
+                [
+                  5,
+                  11
+                ]
+              ],
+              "payouts": [
+                830,
+                880,
+                180
+              ]
+            }
+          }
+        }
       },
       {
         "courseId": "fukushima-dirt-1700-202603020710",
@@ -4369,7 +5449,262 @@
             "lastRaceDistance": 1400,
             "distanceChange": 300
           }
-        ]
+        ],
+        "result": {
+          "updatedAt": "2026-07-19T03:30:42.714Z",
+          "winnerHorseId": "15",
+          "winnerHorseName": "モリノアミーゴ",
+          "top3HorseIds": [
+            "15",
+            "14",
+            "6"
+          ],
+          "top3HorseNames": [
+            "モリノアミーゴ",
+            "オーケーマヒナ",
+            "レッドベルダンス"
+          ],
+          "finishers": [
+            {
+              "position": 1,
+              "gateNumber": 8,
+              "horseNumber": 15,
+              "externalHorseId": "2022106328",
+              "name": "モリノアミーゴ",
+              "jockey": "大野",
+              "finishTime": "1:44.3",
+              "margin": "",
+              "popularity": 8,
+              "odds": 18.3,
+              "horseId": "15"
+            },
+            {
+              "position": 2,
+              "gateNumber": 8,
+              "horseNumber": 14,
+              "externalHorseId": "2022100432",
+              "name": "オーケーマヒナ",
+              "jockey": "石川",
+              "finishTime": "1:45.0",
+              "margin": "4",
+              "popularity": 7,
+              "odds": 17.1,
+              "horseId": "14"
+            },
+            {
+              "position": 3,
+              "gateNumber": 4,
+              "horseNumber": 6,
+              "externalHorseId": "2022104897",
+              "name": "レッドベルダンス",
+              "jockey": "嶋田",
+              "finishTime": "1:45.1",
+              "margin": "1",
+              "popularity": 2,
+              "odds": 5.5,
+              "horseId": "6"
+            },
+            {
+              "position": 4,
+              "gateNumber": 7,
+              "horseNumber": 12,
+              "externalHorseId": "2022100333",
+              "name": "タケルハーロック",
+              "jockey": "石田",
+              "finishTime": "1:45.4",
+              "margin": "1.3/4",
+              "popularity": 4,
+              "odds": 6.8,
+              "horseId": "12"
+            },
+            {
+              "position": 5,
+              "gateNumber": 1,
+              "horseNumber": 1,
+              "externalHorseId": "2022101716",
+              "name": "ピコシー",
+              "jockey": "津村",
+              "finishTime": "1:45.6",
+              "margin": "1",
+              "popularity": 5,
+              "odds": 8.9,
+              "horseId": "1"
+            },
+            {
+              "position": 6,
+              "gateNumber": 4,
+              "horseNumber": 7,
+              "externalHorseId": "2021101449",
+              "name": "ライジンマル",
+              "jockey": "木幡初",
+              "finishTime": "1:45.7",
+              "margin": "1",
+              "popularity": 3,
+              "odds": 6.7,
+              "horseId": "7"
+            },
+            {
+              "position": 7,
+              "gateNumber": 7,
+              "horseNumber": 13,
+              "externalHorseId": "2021104868",
+              "name": "フリーマントル",
+              "jockey": "菊沢",
+              "finishTime": "1:45.9",
+              "margin": "3/4",
+              "popularity": 12,
+              "odds": 79,
+              "horseId": "13"
+            },
+            {
+              "position": 8,
+              "gateNumber": 5,
+              "horseNumber": 8,
+              "externalHorseId": "2022103518",
+              "name": "リラゲイル",
+              "jockey": "原",
+              "finishTime": "1:46.0",
+              "margin": "1/2",
+              "popularity": 9,
+              "odds": 19.4,
+              "horseId": "8"
+            },
+            {
+              "position": 9,
+              "gateNumber": 5,
+              "horseNumber": 9,
+              "externalHorseId": "2018103473",
+              "name": "サヴァビアン",
+              "jockey": "野中",
+              "finishTime": "1:46.0",
+              "margin": "アタマ",
+              "popularity": 14,
+              "odds": 304.7,
+              "horseId": "9"
+            },
+            {
+              "position": 10,
+              "gateNumber": 3,
+              "horseNumber": 5,
+              "externalHorseId": "2022105610",
+              "name": "ウインハルモニア",
+              "jockey": "松岡",
+              "finishTime": "1:46.2",
+              "margin": "1",
+              "popularity": 10,
+              "odds": 26.3,
+              "horseId": "5"
+            },
+            {
+              "position": 11,
+              "gateNumber": 2,
+              "horseNumber": 3,
+              "externalHorseId": "2022104608",
+              "name": "グロスビーク",
+              "jockey": "戸崎圭",
+              "finishTime": "1:46.5",
+              "margin": "2",
+              "popularity": 1,
+              "odds": 2.7,
+              "horseId": "3"
+            },
+            {
+              "position": 12,
+              "gateNumber": 3,
+              "horseNumber": 4,
+              "externalHorseId": "2022102691",
+              "name": "マナエトレ",
+              "jockey": "石橋脩",
+              "finishTime": "1:46.8",
+              "margin": "1.1/2",
+              "popularity": 6,
+              "odds": 16.9,
+              "horseId": "4"
+            },
+            {
+              "position": 13,
+              "gateNumber": 2,
+              "horseNumber": 2,
+              "externalHorseId": "2021103588",
+              "name": "グラスブランシュ",
+              "jockey": "杉原",
+              "finishTime": "1:47.1",
+              "margin": "2",
+              "popularity": 13,
+              "odds": 171.9,
+              "horseId": "2"
+            },
+            {
+              "position": 14,
+              "gateNumber": 6,
+              "horseNumber": 10,
+              "externalHorseId": "2021103000",
+              "name": "ヴァルドルチャ",
+              "jockey": "小崎",
+              "finishTime": "1:47.6",
+              "margin": "3",
+              "popularity": 11,
+              "odds": 56.9,
+              "horseId": "10"
+            },
+            {
+              "position": 15,
+              "gateNumber": 6,
+              "horseNumber": 11,
+              "externalHorseId": "2022106893",
+              "name": "ホープエトワール",
+              "jockey": "木幡巧",
+              "finishTime": "1:48.0",
+              "margin": "2.1/2",
+              "popularity": 15,
+              "odds": 330.2,
+              "horseId": "11"
+            }
+          ],
+          "payouts": {
+            "tansho": {
+              "resultNumbers": [
+                15
+              ],
+              "payouts": [
+                1830
+              ]
+            },
+            "fukusho": {
+              "resultNumbers": [
+                15,
+                14,
+                6
+              ],
+              "payouts": [
+                540,
+                450,
+                190
+              ]
+            },
+            "wide": {
+              "resultNumbers": [
+                [
+                  14,
+                  15
+                ],
+                [
+                  6,
+                  15
+                ],
+                [
+                  6,
+                  14
+                ]
+              ],
+              "payouts": [
+                3270,
+                1540,
+                1060
+              ]
+            }
+          }
+        }
       },
       {
         "courseId": "fukushima-turf-1800-202603020711",
@@ -4905,7 +6240,275 @@
             "lastRaceDistance": 1800,
             "distanceChange": 0
           }
-        ]
+        ],
+        "result": {
+          "updatedAt": "2026-07-19T03:30:43.537Z",
+          "winnerHorseId": "13",
+          "winnerHorseName": "ミラビリスマジック",
+          "top3HorseIds": [
+            "13",
+            "8",
+            "4"
+          ],
+          "top3HorseNames": [
+            "ミラビリスマジック",
+            "ホウオウスーペリア",
+            "ワイドアラジン"
+          ],
+          "finishers": [
+            {
+              "position": 1,
+              "gateNumber": 7,
+              "horseNumber": 13,
+              "externalHorseId": "2021105105",
+              "name": "ミラビリスマジック",
+              "jockey": "戸崎圭",
+              "finishTime": "1:46.2",
+              "margin": "",
+              "popularity": 2,
+              "odds": 4.8,
+              "horseId": "13"
+            },
+            {
+              "position": 2,
+              "gateNumber": 4,
+              "horseNumber": 8,
+              "externalHorseId": "2020103928",
+              "name": "ホウオウスーペリア",
+              "jockey": "三浦",
+              "finishTime": "1:46.3",
+              "margin": "クビ",
+              "popularity": 13,
+              "odds": 30.3,
+              "horseId": "8"
+            },
+            {
+              "position": 3,
+              "gateNumber": 2,
+              "horseNumber": 4,
+              "externalHorseId": "2020104550",
+              "name": "ワイドアラジン",
+              "jockey": "田辺",
+              "finishTime": "1:46.4",
+              "margin": "1",
+              "popularity": 5,
+              "odds": 12.7,
+              "horseId": "4"
+            },
+            {
+              "position": 4,
+              "gateNumber": 3,
+              "horseNumber": 5,
+              "externalHorseId": "2022106793",
+              "name": "コスモアンソロジー",
+              "jockey": "津村",
+              "finishTime": "1:46.5",
+              "margin": "1/2",
+              "popularity": 3,
+              "odds": 5.3,
+              "horseId": "5"
+            },
+            {
+              "position": 5,
+              "gateNumber": 5,
+              "horseNumber": 9,
+              "externalHorseId": "2022100201",
+              "name": "コンドゥイア",
+              "jockey": "小崎",
+              "finishTime": "1:46.5",
+              "margin": "アタマ",
+              "popularity": 11,
+              "odds": 24.4,
+              "horseId": "9"
+            },
+            {
+              "position": 6,
+              "gateNumber": 6,
+              "horseNumber": 12,
+              "externalHorseId": "2022101227",
+              "name": "ヴォンフレ",
+              "jockey": "横山典",
+              "finishTime": "1:46.6",
+              "margin": "クビ",
+              "popularity": 8,
+              "odds": 17.1,
+              "horseId": "12"
+            },
+            {
+              "position": 7,
+              "gateNumber": 6,
+              "horseNumber": 11,
+              "externalHorseId": "2018106154",
+              "name": "エスコバル",
+              "jockey": "吉田豊",
+              "finishTime": "1:47.0",
+              "margin": "2.1/2",
+              "popularity": 15,
+              "odds": 62.3,
+              "horseId": "11"
+            },
+            {
+              "position": 8,
+              "gateNumber": 7,
+              "horseNumber": 14,
+              "externalHorseId": "2021104189",
+              "name": "テリオスサラ",
+              "jockey": "菊沢",
+              "finishTime": "1:47.0",
+              "margin": "クビ",
+              "popularity": 6,
+              "odds": 13.9,
+              "horseId": "14"
+            },
+            {
+              "position": 9,
+              "gateNumber": 1,
+              "horseNumber": 1,
+              "externalHorseId": "2021105601",
+              "name": "ショーマンフリート",
+              "jockey": "嶋田",
+              "finishTime": "1:47.1",
+              "margin": "1/2",
+              "popularity": 16,
+              "odds": 154.2,
+              "horseId": "1"
+            },
+            {
+              "position": 10,
+              "gateNumber": 4,
+              "horseNumber": 7,
+              "externalHorseId": "2020100810",
+              "name": "グラニット",
+              "jockey": "江田照",
+              "finishTime": "1:47.2",
+              "margin": "1/2",
+              "popularity": 14,
+              "odds": 48.4,
+              "horseId": "7"
+            },
+            {
+              "position": 11,
+              "gateNumber": 2,
+              "horseNumber": 3,
+              "externalHorseId": "2020100809",
+              "name": "アマイ",
+              "jockey": "原",
+              "finishTime": "1:47.4",
+              "margin": "1.1/4",
+              "popularity": 12,
+              "odds": 28.4,
+              "horseId": "3"
+            },
+            {
+              "position": 12,
+              "gateNumber": 3,
+              "horseNumber": 6,
+              "externalHorseId": "2020106811",
+              "name": "タイキラフター",
+              "jockey": "杉原",
+              "finishTime": "1:47.4",
+              "margin": "クビ",
+              "popularity": 4,
+              "odds": 10.2,
+              "horseId": "6"
+            },
+            {
+              "position": 13,
+              "gateNumber": 5,
+              "horseNumber": 10,
+              "externalHorseId": "2020100495",
+              "name": "ドラゴンヘッド",
+              "jockey": "石田",
+              "finishTime": "1:47.5",
+              "margin": "クビ",
+              "popularity": 9,
+              "odds": 19.5,
+              "horseId": "10"
+            },
+            {
+              "position": 14,
+              "gateNumber": 1,
+              "horseNumber": 2,
+              "externalHorseId": "2020105217",
+              "name": "ウインオーディン",
+              "jockey": "荻野極",
+              "finishTime": "1:47.7",
+              "margin": "1",
+              "popularity": 7,
+              "odds": 17.1,
+              "horseId": "2"
+            },
+            {
+              "position": 15,
+              "gateNumber": 8,
+              "horseNumber": 16,
+              "externalHorseId": "2021105859",
+              "name": "フォルラニーニ",
+              "jockey": "坂井",
+              "finishTime": "1:47.9",
+              "margin": "1.1/2",
+              "popularity": 1,
+              "odds": 4,
+              "horseId": "16"
+            },
+            {
+              "position": 16,
+              "gateNumber": 8,
+              "horseNumber": 15,
+              "externalHorseId": "2022105696",
+              "name": "サヴォンリンナ",
+              "jockey": "大野",
+              "finishTime": "1:48.9",
+              "margin": "6",
+              "popularity": 10,
+              "odds": 24.2,
+              "horseId": "15"
+            }
+          ],
+          "payouts": {
+            "tansho": {
+              "resultNumbers": [
+                13
+              ],
+              "payouts": [
+                480
+              ]
+            },
+            "fukusho": {
+              "resultNumbers": [
+                13,
+                8,
+                4
+              ],
+              "payouts": [
+                230,
+                660,
+                380
+              ]
+            },
+            "wide": {
+              "resultNumbers": [
+                [
+                  8,
+                  13
+                ],
+                [
+                  4,
+                  13
+                ],
+                [
+                  4,
+                  8
+                ]
+              ],
+              "payouts": [
+                1790,
+                1140,
+                3990
+              ]
+            }
+          }
+        }
       },
       {
         "courseId": "fukushima-dirt-1150-202603020712",
@@ -5441,7 +7044,275 @@
             "lastRaceDistance": 1200,
             "distanceChange": -50
           }
-        ]
+        ],
+        "result": {
+          "updatedAt": "2026-07-19T03:30:44.391Z",
+          "winnerHorseId": "6",
+          "winnerHorseName": "ロイヤルスパイア",
+          "top3HorseIds": [
+            "6",
+            "2",
+            "8"
+          ],
+          "top3HorseNames": [
+            "ロイヤルスパイア",
+            "ソニックブレイカー",
+            "アンプイットアップ"
+          ],
+          "finishers": [
+            {
+              "position": 1,
+              "gateNumber": 3,
+              "horseNumber": 6,
+              "externalHorseId": "2023101112",
+              "name": "ロイヤルスパイア",
+              "jockey": "坂井",
+              "finishTime": "1:08.3",
+              "margin": "",
+              "popularity": 3,
+              "odds": 4,
+              "horseId": "6"
+            },
+            {
+              "position": 2,
+              "gateNumber": 1,
+              "horseNumber": 2,
+              "externalHorseId": "2023100955",
+              "name": "ソニックブレイカー",
+              "jockey": "戸崎圭",
+              "finishTime": "1:08.3",
+              "margin": "ハナ",
+              "popularity": 1,
+              "odds": 3.1,
+              "horseId": "2"
+            },
+            {
+              "position": 3,
+              "gateNumber": 4,
+              "horseNumber": 8,
+              "externalHorseId": "2023101146",
+              "name": "アンプイットアップ",
+              "jockey": "荻野極",
+              "finishTime": "1:08.4",
+              "margin": "1/2",
+              "popularity": 4,
+              "odds": 6.9,
+              "horseId": "8"
+            },
+            {
+              "position": 4,
+              "gateNumber": 7,
+              "horseNumber": 13,
+              "externalHorseId": "2023105083",
+              "name": "ベルゼビュート",
+              "jockey": "菊沢",
+              "finishTime": "1:08.6",
+              "margin": "1.1/4",
+              "popularity": 2,
+              "odds": 4,
+              "horseId": "13"
+            },
+            {
+              "position": 5,
+              "gateNumber": 2,
+              "horseNumber": 4,
+              "externalHorseId": "2023101039",
+              "name": "ベアアッコチャン",
+              "jockey": "大野",
+              "finishTime": "1:08.6",
+              "margin": "クビ",
+              "popularity": 9,
+              "odds": 48,
+              "horseId": "4"
+            },
+            {
+              "position": 6,
+              "gateNumber": 3,
+              "horseNumber": 5,
+              "externalHorseId": "2021102784",
+              "name": "ノアスペシャル",
+              "jockey": "木幡巧",
+              "finishTime": "1:08.7",
+              "margin": "クビ",
+              "popularity": 8,
+              "odds": 29.1,
+              "horseId": "5"
+            },
+            {
+              "position": 7,
+              "gateNumber": 2,
+              "horseNumber": 3,
+              "externalHorseId": "2023100479",
+              "name": "ディヴァインスカイ",
+              "jockey": "津村",
+              "finishTime": "1:08.7",
+              "margin": "クビ",
+              "popularity": 6,
+              "odds": 15.4,
+              "horseId": "3"
+            },
+            {
+              "position": 8,
+              "gateNumber": 5,
+              "horseNumber": 9,
+              "externalHorseId": "2022106926",
+              "name": "ナインオブレター",
+              "jockey": "吉田豊",
+              "finishTime": "1:08.9",
+              "margin": "1.1/4",
+              "popularity": 14,
+              "odds": 216.1,
+              "horseId": "9"
+            },
+            {
+              "position": 9,
+              "gateNumber": 6,
+              "horseNumber": 12,
+              "externalHorseId": "2020104291",
+              "name": "ベリーベリーベリー",
+              "jockey": "▲佐藤",
+              "finishTime": "1:09.1",
+              "margin": "3/4",
+              "popularity": 11,
+              "odds": 75.2,
+              "horseId": "12"
+            },
+            {
+              "position": 10,
+              "gateNumber": 4,
+              "horseNumber": 7,
+              "externalHorseId": "2023102235",
+              "name": "トワイライトサイト",
+              "jockey": "小崎",
+              "finishTime": "1:09.1",
+              "margin": "クビ",
+              "popularity": 13,
+              "odds": 162.1,
+              "horseId": "7"
+            },
+            {
+              "position": 11,
+              "gateNumber": 8,
+              "horseNumber": 16,
+              "externalHorseId": "2023100633",
+              "name": "アイアンナックル",
+              "jockey": "田辺",
+              "finishTime": "1:09.3",
+              "margin": "1.1/4",
+              "popularity": 5,
+              "odds": 13,
+              "horseId": "16"
+            },
+            {
+              "position": 12,
+              "gateNumber": 7,
+              "horseNumber": 14,
+              "externalHorseId": "2022110126",
+              "name": "エコロカディス",
+              "jockey": "杉原",
+              "finishTime": "1:09.4",
+              "margin": "クビ",
+              "popularity": 7,
+              "odds": 22.5,
+              "horseId": "14"
+            },
+            {
+              "position": 13,
+              "gateNumber": 6,
+              "horseNumber": 11,
+              "externalHorseId": "2021103135",
+              "name": "マナマカナ",
+              "jockey": "▲石田",
+              "finishTime": "1:09.4",
+              "margin": "クビ",
+              "popularity": 12,
+              "odds": 148.6,
+              "horseId": "11"
+            },
+            {
+              "position": 14,
+              "gateNumber": 1,
+              "horseNumber": 1,
+              "externalHorseId": "2020104617",
+              "name": "ブルーリヴァーサル",
+              "jockey": "野中",
+              "finishTime": "1:09.7",
+              "margin": "1.3/4",
+              "popularity": 16,
+              "odds": 395.6,
+              "horseId": "1"
+            },
+            {
+              "position": 15,
+              "gateNumber": 5,
+              "horseNumber": 10,
+              "externalHorseId": "2023103085",
+              "name": "トリスティ",
+              "jockey": "★谷原",
+              "finishTime": "1:10.2",
+              "margin": "2.1/2",
+              "popularity": 10,
+              "odds": 75,
+              "horseId": "10"
+            },
+            {
+              "position": 16,
+              "gateNumber": 8,
+              "horseNumber": 15,
+              "externalHorseId": "2021100568",
+              "name": "ロックオブソシジ",
+              "jockey": "柴田大",
+              "finishTime": "1:10.7",
+              "margin": "3",
+              "popularity": 15,
+              "odds": 248.1,
+              "horseId": "15"
+            }
+          ],
+          "payouts": {
+            "tansho": {
+              "resultNumbers": [
+                6
+              ],
+              "payouts": [
+                400
+              ]
+            },
+            "fukusho": {
+              "resultNumbers": [
+                6,
+                2,
+                8
+              ],
+              "payouts": [
+                160,
+                140,
+                250
+              ]
+            },
+            "wide": {
+              "resultNumbers": [
+                [
+                  2,
+                  6
+                ],
+                [
+                  6,
+                  8
+                ],
+                [
+                  2,
+                  8
+                ]
+              ],
+              "payouts": [
+                240,
+                800,
+                710
+              ]
+            }
+          }
+        }
       },
       {
         "courseId": "fukushima-turf-1200-202603020809",
@@ -8025,7 +9896,301 @@
             "lastRaceDistance": 1200,
             "distanceChange": 0
           }
-        ]
+        ],
+        "result": {
+          "updatedAt": "2026-07-19T03:30:45.186Z",
+          "winnerHorseId": "16",
+          "winnerHorseName": "カエリールークス",
+          "top3HorseIds": [
+            "16",
+            "8",
+            "10"
+          ],
+          "top3HorseNames": [
+            "カエリールークス",
+            "タカヨシ",
+            "タカモリ"
+          ],
+          "finishers": [
+            {
+              "position": 1,
+              "gateNumber": 8,
+              "horseNumber": 16,
+              "externalHorseId": "2024109104",
+              "name": "カエリールークス",
+              "jockey": "松山",
+              "finishTime": "1:10.4",
+              "margin": "",
+              "popularity": 1,
+              "odds": 1.9,
+              "horseId": "16"
+            },
+            {
+              "position": 2,
+              "gateNumber": 4,
+              "horseNumber": 8,
+              "externalHorseId": "2024108122",
+              "name": "タカヨシ",
+              "jockey": "飛田愛",
+              "finishTime": "1:10.4",
+              "margin": "アタマ",
+              "popularity": 6,
+              "odds": 23.8,
+              "horseId": "8"
+            },
+            {
+              "position": 3,
+              "gateNumber": 5,
+              "horseNumber": 10,
+              "externalHorseId": "2024109102",
+              "name": "タカモリ",
+              "jockey": "田山",
+              "finishTime": "1:10.8",
+              "margin": "2.1/2",
+              "popularity": 5,
+              "odds": 13.5,
+              "horseId": "10"
+            },
+            {
+              "position": 4,
+              "gateNumber": 3,
+              "horseNumber": 6,
+              "externalHorseId": "2024109106",
+              "name": "ルーストカール",
+              "jockey": "田口",
+              "finishTime": "1:11.0",
+              "margin": "3/4",
+              "popularity": 14,
+              "odds": 259.8,
+              "horseId": "6"
+            },
+            {
+              "position": 5,
+              "gateNumber": 5,
+              "horseNumber": 9,
+              "externalHorseId": "2024108117",
+              "name": "ユイノジカンカセギ",
+              "jockey": "長岡",
+              "finishTime": "1:11.0",
+              "margin": "ハナ",
+              "popularity": 7,
+              "odds": 76.8,
+              "horseId": "9"
+            },
+            {
+              "position": 6,
+              "gateNumber": 2,
+              "horseNumber": 3,
+              "externalHorseId": "2024109107",
+              "name": "リエーヴェ",
+              "jockey": "永島",
+              "finishTime": "1:11.0",
+              "margin": "クビ",
+              "popularity": 2,
+              "odds": 3.5,
+              "horseId": "3"
+            },
+            {
+              "position": 7,
+              "gateNumber": 3,
+              "horseNumber": 5,
+              "externalHorseId": "2024108106",
+              "name": "カシノヴィタ",
+              "jockey": "森田",
+              "finishTime": "1:11.7",
+              "margin": "4",
+              "popularity": 17,
+              "odds": 558.1,
+              "horseId": "5"
+            },
+            {
+              "position": 8,
+              "gateNumber": 7,
+              "horseNumber": 13,
+              "externalHorseId": "2024108087",
+              "name": "ニシノマティーニ",
+              "jockey": "今村",
+              "finishTime": "1:11.8",
+              "margin": "クビ",
+              "popularity": 9,
+              "odds": 95.7,
+              "horseId": "13"
+            },
+            {
+              "position": 9,
+              "gateNumber": 1,
+              "horseNumber": 2,
+              "externalHorseId": "2024108030",
+              "name": "ヘキレキ",
+              "jockey": "国分優",
+              "finishTime": "1:11.8",
+              "margin": "クビ",
+              "popularity": 8,
+              "odds": 88.7,
+              "horseId": "2"
+            },
+            {
+              "position": 10,
+              "gateNumber": 4,
+              "horseNumber": 7,
+              "externalHorseId": "2024108050",
+              "name": "ソゲソゲスマイル",
+              "jockey": "西塚",
+              "finishTime": "1:12.0",
+              "margin": "1.1/2",
+              "popularity": 12,
+              "odds": 206.2,
+              "horseId": "7"
+            },
+            {
+              "position": 11,
+              "gateNumber": 6,
+              "horseNumber": 12,
+              "externalHorseId": "2024108085",
+              "name": "グレートキリシマ",
+              "jockey": "松若",
+              "finishTime": "1:12.1",
+              "margin": "1/2",
+              "popularity": 13,
+              "odds": 215.5,
+              "horseId": "12"
+            },
+            {
+              "position": 12,
+              "gateNumber": 7,
+              "horseNumber": 15,
+              "externalHorseId": "2024108093",
+              "name": "カシノクロサイト",
+              "jockey": "亀田",
+              "finishTime": "1:12.1",
+              "margin": "ハナ",
+              "popularity": 16,
+              "odds": 519.7,
+              "horseId": "15"
+            },
+            {
+              "position": 13,
+              "gateNumber": 8,
+              "horseNumber": 17,
+              "externalHorseId": "2024108118",
+              "name": "スイトーヨ",
+              "jockey": "川田",
+              "finishTime": "1:12.2",
+              "margin": "アタマ",
+              "popularity": 3,
+              "odds": 7.5,
+              "horseId": "17"
+            },
+            {
+              "position": 14,
+              "gateNumber": 2,
+              "horseNumber": 4,
+              "externalHorseId": "2024108108",
+              "name": "ワッザイカ",
+              "jockey": "泉谷",
+              "finishTime": "1:12.2",
+              "margin": "クビ",
+              "popularity": 11,
+              "odds": 114,
+              "horseId": "4"
+            },
+            {
+              "position": 15,
+              "gateNumber": 6,
+              "horseNumber": 11,
+              "externalHorseId": "2024108115",
+              "name": "トシミチ",
+              "jockey": "幸",
+              "finishTime": "1:12.3",
+              "margin": "1",
+              "popularity": 4,
+              "odds": 8.4,
+              "horseId": "11"
+            },
+            {
+              "position": 16,
+              "gateNumber": 8,
+              "horseNumber": 18,
+              "externalHorseId": "2024108089",
+              "name": "ニシノキヅイタラ",
+              "jockey": "酒井",
+              "finishTime": "1:12.4",
+              "margin": "クビ",
+              "popularity": 10,
+              "odds": 98,
+              "horseId": "18"
+            },
+            {
+              "position": 17,
+              "gateNumber": 7,
+              "horseNumber": 14,
+              "externalHorseId": "2024108061",
+              "name": "ラブマイティー",
+              "jockey": "水沼",
+              "finishTime": "1:12.5",
+              "margin": "1/2",
+              "popularity": 18,
+              "odds": 623.7,
+              "horseId": "14"
+            },
+            {
+              "position": 18,
+              "gateNumber": 1,
+              "horseNumber": 1,
+              "externalHorseId": "2024108116",
+              "name": "バミューダボーイ",
+              "jockey": "長谷蓮",
+              "finishTime": "1:12.8",
+              "margin": "1.3/4",
+              "popularity": 15,
+              "odds": 340,
+              "horseId": "1"
+            }
+          ],
+          "payouts": {
+            "tansho": {
+              "resultNumbers": [
+                16
+              ],
+              "payouts": [
+                190
+              ]
+            },
+            "fukusho": {
+              "resultNumbers": [
+                16,
+                8,
+                10
+              ],
+              "payouts": [
+                120,
+                490,
+                240
+              ]
+            },
+            "wide": {
+              "resultNumbers": [
+                [
+                  8,
+                  16
+                ],
+                [
+                  10,
+                  16
+                ],
+                [
+                  8,
+                  10
+                ]
+              ],
+              "payouts": [
+                1520,
+                620,
+                2850
+              ]
+            }
+          }
+        }
       },
       {
         "courseId": "kokura-dirt-1700-202610020710",
@@ -8433,7 +10598,223 @@
             "lastRaceDistance": 1800,
             "distanceChange": -100
           }
-        ]
+        ],
+        "result": {
+          "updatedAt": "2026-07-19T03:30:45.957Z",
+          "winnerHorseId": "2",
+          "winnerHorseName": "ワイドクリーガー",
+          "top3HorseIds": [
+            "2",
+            "1",
+            "7"
+          ],
+          "top3HorseNames": [
+            "ワイドクリーガー",
+            "コスモストーム",
+            "ワンダーカモン"
+          ],
+          "finishers": [
+            {
+              "position": 1,
+              "gateNumber": 2,
+              "horseNumber": 2,
+              "externalHorseId": "2022105611",
+              "name": "ワイドクリーガー",
+              "jockey": "団野",
+              "finishTime": "1:44.7",
+              "margin": "",
+              "popularity": 3,
+              "odds": 5,
+              "horseId": "2"
+            },
+            {
+              "position": 2,
+              "gateNumber": 1,
+              "horseNumber": 1,
+              "externalHorseId": "2022104120",
+              "name": "コスモストーム",
+              "jockey": "秋山稔",
+              "finishTime": "1:44.7",
+              "margin": "アタマ",
+              "popularity": 1,
+              "odds": 2.9,
+              "horseId": "1"
+            },
+            {
+              "position": 3,
+              "gateNumber": 6,
+              "horseNumber": 7,
+              "externalHorseId": "2021100739",
+              "name": "ワンダーカモン",
+              "jockey": "Ｍデム",
+              "finishTime": "1:45.3",
+              "margin": "3.1/2",
+              "popularity": 7,
+              "odds": 23.5,
+              "horseId": "7"
+            },
+            {
+              "position": 4,
+              "gateNumber": 5,
+              "horseNumber": 5,
+              "externalHorseId": "2022103619",
+              "name": "タマモジャスミン",
+              "jockey": "田口",
+              "finishTime": "1:45.4",
+              "margin": "3/4",
+              "popularity": 5,
+              "odds": 10,
+              "horseId": "5"
+            },
+            {
+              "position": 5,
+              "gateNumber": 7,
+              "horseNumber": 10,
+              "externalHorseId": "2020106101",
+              "name": "シュヴァルツリーベ",
+              "jockey": "藤懸",
+              "finishTime": "1:45.8",
+              "margin": "2.1/2",
+              "popularity": 8,
+              "odds": 25.9,
+              "horseId": "10"
+            },
+            {
+              "position": 6,
+              "gateNumber": 8,
+              "horseNumber": 12,
+              "externalHorseId": "2021106544",
+              "name": "タガノヘラクレス",
+              "jockey": "高杉",
+              "finishTime": "1:45.9",
+              "margin": "1/2",
+              "popularity": 2,
+              "odds": 4.5,
+              "horseId": "12"
+            },
+            {
+              "position": 7,
+              "gateNumber": 5,
+              "horseNumber": 6,
+              "externalHorseId": "2021106177",
+              "name": "タマモナポリ",
+              "jockey": "酒井",
+              "finishTime": "1:46.4",
+              "margin": "3",
+              "popularity": 6,
+              "odds": 11.4,
+              "horseId": "6"
+            },
+            {
+              "position": 8,
+              "gateNumber": 4,
+              "horseNumber": 4,
+              "externalHorseId": "2021107278",
+              "name": "ユーヴェリア",
+              "jockey": "国分恭",
+              "finishTime": "1:46.7",
+              "margin": "1.1/2",
+              "popularity": 9,
+              "odds": 59.7,
+              "horseId": "4"
+            },
+            {
+              "position": 9,
+              "gateNumber": 6,
+              "horseNumber": 8,
+              "externalHorseId": "2022103047",
+              "name": "ホウショウマリス",
+              "jockey": "幸",
+              "finishTime": "1:46.9",
+              "margin": "1",
+              "popularity": 4,
+              "odds": 5.5,
+              "horseId": "8"
+            },
+            {
+              "position": 10,
+              "gateNumber": 7,
+              "horseNumber": 9,
+              "externalHorseId": "2022102739",
+              "name": "ナリタヒカリ",
+              "jockey": "太宰",
+              "finishTime": "1:47.3",
+              "margin": "2.1/2",
+              "popularity": 12,
+              "odds": 186.4,
+              "horseId": "9"
+            },
+            {
+              "position": 11,
+              "gateNumber": 3,
+              "horseNumber": 3,
+              "externalHorseId": "2021105939",
+              "name": "メイショウザンゲツ",
+              "jockey": "菱田",
+              "finishTime": "1:48.0",
+              "margin": "4",
+              "popularity": 11,
+              "odds": 84.9,
+              "horseId": "3"
+            },
+            {
+              "position": 12,
+              "gateNumber": 8,
+              "horseNumber": 11,
+              "externalHorseId": "2021106854",
+              "name": "ハピアーザンエバー",
+              "jockey": "森田",
+              "finishTime": "1:48.6",
+              "margin": "3.1/2",
+              "popularity": 10,
+              "odds": 74.1,
+              "horseId": "11"
+            }
+          ],
+          "payouts": {
+            "tansho": {
+              "resultNumbers": [
+                2
+              ],
+              "payouts": [
+                500
+              ]
+            },
+            "fukusho": {
+              "resultNumbers": [
+                2,
+                1,
+                7
+              ],
+              "payouts": [
+                180,
+                140,
+                370
+              ]
+            },
+            "wide": {
+              "resultNumbers": [
+                [
+                  1,
+                  2
+                ],
+                [
+                  2,
+                  7
+                ],
+                [
+                  1,
+                  7
+                ]
+              ],
+              "payouts": [
+                340,
+                1640,
+                1060
+              ]
+            }
+          }
+        }
       },
       {
         "courseId": "kokura-turf-1200-202610020711",
@@ -8841,7 +11222,223 @@
             "lastRaceDistance": 1200,
             "distanceChange": 0
           }
-        ]
+        ],
+        "result": {
+          "updatedAt": "2026-07-19T03:30:46.173Z",
+          "winnerHorseId": "5",
+          "winnerHorseName": "コウセキ",
+          "top3HorseIds": [
+            "5",
+            "3",
+            "10"
+          ],
+          "top3HorseNames": [
+            "コウセキ",
+            "アイルシャイン",
+            "ベイビーキッス"
+          ],
+          "finishers": [
+            {
+              "position": 1,
+              "gateNumber": 5,
+              "horseNumber": 5,
+              "externalHorseId": "2022110026",
+              "name": "コウセキ",
+              "jockey": "松山",
+              "finishTime": "1:07.6",
+              "margin": "",
+              "popularity": 1,
+              "odds": 1.8,
+              "horseId": "5"
+            },
+            {
+              "position": 2,
+              "gateNumber": 3,
+              "horseNumber": 3,
+              "externalHorseId": "2020104520",
+              "name": "アイルシャイン",
+              "jockey": "飛田愛",
+              "finishTime": "1:07.9",
+              "margin": "2",
+              "popularity": 7,
+              "odds": 17.7,
+              "horseId": "3"
+            },
+            {
+              "position": 3,
+              "gateNumber": 7,
+              "horseNumber": 10,
+              "externalHorseId": "2022102514",
+              "name": "ベイビーキッス",
+              "jockey": "藤懸",
+              "finishTime": "1:08.0",
+              "margin": "1/2",
+              "popularity": 3,
+              "odds": 9.3,
+              "horseId": "10"
+            },
+            {
+              "position": 4,
+              "gateNumber": 5,
+              "horseNumber": 6,
+              "externalHorseId": "2019100566",
+              "name": "ミロワール",
+              "jockey": "酒井",
+              "finishTime": "1:08.0",
+              "margin": "ハナ",
+              "popularity": 4,
+              "odds": 10,
+              "horseId": "6"
+            },
+            {
+              "position": 5,
+              "gateNumber": 1,
+              "horseNumber": 1,
+              "externalHorseId": "2021100157",
+              "name": "ロードトレイル",
+              "jockey": "高杉",
+              "finishTime": "1:08.1",
+              "margin": "1/2",
+              "popularity": 8,
+              "odds": 18.4,
+              "horseId": "1"
+            },
+            {
+              "position": 6,
+              "gateNumber": 4,
+              "horseNumber": 4,
+              "externalHorseId": "2019106739",
+              "name": "ダークエクリプス",
+              "jockey": "松若",
+              "finishTime": "1:08.4",
+              "margin": "2",
+              "popularity": 12,
+              "odds": 99.9,
+              "horseId": "4"
+            },
+            {
+              "position": 7,
+              "gateNumber": 7,
+              "horseNumber": 9,
+              "externalHorseId": "2021106661",
+              "name": "ヒーローインチーフ",
+              "jockey": "西塚",
+              "finishTime": "1:08.8",
+              "margin": "2",
+              "popularity": 5,
+              "odds": 13.5,
+              "horseId": "9"
+            },
+            {
+              "position": 8,
+              "gateNumber": 2,
+              "horseNumber": 2,
+              "externalHorseId": "2021101654",
+              "name": "トーラスシャイン",
+              "jockey": "西村淳",
+              "finishTime": "1:09.1",
+              "margin": "2",
+              "popularity": 2,
+              "odds": 5.5,
+              "horseId": "2"
+            },
+            {
+              "position": 9,
+              "gateNumber": 8,
+              "horseNumber": 11,
+              "externalHorseId": "2021103977",
+              "name": "リチャードバローズ",
+              "jockey": "団野",
+              "finishTime": "1:09.3",
+              "margin": "1",
+              "popularity": 10,
+              "odds": 37.4,
+              "horseId": "11"
+            },
+            {
+              "position": 10,
+              "gateNumber": 6,
+              "horseNumber": 7,
+              "externalHorseId": "2022100791",
+              "name": "ブラックケリー",
+              "jockey": "吉村",
+              "finishTime": "1:09.4",
+              "margin": "クビ",
+              "popularity": 11,
+              "odds": 72.5,
+              "horseId": "7"
+            },
+            {
+              "position": 11,
+              "gateNumber": 6,
+              "horseNumber": 8,
+              "externalHorseId": "2022103707",
+              "name": "エスペシャリー",
+              "jockey": "田山",
+              "finishTime": "1:09.6",
+              "margin": "1.1/4",
+              "popularity": 9,
+              "odds": 33.4,
+              "horseId": "8"
+            },
+            {
+              "position": 12,
+              "gateNumber": 8,
+              "horseNumber": 12,
+              "externalHorseId": "2021107180",
+              "name": "ジュンヴァンケット",
+              "jockey": "富田",
+              "finishTime": "1:09.9",
+              "margin": "2",
+              "popularity": 6,
+              "odds": 16.6,
+              "horseId": "12"
+            }
+          ],
+          "payouts": {
+            "tansho": {
+              "resultNumbers": [
+                5
+              ],
+              "payouts": [
+                180
+              ]
+            },
+            "fukusho": {
+              "resultNumbers": [
+                5,
+                3,
+                10
+              ],
+              "payouts": [
+                110,
+                440,
+                250
+              ]
+            },
+            "wide": {
+              "resultNumbers": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  5,
+                  10
+                ],
+                [
+                  3,
+                  10
+                ]
+              ],
+              "payouts": [
+                860,
+                380,
+                1900
+              ]
+            }
+          }
+        }
       },
       {
         "courseId": "kokura-dirt-1700-202610020712",
@@ -9313,7 +11910,249 @@
             "lastRaceDistance": 1700,
             "distanceChange": 0
           }
-        ]
+        ],
+        "result": {
+          "updatedAt": "2026-07-19T03:30:46.580Z",
+          "winnerHorseId": "5",
+          "winnerHorseName": "バートラガッツ",
+          "top3HorseIds": [
+            "5",
+            "7",
+            "14"
+          ],
+          "top3HorseNames": [
+            "バートラガッツ",
+            "ブラックレジェンド",
+            "モズプリヴェール"
+          ],
+          "finishers": [
+            {
+              "position": 1,
+              "gateNumber": 4,
+              "horseNumber": 5,
+              "externalHorseId": "2023107362",
+              "name": "バートラガッツ",
+              "jockey": "松山",
+              "finishTime": "1:44.5",
+              "margin": "",
+              "popularity": 1,
+              "odds": 1.6,
+              "horseId": "5"
+            },
+            {
+              "position": 2,
+              "gateNumber": 5,
+              "horseNumber": 7,
+              "externalHorseId": "2023100297",
+              "name": "ブラックレジェンド",
+              "jockey": "◇今村",
+              "finishTime": "1:45.1",
+              "margin": "3.1/2",
+              "popularity": 3,
+              "odds": 8.6,
+              "horseId": "7"
+            },
+            {
+              "position": 3,
+              "gateNumber": 8,
+              "horseNumber": 14,
+              "externalHorseId": "2022102916",
+              "name": "モズプリヴェール",
+              "jockey": "松若",
+              "finishTime": "1:45.2",
+              "margin": "3/4",
+              "popularity": 7,
+              "odds": 21.3,
+              "horseId": "14"
+            },
+            {
+              "position": 4,
+              "gateNumber": 8,
+              "horseNumber": 13,
+              "externalHorseId": "2023102707",
+              "name": "ヨカオウ",
+              "jockey": "☆田山",
+              "finishTime": "1:45.3",
+              "margin": "1/2",
+              "popularity": 5,
+              "odds": 16.3,
+              "horseId": "13"
+            },
+            {
+              "position": 5,
+              "gateNumber": 4,
+              "horseNumber": 6,
+              "externalHorseId": "2023110029",
+              "name": "ジューンセクレタ",
+              "jockey": "西村淳",
+              "finishTime": "1:45.3",
+              "margin": "アタマ",
+              "popularity": 2,
+              "odds": 6.8,
+              "horseId": "6"
+            },
+            {
+              "position": 6,
+              "gateNumber": 5,
+              "horseNumber": 8,
+              "externalHorseId": "2023110079",
+              "name": "アメリカンスタイル",
+              "jockey": "西塚",
+              "finishTime": "1:45.6",
+              "margin": "1.1/2",
+              "popularity": 6,
+              "odds": 16.6,
+              "horseId": "8"
+            },
+            {
+              "position": 7,
+              "gateNumber": 6,
+              "horseNumber": 10,
+              "externalHorseId": "2022101417",
+              "name": "フランキーバローズ",
+              "jockey": "団野",
+              "finishTime": "1:45.8",
+              "margin": "1",
+              "popularity": 4,
+              "odds": 9.5,
+              "horseId": "10"
+            },
+            {
+              "position": 8,
+              "gateNumber": 3,
+              "horseNumber": 4,
+              "externalHorseId": "2022104176",
+              "name": "チャチャピンク",
+              "jockey": "亀田",
+              "finishTime": "1:46.0",
+              "margin": "1.1/2",
+              "popularity": 12,
+              "odds": 91.1,
+              "horseId": "4"
+            },
+            {
+              "position": 9,
+              "gateNumber": 7,
+              "horseNumber": 11,
+              "externalHorseId": "2023101694",
+              "name": "ケンフィールド",
+              "jockey": "幸",
+              "finishTime": "1:46.0",
+              "margin": "ハナ",
+              "popularity": 9,
+              "odds": 58.1,
+              "horseId": "11"
+            },
+            {
+              "position": 10,
+              "gateNumber": 6,
+              "horseNumber": 9,
+              "externalHorseId": "2022106189",
+              "name": "デュアルロール",
+              "jockey": "中井",
+              "finishTime": "1:46.3",
+              "margin": "2",
+              "popularity": 13,
+              "odds": 121.1,
+              "horseId": "9"
+            },
+            {
+              "position": 11,
+              "gateNumber": 7,
+              "horseNumber": 12,
+              "externalHorseId": "2023101231",
+              "name": "フリッシュ",
+              "jockey": "藤懸",
+              "finishTime": "1:46.4",
+              "margin": "クビ",
+              "popularity": 8,
+              "odds": 28,
+              "horseId": "12"
+            },
+            {
+              "position": 12,
+              "gateNumber": 2,
+              "horseNumber": 2,
+              "externalHorseId": "2022107325",
+              "name": "レーンアジリティ",
+              "jockey": "高倉",
+              "finishTime": "1:46.8",
+              "margin": "2.1/2",
+              "popularity": 10,
+              "odds": 65.6,
+              "horseId": "2"
+            },
+            {
+              "position": 13,
+              "gateNumber": 3,
+              "horseNumber": 3,
+              "externalHorseId": "2022103946",
+              "name": "スマートクラビ",
+              "jockey": "吉村",
+              "finishTime": "1:47.1",
+              "margin": "1.3/4",
+              "popularity": 14,
+              "odds": 139.6,
+              "horseId": "3"
+            },
+            {
+              "position": 14,
+              "gateNumber": 1,
+              "horseNumber": 1,
+              "externalHorseId": "2022102429",
+              "name": "ミッキーコンドル",
+              "jockey": "Ｍデム",
+              "finishTime": "1:47.4",
+              "margin": "2",
+              "popularity": 11,
+              "odds": 66.8,
+              "horseId": "1"
+            }
+          ],
+          "payouts": {
+            "tansho": {
+              "resultNumbers": [
+                5
+              ],
+              "payouts": [
+                160
+              ]
+            },
+            "fukusho": {
+              "resultNumbers": [
+                5,
+                7,
+                14
+              ],
+              "payouts": [
+                110,
+                180,
+                230
+              ]
+            },
+            "wide": {
+              "resultNumbers": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  5,
+                  14
+                ],
+                [
+                  7,
+                  14
+                ]
+              ],
+              "payouts": [
+                260,
+                460,
+                880
+              ]
+            }
+          }
+        }
       },
       {
         "courseId": "kokura-turf-1800-202610020809",
