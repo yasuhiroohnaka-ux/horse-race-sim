@@ -335,10 +335,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 1,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 45,
+      "favoriteCount": 75,
       "xBuzzScore": 0,
-      "predictionCount": 91,
-      "realOdds": 3.4,
+      "predictionCount": 93,
+      "realOdds": 3.1,
       "oddsSource": "forecast",
       "speed": 71,
       "stamina": 75,
@@ -366,7 +366,7 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "favoriteCount": 1,
       "xBuzzScore": 0,
       "predictionCount": 12,
-      "realOdds": 129.1,
+      "realOdds": 140.8,
       "oddsSource": "forecast",
       "speed": 69,
       "stamina": 71,
@@ -391,10 +391,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 3,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 15,
+      "favoriteCount": 23,
       "xBuzzScore": 0,
-      "predictionCount": 70,
-      "realOdds": 8.4,
+      "predictionCount": 69,
+      "realOdds": 8.8,
       "oddsSource": "forecast",
       "speed": 70,
       "stamina": 69,
@@ -419,10 +419,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 4,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 3,
+      "favoriteCount": 4,
       "xBuzzScore": 0,
-      "predictionCount": 36,
-      "realOdds": 35.3,
+      "predictionCount": 32,
+      "realOdds": 42.1,
       "oddsSource": "forecast",
       "speed": 69,
       "stamina": 73,
@@ -447,10 +447,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 5,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 0,
+      "favoriteCount": 1,
       "xBuzzScore": 0,
       "predictionCount": 12,
-      "realOdds": 148.8,
+      "realOdds": 118.5,
       "oddsSource": "forecast",
       "speed": 68,
       "stamina": 75,
@@ -475,10 +475,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 6,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 28,
+      "favoriteCount": 40,
       "xBuzzScore": 0,
-      "predictionCount": 81,
-      "realOdds": 5.2,
+      "predictionCount": 80,
+      "realOdds": 5.6,
       "oddsSource": "forecast",
       "speed": 70,
       "stamina": 68,
@@ -505,8 +505,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 55,
       "favoriteCount": 5,
       "xBuzzScore": 0,
-      "predictionCount": 46,
-      "realOdds": 23.4,
+      "predictionCount": 40,
+      "realOdds": 30.8,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 66,
@@ -533,8 +533,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 55,
       "favoriteCount": 5,
       "xBuzzScore": 0,
-      "predictionCount": 40,
-      "realOdds": 30.9,
+      "predictionCount": 30,
+      "realOdds": 45.9,
       "oddsSource": "forecast",
       "speed": 68,
       "stamina": 73,
@@ -559,10 +559,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 9,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 31,
+      "favoriteCount": 37,
       "xBuzzScore": 0,
-      "predictionCount": 83,
-      "realOdds": 4.9,
+      "predictionCount": 78,
+      "realOdds": 6,
       "oddsSource": "forecast",
       "speed": 70,
       "stamina": 68,
@@ -587,10 +587,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 10,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 2,
+      "favoriteCount": 3,
       "xBuzzScore": 0,
-      "predictionCount": 21,
-      "realOdds": 66.9,
+      "predictionCount": 22,
+      "realOdds": 66.2,
       "oddsSource": "forecast",
       "speed": 67,
       "stamina": 72,
@@ -615,10 +615,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 11,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 4,
+      "favoriteCount": 5,
       "xBuzzScore": 0,
-      "predictionCount": 36,
-      "realOdds": 36.7,
+      "predictionCount": 30,
+      "realOdds": 45.9,
       "oddsSource": "forecast",
       "speed": 68,
       "stamina": 71,
@@ -643,10 +643,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 12,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 1,
+      "favoriteCount": 2,
       "xBuzzScore": 0,
       "predictionCount": 12,
-      "realOdds": 129.1,
+      "realOdds": 109.9,
       "oddsSource": "forecast",
       "speed": 76,
       "stamina": 66,
@@ -671,10 +671,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 13,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 64,
+      "favoriteCount": 114,
       "xBuzzScore": 0,
-      "predictionCount": 98,
-      "realOdds": 2.6,
+      "predictionCount": 100,
+      "realOdds": 2.3,
       "oddsSource": "forecast",
       "speed": 72,
       "stamina": 69,
@@ -3399,10 +3399,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 1,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 6,
+      "favoriteCount": 9,
       "xBuzzScore": 0,
-      "predictionCount": 46,
-      "realOdds": 23.6,
+      "predictionCount": 45,
+      "realOdds": 24.9,
       "oddsSource": "forecast",
       "speed": 69,
       "stamina": 75,
@@ -3427,10 +3427,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 2,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 50,
+      "favoriteCount": 81,
       "xBuzzScore": 0,
-      "predictionCount": 93,
-      "realOdds": 3.1,
+      "predictionCount": 94,
+      "realOdds": 3,
       "oddsSource": "forecast",
       "speed": 70,
       "stamina": 72,
@@ -3455,10 +3455,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 3,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 0,
+      "favoriteCount": 4,
       "xBuzzScore": 0,
-      "predictionCount": 12,
-      "realOdds": 166.6,
+      "predictionCount": 23,
+      "realOdds": 61.3,
       "oddsSource": "forecast",
       "speed": 71,
       "stamina": 75,
@@ -3483,10 +3483,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 4,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 104,
+      "favoriteCount": 164,
       "xBuzzScore": 0,
-      "predictionCount": 104,
-      "realOdds": 2,
+      "predictionCount": 105,
+      "realOdds": 1.9,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 69,
@@ -3511,10 +3511,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 5,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 11,
+      "favoriteCount": 16,
       "xBuzzScore": 0,
-      "predictionCount": 54,
-      "realOdds": 17,
+      "predictionCount": 53,
+      "realOdds": 17.6,
       "oddsSource": "forecast",
       "speed": 67,
       "stamina": 72,
@@ -3539,10 +3539,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 6,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 26,
+      "favoriteCount": 33,
       "xBuzzScore": 0,
-      "predictionCount": 76,
-      "realOdds": 6.5,
+      "predictionCount": 74,
+      "realOdds": 7.1,
       "oddsSource": "forecast",
       "speed": 75,
       "stamina": 67,
@@ -3567,10 +3567,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 7,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 25,
+      "favoriteCount": 31,
       "xBuzzScore": 0,
-      "predictionCount": 73,
-      "realOdds": 7.5,
+      "predictionCount": 71,
+      "realOdds": 8.2,
       "oddsSource": "forecast",
       "speed": 69,
       "stamina": 71,
@@ -3597,8 +3597,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 55,
       "favoriteCount": 4,
       "xBuzzScore": 0,
-      "predictionCount": 35,
-      "realOdds": 37.4,
+      "predictionCount": 28,
+      "realOdds": 50.5,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 70,
@@ -3625,8 +3625,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 57,
       "favoriteCount": 2,
       "xBuzzScore": 0,
-      "predictionCount": 26,
-      "realOdds": 55.2,
+      "predictionCount": 23,
+      "realOdds": 61.3,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 72,
@@ -3653,8 +3653,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 55,
       "favoriteCount": 4,
       "xBuzzScore": 0,
-      "predictionCount": 30,
-      "realOdds": 46.4,
+      "predictionCount": 22,
+      "realOdds": 66,
       "oddsSource": "forecast",
       "speed": 71,
       "stamina": 75,
@@ -3679,10 +3679,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 11,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 12,
+      "favoriteCount": 14,
       "xBuzzScore": 0,
-      "predictionCount": 59,
-      "realOdds": 13.3,
+      "predictionCount": 54,
+      "realOdds": 16.9,
       "oddsSource": "forecast",
       "speed": 70,
       "stamina": 68,
@@ -3709,10 +3709,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 1,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 17,
+      "favoriteCount": 27,
       "xBuzzScore": 0,
-      "predictionCount": 42,
-      "realOdds": 28.4,
+      "predictionCount": 44,
+      "realOdds": 25.3,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 70,
@@ -3737,10 +3737,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 2,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 13,
+      "favoriteCount": 19,
       "xBuzzScore": 0,
-      "predictionCount": 34,
-      "realOdds": 39.4,
+      "predictionCount": 35,
+      "realOdds": 38,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 66,
@@ -3765,10 +3765,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 3,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 12,
+      "favoriteCount": 13,
       "xBuzzScore": 0,
-      "predictionCount": 36,
-      "realOdds": 35.5,
+      "predictionCount": 30,
+      "realOdds": 46.3,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 69,
@@ -3793,10 +3793,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 4,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 43,
+      "favoriteCount": 57,
       "xBuzzScore": 0,
-      "predictionCount": 64,
-      "realOdds": 10.9,
+      "predictionCount": 63,
+      "realOdds": 11.4,
       "oddsSource": "forecast",
       "speed": 71,
       "stamina": 68,
@@ -3821,7 +3821,7 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 5,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 129,
+      "favoriteCount": 180,
       "xBuzzScore": 0,
       "predictionCount": 87,
       "realOdds": 4,
@@ -3849,7 +3849,7 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 6,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 232,
+      "favoriteCount": 338,
       "xBuzzScore": 0,
       "predictionCount": 100,
       "realOdds": 2.3,
@@ -3877,10 +3877,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 7,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 21,
+      "favoriteCount": 32,
       "xBuzzScore": 0,
-      "predictionCount": 49,
-      "realOdds": 20.7,
+      "predictionCount": 50,
+      "realOdds": 19.5,
       "oddsSource": "forecast",
       "speed": 69,
       "stamina": 71,
@@ -3905,10 +3905,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 8,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 41,
+      "favoriteCount": 61,
       "xBuzzScore": 0,
-      "predictionCount": 64,
-      "realOdds": 10.9,
+      "predictionCount": 65,
+      "realOdds": 10.5,
       "oddsSource": "forecast",
       "speed": 68,
       "stamina": 73,
@@ -3933,10 +3933,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 9,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 4,
+      "favoriteCount": 9,
       "xBuzzScore": 0,
-      "predictionCount": 23,
-      "realOdds": 63.3,
+      "predictionCount": 27,
+      "realOdds": 53.8,
       "oddsSource": "forecast",
       "speed": 67,
       "stamina": 73,
@@ -3961,10 +3961,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 10,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 8,
+      "favoriteCount": 10,
       "xBuzzScore": 0,
-      "predictionCount": 23,
-      "realOdds": 63.3,
+      "predictionCount": 21,
+      "realOdds": 66.8,
       "oddsSource": "forecast",
       "speed": 71,
       "stamina": 75,
@@ -3989,10 +3989,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 11,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 154,
+      "favoriteCount": 221,
       "xBuzzScore": 0,
       "predictionCount": 93,
-      "realOdds": 3.1,
+      "realOdds": 3.2,
       "oddsSource": "forecast",
       "speed": 76,
       "stamina": 69,
@@ -4553,10 +4553,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 1,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 76,
+      "favoriteCount": 110,
       "xBuzzScore": 0,
-      "predictionCount": 83,
-      "realOdds": 4.8,
+      "predictionCount": 84,
+      "realOdds": 4.7,
       "oddsSource": "forecast",
       "speed": 71,
       "stamina": 69,
@@ -4581,7 +4581,7 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 2,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 37,
+      "favoriteCount": 51,
       "xBuzzScore": 0,
       "predictionCount": 74,
       "realOdds": 7.1,
@@ -4609,10 +4609,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 3,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 15,
+      "favoriteCount": 16,
       "xBuzzScore": 0,
-      "predictionCount": 47,
-      "realOdds": 22.4,
+      "predictionCount": 41,
+      "realOdds": 28.9,
       "oddsSource": "forecast",
       "speed": 74,
       "stamina": 70,
@@ -4637,10 +4637,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 4,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 215,
+      "favoriteCount": 336,
       "xBuzzScore": 0,
-      "predictionCount": 105,
-      "realOdds": 1.9,
+      "predictionCount": 106,
+      "realOdds": 1.8,
       "oddsSource": "forecast",
       "speed": 70,
       "stamina": 69,
@@ -4665,10 +4665,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 5,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 10,
+      "favoriteCount": 14,
       "xBuzzScore": 0,
       "predictionCount": 40,
-      "realOdds": 29.9,
+      "realOdds": 30.6,
       "oddsSource": "forecast",
       "speed": 70,
       "stamina": 69,
@@ -4695,8 +4695,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 57,
       "favoriteCount": 15,
       "xBuzzScore": 0,
-      "predictionCount": 47,
-      "realOdds": 22.9,
+      "predictionCount": 38,
+      "realOdds": 32.8,
       "oddsSource": "forecast",
       "speed": 66,
       "stamina": 73,
@@ -4723,8 +4723,8 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "weight": 57,
       "favoriteCount": 5,
       "xBuzzScore": 0,
-      "predictionCount": 27,
-      "realOdds": 53.2,
+      "predictionCount": 22,
+      "realOdds": 64,
       "oddsSource": "forecast",
       "speed": 70,
       "stamina": 69,
@@ -4749,10 +4749,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 8,
       "sex": "F",
       "weight": 55,
-      "favoriteCount": 99,
+      "favoriteCount": 126,
       "xBuzzScore": 0,
-      "predictionCount": 93,
-      "realOdds": 3.2,
+      "predictionCount": 91,
+      "realOdds": 3.4,
       "oddsSource": "forecast",
       "speed": 71,
       "stamina": 73,
@@ -4777,10 +4777,10 @@ export const GENERATED_WEEKLY_HORSES_MAP: Record<string, GeneratedHorseSeed[]> =
       "gateNumber": 9,
       "sex": "M",
       "weight": 57,
-      "favoriteCount": 6,
+      "favoriteCount": 9,
       "xBuzzScore": 0,
       "predictionCount": 30,
-      "realOdds": 45.6,
+      "realOdds": 47.1,
       "oddsSource": "forecast",
       "speed": 73,
       "stamina": 72,
@@ -5022,15 +5022,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "popularity": 13,
           "odds": 219.6
         }
-      ]
-    },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:32.701Z",
-      "summary": "ブルージェイは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった、近走内容の良さがそのまま結果につながった。",
-      "xPostText": "【クローバー賞回顧】1着 ブルージェイ(2番人気 4倍) / 2着 フレイコン / 3着 エイシンウルトラン。ブルージェイは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった、近走内容の良さがそのまま結果につながった。 #クローバー賞",
-      "reasons": [
-        "先行力を生かしやすい舞台だった",
-        "近走内容の良さがそのまま結果につながった"
       ]
     },
     "horses": [
@@ -5650,15 +5641,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:33.636Z",
-      "summary": "アスミルは条件が噛み合って突き抜けた。距離短縮で追走負荷が軽くなった、先行力を生かしやすい舞台だった。",
-      "xPostText": "【ＷＡＳＪ第１戦(2勝クラス)回顧】1着 アスミル(1番人気 4.3倍) / 2着 ビービーエフォート / 3着 ミキノバカラ。アスミルは条件が噛み合って突き抜けた。距離短縮で追走負荷が軽くなった、先行力を生かしやすい舞台だった。 #ＷＡＳＪ第１戦",
-      "reasons": [
-        "距離短縮で追走負荷が軽くなった",
-        "先行力を生かしやすい舞台だった"
-      ]
-    },
     "horses": [
       {
         "id": "1",
@@ -6263,14 +6245,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:33.839Z",
-      "summary": "キャントウェイトは能力上位で押し切った。近走の能力水準がこの相手では上位だった。",
-      "xPostText": "【ＷＡＳＪ第２戦(3勝クラス)回顧】1着 キャントウェイト(4番人気 6.2倍) / 2着 スパークリシャール / 3着 ショウナンサムデイ。キャントウェイトは能力上位で押し切った。近走の能力水準がこの相手では上位だった。 #ＷＡＳＪ第２戦",
-      "reasons": [
-        "近走の能力水準がこの相手では上位だった"
-      ]
-    },
     "horses": [
       {
         "id": "1",
@@ -6849,15 +6823,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:34.160Z",
-      "summary": "ロングミックスは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。",
-      "xPostText": "【ニセコ特別(1勝クラス)回顧】1着 ロングミックス(1番人気 3倍) / 2着 ブリオメンテ / 3着 サマーナイト。ロングミックスは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。 #ニセコ特別",
-      "reasons": [
-        "近走の能力水準がこの相手では上位だった",
-        "近走内容の良さがそのまま結果につながった"
-      ]
-    },
     "horses": [
       {
         "id": "1",
@@ -7376,14 +7341,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "popularity": 9,
           "odds": 34.6
         }
-      ]
-    },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:35.875Z",
-      "summary": "エイシンインアウトは条件が噛み合って突き抜けた。近走内容の良さがそのまま結果につながった。",
-      "xPostText": "【ルスツ特別(1勝クラス)回顧】1着 エイシンインアウト(3番人気 5.4倍) / 2着 ハルフロンティア / 3着 マイネルマスター。エイシンインアウトは条件が噛み合って突き抜けた。近走内容の良さがそのまま結果につながった。 #ルスツ特別",
-      "reasons": [
-        "近走内容の良さがそのまま結果につながった"
       ]
     },
     "horses": [
@@ -7973,14 +7930,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "popularity": 11,
           "odds": 18
         }
-      ]
-    },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:36.817Z",
-      "summary": "マーシヴィガラスは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった。",
-      "xPostText": "【ＷＡＳＪ第３戦(2勝クラス)回顧】1着 マーシヴィガラス(12番人気 86.5倍) / 2着 ローズマイスター / 3着 アオハルブルース。マーシヴィガラスは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった。 #ＷＡＳＪ第３戦",
-      "reasons": [
-        "先行力を生かしやすい舞台だった"
       ]
     },
     "horses": [
@@ -8624,16 +8573,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "popularity": 15,
           "odds": 206.2
         }
-      ]
-    },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:37.162Z",
-      "summary": "サウンドモリアーナは能力と条件が噛み合って押し切った。相対的に軽い斤量が効いた、先行力を生かしやすい舞台だった、近走の能力水準がこの相手では上位だった。",
-      "xPostText": "【キーンランドＣ回顧】1着 サウンドモリアーナ(5番人気 12.9倍) / 2着 パンジャタワー / 3着 ウインカーネリアン。サウンドモリアーナは能力と条件が噛み合って押し切った。相対的に軽い斤量が効いた、先行力を生かしやすい舞台だった、近走の能力水準がこの相手では上位だった。 #キーンランドＣ",
-      "reasons": [
-        "相対的に軽い斤量が効いた",
-        "先行力を生かしやすい舞台だった",
-        "近走の能力水準がこの相手では上位だった"
       ]
     },
     "horses": [
@@ -9309,14 +9248,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:37.553Z",
-      "summary": "ミリオンクラウンは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった。",
-      "xPostText": "【ＷＡＳＪ第４戦(2勝クラス)回顧】1着 ミリオンクラウン(2番人気 4.3倍) / 2着 マイネルフォルツァ / 3着 ワザモノ。ミリオンクラウンは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった。 #ＷＡＳＪ第４戦",
-      "reasons": [
-        "先行力を生かしやすい舞台だった"
-      ]
-    },
     "horses": [
       {
         "id": "1",
@@ -9984,15 +9915,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "popularity": 17,
           "odds": 274.8
         }
-      ]
-    },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:34.403Z",
-      "summary": "ショウナンザナドゥは条件が噛み合って突き抜けた。相対的に軽い斤量が効いた、先行力を生かしやすい舞台だった。",
-      "xPostText": "【朱鷺Ｓ回顧】1着 ショウナンザナドゥ(5番人気 12.4倍) / 2着 ガロンヌ / 3着 ララマセラシオン。ショウナンザナドゥは条件が噛み合って突き抜けた。相対的に軽い斤量が効いた、先行力を生かしやすい舞台だった。 #朱鷺Ｓ",
-      "reasons": [
-        "相対的に軽い斤量が効いた",
-        "先行力を生かしやすい舞台だった"
       ]
     },
     "horses": [
@@ -10737,16 +10659,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:34.716Z",
-      "summary": "ミスタートントンは能力と条件が噛み合って押し切った。先行力を生かしやすい舞台だった、近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。",
-      "xPostText": "【３歳未勝利回顧】1着 ミスタートントン(1番人気 1.7倍) / 2着 ジャメビュ / 3着 テリオスレイ。ミスタートントンは能力と条件が噛み合って押し切った。先行力を生かしやすい舞台だった、近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。 #３歳未勝利",
-      "reasons": [
-        "先行力を生かしやすい舞台だった",
-        "近走の能力水準がこの相手では上位だった",
-        "近走内容の良さがそのまま結果につながった"
-      ]
-    },
     "horses": [
       {
         "id": "1",
@@ -11340,16 +11252,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:37.799Z",
-      "summary": "レッチュベルクは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった、内目の枠からロスなく運べた、近走内容の良さがそのまま結果につながった。",
-      "xPostText": "【新潟２歳Ｓ回顧】1着 レッチュベルク(1番人気 2.8倍) / 2着 トウシンマジック / 3着 トップチェッカー。レッチュベルクは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった、内目の枠からロスなく運べた、近走内容の良さがそのまま結果につながった。 #新潟２歳Ｓ",
-      "reasons": [
-        "先行力を生かしやすい舞台だった",
-        "内目の枠からロスなく運べた",
-        "近走内容の良さがそのまま結果につながった"
-      ]
-    },
     "horses": [
       {
         "id": "1",
@@ -11827,15 +11729,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "popularity": 10,
           "odds": 143
         }
-      ]
-    },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:38.074Z",
-      "summary": "クリムゾンリーフは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった、近走内容の良さがそのまま結果につながった。",
-      "xPostText": "【３歳未勝利回顧】1着 クリムゾンリーフ(1番人気 1.4倍) / 2着 トルネードアイル / 3着 タニセンローマ。クリムゾンリーフは条件が噛み合って突き抜けた。先行力を生かしやすい舞台だった、近走内容の良さがそのまま結果につながった。 #３歳未勝利",
-      "reasons": [
-        "先行力を生かしやすい舞台だった",
-        "近走内容の良さがそのまま結果につながった"
       ]
     },
     "horses": [
@@ -12436,15 +12329,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "popularity": 11,
           "odds": 79
         }
-      ]
-    },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:35.061Z",
-      "summary": "チュウワメロディーは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。",
-      "xPostText": "【３歳未勝利回顧】1着 チュウワメロディー(1番人気 3.3倍) / 2着 アンガーザガール / 3着 スイートポメロ。チュウワメロディーは能力上位で押し切った。近走の能力水準がこの相手では上位だった、近走内容の良さがそのまま結果につながった。 #３歳未勝利",
-      "reasons": [
-        "近走の能力水準がこの相手では上位だった",
-        "近走内容の良さがそのまま結果につながった"
       ]
     },
     "horses": [
@@ -13201,16 +13085,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
         }
       ]
     },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:38.460Z",
-      "summary": "トリポリタニアは条件が噛み合って突き抜けた。距離短縮で追走負荷が軽くなった、直線で末脚を生かせる条件だった、近走内容の良さがそのまま結果につながった。",
-      "xPostText": "【名古屋城Ｓ回顧】1着 トリポリタニア(1番人気 3.1倍) / 2着 マーズオデッセイ / 3着 マリオロード。トリポリタニアは条件が噛み合って突き抜けた。距離短縮で追走負荷が軽くなった、直線で末脚を生かせる条件だった、近走内容の良さがそのまま結果につながった。 #名古屋城Ｓ",
-      "reasons": [
-        "距離短縮で追走負荷が軽くなった",
-        "直線で末脚を生かせる条件だった",
-        "近走内容の良さがそのまま結果につながった"
-      ]
-    },
     "horses": [
       {
         "id": "1",
@@ -13908,15 +13782,6 @@ export const GENERATED_ARCHIVED_RACES: GeneratedReviewRace[] = [
           "popularity": 16,
           "odds": 229.5
         }
-      ]
-    },
-    "review": {
-      "updatedAt": "2026-08-24T02:22:38.713Z",
-      "summary": "ヒッグスボソンは能力上位で押し切った。直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。",
-      "xPostText": "【３歳未勝利回顧】1着 ヒッグスボソン(9番人気 20.3倍) / 2着 ユウトザイシン / 3着 シャインゴーツ。ヒッグスボソンは能力上位で押し切った。直線で末脚を生かせる条件だった、近走の能力水準がこの相手では上位だった。 #３歳未勝利",
-      "reasons": [
-        "直線で末脚を生かせる条件だった",
-        "近走の能力水準がこの相手では上位だった"
       ]
     },
     "horses": [
