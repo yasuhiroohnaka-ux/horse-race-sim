@@ -34,7 +34,7 @@ test("calibratePlaceProb keeps the well-calibrated high band roughly intact", ()
   assert.ok(calibrated > 0.72 && calibrated < 0.92, `expected ~0.8, got ${calibrated}`);
 });
 
-// --- classification gates (v2.4) ---
+// --- classification gates (v3.1: 単勝主軸) ---
 
 test("null entry classifies as skip", () => {
   const hint = classifyHonmeiPick(null);
@@ -42,15 +42,39 @@ test("null entry classifies as skip", () => {
   assert.equal(hint.confidence, 0);
 });
 
-test("small field (<=9 horses) classifies as skip", () => {
+test("small field (<=9 horses) is a caution, not a skip", () => {
+  // v2.4 は少頭数を hard skip にしていたが、公式払戻で採点すると前半 単ROI14% →
+  // 後半 103% と反転し再現しなかった (n=12/21)。v3.1 では confidence 減点に降格。
+  const small = classifyHonmeiPick({ winProb: 0.6, placeProb: 0.85, odds: 2.0, fieldSize: 8 });
+  const large = classifyHonmeiPick({ winProb: 0.6, placeProb: 0.85, odds: 2.0, fieldSize: 14 });
+  assert.equal(small.classification, "win");
+  assert.equal(large.classification, "win");
+  assert.match(small.reason ?? "", /少頭数/);
+  assert.ok(small.confidence < large.confidence);
+});
+
+test("honmei at 4.0x or longer classifies as skip (混戦)", () => {
+  // 本命が4.0倍以上のレースは単的中が両半期で10-17%しかない出血セグメント
   const hint = classifyHonmeiPick({
     winProb: 0.6,
     placeProb: 0.85,
-    odds: 2.0,
-    fieldSize: 8,
+    odds: 4.5,
+    fieldSize: 14,
   });
   assert.equal(hint.classification, "skip");
-  assert.match(hint.reason ?? "", /少頭数/);
+  assert.match(hint.reason ?? "", /混戦/);
+});
+
+test("core win tier fires on calibrated win prob with market support", () => {
+  // calWin(0.5)≈0.32: T1 (>=0.35) は満たさないが T2 (>=0.30 かつ odds<4.0) で単勝勝負
+  const hint = classifyHonmeiPick({
+    winProb: 0.5,
+    placeProb: 0.85,
+    odds: 3.0,
+    fieldSize: 14,
+  });
+  assert.equal(hint.classification, "win");
+  assert.match(hint.reason ?? "", /堅軸/);
 });
 
 test("weak calibrated probs on both axes classify as skip", () => {
@@ -66,7 +90,7 @@ test("weak calibrated probs on both axes classify as skip", () => {
 });
 
 test("strong calibrated win credentials classify as win", () => {
-  // calWin(0.6)≈0.65 >= 0.35, calTanRoi ≈ 0.65 * 2.0 * 100 = 130 >= 95
+  // calWin(0.6)≈0.65 >= 0.35, calTanRoi ≈ 0.65 * 2.0 * 100 = 130 >= 95 → T1 本命級
   const hint = classifyHonmeiPick({
     winProb: 0.6,
     placeProb: 0.8,
@@ -74,6 +98,7 @@ test("strong calibrated win credentials classify as win", () => {
     fieldSize: 14,
   });
   assert.equal(hint.classification, "win");
+  assert.match(hint.reason ?? "", /本命級/);
 });
 
 test("stable place credentials without win strength classify as place", () => {
@@ -89,11 +114,12 @@ test("stable place credentials without win strength classify as place", () => {
 });
 
 test("intermediate band falls back to relaxed place with low confidence", () => {
-  // calWin(0.5)≈0.32, calPlace(0.68)≈0.55: skip でも win でも place 本則でもない
+  // calWin(0.48)≈0.27 は win の両ゲート未満、calPlace(0.68)≈0.55 は place 本則未満、
+  // calTanRoi ≈ 0.27 * 3.5 * 100 ≈ 94 は skip 基準超え → 中間帯
   const hint = classifyHonmeiPick({
-    winProb: 0.5,
+    winProb: 0.48,
     placeProb: 0.68,
-    odds: 3.0,
+    odds: 3.5,
     fieldSize: 14,
   });
   assert.equal(hint.classification, "place");
@@ -142,11 +168,11 @@ function buildRace(horseCount: number) {
   };
 }
 
-test("pickTanpukuPair emits v2.5 version and calibrated fields", () => {
+test("pickTanpukuPair emits v3.1 version and calibrated fields", () => {
   const result = pickTanpukuPair(buildRace(14));
   assert.ok(result);
-  assert.equal(result.scoringVersion, "tanpuku-place-v2.5");
-  assert.equal(TANPUKU_SCORING_VERSION, "tanpuku-place-v2.5");
+  assert.equal(result.scoringVersion, "tanpuku-win-v3.1");
+  assert.equal(TANPUKU_SCORING_VERSION, "tanpuku-win-v3.1");
   const winPick = result.winPick;
   assert.ok(winPick.classificationHint);
   assert.ok(["win", "place", "skip"].includes(winPick.classificationHint.classification));
@@ -156,10 +182,12 @@ test("pickTanpukuPair emits v2.5 version and calibrated fields", () => {
   assert.ok(winPick.calWinProb < winPick.winProb + 1e-9);
 });
 
-test("pickTanpukuPair on a small field yields skip classification", () => {
+test("pickTanpukuPair skips a honmei that is weak on both calibrated axes", () => {
+  // buildRace(8) の本命は 3.5倍 / calWin 0.13 / calPlace 0.50 → 両面基準未満で skip
   const result = pickTanpukuPair(buildRace(8));
   assert.ok(result);
   assert.equal(result.winPick.classificationHint.classification, "skip");
+  assert.match(result.winPick.classificationHint.reason ?? "", /基準未満/);
 });
 
 // --- v2.5: placeOdds model / overbet label / wide recommendation ---
@@ -260,8 +288,8 @@ test("fair_priced honmei gets an explanatory note without confidence change", ()
   });
   assert.match(fair.reason ?? "", /適正評価帯/);
   assert.doesNotMatch(overbet.reason ?? "", /適正評価帯/);
-  // fair_priced は confidence を変えない: place 分類の基準値 0.6 のまま
-  assert.equal(fair.classification, "place");
+  // fair_priced は confidence を変えない: win T2 (堅軸) の基準値 0.6 のまま
+  assert.equal(fair.classification, "win");
   assert.equal(fair.confidence, 0.6);
 });
 
