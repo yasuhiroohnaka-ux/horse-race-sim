@@ -1,19 +1,277 @@
 @import "tailwindcss";
 
+/* ===========================================================================
+   単勝ラボ — design tokens
+   ---------------------------------------------------------------------------
+   主題: 「単勝を当てる計器」。日中に数字を読む道具なので、通常面は紙、
+   電光掲示板 (board) だけを芝の深緑黒にして、そこに判定を光らせる。
+   色の主役は JRA の枠色8色。装飾ではなく馬を識別する機能色として使う。
+   =========================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- 紙面 (通常のデータ面) --- */
+  --paper: #edf0ea;
+  --paper-sunk: #e2e7dd;
+  --card: #ffffff;
+  --line: #d4dbd0;
+  --line-soft: #e5eae1;
+
+  /* --- 文字 --- */
+  --ink: #0f1512;
+  --ink-2: #46544c;
+  --ink-3: #78877e;
+
+  /* --- 掲示板 (夜の芝) --- */
+  --turf: #0d1712;
+  --turf-raised: #16241c;
+  --turf-line: #27392f;
+  --turf-ink: #e7ede9;
+  --turf-ink-2: #93a79c;
+
+  /* --- 判定 ---
+     大胆さは「勝負」だけに使う。抑えは輪郭、見送りは沈める。 */
+  --go: #e8940c;
+  --go-deep: #a4650a;
+  --go-wash: #fbeed3;
+
+  /* --- 結果・注記 ---
+     判定 (勝負/抑え/見送り) とは別の軸。既定の emerald/rose ではなく、
+     緑寄りの地に合わせて彩度を落とした色を使う。 */
+  --hit: #1c7a4e;
+  --hit-wash: #e0f0e6;
+  --miss: #a8402f;
+  --miss-wash: #f7e3df;
+  --note: #8a6a1c;
+  --note-wash: #f7edd7;
+  --info: #2b5f8f;
+  --info-wash: #e0eaf4;
+
+  /* --- 枠色 (JRA 1〜8枠)。lib/frameColor.ts がここを参照する --- */
+  --waku-1: #ffffff;
+  --waku-2: #191919;
+  --waku-3: #d6202f;
+  --waku-4: #1e5fbf;
+  --waku-5: #f2c400;
+  --waku-6: #1f9a56;
+  --waku-7: #f07b1d;
+  --waku-8: #ec8fa9;
+
+  /* --- 形 --- */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 14px;
+  --r-board: 20px;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-paper-sunk: var(--paper-sunk);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-turf: var(--turf);
+  --color-turf-raised: var(--turf-raised);
+  --color-turf-line: var(--turf-line);
+  --color-turf-ink: var(--turf-ink);
+  --color-turf-ink-2: var(--turf-ink-2);
+  --color-go: var(--go);
+  --color-go-deep: var(--go-deep);
+  --color-go-wash: var(--go-wash);
+  --color-hit: var(--hit);
+  --color-hit-wash: var(--hit-wash);
+  --color-miss: var(--miss);
+  --color-miss-wash: var(--miss-wash);
+  --color-note: var(--note);
+  --color-note-wash: var(--note-wash);
+  --color-info: var(--info);
+  --color-info-wash: var(--info-wash);
+  --font-display: var(--font-archivo), "Archivo", system-ui, sans-serif;
+  --font-sans: var(--font-jp), "Hiragino Kaku Gothic ProN", "Yu Gothic Medium", "Yu Gothic", sans-serif;
+  --font-mono: var(--font-chivo-mono), ui-monospace, monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-jp), "Hiragino Kaku Gothic ProN", "Yu Gothic Medium", "Yu Gothic",
+    "Noto Sans JP", sans-serif;
+  font-feature-settings: "palt" 1;
+}
+
+/* ---------------------------------------------------------------------------
+   Type
+   見出しは Archivo を幅広・高ウェイトで。掲示板の看板文字の質感を出す。
+   数値は Chivo Mono の等幅数字で桁を揃える (オッズ・確率・回収率)。
+   --------------------------------------------------------------------------- */
+
+.t-display {
+  font-family: var(--font-archivo), "Archivo", var(--font-jp), "Hiragino Kaku Gothic ProN",
+    "Yu Gothic Medium", "Yu Gothic", sans-serif;
+  font-variation-settings: "wdth" 112;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 0.94;
+}
+
+.t-title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+/* 小さな全大文字ラベル。データ表の見出しにだけ使い、多用しない */
+.t-label {
+  font-family: var(--font-archivo), "Archivo", var(--font-jp), sans-serif;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.t-num {
+  font-family: var(--font-chivo-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.02em;
+}
+
+/* ---------------------------------------------------------------------------
+   Surfaces
+   --------------------------------------------------------------------------- */
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+}
+
+.card-sunk {
+  background: var(--paper-sunk);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-md);
+}
+
+/* 電光掲示板。判定と当日の数字だけを載せる面 */
+.board {
+  background: var(--turf);
+  color: var(--turf-ink);
+  border-radius: var(--r-board);
+  border: 1px solid var(--turf-line);
+}
+
+/* ---------------------------------------------------------------------------
+   判定バッジ (単勝勝負 / 抑え / 見送り)
+   --------------------------------------------------------------------------- */
+
+.verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.verdict-go {
+  background: var(--go);
+  color: #241505;
+}
+
+.verdict-hold {
+  background: transparent;
+  color: var(--ink-2);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.verdict-pass {
+  background: var(--paper-sunk);
+  color: var(--ink-3);
+}
+
+.board .verdict-hold {
+  color: var(--turf-ink-2);
+  box-shadow: inset 0 0 0 1px var(--turf-line);
+}
+
+.board .verdict-pass {
+  background: var(--turf-raised);
+  color: var(--turf-ink-2);
+}
+
+/* ---------------------------------------------------------------------------
+   Controls
+   --------------------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--r-md);
+  padding: 0.6rem 1.05rem;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  transition: background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+
+.btn-go {
+  background: var(--go);
+  color: #241505;
+}
+.btn-go:hover { background: #f5a520; }
+
+.btn-quiet {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.btn-quiet:hover { background: var(--paper-sunk); }
+
+.board .btn-quiet {
+  color: var(--turf-ink);
+  box-shadow: inset 0 0 0 1px var(--turf-line);
+}
+.board .btn-quiet:hover { background: var(--turf-raised); }
+
+/* ---------------------------------------------------------------------------
+   Data tables — 数字は桁を揃える
+   --------------------------------------------------------------------------- */
+
+table th,
+table td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------------
+   Quality floor
+   --------------------------------------------------------------------------- */
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--go);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

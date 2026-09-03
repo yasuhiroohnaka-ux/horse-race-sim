@@ -18,7 +18,7 @@ export function InfoHint({
       type="button"
       title={content}
       aria-label={`${label}: ${content}`}
-      className={`inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-slate-300 bg-white text-slate-400 transition hover:border-slate-400 hover:text-slate-600 ${className}`}
+      className={`inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-line bg-card text-ink-3 transition hover:border-line hover:text-ink-2 ${className}`}
     >
       <CircleHelp size={11} />
     </button>

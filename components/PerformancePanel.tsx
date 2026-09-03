@@ -54,31 +54,31 @@ export function PerformancePanel() {
   const updatedAt = data?.performance?.updatedAt || data?.updatedAt || null;
 
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <section className="rounded-[var(--r-lg)] border border-line bg-card p-6 ">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold tracking-[0.2em] text-slate-400">TRACK RECORD</p>
-          <h2 className="mt-1 text-2xl font-bold text-slate-900">単複おすすめ成績</h2>
+          <p className="t-label">TRACK RECORD</p>
+          <h2 className="mt-1 text-2xl font-bold text-ink">単複おすすめ成績</h2>
         </div>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-ink-2">
           {updatedAt ? `最終更新: ${new Date(updatedAt).toLocaleString("ja-JP")}` : "毎週更新"}
         </p>
       </div>
 
-      {!weekly && !total && <p className="text-sm text-slate-500">まだ集計データがありません。</p>}
+      {!weekly && !total && <p className="text-sm text-ink-2">まだ集計データがありません。</p>}
 
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl bg-slate-50 p-4">
-          <p className="text-sm font-bold text-slate-900">週次 {weekly?.weekOf ? `(${weekly.weekOf})` : ""}</p>
-          <div className="mt-3 space-y-2 text-sm text-slate-600">
+        <div className="rounded-[var(--r-md)] bg-paper-sunk p-4">
+          <p className="text-sm font-bold text-ink">週次 {weekly?.weekOf ? `(${weekly.weekOf})` : ""}</p>
+          <div className="mt-3 space-y-2 text-sm text-ink-2">
             <p>単: 的中率 {pct(weekly?.tanHits ?? 0, weekly?.bets ?? 0)}% / 回収率 {pct(weekly?.tanPayout ?? 0, weekly?.tanStake ?? 0)}%</p>
             <p>複: 的中率 {pct(weekly?.fukuHits ?? 0, weekly?.bets ?? 0)}% / 回収率 {pct(weekly?.fukuPayout ?? 0, weekly?.fukuStake ?? 0)}%</p>
           </div>
         </div>
 
-        <div className="rounded-2xl bg-slate-50 p-4">
-          <p className="text-sm font-bold text-slate-900">累計</p>
-          <div className="mt-3 space-y-2 text-sm text-slate-600">
+        <div className="rounded-[var(--r-md)] bg-paper-sunk p-4">
+          <p className="text-sm font-bold text-ink">累計</p>
+          <div className="mt-3 space-y-2 text-sm text-ink-2">
             <p>単: 的中率 {pct(total?.tanHits ?? 0, total?.bets ?? 0)}% / 回収率 {pct(total?.tanPayout ?? 0, total?.tanStake ?? 0)}%</p>
             <p>複: 的中率 {pct(total?.fukuHits ?? 0, total?.bets ?? 0)}% / 回収率 {pct(total?.fukuPayout ?? 0, total?.fukuStake ?? 0)}%</p>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { SiteRail } from "@/components/SiteRail";
 import Link from "next/link";
 import {
   CartesianGrid,
@@ -115,10 +116,10 @@ function parsePct(value: string | undefined): number | null {
 
 function roiCellClass(value: string | undefined): string {
   const roi = parsePct(value);
-  if (roi === null) return "text-slate-400";
-  if (roi >= 100) return "font-bold text-emerald-600";
-  if (roi < 70) return "text-rose-600";
-  return "text-slate-900";
+  if (roi === null) return "text-ink-3";
+  if (roi >= 100) return "font-bold text-hit";
+  if (roi < 70) return "text-miss";
+  return "text-ink";
 }
 
 function formatDateTime(iso: string | undefined | null): string {
@@ -149,10 +150,10 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-      <p className="text-xs font-semibold tracking-[0.2em] text-slate-400">{label}</p>
-      <h2 className="mt-2 text-xl font-bold text-slate-900">{title}</h2>
-      {description && <p className="mt-1 text-xs leading-5 text-slate-500">{description}</p>}
+    <section className="rounded-[var(--r-lg)] border border-line bg-card p-6 ">
+      <p className="t-label">{label}</p>
+      <h2 className="mt-2 text-xl font-bold text-ink">{title}</h2>
+      {description && <p className="mt-1 text-xs leading-5 text-ink-2">{description}</p>}
       <div className="mt-4">{children}</div>
     </section>
   );
@@ -162,10 +163,10 @@ function ClassStatTable({ data, caption }: { data: ClassMap | undefined; caption
   const order: Array<"place" | "win" | "skip"> = ["place", "win", "skip"];
   return (
     <div className="overflow-x-auto">
-      {caption && <p className="mb-2 text-xs font-semibold text-slate-500">{caption}</p>}
+      {caption && <p className="mb-2 text-xs font-semibold text-ink-2">{caption}</p>}
       <table className="w-full min-w-[480px] text-xs">
         <thead>
-          <tr className="border-b border-slate-200 text-slate-500">
+          <tr className="border-b border-line text-ink-2">
             <th className="px-2 py-2 text-left">分類</th>
             <th className="px-2 py-2 text-right">n</th>
             <th className="px-2 py-2 text-right">単的中</th>
@@ -180,11 +181,11 @@ function ClassStatTable({ data, caption }: { data: ClassMap | undefined; caption
             const stat = data?.[key];
             if (!stat) return null;
             return (
-              <tr key={key} className="border-b border-slate-100">
-                <td className="px-2 py-2 font-semibold text-slate-900">{CLASS_LABELS[key]}</td>
-                <td className="px-2 py-2 text-right text-slate-600">{stat.n}</td>
-                <td className="px-2 py-2 text-right text-slate-600">{stat.tanHit}</td>
-                <td className="px-2 py-2 text-right text-slate-600">{stat.fukuHit}</td>
+              <tr key={key} className="border-b border-line-soft">
+                <td className="px-2 py-2 font-semibold text-ink">{CLASS_LABELS[key]}</td>
+                <td className="px-2 py-2 text-right text-ink-2">{stat.n}</td>
+                <td className="px-2 py-2 text-right text-ink-2">{stat.tanHit}</td>
+                <td className="px-2 py-2 text-right text-ink-2">{stat.fukuHit}</td>
                 <td className={`px-2 py-2 text-right ${roiCellClass(stat.tanRoi)}`}>{stat.tanRoi}</td>
                 <td className={`px-2 py-2 text-right ${roiCellClass(stat.fukuRoi)}`}>{stat.fukuRoi}</td>
                 <td className={`px-2 py-2 text-right ${roiCellClass(stat.wideRoi)}`}>{stat.wideRoi}</td>
@@ -202,7 +203,7 @@ function LogLossTable({ win, place }: { win: LogLossRow | undefined; place: LogL
     <div className="overflow-x-auto">
       <table className="w-full min-w-[420px] text-xs">
         <thead>
-          <tr className="border-b border-slate-200 text-slate-500">
+          <tr className="border-b border-line text-ink-2">
             <th className="px-2 py-2 text-left">logLoss (小さいほど良い)</th>
             <th className="px-2 py-2 text-right">生モデル</th>
             <th className="px-2 py-2 text-right">市場単体</th>
@@ -211,19 +212,19 @@ function LogLossTable({ win, place }: { win: LogLossRow | undefined; place: LogL
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b border-slate-100">
-            <td className="px-2 py-2 font-semibold text-slate-900">winProb</td>
-            <td className="px-2 py-2 text-right text-slate-600">{formatLogLoss(win?.rawModel)}</td>
-            <td className="px-2 py-2 text-right text-slate-600">{formatLogLoss(win?.rawMarket)}</td>
-            <td className="px-2 py-2 text-right font-semibold text-slate-900">{formatLogLoss(win?.deployed)}</td>
-            <td className="px-2 py-2 text-right text-slate-600">{formatLogLoss(win?.candidate)}</td>
+          <tr className="border-b border-line-soft">
+            <td className="px-2 py-2 font-semibold text-ink">winProb</td>
+            <td className="px-2 py-2 text-right text-ink-2">{formatLogLoss(win?.rawModel)}</td>
+            <td className="px-2 py-2 text-right text-ink-2">{formatLogLoss(win?.rawMarket)}</td>
+            <td className="px-2 py-2 text-right font-semibold text-ink">{formatLogLoss(win?.deployed)}</td>
+            <td className="px-2 py-2 text-right text-ink-2">{formatLogLoss(win?.candidate)}</td>
           </tr>
-          <tr className="border-b border-slate-100">
-            <td className="px-2 py-2 font-semibold text-slate-900">placeProb</td>
-            <td className="px-2 py-2 text-right text-slate-600">{formatLogLoss(place?.rawModel)}</td>
-            <td className="px-2 py-2 text-right text-slate-400">-</td>
-            <td className="px-2 py-2 text-right font-semibold text-slate-900">{formatLogLoss(place?.deployed)}</td>
-            <td className="px-2 py-2 text-right text-slate-600">{formatLogLoss(place?.candidate)}</td>
+          <tr className="border-b border-line-soft">
+            <td className="px-2 py-2 font-semibold text-ink">placeProb</td>
+            <td className="px-2 py-2 text-right text-ink-2">{formatLogLoss(place?.rawModel)}</td>
+            <td className="px-2 py-2 text-right text-ink-3">-</td>
+            <td className="px-2 py-2 text-right font-semibold text-ink">{formatLogLoss(place?.deployed)}</td>
+            <td className="px-2 py-2 text-right text-ink-2">{formatLogLoss(place?.candidate)}</td>
           </tr>
         </tbody>
       </table>
@@ -233,14 +234,14 @@ function LogLossTable({ win, place }: { win: LogLossRow | undefined; place: LogL
 
 function AlertBanner({ tone, title, body }: { tone: "critical" | "warning" | "ok" | "info"; title: string; body: string }) {
   const styles: Record<string, string> = {
-    critical: "border-rose-200 bg-rose-50 text-rose-800",
-    warning: "border-amber-200 bg-amber-50 text-amber-800",
-    ok: "border-emerald-200 bg-emerald-50 text-emerald-800",
-    info: "border-slate-200 bg-white text-slate-700",
+    critical: "border-miss bg-miss-wash text-miss",
+    warning: "border-note bg-note-wash text-note",
+    ok: "border-hit bg-hit-wash text-hit",
+    info: "border-line bg-card text-ink-2",
   };
   const icons: Record<string, string> = { critical: "⛔", warning: "⚠", ok: "✓", info: "ℹ" };
   return (
-    <div className={`rounded-2xl border px-4 py-3 text-sm ${styles[tone]}`}>
+    <div className={`rounded-[var(--r-md)] border px-4 py-3 text-sm ${styles[tone]}`}>
       <p className="font-bold">
         <span className="mr-2" aria-hidden>{icons[tone]}</span>
         {title}
@@ -296,33 +297,24 @@ export default function MonitorPage() {
   const holdoutPlaceWideRoi = parsePct(holdout?.deployedClassification?.place?.wideRoi);
 
   return (
-    <div className="min-h-screen bg-slate-100 px-4 py-6 md:px-8 md:py-10">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <section className="overflow-hidden rounded-[32px] bg-slate-900 text-white shadow-2xl">
-          <div className="px-6 py-8 md:px-10 md:py-10">
-            <p className="text-xs font-semibold tracking-[0.2em] text-slate-400">MODEL MONITOR</p>
-            <h1 className="mt-2 text-3xl font-black tracking-[0.08em] md:text-4xl">モデル監視ダッシュボード</h1>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
-              校正レポート (calibration-report) をそのまま画面化したものです。成績評価は
-              live_pre_race (発走前のライブ予測) を正とし、遡及分はフィット補助に限定しています。
+    <div className="min-h-screen bg-paper">
+      <SiteRail current="/monitor" />
+      <div className="mx-auto max-w-6xl space-y-5 px-4 py-5 md:px-6 md:py-7">
+        <header className="flex flex-col gap-3 border-b border-line pb-5 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="t-label">Model monitor</p>
+            <h1 className="t-title mt-1.5 text-[26px]">モデル監視</h1>
+            <p className="mt-2 max-w-3xl text-[13px] leading-6 text-ink-2">
+              校正レポートをそのまま画面にしたものです。成績は発走前のライブ予測 (live_pre_race) を正とし、
+              遡及分はフィット補助に限定しています。
             </p>
-            <p className="mt-3 text-xs text-slate-400">
-              レポート生成: {formatDateTime(report?.generatedAt)} / 対象: 確定済み本命 {report?.sampleSize ?? "-"} 件 (
-              {report?.dateRange?.from ?? "-"} 〜 {report?.dateRange?.to ?? "-"})
-            </p>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <Link href="/" className="rounded-full border border-slate-600 px-5 py-2 text-xs font-bold text-slate-100 transition hover:bg-slate-800">
-                トップへ
-              </Link>
-              <Link href="/sim" className="rounded-full border border-slate-600 px-5 py-2 text-xs font-bold text-slate-100 transition hover:bg-slate-800">
-                シミュレーター
-              </Link>
-              <Link href="/archive" className="rounded-full border border-slate-600 px-5 py-2 text-xs font-bold text-slate-100 transition hover:bg-slate-800">
-                レース回顧
-              </Link>
-            </div>
           </div>
-        </section>
+          <p className="t-num shrink-0 text-[11px] leading-5 text-ink-3 lg:text-right">
+            生成 {formatDateTime(report?.generatedAt)}
+            <br />
+            確定本命 {report?.sampleSize ?? "-"} 件 ({report?.dateRange?.from ?? "-"} 〜 {report?.dateRange?.to ?? "-"})
+          </p>
+        </header>
 
         {failed && (
           <AlertBanner
@@ -369,20 +361,20 @@ export default function MonitorPage() {
               description="直近50件を取り置いた再フィット検証。全条件を満たした場合のみ --write-coefficients で係数を更新します。"
             >
               <div className="grid gap-2 text-xs md:grid-cols-2">
-                <div className={`rounded-xl px-3 py-2 ${gate?.candidateWinBeatsMarket ? "bg-emerald-50 text-emerald-700" : "bg-slate-50 text-slate-500"}`}>
+                <div className={`rounded-[var(--r-md)] px-3 py-2 ${gate?.candidateWinBeatsMarket ? "bg-hit-wash text-hit" : "bg-paper-sunk text-ink-2"}`}>
                   {gate?.candidateWinBeatsMarket ? "✓" : "✗"} win 候補係数が市場単体に勝つ
                 </div>
-                <div className={`rounded-xl px-3 py-2 ${gate?.candidateWinNoWorseThanDeployed ? "bg-emerald-50 text-emerald-700" : "bg-slate-50 text-slate-500"}`}>
+                <div className={`rounded-[var(--r-md)] px-3 py-2 ${gate?.candidateWinNoWorseThanDeployed ? "bg-hit-wash text-hit" : "bg-paper-sunk text-ink-2"}`}>
                   {gate?.candidateWinNoWorseThanDeployed ? "✓" : "✗"} win 候補係数が配備係数以上
                 </div>
-                <div className={`rounded-xl px-3 py-2 ${gate?.candidatePlaceNoWorseThanDeployed ? "bg-emerald-50 text-emerald-700" : "bg-slate-50 text-slate-500"}`}>
+                <div className={`rounded-[var(--r-md)] px-3 py-2 ${gate?.candidatePlaceNoWorseThanDeployed ? "bg-hit-wash text-hit" : "bg-paper-sunk text-ink-2"}`}>
                   {gate?.candidatePlaceNoWorseThanDeployed ? "✓" : "✗"} place 候補係数が配備係数以上
                 </div>
-                <div className={`rounded-xl px-3 py-2 font-bold ${gate?.shouldWriteCoefficients ? "bg-emerald-100 text-emerald-800" : "bg-amber-50 text-amber-700"}`}>
+                <div className={`rounded-[var(--r-md)] px-3 py-2 font-bold ${gate?.shouldWriteCoefficients ? "bg-hit-wash text-hit" : "bg-note-wash text-note"}`}>
                   {gate?.shouldWriteCoefficients ? "→ ゲート通過: 係数更新を実行してよい" : "→ ゲート未通過: 係数は据え置き"}
                 </div>
               </div>
-              <p className="mt-3 text-xs text-slate-500">
+              <p className="mt-3 text-xs text-ink-2">
                 配備係数の学習: {report.winCalibration?.deployedMeta?.sampleSize ?? "-"} 件 (
                 {report.winCalibration?.deployedMeta?.dateRange?.from ?? "-"} 〜{" "}
                 {report.winCalibration?.deployedMeta?.dateRange?.to ?? "-"}) / 検証窓:{" "}
@@ -436,11 +428,11 @@ export default function MonitorPage() {
                     </ResponsiveContainer>
                   </div>
                   <details className="mt-3">
-                    <summary className="cursor-pointer text-xs font-semibold text-slate-500">週次の数値テーブルを開く</summary>
+                    <summary className="cursor-pointer text-xs font-semibold text-ink-2">週次の数値テーブルを開く</summary>
                     <div className="mt-2 overflow-x-auto">
                       <table className="w-full min-w-[480px] text-xs">
                         <thead>
-                          <tr className="border-b border-slate-200 text-slate-500">
+                          <tr className="border-b border-line text-ink-2">
                             <th className="px-2 py-2 text-left">週 (月曜起点)</th>
                             <th className="px-2 py-2 text-right">本命数</th>
                             <th className="px-2 py-2 text-right">単勝ROI</th>
@@ -450,12 +442,12 @@ export default function MonitorPage() {
                         </thead>
                         <tbody>
                           {trend.map((point) => (
-                            <tr key={point.weekOf} className="border-b border-slate-100">
-                              <td className="px-2 py-2 text-slate-900">{point.weekOf}</td>
-                              <td className="px-2 py-2 text-right text-slate-600">{point.bets}</td>
+                            <tr key={point.weekOf} className="border-b border-line-soft">
+                              <td className="px-2 py-2 text-ink">{point.weekOf}</td>
+                              <td className="px-2 py-2 text-right text-ink-2">{point.bets}</td>
                               <td className={`px-2 py-2 text-right ${roiCellClass(`${point.tanRoi}%`)}`}>{point.tanRoi.toFixed(1)}%</td>
                               <td className={`px-2 py-2 text-right ${roiCellClass(`${point.fukuRoi}%`)}`}>{point.fukuRoi.toFixed(1)}%</td>
-                              <td className={`px-2 py-2 text-right ${point.wideRoi === null ? "text-slate-400" : roiCellClass(`${point.wideRoi}%`)}`}>
+                              <td className={`px-2 py-2 text-right ${point.wideRoi === null ? "text-ink-3" : roiCellClass(`${point.wideRoi}%`)}`}>
                                 {point.wideRoi === null ? "-" : `${point.wideRoi.toFixed(1)}%`}
                               </td>
                             </tr>
@@ -466,7 +458,7 @@ export default function MonitorPage() {
                   </details>
                 </>
               ) : (
-                <p className="text-sm text-slate-500">live_pre_race の確定データがまだありません。</p>
+                <p className="text-sm text-ink-2">live_pre_race の確定データがまだありません。</p>
               )}
             </SectionCard>
 
@@ -495,7 +487,7 @@ export default function MonitorPage() {
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[480px] text-xs">
                   <thead>
-                    <tr className="border-b border-slate-200 text-slate-500">
+                    <tr className="border-b border-line text-ink-2">
                       <th className="px-2 py-2 text-left">区分</th>
                       <th className="px-2 py-2 text-right">n</th>
                       <th className="px-2 py-2 text-right">単的中</th>
@@ -513,11 +505,11 @@ export default function MonitorPage() {
                       ] as const
                     ).map(([label, bucket]) =>
                       bucket ? (
-                        <tr key={label} className="border-b border-slate-100">
-                          <td className="px-2 py-2 font-semibold text-slate-900">{label}</td>
-                          <td className="px-2 py-2 text-right text-slate-600">{bucket.overall.n}</td>
-                          <td className="px-2 py-2 text-right text-slate-600">{bucket.overall.tanHit}</td>
-                          <td className="px-2 py-2 text-right text-slate-600">{bucket.overall.fukuHit}</td>
+                        <tr key={label} className="border-b border-line-soft">
+                          <td className="px-2 py-2 font-semibold text-ink">{label}</td>
+                          <td className="px-2 py-2 text-right text-ink-2">{bucket.overall.n}</td>
+                          <td className="px-2 py-2 text-right text-ink-2">{bucket.overall.tanHit}</td>
+                          <td className="px-2 py-2 text-right text-ink-2">{bucket.overall.fukuHit}</td>
                           <td className={`px-2 py-2 text-right ${roiCellClass(bucket.overall.tanRoi)}`}>{bucket.overall.tanRoi}</td>
                           <td className={`px-2 py-2 text-right ${roiCellClass(bucket.overall.fukuRoi)}`}>{bucket.overall.fukuRoi}</td>
                           <td className={`px-2 py-2 text-right ${roiCellClass(bucket.overall.wideRoi)}`}>{bucket.overall.wideRoi}</td>
@@ -537,7 +529,7 @@ export default function MonitorPage() {
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[520px] text-xs">
                   <thead>
-                    <tr className="border-b border-slate-200 text-slate-500">
+                    <tr className="border-b border-line text-ink-2">
                       <th className="px-2 py-2 text-left">帯</th>
                       <th className="px-2 py-2 text-right">n</th>
                       <th className="px-2 py-2 text-right">単ROI</th>
@@ -547,9 +539,9 @@ export default function MonitorPage() {
                   </thead>
                   <tbody>
                     {(report.marketGapBands ?? []).map((band) => (
-                      <tr key={band.band} className="border-b border-slate-100">
-                        <td className="px-2 py-2 text-slate-900">{band.band}</td>
-                        <td className="px-2 py-2 text-right text-slate-600">{band.n}</td>
+                      <tr key={band.band} className="border-b border-line-soft">
+                        <td className="px-2 py-2 text-ink">{band.band}</td>
+                        <td className="px-2 py-2 text-right text-ink-2">{band.n}</td>
                         <td className={`px-2 py-2 text-right ${roiCellClass(band.tanRoi)}`}>{band.tanRoi}</td>
                         <td className={`px-2 py-2 text-right ${roiCellClass(band.fukuRoi)}`}>{band.fukuRoi}</td>
                         <td className={`px-2 py-2 text-right ${roiCellClass(band.wideRoi)}`}>{band.wideRoi}</td>
@@ -576,7 +568,7 @@ export default function MonitorPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full min-w-[360px] text-xs">
                       <thead>
-                        <tr className="border-b border-slate-200 text-slate-500">
+                        <tr className="border-b border-line text-ink-2">
                           <th className="px-2 py-2 text-left">帯</th>
                           <th className="px-2 py-2 text-right">n</th>
                           <th className="px-2 py-2 text-right">生値平均</th>
@@ -586,12 +578,12 @@ export default function MonitorPage() {
                       </thead>
                       <tbody>
                         {(buckets ?? []).map((bucket) => (
-                          <tr key={bucket.band} className="border-b border-slate-100">
-                            <td className="px-2 py-2 text-slate-900">{bucket.band}</td>
-                            <td className="px-2 py-2 text-right text-slate-600">{bucket.n}</td>
-                            <td className="px-2 py-2 text-right text-slate-600">{bucket.avgRaw}</td>
-                            <td className="px-2 py-2 text-right font-semibold text-slate-900">{bucket.avgCalibrated}</td>
-                            <td className="px-2 py-2 text-right text-slate-600">{bucket.actual}</td>
+                          <tr key={bucket.band} className="border-b border-line-soft">
+                            <td className="px-2 py-2 text-ink">{bucket.band}</td>
+                            <td className="px-2 py-2 text-right text-ink-2">{bucket.n}</td>
+                            <td className="px-2 py-2 text-right text-ink-2">{bucket.avgRaw}</td>
+                            <td className="px-2 py-2 text-right font-semibold text-ink">{bucket.avgCalibrated}</td>
+                            <td className="px-2 py-2 text-right text-ink-2">{bucket.actual}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -602,38 +594,38 @@ export default function MonitorPage() {
             </div>
 
             <SectionCard label="MODEL INFO" title="係数・補助モデル情報">
-              <div className="grid gap-3 text-xs text-slate-600 md:grid-cols-3">
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="font-bold text-slate-900">配備係数 (win / place)</p>
+              <div className="grid gap-3 text-xs text-ink-2 md:grid-cols-3">
+                <div className="rounded-[var(--r-md)] bg-paper-sunk p-4">
+                  <p className="font-bold text-ink">配備係数 (win / place)</p>
                   <p className="mt-2">
                     win: a={report.winCalibration?.deployedCoef?.a ?? "-"}, b={report.winCalibration?.deployedCoef?.b ?? "-"}
                   </p>
                   <p>
                     place: a={report.placeCalibration?.deployedCoef?.a ?? "-"}, b={report.placeCalibration?.deployedCoef?.b ?? "-"}
                   </p>
-                  <p className="mt-2 text-slate-400">学習: {formatDateTime(report.winCalibration?.deployedMeta?.fittedAt)}</p>
+                  <p className="mt-2 text-ink-3">学習: {formatDateTime(report.winCalibration?.deployedMeta?.fittedAt)}</p>
                 </div>
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="font-bold text-slate-900">全件再フィット候補 (参考)</p>
+                <div className="rounded-[var(--r-md)] bg-paper-sunk p-4">
+                  <p className="font-bold text-ink">全件再フィット候補 (参考)</p>
                   <p className="mt-2">
                     win: a={report.winCalibration?.coef?.a ?? "-"}, b={report.winCalibration?.coef?.b ?? "-"}
                   </p>
                   <p>
                     place: a={report.placeCalibration?.coef?.a ?? "-"}, b={report.placeCalibration?.coef?.b ?? "-"}
                   </p>
-                  <p className="mt-2 text-slate-400">更新ゲート通過時のみ採用</p>
+                  <p className="mt-2 text-ink-3">更新ゲート通過時のみ採用</p>
                 </div>
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="font-bold text-slate-900">複勝オッズ近似 (実払戻OLS)</p>
+                <div className="rounded-[var(--r-md)] bg-paper-sunk p-4">
+                  <p className="font-bold text-ink">複勝オッズ近似 (実払戻OLS)</p>
                   <p className="mt-2">
                     placeOdds ≈ 単勝オッズ × {report.placeOddsModel?.slope ?? "-"} + {report.placeOddsModel?.intercept ?? "-"}
                   </p>
-                  <p className="mt-2 text-slate-400">n={report.placeOddsModel?.sampleSize ?? "-"} (的中サンプルのみ)</p>
+                  <p className="mt-2 text-ink-3">n={report.placeOddsModel?.sampleSize ?? "-"} (的中サンプルのみ)</p>
                 </div>
               </div>
             </SectionCard>
 
-            <footer className="pb-4 text-center text-xs text-slate-400">
+            <footer className="pb-4 text-center text-xs text-ink-3">
               データ更新: 週次ルーチンの回顧ステージ後に自動再生成 / 手動更新は node scripts/calibration-report.mjs
             </footer>
           </>

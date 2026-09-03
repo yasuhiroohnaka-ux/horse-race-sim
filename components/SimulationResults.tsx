@@ -44,10 +44,10 @@ interface SimulationResultsProps {
 }
 
 const MARKET_GAP_BADGES: Record<string, { label: string; className: string }> = {
-  fair_priced: { label: "一致", className: "bg-emerald-50 text-emerald-700" },
-  overbet_moderate: { label: "過熱中", className: "bg-amber-50 text-amber-700" },
-  overbet_high: { label: "過熱大", className: "bg-rose-50 text-rose-700" },
-  underbet: { label: "過小", className: "bg-blue-50 text-blue-700" },
+  fair_priced: { label: "一致", className: "bg-hit-wash text-hit" },
+  overbet_moderate: { label: "過熱中", className: "bg-note-wash text-note" },
+  overbet_high: { label: "過熱大", className: "bg-miss-wash text-miss" },
+  underbet: { label: "過小", className: "bg-info-wash text-info" },
 };
 
 function getSignalTone(label: string): string {
@@ -56,16 +56,16 @@ function getSignalTone(label: string): string {
     case "市場先行":
     case "能力漏れ注目":
     case "条件替わり注目":
-      return "text-amber-700 bg-amber-50";
+      return "text-note bg-note-wash";
     case "市場盲点":
     case "プロ先行妙味":
-      return "text-emerald-700 bg-emerald-50";
+      return "text-hit bg-hit-wash";
     case "ガチ勢先行":
-      return "text-amber-700 bg-amber-50";
+      return "text-note bg-note-wash";
     case "一般人気先行":
-      return "text-blue-700 bg-blue-50";
+      return "text-info bg-info-wash";
     default:
-      return "text-slate-600 bg-slate-100";
+      return "text-ink-2 bg-paper";
   }
 }
 
@@ -97,17 +97,17 @@ function TrendFocusItem({
   rows: ReturnType<typeof buildRaceAnalysisRows>;
 }) {
   return (
-    <div className="rounded-md border border-slate-200 bg-white px-3 py-2">
-      <p className="text-[11px] font-bold text-slate-500">{label}</p>
+    <div className="rounded-md border border-line bg-card px-3 py-2">
+      <p className="text-[11px] font-bold text-ink-2">{label}</p>
       <div className="mt-1 space-y-1">
         {rows.length > 0 ? rows.slice(0, 3).map((row) => (
           <div key={row.horseId} className="flex items-center justify-between gap-2 text-xs">
-            <span className="truncate font-semibold text-slate-900">{row.name}</span>
-            <span className="shrink-0 text-slate-500">
+            <span className="truncate font-semibold text-ink">{row.name}</span>
+            <span className="shrink-0 text-ink-2">
               {row.adjustedRank ? `参考${row.adjustedRank}位` : `${row.simWinRate.toFixed(1)}%`}
             </span>
           </div>
-        )) : <p className="text-xs text-slate-400">該当なし</p>}
+        )) : <p className="text-xs text-ink-3">該当なし</p>}
       </div>
     </div>
   );
@@ -188,89 +188,89 @@ export function SimulationResults({
   const valueGapFocusRows = valueGapRows.length > 0 ? valueGapRows : isNhkMile ? satsukiRows : [];
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-[var(--r-md)] border border-line bg-card p-5 ">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold tracking-[0.2em] text-slate-400">SIMULATION RESULT</p>
-          <h2 className="text-lg font-bold text-slate-900">100回試走の結果</h2>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="t-label">SIMULATION RESULT</p>
+          <h2 className="text-lg font-bold text-ink">100回試走の結果</h2>
+          <p className="mt-1 text-xs text-ink-2">
             青は試走勝率、濃紺は一般市場の期待値、金はガチ勢市場の期待値です。
           </p>
-          <p className="mt-1 text-[11px] text-slate-400">各指標名の ? にカーソルを合わせると説明が出ます。</p>
+          <p className="mt-1 text-[11px] text-ink-3">各指標名の ? にカーソルを合わせると説明が出ます。</p>
         </div>
-        <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+        <div className="rounded-full bg-paper px-3 py-1 text-xs font-medium text-ink-2">
           {course.name}
         </div>
       </div>
 
       <div className="mb-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
-          <p className="text-[11px] font-semibold tracking-wide text-blue-500">
+        <div className="rounded-[var(--r-md)] border border-info bg-info-wash p-4">
+          <p className="text-[11px] font-semibold tracking-wide text-info">
             <MetricLabel
               label="勝ちやすい馬"
               help={SUMMARY_CARD_DESCRIPTIONS.strongest}
-              toneClassName="text-blue-500"
+              toneClassName="text-info"
             />
           </p>
-          <p className="mt-1 text-base font-bold text-slate-900">{strongest?.name ?? "-"}</p>
-          <p className="mt-1 text-xs text-slate-600">試走 {strongest?.simWinRate?.toFixed(1) ?? "-"}% / フェア {strongest?.fairOdds?.toFixed(1) ?? "-"}倍</p>
+          <p className="mt-1 text-base font-bold text-ink">{strongest?.name ?? "-"}</p>
+          <p className="mt-1 text-xs text-ink-2">試走 {strongest?.simWinRate?.toFixed(1) ?? "-"}% / フェア {strongest?.fairOdds?.toFixed(1) ?? "-"}倍</p>
         </div>
-        <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
-          <p className="text-[11px] font-semibold tracking-wide text-amber-600">
+        <div className="rounded-[var(--r-md)] border border-note bg-note-wash p-4">
+          <p className="text-[11px] font-semibold tracking-wide text-note">
             <MetricLabel
               label="市場注目馬"
               help={SUMMARY_CARD_DESCRIPTIONS.marketWatch}
-              toneClassName="text-amber-600"
+              toneClassName="text-note"
             />
           </p>
-          <p className="mt-1 text-base font-bold text-slate-900">{riskyFavorite?.name ?? "-"}</p>
-          <p className="mt-1 text-xs font-semibold text-amber-700">{riskyFavorite?.signalDetailLabel ?? "市場注目"}</p>
-          <p className="mt-1 text-xs text-slate-600">公式 {riskyFavorite?.officialImplied?.toFixed(1) ?? "-"}% に対し試走 {riskyFavorite?.simWinRate?.toFixed(1) ?? "-"}%</p>
-          <p className="mt-1 text-[11px] leading-5 text-slate-500">{riskyFavorite?.signalReason ?? "市場注目の理由は集計中です。"}</p>
+          <p className="mt-1 text-base font-bold text-ink">{riskyFavorite?.name ?? "-"}</p>
+          <p className="mt-1 text-xs font-semibold text-note">{riskyFavorite?.signalDetailLabel ?? "市場注目"}</p>
+          <p className="mt-1 text-xs text-ink-2">公式 {riskyFavorite?.officialImplied?.toFixed(1) ?? "-"}% に対し試走 {riskyFavorite?.simWinRate?.toFixed(1) ?? "-"}%</p>
+          <p className="mt-1 text-[11px] leading-5 text-ink-2">{riskyFavorite?.signalReason ?? "市場注目の理由は集計中です。"}</p>
         </div>
-        <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-          <p className="text-[11px] font-semibold tracking-wide text-emerald-600">
+        <div className="rounded-[var(--r-md)] border border-hit bg-hit-wash p-4">
+          <p className="text-[11px] font-semibold tracking-wide text-hit">
             <MetricLabel
               label="妙味候補"
               help={SUMMARY_CARD_DESCRIPTIONS.valueHorse}
-              toneClassName="text-emerald-600"
+              toneClassName="text-hit"
             />
           </p>
-          <p className="mt-1 text-base font-bold text-slate-900">{valueHorse?.name ?? "-"}</p>
-          <p className="mt-1 text-xs text-slate-600">試走 {valueHorse?.simWinRate?.toFixed(1) ?? "-"}% / 公式 {valueHorse?.officialOdds?.toFixed(1) ?? "-"}倍</p>
+          <p className="mt-1 text-base font-bold text-ink">{valueHorse?.name ?? "-"}</p>
+          <p className="mt-1 text-xs text-ink-2">試走 {valueHorse?.simWinRate?.toFixed(1) ?? "-"}% / 公式 {valueHorse?.officialOdds?.toFixed(1) ?? "-"}倍</p>
         </div>
-        <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
-          <p className="text-[11px] font-semibold tracking-wide text-amber-600">
+        <div className="rounded-[var(--r-md)] border border-note bg-note-wash p-4">
+          <p className="text-[11px] font-semibold tracking-wide text-note">
             <MetricLabel
               label="一般市場 vs ガチ勢市場"
               help={SUMMARY_CARD_DESCRIPTIONS.disagreement}
-              toneClassName="text-amber-600"
+              toneClassName="text-note"
             />
           </p>
-          <p className="mt-1 text-base font-bold text-slate-900">{disagreement?.name ?? "-"}</p>
-          <p className="mt-1 text-xs text-slate-600">期待値差 {disagreement?.marketExpertGap?.toFixed(1) ?? "-"}pt</p>
+          <p className="mt-1 text-base font-bold text-ink">{disagreement?.name ?? "-"}</p>
+          <p className="mt-1 text-xs text-ink-2">期待値差 {disagreement?.marketExpertGap?.toFixed(1) ?? "-"}pt</p>
         </div>
       </div>
 
       {hasTrendRows && (
-        <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50/70 p-4">
+        <div className="mb-5 rounded-lg border border-note bg-note-wash/70 p-4">
           <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
             <div>
-              <p className="text-sm font-bold text-amber-900">{trendProfile?.raceName ?? "レース"} 傾向チェック</p>
-              <p className="mt-1 text-xs leading-5 text-amber-800">
+              <p className="text-sm font-bold text-note">{trendProfile?.raceName ?? "レース"} 傾向チェック</p>
+              <p className="mt-1 text-xs leading-5 text-note">
                 trend hints は買い目・注釈用の参考層です。補正後参考順位は勝率ではなく、試走結果に軽い傾向補正を足した比較用スコアです。
               </p>
             </div>
             {isNhkMile && (
-              <span className="rounded-full border border-amber-300 bg-white px-2 py-1 text-[11px] font-bold text-amber-700">
+              <span className="rounded-full border border-note bg-card px-2 py-1 text-[11px] font-bold text-note">
                 荒れ要素確認
               </span>
             )}
           </div>
           {trendProfile && trendProfile.notes.length > 0 && (
-            <ul className="mb-3 space-y-1 rounded-md border border-amber-200 bg-white px-3 py-2">
+            <ul className="mb-3 space-y-1 rounded-md border border-note bg-card px-3 py-2">
               {trendProfile.notes.map((note, index) => (
-                <li key={index} className="text-[11px] leading-5 text-amber-900">
+                <li key={index} className="text-[11px] leading-5 text-note">
                   {note}
                 </li>
               ))}
@@ -289,12 +289,12 @@ export function SimulationResults({
 
       <RaceTrendNotesPanel notes={raceTrendNotes} heuristicHints={raceHeuristicHints} />
 
-      <div className="mb-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-        <div className="mb-2 flex flex-wrap gap-2 text-[11px] text-slate-500">
-          <span className="rounded-full bg-white px-3 py-1">馬場 {condition.groundCondition}</span>
-          <span className="rounded-full bg-white px-3 py-1">天気 {condition.weather}</span>
-          <span className="rounded-full bg-white px-3 py-1">風 {condition.windDirection} {condition.windSpeed}m/s</span>
-          <span className="rounded-full bg-white px-3 py-1">展開 {condition.paceScenario}</span>
+      <div className="mb-5 rounded-[var(--r-md)] border border-line bg-paper-sunk p-4">
+        <div className="mb-2 flex flex-wrap gap-2 text-[11px] text-ink-2">
+          <span className="rounded-full bg-card px-3 py-1">馬場 {condition.groundCondition}</span>
+          <span className="rounded-full bg-card px-3 py-1">天気 {condition.weather}</span>
+          <span className="rounded-full bg-card px-3 py-1">風 {condition.windDirection} {condition.windSpeed}m/s</span>
+          <span className="rounded-full bg-card px-3 py-1">展開 {condition.paceScenario}</span>
         </div>
         <div style={{ height: Math.max(320, chartRows.length * 42) }}>
           <ResponsiveContainer width="100%" height="100%">
@@ -330,7 +330,7 @@ export function SimulationResults({
           } w-full border-collapse text-xs`}
         >
           <thead>
-            <tr className="border-y border-slate-200 bg-slate-50 text-slate-500">
+            <tr className="border-y border-line bg-paper-sunk text-ink-2">
               <th className="px-2 py-2 text-center">順位</th>
               <th className="px-2 py-2 text-center">馬番</th>
               <th className="px-2 py-2 text-left">馬名</th>
@@ -392,8 +392,8 @@ export function SimulationResults({
               const previousRaceEvidence = formatPreviousRaceEvidence(row.horse);
 
               return (
-                <tr key={row.horseId} className="border-b border-slate-100 hover:bg-slate-50/70">
-                  <td className="px-2 py-2 text-center font-semibold text-slate-500">#{index + 1}</td>
+                <tr key={row.horseId} className="border-b border-line-soft hover:bg-paper-sunk/70">
+                  <td className="px-2 py-2 text-center font-semibold text-ink-2">#{index + 1}</td>
                   <td className="px-2 py-2 text-center">
                     <span
                       className="inline-flex min-w-8 items-center justify-center rounded border px-2 py-1 font-bold"
@@ -407,23 +407,23 @@ export function SimulationResults({
                     </span>
                   </td>
                   <td className="px-2 py-2">
-                    <div className="font-semibold text-slate-900">{row.name}</div>
-                    <div className="text-[10px] text-slate-400">{row.jockey}</div>
+                    <div className="font-semibold text-ink">{row.name}</div>
+                    <div className="text-[10px] text-ink-3">{row.jockey}</div>
                     {hasTrendRows && previousRaceEvidence && (
-                      <div className="text-[10px] text-slate-400">{previousRaceEvidence}</div>
+                      <div className="text-[10px] text-ink-3">{previousRaceEvidence}</div>
                     )}
                   </td>
-                  <td className="px-2 py-2 text-right font-semibold text-slate-900">{row.displayAbilityScore.toFixed(1)}</td>
-                  <td className="px-2 py-2 text-right font-semibold text-blue-600">{row.simWinRate.toFixed(1)}%</td>
+                  <td className="px-2 py-2 text-right font-semibold text-ink">{row.displayAbilityScore.toFixed(1)}</td>
+                  <td className="px-2 py-2 text-right font-semibold text-info">{row.simWinRate.toFixed(1)}%</td>
                   {hasCalibrated && (() => {
                     const cal = calibratedByHorseId.get(row.horseId);
                     const badge = cal?.marketGapLabel ? MARKET_GAP_BADGES[cal.marketGapLabel] : undefined;
                     return (
                       <>
-                        <td className="px-2 py-2 text-right font-semibold text-slate-900">
+                        <td className="px-2 py-2 text-right font-semibold text-ink">
                           {cal ? `${(cal.calWinProb * 100).toFixed(1)}%` : "-"}
                         </td>
-                        <td className="px-2 py-2 text-right font-semibold text-slate-900">
+                        <td className="px-2 py-2 text-right font-semibold text-ink">
                           {cal ? `${(cal.calPlaceProb * 100).toFixed(1)}%` : "-"}
                         </td>
                         <td className="px-2 py-2 text-center">
@@ -432,7 +432,7 @@ export function SimulationResults({
                               {badge.label}
                             </span>
                           ) : (
-                            <span className="text-slate-300">-</span>
+                            <span className="text-turf-ink-2">-</span>
                           )}
                         </td>
                       </>
@@ -442,13 +442,13 @@ export function SimulationResults({
                     <>
                       <td className="px-2 py-2 text-center">
                         <div className="space-y-0.5">
-                          <div className={`font-semibold ${Number(row.trendAdjustment ?? 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                          <div className={`font-semibold ${Number(row.trendAdjustment ?? 0) >= 0 ? "text-hit" : "text-miss"}`}>
                             {formatTrendAdjustment(row.trendAdjustment)}
                           </div>
-                          <div className="text-[10px] text-slate-400">
+                          <div className="text-[10px] text-ink-3">
                             素点{row.originalRank ?? index + 1}位 → 補正後参考{row.adjustedRank ?? index + 1}位
                           </div>
-                          <div className="text-[10px] text-slate-400">
+                          <div className="text-[10px] text-ink-3">
                             参考スコア {Number(row.adjustedScore ?? row.baseScore ?? 0).toFixed(3)}
                           </div>
                         </div>
@@ -461,43 +461,43 @@ export function SimulationResults({
                                 key={hint.id}
                                 title={`${hint.evidenceLabel ? `${hint.evidenceLabel} / ` : ""}${hint.explanation} / 補正 ${formatTrendAdjustment(hint.adjustment)} / confidence ${hint.confidence.toFixed(2)} / sample ${hint.sampleSize}`}
                                 className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                                  hint.adjustment >= 0 ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
+                                  hint.adjustment >= 0 ? "bg-hit-wash text-hit" : "bg-miss-wash text-miss"
                                 }`}
                               >
                                 {hint.label}
                               </span>
                             ))}
                             {row.matchedTrendHints.length > 3 && (
-                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
+                              <span className="rounded-full bg-paper px-2 py-0.5 text-[10px] font-semibold text-ink-2">
                                 +{row.matchedTrendHints.length - 3}
                               </span>
                             )}
                           </div>
                         ) : (
-                          <span className="text-[10px] text-slate-300">trendなし</span>
+                          <span className="text-[10px] text-turf-ink-2">trendなし</span>
                         )}
                       </td>
                     </>
                   )}
-                  <td className="px-2 py-2 text-right text-slate-600">{row.fairOdds ? `${row.fairOdds.toFixed(1)}倍` : "-"}</td>
+                  <td className="px-2 py-2 text-right text-ink-2">{row.fairOdds ? `${row.fairOdds.toFixed(1)}倍` : "-"}</td>
                   <td className="px-2 py-2 text-right">
-                    <div className="font-medium text-slate-900">{row.officialOdds ? `${row.officialOdds.toFixed(1)}倍` : "-"}</div>
-                    <div className="text-[10px] text-slate-400">{row.officialImplied.toFixed(1)}%</div>
+                    <div className="font-medium text-ink">{row.officialOdds ? `${row.officialOdds.toFixed(1)}倍` : "-"}</div>
+                    <div className="text-[10px] text-ink-3">{row.officialImplied.toFixed(1)}%</div>
                   </td>
                   <td className="px-2 py-2 text-right">
-                    <div className="font-medium text-amber-700">{row.expertOdds ? `${row.expertOdds.toFixed(1)}倍` : "-"}</div>
-                    <div className="text-[10px] text-amber-500">{row.expertImplied.toFixed(1)}%</div>
+                    <div className="font-medium text-note">{row.expertOdds ? `${row.expertOdds.toFixed(1)}倍` : "-"}</div>
+                    <div className="text-[10px] text-note">{row.expertImplied.toFixed(1)}%</div>
                   </td>
-                  <td className={`px-2 py-2 text-right font-semibold ${row.officialGap >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                  <td className={`px-2 py-2 text-right font-semibold ${row.officialGap >= 0 ? "text-hit" : "text-miss"}`}>
                     {row.officialGap >= 0 ? `+${row.officialGap.toFixed(1)}` : row.officialGap.toFixed(1)}pt
                   </td>
-                  <td className={`px-2 py-2 text-right font-semibold ${row.expertGap >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                  <td className={`px-2 py-2 text-right font-semibold ${row.expertGap >= 0 ? "text-hit" : "text-miss"}`}>
                     {row.expertGap >= 0 ? `+${row.expertGap.toFixed(1)}` : row.expertGap.toFixed(1)}pt
                   </td>
-                  <td className={`px-2 py-2 text-right font-semibold ${row.marketExpertGap >= 0 ? "text-amber-600" : "text-blue-600"}`}>
+                  <td className={`px-2 py-2 text-right font-semibold ${row.marketExpertGap >= 0 ? "text-note" : "text-info"}`}>
                     {row.marketExpertGap >= 0 ? `+${row.marketExpertGap.toFixed(1)}` : row.marketExpertGap.toFixed(1)}pt
                   </td>
-                  <td className="px-2 py-2 text-right text-slate-600">{row.buzzShare.toFixed(1)}%</td>
+                  <td className="px-2 py-2 text-right text-ink-2">{row.buzzShare.toFixed(1)}%</td>
                   <td className="px-2 py-2 text-center">
                     <span
                       title={getSignalDescription(row.signalDetailLabel ?? row.signalLabel, row.signalReason)}
@@ -516,26 +516,26 @@ export function SimulationResults({
       <div className="mt-5 flex flex-wrap justify-end gap-3">
         <button
           onClick={onReset}
-          className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+          className="rounded-full border border-line px-4 py-2 text-sm font-medium text-ink-2 transition hover:bg-paper-sunk"
         >
           条件を見直す
         </button>
         <button
           onClick={onRunAgain}
           disabled={isRunning}
-          className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+          className="rounded-full border border-line px-4 py-2 text-sm font-medium text-ink-2 transition hover:bg-paper-sunk disabled:opacity-50"
         >
           {isRunning ? "再試走中..." : "もう一度100回試走"}
         </button>
         <button
           onClick={onPostPreRaceToX}
-          className="rounded-full bg-black px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+          className="rounded-full bg-black px-5 py-2 text-sm font-semibold text-white transition hover:bg-turf-raised"
         >
           単複予想をX投稿
         </button>
         <button
           onClick={onPostToMarketFocusToX}
-          className="rounded-full border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-700 transition hover:bg-amber-50"
+          className="rounded-full border border-note px-4 py-2 text-sm font-semibold text-note transition hover:bg-note-wash"
         >
           市場注目馬をX投稿
         </button>

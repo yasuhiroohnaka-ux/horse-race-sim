@@ -4,7 +4,7 @@
 
 ## 現在の状態
 
-- アプリ名: `KEIBA GAP LAB`
+- アプリ名: `単勝ラボ` (旧 KEIBA GAP LAB)
 - 目的: 能力値・適性・馬場条件と、市場オッズのズレを比較してレースを読む
 - 主な画面
   - `/`: 今週の対象レース一覧
@@ -199,3 +199,106 @@
 - `app/api/calibration-report/route.ts` (新規): レポート JSON の提供 + live_pre_race 限定の週次ROI推移 (単勝/複勝/ワイド、pair 決済ベース) を review-records から集計
 - トップページのヒーローに「モデル監視」ボタンを追加
 - 表示のみの変更でエンジンには不干渉。レポートは週次ルーチンが自動再生成するため、ダッシュボードは常に最新の監視値を映す
+
+## 2026-09-03 current state: tanpuku-win-v3.1 (単勝主軸・的中率維持型)
+
+### 経緯
+Antigravity による監査 (`data/analysis/2026-09-03-win-v3-audit-and-evaluation.md`) が
+tanpuku-win-v3.0 を提案したが、検証したところ主要な数値が再現しなかったため revert した。
+評価の詳細は `data/analysis/2026-09-03-win-v3-claude-review.md`。要点:
+
+- 監査は払戻を「事前オッズ×100」で計算していた。公式払戻で採点し直すと、根拠だった
+  「シミュレータ rank1 ベタ買い 114.5%」は **85.6%**、「20倍以上帯 193%」は **50.5%** になる。
+- v3.0 の実測は ベタ買い 81.2% / class win 86.0%(n=222) で、v2.5 (86.6% / 103.9%) より劣化していた。
+
+### v3.1 の方針: 選定順位は触らず、判定層だけを単勝主軸にする
+本命の選び方を placeScore / 能力スコア / 市場1番人気 の3方式で比較したが、全333件で
+的中 31.2% / 30.3% / 30.6%、単ROI 82.0% / 81.7% / 80.2% とほぼ同着だった。
+選定順位の入れ替えに再現性のある利得はないので **placeScore 順のまま**とし、
+`classifyHonmeiPick` だけを作り替えた。
+
+閾値は前半166件のみで決定し、後半167件で検証している。分割検証で両半期とも単調だった
+シグナルは `calWinProb` と `odds` の2つだけで、`calTanRoi` (v3.0 が穴ゲートに使った指標) と
+`fieldSize` は前後半で符号が反転するため判定には使わない。
+
+- `win` T1 本命級: 校正勝率 ≥ 0.35 かつ 校正単ROI ≥ 95
+- `win` T2 堅軸: 校正勝率 ≥ 0.30 かつ オッズ < 4.0
+- `skip` 混戦: 本命オッズ ≥ 4.0 (単的中が両半期で 10-17% しかない出血帯)
+- `skip` 両面弱: 校正複勝率 < 0.52 かつ 校正単ROI < 85 (v2.4 から据え置き)
+- 少頭数 (≤9頭) は hard skip をやめて confidence 減点に降格
+  (公式払戻で採点すると 前半 単ROI 14.2% → 後半 102.9% と反転し再現しなかった)
+
+### 実測 (scripts/backtest-selection.mjs、事前オッズで選定・公式払戻で採点、333レース)
+
+| class | v2.5 | **v3.1** |
+| --- | --- | --- |
+| win | n=38 的中 44.7% ROI 110.0% | **n=141 的中 46.8% ROI 98.2%** |
+| place | n=239 的中 30.1% ROI 83.5% | n=83 的中 28.9% ROI 83.0% |
+| skip | n=56 的中 26.8% ROI 56.4% | n=109 的中 12.8% ROI 60.2% |
+
+単勝で勝負できるレースが 38 → 141 (11% → 42%) に増え、的中率は 44.7% → 46.8%。
+時系列分割でも安定している (train n=82 43.9%/99.3%、holdout n=59 50.8%/96.8%)。
+`calibration-report.mjs` 側の独立集計でも 事後 holdout の class win が n=40 的中 52.5% / 単ROI 100.5%、
+class skip が n=30 的中 6.7% / 単ROI 23.0%。
+
+**到達点の正直な整理**: win クラスの単勝ROI は約 95-100% であって 110% ではない。
+n=333・的中47% では 95%CI が [79.6, 117.0] 開くので「控除率20%を上回った」とは言えない。
+v3.1 が確実に言えるのは「買う対象を 42% に絞り、その中の的中率を 31% → 47% に上げ、
+ROI を 82% → 98% に改善した」ところまで。
+
+### 検証基盤 (今後の改変は必ずここを通す)
+`scripts/backtest-selection.mjs` を新設した。監査が踏んだ落とし穴を構造的に防ぐ:
+
+1. 採点は公式単勝払戻 (`result.finishers[].odds * 100` は全333レースで公式払戻と完全一致)
+2. 選定に渡すオッズは review-records の事前スナップショット値。アーカイブの
+   `horses[].realOdds` は確定オッズが混入しており (30倍超でも約49%が一致)、そのまま使うとリークになる
+3. ROI は必ずブートストラップ95%CI つきで出力
+
+```
+node scripts/backtest-selection.mjs --split=2026-05-30
+node scripts/backtest-selection.mjs --baseline=<旧モジュールのパス>   # A/B
+```
+
+旧バージョンとの A/B は `git show <rev>:lib/tanpukuSelection.mjs > lib/tanpukuSelection.old.mjs`
+で一時ファイルを作って `--baseline` に渡す (比較後は削除する)。
+
+### 変更ファイル
+- `lib/tanpukuSelection.mjs`: `TANPUKU_SCORING_VERSION` = `tanpuku-win-v3.1`、`CLASSIFY` 再設計、`classifyHonmeiPick` の順序変更
+- `lib/predictionSnapshots.ts`: `DEFAULT_SCORING_VERSION` 同期
+- `tests/tanpukuSelection.test.ts`: 新ゲートのテストを追加 (115本パス)
+- `scripts/backtest-selection.mjs`: 新規
+- `data/analysis/calibration-report.{md,json}`: 再生成 (選定順位が不変なので保存済み本命でそのまま評価できる)
+
+## 2026-09-03: 「単勝ラボ」へ改名 + デザインシステム導入
+
+### 改名
+`KEIBA GAP LAB` → **`単勝ラボ`** (Latin ロックアップは `Tansho Lab`)。
+`app/layout.tsx` の metadata、共通レール、各ページ見出しを更新済み。
+
+### デザイン方針
+主題を「単勝を当てる計器」と定め、既定の Tailwind パレットから専用トークンへ全面移行した。
+
+- **地**: 通常のデータ面は緑がかった紙色 `--paper #edf0ea`。芝の深緑黒 `--turf #0d1712` は
+  「電光掲示板」面 (`.board`) にだけ使い、そこに判定を光らせる
+- **色の主役**: JRA の枠色8色 `--waku-1〜8`。`lib/frameColor.ts` がこの CSS 変数を参照するので
+  枠色の値はリポジトリ内で1箇所しかない
+- **大胆さは1点に集中**: 彩度の高い色は「単勝勝負」の琥珀 `--go` だけ。抑えは輪郭線、見送りは沈める
+- **軸を2本に分離**: 判定 (勝負/抑え/見送り) と 結果 (的中/不的中/注記/参考) は別トークン。
+  結果側は既定の emerald/rose ではなく、緑寄りの地に合わせて彩度を落とした `--hit / --miss / --note / --info`
+- **書体**: Archivo (見出し・可変幅) / Chivo Mono (オッズ・確率・回収率の等幅数字) / Zen Kaku Gothic New (和文)
+
+### 主な変更
+- `app/globals.css`: トークン定義と共通クラス (`.board` `.card` `.verdict` `.btn` `.t-display` `.t-num` `.t-label`)
+- `components/SiteRail.tsx` (新規): 全ページ共通の上部レール。稼働中のエンジン版数を常時表示する
+- `app/page.tsx`: 全面刷新。ヒーローは掲示板で、**判定3クラスの実測値をそのまま出す**
+- `lib/engineScorecard.ts` (新規): トップの成績は `data/analysis/backtest-selection.json` を読む。
+  画面に数値を直書きしないので、ゲートを変えたのに表示だけ古いという状態にならない
+- `/sim` `/archive` `/monitor`: 共通レールを載せ、重複していた巨大ヒーローを撤去。配色をトークンへ移行
+- 影 (`shadow-*`) は全廃し、面は罫線で切る
+
+### 文体
+「〜を、〇〇する。」調は使わない。
+
+### 確認済み
+`npm test` 115本パス / `npx tsc --noEmit` エラー0 / `npm run build` 成功 /
+モバイル (375px) で横スクロールなし / フォーカスリングと `prefers-reduced-motion` 対応済み

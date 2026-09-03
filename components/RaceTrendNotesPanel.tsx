@@ -31,9 +31,9 @@ function TrendRowsTable({ rows }: { rows: RaceTrendRow[] }) {
   const extraKeys = getExtraKeys(rows);
 
   return (
-    <div className="mt-3 overflow-x-auto rounded-lg border border-slate-200">
+    <div className="mt-3 overflow-x-auto rounded-lg border border-line">
       <table className="min-w-[760px] w-full border-collapse text-xs">
-        <thead className="bg-slate-50 text-slate-500">
+        <thead className="bg-paper-sunk text-ink-2">
           <tr>
             <th className="whitespace-nowrap px-3 py-2 text-left font-semibold">項目</th>
             {hasRecordStats && (
@@ -53,18 +53,18 @@ function TrendRowsTable({ rows }: { rows: RaceTrendRow[] }) {
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={row.label} className="border-t border-slate-100 align-top">
-              <td className="whitespace-nowrap px-3 py-2 font-semibold text-slate-800">{row.label}</td>
+            <tr key={row.label} className="border-t border-line-soft align-top">
+              <td className="whitespace-nowrap px-3 py-2 font-semibold text-ink">{row.label}</td>
               {hasRecordStats && (
                 <>
-                  <td className="whitespace-nowrap px-3 py-2 text-slate-700">{row.record ?? "-"}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-right text-slate-700">{row.winRate ?? "-"}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-right text-slate-700">{row.quinellaRate ?? "-"}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-right text-slate-700">{row.showRate ?? "-"}</td>
+                  <td className="whitespace-nowrap px-3 py-2 text-ink-2">{row.record ?? "-"}</td>
+                  <td className="whitespace-nowrap px-3 py-2 text-right text-ink-2">{row.winRate ?? "-"}</td>
+                  <td className="whitespace-nowrap px-3 py-2 text-right text-ink-2">{row.quinellaRate ?? "-"}</td>
+                  <td className="whitespace-nowrap px-3 py-2 text-right text-ink-2">{row.showRate ?? "-"}</td>
                 </>
               )}
               {extraKeys.map((key) => (
-                <td key={key} className="max-w-[320px] px-3 py-2 leading-5 text-slate-700">
+                <td key={key} className="max-w-[320px] px-3 py-2 leading-5 text-ink-2">
                   {row.extra?.[key] ?? "-"}
                 </td>
               ))}
@@ -80,21 +80,21 @@ export function RaceTrendNotesPanel({ notes, heuristicHints = [] }: RaceTrendNot
   if (notes.length === 0) return null;
 
   return (
-    <details className="mb-5 rounded-lg border border-emerald-200 bg-emerald-50/70 p-4" open>
-      <summary className="cursor-pointer select-none text-sm font-bold text-emerald-950">
+    <details className="mb-5 rounded-lg border border-hit bg-hit-wash/70 p-4" open>
+      <summary className="cursor-pointer select-none text-sm font-bold text-hit">
         レース傾向メモ
       </summary>
 
-      <p className="mt-2 text-xs leading-5 text-emerald-900">
+      <p className="mt-2 text-xs leading-5 text-hit">
         スクショ由来の根拠メモです。印や買い目へ直接反映せず、前走・馬場・ローテの確認材料として表示します。
       </p>
 
       {heuristicHints.length > 0 && (
         <div className="mt-3 grid gap-2 md:grid-cols-3">
           {heuristicHints.map((hint) => (
-            <div key={hint.id} className="rounded-md border border-emerald-200 bg-white px-3 py-2">
-              <p className="text-[11px] font-bold text-emerald-700">{hint.label}</p>
-              <p className="mt-1 text-xs leading-5 text-slate-700">{hint.description}</p>
+            <div key={hint.id} className="rounded-md border border-hit bg-card px-3 py-2">
+              <p className="text-[11px] font-bold text-hit">{hint.label}</p>
+              <p className="mt-1 text-xs leading-5 text-ink-2">{hint.description}</p>
             </div>
           ))}
         </div>
@@ -102,25 +102,25 @@ export function RaceTrendNotesPanel({ notes, heuristicHints = [] }: RaceTrendNot
 
       <div className="mt-4 grid gap-3">
         {notes.map((note) => (
-          <article key={note.id} className="rounded-lg border border-emerald-100 bg-white p-4">
+          <article key={note.id} className="rounded-lg border border-hit bg-card p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-bold text-emerald-700">
+              <span className="rounded-full bg-hit-wash px-2 py-1 text-[11px] font-bold text-hit">
                 {CATEGORY_LABELS[note.category]}
               </span>
               {note.sourceLabel ? (
-                <span className="text-[11px] font-medium text-slate-400">{note.sourceLabel}</span>
+                <span className="text-[11px] font-medium text-ink-3">{note.sourceLabel}</span>
               ) : null}
             </div>
-            <h3 className="mt-2 text-base font-bold text-slate-950">{note.title}</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-700">{note.summary}</p>
-            <div className="mt-3 rounded-md border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm leading-6 text-emerald-950">
+            <h3 className="mt-2 text-base font-bold text-ink">{note.title}</h3>
+            <p className="mt-2 text-sm leading-6 text-ink-2">{note.summary}</p>
+            <div className="mt-3 rounded-md border border-hit bg-hit-wash px-3 py-2 text-sm leading-6 text-hit">
               <span className="font-bold">ポイント:</span> {note.point}
             </div>
 
             {note.rows?.length ? <TrendRowsTable rows={note.rows} /> : null}
 
             {note.cautions?.length ? (
-              <ul className="mt-3 list-disc space-y-1 pl-5 text-xs leading-5 text-slate-600">
+              <ul className="mt-3 list-disc space-y-1 pl-5 text-xs leading-5 text-ink-2">
                 {note.cautions.map((caution) => (
                   <li key={caution}>{caution}</li>
                 ))}

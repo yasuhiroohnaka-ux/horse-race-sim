@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { CalendarDays, Filter, RotateCcw, X } from "lucide-react";
+import { SiteRail } from "@/components/SiteRail";
 import {
   GENERATED_ARCHIVED_RACES,
   GENERATED_COMPLETED_RACES,
@@ -266,14 +267,14 @@ function getSampleReliability(raceCount: number): { label: string; className: st
   if (raceCount < 10) {
     return {
       label: "参考値",
-      className: "border-amber-200 bg-amber-50 text-amber-700",
+      className: "border-note bg-note-wash text-note",
       note: "対象Rが10未満のため、回収率は跳ねやすい参考値です。",
     };
   }
   if (raceCount < 30) {
     return {
       label: "検証中",
-      className: "border-sky-200 bg-sky-50 text-sky-700",
+      className: "border-info bg-info-wash text-info",
       note: "対象Rが30未満のため、傾向はまだ検証中です。",
     };
   }
@@ -292,22 +293,22 @@ function formatOutcome(value: string) {
 }
 
 function gradeTone(grade: ExpectationGrade | null) {
-  if (grade === "S") return "bg-rose-100 text-rose-700 border-rose-200";
-  if (grade === "A") return "bg-amber-100 text-amber-800 border-amber-200";
-  if (grade === "B") return "bg-sky-100 text-sky-800 border-sky-200";
-  if (grade === "C") return "bg-slate-100 text-slate-700 border-slate-200";
-  return "bg-slate-50 text-slate-400 border-slate-200";
+  if (grade === "S") return "bg-miss-wash text-miss border-miss";
+  if (grade === "A") return "bg-note-wash text-note border-note";
+  if (grade === "B") return "bg-info-wash text-info border-info";
+  if (grade === "C") return "bg-paper text-ink-2 border-line";
+  return "bg-paper-sunk text-ink-3 border-line";
 }
 
 function qualityTone(flag: DataQualityFlag) {
-  if (flag === "not live_pre_race") return "bg-amber-100 text-amber-800";
-  if (flag === "retrospective") return "bg-rose-100 text-rose-700";
-  if (flag === "legacy source unknown") return "bg-slate-200 text-slate-700";
+  if (flag === "not live_pre_race") return "bg-note-wash text-note";
+  if (flag === "retrospective") return "bg-miss-wash text-miss";
+  if (flag === "legacy source unknown") return "bg-paper-sunk text-ink-2";
   if (flag === "backfill") return "bg-purple-100 text-purple-700";
   if (flag === "saved_manual") return "bg-cyan-100 text-cyan-800";
-  if (flag === "snapshot after race") return "bg-rose-100 text-rose-700";
+  if (flag === "snapshot after race") return "bg-miss-wash text-miss";
   if (flag === "payout fallback") return "bg-orange-100 text-orange-800";
-  return "bg-slate-100 text-slate-700";
+  return "bg-paper text-ink-2";
 }
 
 function displayHorse(horseId?: string | null, horseName?: string | null) {
@@ -650,7 +651,7 @@ function SegmentButton<T extends string>({
       type="button"
       onClick={() => onClick(value)}
       className={`h-9 rounded-md border px-3 text-sm font-semibold transition ${
-        active ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-600 hover:border-slate-400"
+        active ? "border-ink bg-turf text-white" : "border-line bg-card text-ink-2 hover:border-line"
       }`}
     >
       {label}
@@ -660,9 +661,9 @@ function SegmentButton<T extends string>({
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="border-b border-slate-100 py-3">
-      <p className="text-xs font-semibold text-slate-500">{label}</p>
-      <div className="mt-1 text-sm font-medium text-slate-900">{value}</div>
+    <div className="border-b border-line-soft py-3">
+      <p className="text-xs font-semibold text-ink-2">{label}</p>
+      <div className="mt-1 text-sm font-medium text-ink">{value}</div>
     </div>
   );
 }
@@ -702,11 +703,11 @@ function PredictionVsResult({
     : null;
 
   return (
-    <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-      <p className="text-xs font-semibold tracking-[0.15em] text-slate-500">予測 vs 結果</p>
+    <div className="mt-4 rounded-[var(--r-md)] border border-line bg-paper-sunk p-4">
+      <p className="text-xs font-semibold tracking-[0.15em] text-ink-2">予測 vs 結果</p>
       <table className="mt-2 w-full text-xs">
         <thead>
-          <tr className="border-b border-slate-200 text-slate-500">
+          <tr className="border-b border-line text-ink-2">
             <th className="py-1.5 pr-2 text-left">予測</th>
             <th className="py-1.5 pr-2 text-left">馬名</th>
             <th className="py-1.5 pr-2 text-right">勝率</th>
@@ -718,11 +719,11 @@ function PredictionVsResult({
             const finish = finishLabel(String(row.horseId));
             const isHit = finish.endsWith("着") && finish !== "着外";
             return (
-              <tr key={row.horseId} className="border-b border-slate-100">
-                <td className="py-1.5 pr-2 text-slate-500">{row.rank}位</td>
-                <td className="py-1.5 pr-2 font-semibold text-slate-900">{row.horseName}</td>
-                <td className="py-1.5 pr-2 text-right text-slate-600">{Number(row.winProb ?? 0).toFixed(1)}%</td>
-                <td className={`py-1.5 text-right font-semibold ${isHit ? "text-emerald-600" : "text-slate-500"}`}>{finish}</td>
+              <tr key={row.horseId} className="border-b border-line-soft">
+                <td className="py-1.5 pr-2 text-ink-2">{row.rank}位</td>
+                <td className="py-1.5 pr-2 font-semibold text-ink">{row.horseName}</td>
+                <td className="py-1.5 pr-2 text-right text-ink-2">{Number(row.winProb ?? 0).toFixed(1)}%</td>
+                <td className={`py-1.5 text-right font-semibold ${isHit ? "text-hit" : "text-ink-2"}`}>{finish}</td>
               </tr>
             );
           })}
@@ -736,25 +737,25 @@ function PredictionVsResult({
               .map(({ horseId, index }) => {
                 const row = rankedRows.find((candidate) => String(candidate.horseId) === horseId) ?? null;
                 return (
-                  <tr key={`actual-${horseId}`} className="border-b border-slate-100 bg-amber-50/60">
-                    <td className="py-1.5 pr-2 text-slate-500">{row ? `${row.rank}位` : "圏外"}</td>
-                    <td className="py-1.5 pr-2 font-semibold text-slate-900">{row?.horseName ?? horseId}</td>
-                    <td className="py-1.5 pr-2 text-right text-slate-600">
+                  <tr key={`actual-${horseId}`} className="border-b border-line-soft bg-note-wash/60">
+                    <td className="py-1.5 pr-2 text-ink-2">{row ? `${row.rank}位` : "圏外"}</td>
+                    <td className="py-1.5 pr-2 font-semibold text-ink">{row?.horseName ?? horseId}</td>
+                    <td className="py-1.5 pr-2 text-right text-ink-2">
                       {row ? `${Number(row.winProb ?? 0).toFixed(1)}%` : "-"}
                     </td>
-                    <td className="py-1.5 text-right font-semibold text-amber-700">{index + 1}着</td>
+                    <td className="py-1.5 text-right font-semibold text-note">{index + 1}着</td>
                   </tr>
                 );
               })}
         </tbody>
       </table>
-      <div className="mt-3 space-y-1.5 text-[11px] leading-4 text-slate-600">
+      <div className="mt-3 space-y-1.5 text-[11px] leading-4 text-ink-2">
         <p>
-          <span className="font-semibold text-slate-700">本命の寄与内訳:</span> {formatContributors(honmeiRow)}
+          <span className="font-semibold text-ink-2">本命の寄与内訳:</span> {formatContributors(honmeiRow)}
         </p>
         {winnerRow && String(winnerRow.horseId) !== String(record?.honmei?.horseId ?? "") && (
           <p>
-            <span className="font-semibold text-slate-700">勝ち馬の寄与内訳:</span> {formatContributors(winnerRow)}
+            <span className="font-semibold text-ink-2">勝ち馬の寄与内訳:</span> {formatContributors(winnerRow)}
             {`(予測${winnerRow.rank}位)`}
           </p>
         )}
@@ -774,38 +775,38 @@ function ReturnSummaryCard({
 }) {
   const reliability = getSampleReliability(summary.raceCount);
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4">
+    <div className="rounded-lg border border-line bg-card p-4">
       <div className="flex items-center justify-between gap-3">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-sm font-bold text-slate-900">{title}</p>
+            <p className="text-sm font-bold text-ink">{title}</p>
             {reliability && (
               <span className={`rounded-full border px-2 py-0.5 text-[11px] font-bold ${reliability.className}`}>
                 {reliability.label}
               </span>
             )}
           </div>
-          <p className="mt-1 text-xs text-slate-500">{formatCount(summary.raceCount)}R / 単複各100円</p>
+          <p className="mt-1 text-xs text-ink-2">{formatCount(summary.raceCount)}R / 単複各100円</p>
         </div>
-        <div className="text-right text-xs text-slate-500">
+        <div className="text-right text-xs text-ink-2">
           <p>単 {summary.tanHitCount}/{summary.raceCount}</p>
           <p>複 {summary.fukuHitCount}/{summary.raceCount}</p>
         </div>
       </div>
       <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded-md bg-slate-50 p-3">
-          <p className="text-xs font-semibold text-slate-500">単勝回収率</p>
-          <p className="mt-1 text-2xl font-bold text-slate-900">{formatRate(summary.tanRoi)}</p>
-          <p className="mt-1 text-xs text-slate-500">的中率 {formatRate(summary.tanRate)}</p>
+        <div className="rounded-md bg-paper-sunk p-3">
+          <p className="text-xs font-semibold text-ink-2">単勝回収率</p>
+          <p className="mt-1 text-2xl font-bold text-ink">{formatRate(summary.tanRoi)}</p>
+          <p className="mt-1 text-xs text-ink-2">的中率 {formatRate(summary.tanRate)}</p>
         </div>
-        <div className="rounded-md bg-slate-50 p-3">
-          <p className="text-xs font-semibold text-slate-500">複勝回収率</p>
-          <p className="mt-1 text-2xl font-bold text-slate-900">{formatRate(summary.fukuRoi)}</p>
-          <p className="mt-1 text-xs text-slate-500">的中率 {formatRate(summary.fukuRate)}</p>
+        <div className="rounded-md bg-paper-sunk p-3">
+          <p className="text-xs font-semibold text-ink-2">複勝回収率</p>
+          <p className="mt-1 text-2xl font-bold text-ink">{formatRate(summary.fukuRoi)}</p>
+          <p className="mt-1 text-xs text-ink-2">的中率 {formatRate(summary.fukuRate)}</p>
         </div>
       </div>
-      {reliability ? <p className="mt-3 text-xs leading-5 text-amber-700">{reliability.note}</p> : null}
-      {note ? <p className="mt-3 text-xs leading-5 text-slate-500">{note}</p> : null}
+      {reliability ? <p className="mt-3 text-xs leading-5 text-note">{reliability.note}</p> : null}
+      {note ? <p className="mt-3 text-xs leading-5 text-ink-2">{note}</p> : null}
     </div>
   );
 }
@@ -814,14 +815,14 @@ function ReturnSummaryCard({
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function CategoryReturnStatsTable({ stats }: { stats: CategoryReturnStat[] }) {
   return (
-    <section className="mb-6 overflow-hidden rounded-lg border border-slate-200 bg-white">
-      <div className="border-b border-slate-100 px-4 py-3">
-        <p className="text-sm font-bold text-slate-900">カテゴリ別 単複回収率</p>
-        <p className="mt-1 text-xs text-slate-500">単勝100円・複勝100円、公式払戻で確定済みの本命推奨のみ集計</p>
+    <section className="mb-6 overflow-hidden rounded-lg border border-line bg-card">
+      <div className="border-b border-line-soft px-4 py-3">
+        <p className="text-sm font-bold text-ink">カテゴリ別 単複回収率</p>
+        <p className="mt-1 text-xs text-ink-2">単勝100円・複勝100円、公式払戻で確定済みの本命推奨のみ集計</p>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-100 text-sm">
-          <thead className="bg-slate-50 text-xs font-bold text-slate-500">
+          <thead className="bg-paper-sunk text-xs font-bold text-ink-2">
             <tr>
               <th className="px-4 py-3 text-left">区分</th>
               <th className="px-4 py-3 text-right">対象</th>
@@ -835,15 +836,15 @@ function CategoryReturnStatsTable({ stats }: { stats: CategoryReturnStat[] }) {
           <tbody className="divide-y divide-slate-100">
             {stats.map((stat) => (
               <tr key={stat.key}>
-                <td className="px-4 py-3 font-semibold text-slate-900">{stat.label}</td>
-                <td className="px-4 py-3 text-right text-slate-700">{formatCount(stat.raceCount)}R</td>
-                <td className="px-4 py-3 text-right font-bold text-slate-900">{formatRate(stat.tanReturnRate)}</td>
-                <td className="px-4 py-3 text-right font-bold text-slate-900">{formatRate(stat.fukuReturnRate)}</td>
-                <td className="px-4 py-3 text-right text-slate-700">{formatRate(stat.combinedReturnRate)}</td>
-                <td className="px-4 py-3 text-right text-slate-700">
+                <td className="px-4 py-3 font-semibold text-ink">{stat.label}</td>
+                <td className="px-4 py-3 text-right text-ink-2">{formatCount(stat.raceCount)}R</td>
+                <td className="px-4 py-3 text-right font-bold text-ink">{formatRate(stat.tanReturnRate)}</td>
+                <td className="px-4 py-3 text-right font-bold text-ink">{formatRate(stat.fukuReturnRate)}</td>
+                <td className="px-4 py-3 text-right text-ink-2">{formatRate(stat.combinedReturnRate)}</td>
+                <td className="px-4 py-3 text-right text-ink-2">
                   単{stat.tanHitCount}/{stat.raceCount}・複{stat.fukuHitCount}/{stat.raceCount}
                 </td>
-                <td className="px-4 py-3 text-right text-slate-700">
+                <td className="px-4 py-3 text-right text-ink-2">
                   単{formatPayout(stat.tanPayout)} / 複{formatPayout(stat.fukuPayout)}
                 </td>
               </tr>
@@ -857,17 +858,17 @@ function CategoryReturnStatsTable({ stats }: { stats: CategoryReturnStat[] }) {
 
 function CategoryReturnStatsTableWithReliability({ stats }: { stats: CategoryReturnStat[] }) {
   return (
-    <section className="mb-6 overflow-hidden rounded-lg border border-slate-200 bg-white">
-      <div className="border-b border-slate-100 px-4 py-3">
-        <p className="text-sm font-bold text-slate-900">カテゴリ別 単複回収率</p>
-        <p className="mt-1 text-xs text-slate-500">単勝100円・複勝100円、公式払戻で確定済みの本命推奨のみ集計</p>
-        <p className="mt-1 text-xs text-amber-700">
+    <section className="mb-6 overflow-hidden rounded-lg border border-line bg-card">
+      <div className="border-b border-line-soft px-4 py-3">
+        <p className="text-sm font-bold text-ink">カテゴリ別 単複回収率</p>
+        <p className="mt-1 text-xs text-ink-2">単勝100円・複勝100円、公式払戻で確定済みの本命推奨のみ集計</p>
+        <p className="mt-1 text-xs text-note">
           対象Rが10未満は参考値、30未満は検証中。少サンプルの高回収率だけでロジックは変更しません。
         </p>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-100 text-sm">
-          <thead className="bg-slate-50 text-xs font-bold text-slate-500">
+          <thead className="bg-paper-sunk text-xs font-bold text-ink-2">
             <tr>
               <th className="px-4 py-3 text-left">区分</th>
               <th className="px-4 py-3 text-right">対象</th>
@@ -883,7 +884,7 @@ function CategoryReturnStatsTableWithReliability({ stats }: { stats: CategoryRet
               const reliability = getSampleReliability(stat.raceCount);
               return (
                 <tr key={stat.key}>
-                  <td className="px-4 py-3 font-semibold text-slate-900">
+                  <td className="px-4 py-3 font-semibold text-ink">
                     <div className="flex flex-wrap items-center gap-2">
                       <span>{stat.label}</span>
                       {reliability && (
@@ -892,16 +893,16 @@ function CategoryReturnStatsTableWithReliability({ stats }: { stats: CategoryRet
                         </span>
                       )}
                     </div>
-                    {reliability && <p className="mt-1 text-[11px] font-normal text-slate-500">{reliability.note}</p>}
+                    {reliability && <p className="mt-1 text-[11px] font-normal text-ink-2">{reliability.note}</p>}
                   </td>
-                  <td className="px-4 py-3 text-right font-semibold text-slate-700">{formatCount(stat.raceCount)}R</td>
-                  <td className="px-4 py-3 text-right font-bold text-slate-900">{formatRate(stat.tanReturnRate)}</td>
-                  <td className="px-4 py-3 text-right font-bold text-slate-900">{formatRate(stat.fukuReturnRate)}</td>
-                  <td className="px-4 py-3 text-right text-slate-700">{formatRate(stat.combinedReturnRate)}</td>
-                  <td className="px-4 py-3 text-right text-slate-700">
+                  <td className="px-4 py-3 text-right font-semibold text-ink-2">{formatCount(stat.raceCount)}R</td>
+                  <td className="px-4 py-3 text-right font-bold text-ink">{formatRate(stat.tanReturnRate)}</td>
+                  <td className="px-4 py-3 text-right font-bold text-ink">{formatRate(stat.fukuReturnRate)}</td>
+                  <td className="px-4 py-3 text-right text-ink-2">{formatRate(stat.combinedReturnRate)}</td>
+                  <td className="px-4 py-3 text-right text-ink-2">
                     単{stat.tanHitCount}/{stat.raceCount}・複{stat.fukuHitCount}/{stat.raceCount}
                   </td>
-                  <td className="px-4 py-3 text-right text-slate-700">
+                  <td className="px-4 py-3 text-right text-ink-2">
                     単{formatPayout(stat.tanPayout)} / 複{formatPayout(stat.fukuPayout)}
                   </td>
                 </tr>
@@ -1000,105 +1001,108 @@ export default function ArchivePage() {
   const selectDate = (date: string) => setFilters((current) => ({ ...current, from: date, to: date }));
 
   return (
-    <main className="min-h-screen bg-stone-50 py-8 text-slate-900">
-      <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8">
-        <header className="mb-6 flex flex-col gap-3 border-b border-slate-200 pb-5 lg:flex-row lg:items-end lg:justify-between">
+    <main className="min-h-screen bg-paper text-ink">
+      <SiteRail current="/archive" />
+      <div className="mx-auto max-w-[1500px] px-4 py-5 sm:px-6 md:py-7 lg:px-8">
+        <header className="mb-5 flex flex-col gap-3 border-b border-line pb-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-sm font-semibold text-teal-700">Archive</p>
-            <h1 className="mt-1 text-3xl font-bold tracking-tight">回顧アーカイブ</h1>
+            <p className="t-label">Archive</p>
+            <h1 className="t-title mt-1.5 text-[26px]">回顧アーカイブ</h1>
+            <p className="mt-2 text-[13px] text-ink-2">確定したレースの予想と結果を突き合わせます。</p>
           </div>
-          <div className="grid grid-cols-3 gap-3 text-right text-sm">
+          <dl className="flex shrink-0 gap-6 text-right">
             <div>
-              <p className="text-slate-500">表示</p>
-              <p className="text-xl font-bold">{filteredRows.length}</p>
+              <dt className="t-label">表示中</dt>
+              <dd className="t-num mt-0.5 text-[22px] font-bold">{filteredRows.length}</dd>
             </div>
             <div>
-              <p className="text-slate-500">全件</p>
-              <p className="text-xl font-bold">{rows.length}</p>
+              <dt className="t-label">全件</dt>
+              <dd className="t-num mt-0.5 text-[22px] font-bold">{rows.length}</dd>
             </div>
             <div>
-              <p className="text-slate-500">読込</p>
-              <p className="text-xl font-bold">{isLoading ? "..." : "完了"}</p>
+              <dt className="t-label">読込</dt>
+              <dd className="mt-0.5 text-[15px] font-bold text-ink-2">{isLoading ? "読込中" : "完了"}</dd>
             </div>
-          </div>
+          </dl>
         </header>
 
-        <section className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
+        <section className="mb-6 rounded-lg border border-note bg-note-wash p-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm font-bold text-amber-950">sourceStatus guard</p>
-              <p className="mt-1 text-xs text-amber-800">
-                live_pre_race only is valid for live prediction performance. Retrospective / manual / unknown rows are shown for review, not live ROI.
+              <p className="text-[13px] font-bold text-note">ライブ予測だけが成績の対象です</p>
+              <p className="mt-1 text-xs text-note">
+                回収率の評価に使えるのは発走前に記録した live_pre_race だけです。遡及・手動・不明の行は
+                突き合わせ用に表示していますが、ライブ成績には数えていません。
               </p>
             </div>
             <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4 lg:min-w-[520px]">
               <div className="rounded-md bg-white/70 p-2">
-                <p className="font-semibold text-slate-500">live_pre_race</p>
-                <p className="text-lg font-bold text-emerald-700">{sourceStatusSummary?.livePreRaceRecords ?? 0}</p>
+                <p className="font-semibold text-ink-2">live_pre_race</p>
+                <p className="text-lg font-bold text-hit">{sourceStatusSummary?.livePreRaceRecords ?? 0}</p>
               </div>
               <div className="rounded-md bg-white/70 p-2">
-                <p className="font-semibold text-slate-500">retrospective</p>
-                <p className="text-lg font-bold text-amber-800">{sourceStatusSummary?.retrospectiveRecords ?? 0}</p>
+                <p className="font-semibold text-ink-2">retrospective</p>
+                <p className="text-lg font-bold text-note">{sourceStatusSummary?.retrospectiveRecords ?? 0}</p>
               </div>
               <div className="rounded-md bg-white/70 p-2">
-                <p className="font-semibold text-slate-500">manual</p>
-                <p className="text-lg font-bold text-slate-800">{sourceStatusSummary?.manualSnapshotRecords ?? 0}</p>
+                <p className="font-semibold text-ink-2">manual</p>
+                <p className="text-lg font-bold text-ink">{sourceStatusSummary?.manualSnapshotRecords ?? 0}</p>
               </div>
               <div className="rounded-md bg-white/70 p-2">
-                <p className="font-semibold text-slate-500">unknown</p>
-                <p className="text-lg font-bold text-rose-700">{sourceStatusSummary?.unknownLegacyRecords ?? 0}</p>
+                <p className="font-semibold text-ink-2">unknown</p>
+                <p className="text-lg font-bold text-miss">{sourceStatusSummary?.unknownLegacyRecords ?? 0}</p>
               </div>
             </div>
           </div>
         </section>
 
         <section className="mb-6 grid gap-3 lg:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-lg border border-slate-200 bg-white p-4">
+          <div className="rounded-lg border border-line bg-card p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-bold text-slate-900">表示中の結果確定レース</p>
-                <p className="mt-1 text-xs text-slate-500">{formatCount(filteredReturnSummary.raceCount)}R / 単複各100円</p>
+                <p className="text-sm font-bold text-ink">表示中の結果確定レース</p>
+                <p className="mt-1 text-xs text-ink-2">{formatCount(filteredReturnSummary.raceCount)}R / 単複各100円</p>
               </div>
-              <div className="text-right text-xs text-slate-500">
+              <div className="text-right text-xs text-ink-2">
                 <p>単 {filteredReturnSummary.tanHitCount}/{filteredReturnSummary.raceCount}</p>
                 <p>複 {filteredReturnSummary.fukuHitCount}/{filteredReturnSummary.raceCount}</p>
               </div>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3">
-              <div className="rounded-md bg-slate-50 p-3">
-                <p className="text-xs font-semibold text-slate-500">単勝回収率</p>
-                <p className="mt-1 text-2xl font-bold text-slate-900">{formatRate(filteredReturnSummary.tanRoi)}</p>
-                <p className="mt-1 text-xs text-slate-500">的中率 {formatRate(filteredReturnSummary.tanRate)}</p>
+              <div className="rounded-md bg-paper-sunk p-3">
+                <p className="text-xs font-semibold text-ink-2">単勝回収率</p>
+                <p className="mt-1 text-2xl font-bold text-ink">{formatRate(filteredReturnSummary.tanRoi)}</p>
+                <p className="mt-1 text-xs text-ink-2">的中率 {formatRate(filteredReturnSummary.tanRate)}</p>
               </div>
-              <div className="rounded-md bg-slate-50 p-3">
-                <p className="text-xs font-semibold text-slate-500">複勝回収率</p>
-                <p className="mt-1 text-2xl font-bold text-slate-900">{formatRate(filteredReturnSummary.fukuRoi)}</p>
-                <p className="mt-1 text-xs text-slate-500">的中率 {formatRate(filteredReturnSummary.fukuRate)}</p>
+              <div className="rounded-md bg-paper-sunk p-3">
+                <p className="text-xs font-semibold text-ink-2">複勝回収率</p>
+                <p className="mt-1 text-2xl font-bold text-ink">{formatRate(filteredReturnSummary.fukuRoi)}</p>
+                <p className="mt-1 text-xs text-ink-2">的中率 {formatRate(filteredReturnSummary.fukuRate)}</p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-lg border border-slate-200 bg-white p-4">
+          <div className="rounded-lg border border-line bg-card p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-bold text-slate-900">全結果確定レース</p>
-                <p className="mt-1 text-xs text-slate-500">{formatCount(totalReturnSummary.raceCount)}R / 単複各100円</p>
+                <p className="text-sm font-bold text-ink">全結果確定レース</p>
+                <p className="mt-1 text-xs text-ink-2">{formatCount(totalReturnSummary.raceCount)}R / 単複各100円</p>
               </div>
-              <div className="text-right text-xs text-slate-500">
+              <div className="text-right text-xs text-ink-2">
                 <p>単 {totalReturnSummary.tanHitCount}/{totalReturnSummary.raceCount}</p>
                 <p>複 {totalReturnSummary.fukuHitCount}/{totalReturnSummary.raceCount}</p>
               </div>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3">
-              <div className="rounded-md bg-slate-50 p-3">
-                <p className="text-xs font-semibold text-slate-500">単勝回収率</p>
-                <p className="mt-1 text-2xl font-bold text-slate-900">{formatRate(totalReturnSummary.tanRoi)}</p>
-                <p className="mt-1 text-xs text-slate-500">的中率 {formatRate(totalReturnSummary.tanRate)}</p>
+              <div className="rounded-md bg-paper-sunk p-3">
+                <p className="text-xs font-semibold text-ink-2">単勝回収率</p>
+                <p className="mt-1 text-2xl font-bold text-ink">{formatRate(totalReturnSummary.tanRoi)}</p>
+                <p className="mt-1 text-xs text-ink-2">的中率 {formatRate(totalReturnSummary.tanRate)}</p>
               </div>
-              <div className="rounded-md bg-slate-50 p-3">
-                <p className="text-xs font-semibold text-slate-500">複勝回収率</p>
-                <p className="mt-1 text-2xl font-bold text-slate-900">{formatRate(totalReturnSummary.fukuRoi)}</p>
-                <p className="mt-1 text-xs text-slate-500">的中率 {formatRate(totalReturnSummary.fukuRate)}</p>
+              <div className="rounded-md bg-paper-sunk p-3">
+                <p className="text-xs font-semibold text-ink-2">複勝回収率</p>
+                <p className="mt-1 text-2xl font-bold text-ink">{formatRate(totalReturnSummary.fukuRoi)}</p>
+                <p className="mt-1 text-xs text-ink-2">的中率 {formatRate(totalReturnSummary.fukuRate)}</p>
               </div>
             </div>
           </div>
@@ -1118,16 +1122,16 @@ export default function ArchivePage() {
 
         {categoryReturnStats.length > 0 ? <CategoryReturnStatsTableWithReliability stats={categoryReturnStats} /> : null}
 
-        <section className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
+        <section className="mb-6 rounded-lg border border-line bg-card p-4">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm font-bold">
-              <Filter className="h-4 w-4 text-teal-700" />
+              <Filter className="h-4 w-4 text-info" />
               フィルタ
             </div>
             <button
               type="button"
               onClick={resetFilters}
-              className="inline-flex h-9 items-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-600 hover:border-slate-400"
+              className="inline-flex h-9 items-center gap-2 rounded-md border border-line bg-card px-3 text-sm font-semibold text-ink-2 hover:border-line"
             >
               <RotateCcw className="h-4 w-4" />
               リセット
@@ -1136,30 +1140,30 @@ export default function ArchivePage() {
 
           <div className="grid gap-4 xl:grid-cols-[1.2fr_1fr_1fr]">
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <label className="text-sm font-semibold text-slate-600">
+              <label className="text-sm font-semibold text-ink-2">
                 開始日
                 <input
                   type="date"
                   value={filters.from}
                   onChange={(event) => updateFilter("from", event.target.value)}
-                  className="mt-1 h-10 w-full rounded-md border border-slate-200 px-3 text-sm text-slate-900"
+                  className="mt-1 h-10 w-full rounded-md border border-line px-3 text-sm text-ink"
                 />
               </label>
-              <label className="text-sm font-semibold text-slate-600">
+              <label className="text-sm font-semibold text-ink-2">
                 終了日
                 <input
                   type="date"
                   value={filters.to}
                   onChange={(event) => updateFilter("to", event.target.value)}
-                  className="mt-1 h-10 w-full rounded-md border border-slate-200 px-3 text-sm text-slate-900"
+                  className="mt-1 h-10 w-full rounded-md border border-line px-3 text-sm text-ink"
                 />
               </label>
-              <label className="text-sm font-semibold text-slate-600">
+              <label className="text-sm font-semibold text-ink-2">
                 場
                 <select
                   value={filters.venue}
                   onChange={(event) => updateFilter("venue", event.target.value)}
-                  className="mt-1 h-10 w-full rounded-md border border-slate-200 px-3 text-sm text-slate-900"
+                  className="mt-1 h-10 w-full rounded-md border border-line px-3 text-sm text-ink"
                 >
                   <option value="all">すべて</option>
                   {venues.map((venue) => (
@@ -1169,21 +1173,21 @@ export default function ArchivePage() {
                   ))}
                 </select>
               </label>
-              <label className="text-sm font-semibold text-slate-600">
+              <label className="text-sm font-semibold text-ink-2">
                 検索
                 <input
                   type="search"
                   value={filters.query}
                   onChange={(event) => updateFilter("query", event.target.value)}
                   placeholder="レース・馬名"
-                  className="mt-1 h-10 w-full rounded-md border border-slate-200 px-3 text-sm text-slate-900"
+                  className="mt-1 h-10 w-full rounded-md border border-line px-3 text-sm text-ink"
                 />
               </label>
             </div>
 
             <div className="space-y-3">
               <div>
-                <p className="mb-2 text-sm font-semibold text-slate-600">R帯</p>
+                <p className="mb-2 text-sm font-semibold text-ink-2">R帯</p>
                 <div className="flex flex-wrap gap-2">
                   <SegmentButton active={filters.raceBand === "all"} value="all" label="すべて" onClick={(value) => updateFilter("raceBand", value)} />
                   <SegmentButton active={filters.raceBand === "9-10"} value="9-10" label="9-10R" onClick={(value) => updateFilter("raceBand", value)} />
@@ -1192,7 +1196,7 @@ export default function ArchivePage() {
                 </div>
               </div>
               <div>
-                <p className="mb-2 text-sm font-semibold text-slate-600">期待度</p>
+                <p className="mb-2 text-sm font-semibold text-ink-2">期待度</p>
                 <div className="flex flex-wrap gap-2">
                   <SegmentButton active={filters.expectation === "all"} value="all" label="すべて" onClick={(value) => updateFilter("expectation", value)} />
                   {GRADES.map((grade) => (
@@ -1204,7 +1208,7 @@ export default function ArchivePage() {
 
             <div className="space-y-3">
               <div>
-                <p className="mb-2 text-sm font-semibold text-slate-600">的中</p>
+                <p className="mb-2 text-sm font-semibold text-ink-2">的中</p>
                 <div className="flex flex-wrap gap-2">
                   <SegmentButton active={filters.hit === "all"} value="all" label="すべて" onClick={(value) => updateFilter("hit", value)} />
                   <SegmentButton active={filters.hit === "tan"} value="tan" label="単勝" onClick={(value) => updateFilter("hit", value)} />
@@ -1213,12 +1217,12 @@ export default function ArchivePage() {
                 </div>
               </div>
               <div className="grid gap-3 lg:grid-cols-3">
-                <label className="text-sm font-semibold text-slate-600">
+                <label className="text-sm font-semibold text-ink-2">
                   snapshotOrigin
                   <select
                     value={filters.origin}
                     onChange={(event) => updateFilter("origin", event.target.value as OriginFilter)}
-                    className="mt-1 h-10 w-full rounded-md border border-slate-200 px-3 text-sm text-slate-900"
+                    className="mt-1 h-10 w-full rounded-md border border-line px-3 text-sm text-ink"
                   >
                     <option value="all">すべて</option>
                     {ORIGINS.map((origin) => (
@@ -1228,12 +1232,12 @@ export default function ArchivePage() {
                     ))}
                   </select>
                 </label>
-                <label className="text-sm font-semibold text-slate-600">
+                <label className="text-sm font-semibold text-ink-2">
                   sourceStatus
                   <select
                     value={filters.sourceStatus}
                     onChange={(event) => updateFilter("sourceStatus", event.target.value as SourceStatusFilter)}
-                    className="mt-1 h-10 w-full rounded-md border border-slate-200 px-3 text-sm text-slate-900"
+                    className="mt-1 h-10 w-full rounded-md border border-line px-3 text-sm text-ink"
                   >
                     <option value="all">all</option>
                     {SOURCE_STATUSES.map((status) => (
@@ -1243,12 +1247,12 @@ export default function ArchivePage() {
                     ))}
                   </select>
                 </label>
-                <label className="text-sm font-semibold text-slate-600">
+                <label className="text-sm font-semibold text-ink-2">
                   一致
                   <select
                     value={filters.agreement}
                     onChange={(event) => updateFilter("agreement", event.target.value as AgreementFilter)}
-                    className="mt-1 h-10 w-full rounded-md border border-slate-200 px-3 text-sm text-slate-900"
+                    className="mt-1 h-10 w-full rounded-md border border-line px-3 text-sm text-ink"
                   >
                     <option value="all">すべて</option>
                     <option value="match">一致</option>
@@ -1260,17 +1264,17 @@ export default function ArchivePage() {
           </div>
         </section>
 
-        <section className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
+        <section className="mb-6 rounded-lg border border-line bg-card p-4">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm font-bold">
-              <CalendarDays className="h-4 w-4 text-teal-700" />
+              <CalendarDays className="h-4 w-4 text-info" />
               カレンダー
             </div>
             {(filters.from || filters.to) && (
               <button
                 type="button"
                 onClick={() => setFilters((current) => ({ ...current, from: "", to: "" }))}
-                className="rounded-md border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 hover:border-slate-400"
+                className="rounded-md border border-line px-3 py-2 text-sm font-semibold text-ink-2 hover:border-line"
               >
                 日付解除
               </button>
@@ -1278,9 +1282,9 @@ export default function ArchivePage() {
           </div>
           <div className="grid gap-4 xl:grid-cols-2">
             {calendarMonths.map(({ month, cells }) => (
-              <div key={month} className="rounded-lg border border-slate-200 p-3">
-                <h2 className="mb-3 text-sm font-bold text-slate-800">{month}</h2>
-                <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-500">
+              <div key={month} className="rounded-lg border border-line p-3">
+                <h2 className="mb-3 text-sm font-bold text-ink">{month}</h2>
+                <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-ink-2">
                   {WEEKDAYS.map((weekday) => (
                     <div key={weekday} className="py-1">
                       {weekday}
@@ -1296,15 +1300,15 @@ export default function ArchivePage() {
                         onClick={() => selectDate(day.date)}
                         className={`min-h-28 rounded-md border p-2 text-left transition ${
                           filters.from === day.date && filters.to === day.date
-                            ? "border-teal-700 bg-teal-50"
-                            : "border-slate-200 bg-white hover:border-teal-400"
+                            ? "border-info bg-info-wash"
+                            : "border-line bg-card hover:border-info"
                         }`}
                       >
                         <div className="flex items-center justify-between gap-1">
-                          <span className="text-sm font-bold text-slate-900">{Number(day.date.slice(8, 10))}</span>
-                          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-700">{day.raceCount}R</span>
+                          <span className="text-sm font-bold text-ink">{Number(day.date.slice(8, 10))}</span>
+                          <span className="rounded-full bg-paper px-2 py-0.5 text-[11px] font-bold text-ink-2">{day.raceCount}R</span>
                         </div>
-                        <div className="mt-2 space-y-1 text-[11px] text-slate-600">
+                        <div className="mt-2 space-y-1 text-[11px] text-ink-2">
                           <p>複 {day.fukuHitCount}/{day.raceCount} ({formatRate(day.fukuRate)})</p>
                           <p>ROI {formatRate(day.roi)}</p>
                           <p>S{day.gradeCounts.S} A{day.gradeCounts.A} B{day.gradeCounts.B} C{day.gradeCounts.C}</p>
@@ -1320,14 +1324,14 @@ export default function ArchivePage() {
           </div>
         </section>
 
-        <section className="rounded-lg border border-slate-200 bg-white">
-          <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
+        <section className="rounded-lg border border-line bg-card">
+          <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
             <h2 className="text-sm font-bold">回顧テーブル</h2>
-            <p className="text-sm text-slate-500">{filteredRows.length}件</p>
+            <p className="text-sm text-ink-2">{filteredRows.length}件</p>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-[1450px] w-full text-left text-sm">
-              <thead className="bg-slate-50 text-xs font-semibold text-slate-500">
+              <thead className="bg-paper-sunk text-xs font-semibold text-ink-2">
                 <tr>
                   <th className="px-3 py-3">日付</th>
                   <th className="px-3 py-3">場</th>
@@ -1357,7 +1361,7 @@ export default function ArchivePage() {
                     onKeyDown={(event) => {
                       if (event.key === "Enter") setSelectedKey(row.key);
                     }}
-                    className="cursor-pointer bg-white hover:bg-teal-50/60 focus:bg-teal-50 focus:outline-none"
+                    className="cursor-pointer bg-card hover:bg-info-wash/60 focus:bg-info-wash focus:outline-none"
                   >
                     <td className="whitespace-nowrap px-3 py-3 font-medium">{row.date || "-"}</td>
                     <td className="whitespace-nowrap px-3 py-3">{row.venue}</td>
@@ -1368,7 +1372,7 @@ export default function ArchivePage() {
                     <td className="max-w-48 truncate px-3 py-3">{row.simLeaderDisplay}</td>
                     <td className="px-3 py-3"><GradeBadge grade={row.betGrade} /></td>
                     <td className="px-3 py-3">
-                      <span className={`rounded-full px-2 py-1 text-xs font-bold ${row.agreement ? "bg-emerald-100 text-emerald-700" : row.agreement === false ? "bg-rose-100 text-rose-700" : "bg-slate-100 text-slate-600"}`}>
+                      <span className={`rounded-full px-2 py-1 text-xs font-bold ${row.agreement ? "bg-hit-wash text-hit" : row.agreement === false ? "bg-miss-wash text-miss" : "bg-paper text-ink-2"}`}>
                         {row.agreement ? "一致" : row.agreement === false ? "不一致" : "-"}
                       </span>
                     </td>
@@ -1379,7 +1383,7 @@ export default function ArchivePage() {
                     <td className="px-3 py-3 text-right font-mono">{formatOdds(row.realOdds)}</td>
                     <td className="whitespace-nowrap px-3 py-3">{row.snapshotOrigin ?? "-"}</td>
                     <td className="whitespace-nowrap px-3 py-3">
-                      <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${row.livePreRaceEligible ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-800"}`}>
+                      <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${row.livePreRaceEligible ? "bg-hit-wash text-hit" : "bg-note-wash text-note"}`}>
                         {row.sourceStatus}
                       </span>
                     </td>
@@ -1387,7 +1391,7 @@ export default function ArchivePage() {
                       <div className="flex max-w-64 flex-wrap gap-1">
                         {row.dataQualityFlags.length ? row.dataQualityFlags.map((flag) => (
                           <span key={flag} className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${qualityTone(flag)}`}>{flag}</span>
-                        )) : <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">ok</span>}
+                        )) : <span className="rounded-full bg-hit-wash px-2 py-0.5 text-[11px] font-bold text-hit">ok</span>}
                       </div>
                     </td>
                   </tr>
@@ -1399,17 +1403,17 @@ export default function ArchivePage() {
       </div>
 
       {selectedRow && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/30" role="dialog" aria-modal="true">
-          <aside className="h-full w-full max-w-xl overflow-y-auto border-l border-slate-200 bg-white shadow-xl">
-            <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-slate-200 bg-white px-5 py-4">
+        <div className="fixed inset-0 z-50 flex justify-end bg-turf/30" role="dialog" aria-modal="true">
+          <aside className="h-full w-full max-w-xl overflow-y-auto border-l border-line bg-card ">
+            <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-line bg-card px-5 py-4">
               <div>
-                <p className="text-sm font-semibold text-teal-700">{selectedRow.date} / {selectedRow.venue} {selectedRow.raceNumber ?? "-"}R</p>
+                <p className="text-sm font-semibold text-info">{selectedRow.date} / {selectedRow.venue} {selectedRow.raceNumber ?? "-"}R</p>
                 <h2 className="mt-1 text-xl font-bold">{selectedRow.raceName}</h2>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedKey(null)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-slate-600 hover:border-slate-400"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line text-ink-2 hover:border-line"
                 aria-label="閉じる"
               >
                 <X className="h-4 w-4" />
@@ -1420,7 +1424,7 @@ export default function ArchivePage() {
               <div className="mb-4 flex flex-wrap gap-2">
                 {selectedRow.dataQualityFlags.length ? selectedRow.dataQualityFlags.map((flag) => (
                   <span key={flag} className={`rounded-full px-2 py-1 text-xs font-bold ${qualityTone(flag)}`}>{flag}</span>
-                )) : <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs font-bold text-emerald-700">ok</span>}
+                )) : <span className="rounded-full bg-hit-wash px-2 py-1 text-xs font-bold text-hit">ok</span>}
               </div>
 
               <Field label="総合試走1位" value={selectedRow.simLeaderDisplay} />

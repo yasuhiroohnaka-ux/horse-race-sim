@@ -24,8 +24,8 @@ export function GradeFilterChips({ value, onChange, counts, totalCount }: GradeF
             className={[
               "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
               isActive
-                ? "border-slate-900 bg-slate-900 text-white shadow-sm"
-                : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900",
+                ? "border-ink bg-turf text-white "
+                : "border-line bg-card text-ink-2 hover:border-line hover:text-ink",
             ].join(" ")}
             aria-pressed={isActive}
           >
@@ -34,7 +34,7 @@ export function GradeFilterChips({ value, onChange, counts, totalCount }: GradeF
               <span
                 className={[
                   "rounded-full px-1.5 py-0.5 text-[10px] leading-none",
-                  isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500",
+                  isActive ? "bg-white/20 text-white" : "bg-paper text-ink-2",
                 ].join(" ")}
               >
                 {count}

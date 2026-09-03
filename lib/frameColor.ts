@@ -4,15 +4,17 @@ export type FrameColor = {
   border: string;
 };
 
+// 色の実体は app/globals.css の --waku-1〜8 に一本化してある。
+// 枠色はこのアプリの識別色そのものなので、値を二重に持たない。
 export const FRAME_COLORS: Record<number, FrameColor> = {
-  1: { bg: "#ffffff", text: "#111827", border: "#cbd5e1" }, // white
-  2: { bg: "#111827", text: "#ffffff", border: "#111827" }, // black
-  3: { bg: "#ef4444", text: "#ffffff", border: "#ef4444" }, // red
-  4: { bg: "#3b82f6", text: "#ffffff", border: "#3b82f6" }, // blue
-  5: { bg: "#eab308", text: "#111827", border: "#ca8a04" }, // yellow
-  6: { bg: "#22c55e", text: "#ffffff", border: "#16a34a" }, // green
-  7: { bg: "#f97316", text: "#ffffff", border: "#ea580c" }, // orange
-  8: { bg: "#f472b6", text: "#ffffff", border: "#ec4899" }, // pink
+  1: { bg: "var(--waku-1)", text: "#191919", border: "var(--line)" }, // 白
+  2: { bg: "var(--waku-2)", text: "#ffffff", border: "var(--waku-2)" }, // 黒
+  3: { bg: "var(--waku-3)", text: "#ffffff", border: "var(--waku-3)" }, // 赤
+  4: { bg: "var(--waku-4)", text: "#ffffff", border: "var(--waku-4)" }, // 青
+  5: { bg: "var(--waku-5)", text: "#2a2200", border: "var(--waku-5)" }, // 黄
+  6: { bg: "var(--waku-6)", text: "#ffffff", border: "var(--waku-6)" }, // 緑
+  7: { bg: "var(--waku-7)", text: "#ffffff", border: "var(--waku-7)" }, // 橙
+  8: { bg: "var(--waku-8)", text: "#46101f", border: "var(--waku-8)" }, // 桃
 };
 
 export function getFrameNumber(gateNumber: number | undefined, fieldSize: number): number {
