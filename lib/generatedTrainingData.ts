@@ -3,7 +3,7 @@
 
 import type { TrainingInsight } from "./trainingInsights";
 
-export const TRAINING_DATA_GENERATED_AT = "2026-09-17T08:00:51.836Z";
+export const TRAINING_DATA_GENERATED_AT = "2026-09-17T23:48:47.830Z";
 
 export const GENERATED_TRAINING_INSIGHTS: TrainingInsight[] = [
   {
