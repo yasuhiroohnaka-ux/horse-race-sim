@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-09-13T13:44:01.603Z",
-  "sampleSize": 486,
+  "generatedAt": "2026-09-20T13:31:11.359Z",
+  "sampleSize": 501,
   "dateRange": {
     "from": "2026-03-06",
-    "to": "2026-09-12"
+    "to": "2026-09-19"
   },
   "winCalibration": {
     "coef": {
-      "a": -0.744,
-      "b": 3.2447
+      "a": -0.7471,
+      "b": 3.148
     },
     "deployedCoef": {
       "a": -0.7442,
@@ -34,27 +34,27 @@
     },
     "metrics": {
       "rawModel": {
-        "logLoss": 0.6717,
-        "brier": 0.2393
+        "logLoss": 0.6721,
+        "brier": 0.2395
       },
       "rawMarket": {
-        "logLoss": 0.584,
+        "logLoss": 0.5844,
         "brier": 0.198
       },
       "calibrated": {
-        "logLoss": 0.5865,
-        "brier": 0.1994
+        "logLoss": 0.5875,
+        "brier": 0.1997
       },
       "deployed": {
-        "logLoss": 0.5866,
-        "brier": 0.1994
+        "logLoss": 0.5875,
+        "brier": 0.1997
       }
     }
   },
   "placeCalibration": {
     "coef": {
-      "a": -0.9347,
-      "b": 1.3933
+      "a": -0.8841,
+      "b": 1.3334
     },
     "deployedCoef": {
       "a": -0.7165,
@@ -80,54 +80,54 @@
     },
     "metrics": {
       "rawModel": {
-        "logLoss": 0.6706,
-        "brier": 0.2385
+        "logLoss": 0.675,
+        "brier": 0.2404
       },
       "calibrated": {
-        "logLoss": 0.6357,
-        "brier": 0.2227
+        "logLoss": 0.6396,
+        "brier": 0.2246
       },
       "deployed": {
-        "logLoss": 0.6365,
-        "brier": 0.2232
+        "logLoss": 0.6403,
+        "brier": 0.225
       }
     }
   },
   "placeOddsModel": {
-    "slope": 0.1762,
-    "intercept": 0.85,
-    "sampleSize": 299
+    "slope": 0.1728,
+    "intercept": 0.8591,
+    "sampleSize": 307
   },
   "marketGapBands": [
     {
       "band": "underbet (校正側が5pt以上高い)",
-      "n": 78,
-      "tanHit": "17.9%",
-      "fukuHit": "52.6%",
-      "wideHit": "16.7%",
-      "tanRoi": "60.9%",
-      "fukuRoi": "83.3%",
-      "wideRoi": "66.9%"
+      "n": 79,
+      "tanHit": "17.7%",
+      "fukuHit": "51.9%",
+      "wideHit": "16.5%",
+      "tanRoi": "60.1%",
+      "fukuRoi": "82.3%",
+      "wideRoi": "66.1%"
     },
     {
       "band": "fair_priced (±5pt一致)",
-      "n": 218,
-      "tanHit": "26.6%",
-      "fukuHit": "59.6%",
-      "wideHit": "23.9%",
-      "tanRoi": "77.7%",
-      "fukuRoi": "86.7%",
-      "wideRoi": "81.6%"
+      "n": 226,
+      "tanHit": "26.1%",
+      "fukuHit": "59.3%",
+      "wideHit": "24.3%",
+      "tanRoi": "76.8%",
+      "fukuRoi": "86.2%",
+      "wideRoi": "82.5%"
     },
     {
       "band": "overbet_moderate (市場5-15pt高い)",
-      "n": 124,
-      "tanHit": "38.7%",
+      "n": 130,
+      "tanHit": "39.2%",
       "fukuHit": "68.5%",
-      "wideHit": "33.9%",
-      "tanRoi": "91.3%",
-      "fukuRoi": "88.5%",
-      "wideRoi": "81.0%"
+      "wideHit": "33.1%",
+      "tanRoi": "92.8%",
+      "fukuRoi": "88.8%",
+      "wideRoi": "79.5%"
     },
     {
       "band": "overbet_high (市場15pt以上高い)",
@@ -143,30 +143,30 @@
   "winBuckets": [
     {
       "band": "0.3-0.45",
-      "n": 66,
-      "avgRaw": "43.3%",
-      "avgCalibrated": "16.8%",
-      "actual": "24.2%"
+      "n": 68,
+      "avgRaw": "43.4%",
+      "avgCalibrated": "17.2%",
+      "actual": "25.0%"
     },
     {
       "band": "0.45-0.5",
-      "n": 252,
+      "n": 262,
       "avgRaw": "47.7%",
-      "avgCalibrated": "26.1%",
-      "actual": "24.2%"
+      "avgCalibrated": "26.2%",
+      "actual": "24.0%"
     },
     {
       "band": "0.5-0.6",
-      "n": 165,
+      "n": 168,
       "avgRaw": "52.9%",
-      "avgCalibrated": "41.2%",
-      "actual": "40.6%"
+      "avgCalibrated": "40.8%",
+      "actual": "40.5%"
     },
     {
       "band": "0.6-1.0",
       "n": 3,
       "avgRaw": "62.4%",
-      "avgCalibrated": "70.9%",
+      "avgCalibrated": "69.9%",
       "actual": "100.0%"
     }
   ],
@@ -175,167 +175,167 @@
       "band": "0-0.6",
       "n": 2,
       "avgRaw": "58.7%",
-      "avgCalibrated": "39.1%",
+      "avgCalibrated": "39.8%",
       "actual": "50.0%"
     },
     {
       "band": "0.6-0.7",
-      "n": 184,
+      "n": 188,
       "avgRaw": "66.4%",
-      "avgCalibrated": "50.5%",
-      "actual": "47.3%"
+      "avgCalibrated": "50.7%",
+      "actual": "48.4%"
     },
     {
       "band": "0.7-0.8",
-      "n": 212,
-      "avgRaw": "74.3%",
-      "avgCalibrated": "63.3%",
-      "actual": "65.6%"
+      "n": 223,
+      "avgRaw": "74.2%",
+      "avgCalibrated": "62.9%",
+      "actual": "64.1%"
     },
     {
       "band": "0.8-1.0",
       "n": 88,
       "avgRaw": "84.7%",
-      "avgCalibrated": "80.9%",
+      "avgCalibrated": "80.2%",
       "actual": "81.8%"
     }
   ],
   "overall": {
-    "n": 486,
-    "tanHit": "30.2%",
-    "fukuHit": "61.5%",
-    "wideHit": "27.6%",
+    "n": 501,
+    "tanHit": "30.1%",
+    "fukuHit": "61.3%",
+    "wideHit": "27.5%",
     "tanRoi": "77.7%",
-    "fukuRoi": "86.5%",
-    "wideRoi": "84.3%"
+    "fukuRoi": "86.1%",
+    "wideRoi": "84.1%"
   },
   "classificationBacktest": {
     "skip": {
-      "n": 152,
-      "tanHit": "14.5%",
-      "fukuHit": "47.4%",
-      "wideHit": "14.5%",
-      "tanRoi": "61.8%",
-      "fukuRoi": "81.1%",
-      "wideRoi": "63.4%"
+      "n": 155,
+      "tanHit": "14.8%",
+      "fukuHit": "47.7%",
+      "wideHit": "14.8%",
+      "tanRoi": "63.4%",
+      "fukuRoi": "81.4%",
+      "wideRoi": "64.5%"
     },
     "win": {
-      "n": 204,
-      "tanHit": "40.7%",
-      "fukuHit": "72.5%",
-      "wideHit": "36.8%",
-      "tanRoi": "82.1%",
-      "fukuRoi": "87.9%",
-      "wideRoi": "89.4%"
+      "n": 209,
+      "tanHit": "40.2%",
+      "fukuHit": "71.3%",
+      "wideHit": "35.9%",
+      "tanRoi": "81.0%",
+      "fukuRoi": "86.3%",
+      "wideRoi": "87.2%"
     },
     "place": {
-      "n": 130,
-      "tanHit": "32.3%",
-      "fukuHit": "60.8%",
-      "wideHit": "28.5%",
-      "tanRoi": "89.5%",
-      "fukuRoi": "90.5%",
-      "wideRoi": "100.8%"
+      "n": 137,
+      "tanHit": "32.1%",
+      "fukuHit": "61.3%",
+      "wideHit": "29.2%",
+      "tanRoi": "89.0%",
+      "fukuRoi": "91.2%",
+      "wideRoi": "101.6%"
     }
   },
   "candidateClassificationBacktest": {
     "skip": {
-      "n": 161,
-      "tanHit": "16.1%",
-      "fukuHit": "48.4%",
-      "wideHit": "14.9%",
-      "tanRoi": "65.6%",
-      "fukuRoi": "83.3%",
-      "wideRoi": "63.5%"
+      "n": 164,
+      "tanHit": "16.5%",
+      "fukuHit": "48.8%",
+      "wideHit": "15.2%",
+      "tanRoi": "67.0%",
+      "fukuRoi": "83.5%",
+      "wideRoi": "64.5%"
     },
     "win": {
-      "n": 198,
-      "tanHit": "40.4%",
-      "fukuHit": "72.7%",
-      "wideHit": "36.9%",
-      "tanRoi": "81.4%",
-      "fukuRoi": "88.3%",
-      "wideRoi": "89.2%"
+      "n": 203,
+      "tanHit": "39.9%",
+      "fukuHit": "71.4%",
+      "wideHit": "36.0%",
+      "tanRoi": "80.3%",
+      "fukuRoi": "86.7%",
+      "wideRoi": "87.0%"
     },
     "place": {
-      "n": 127,
-      "tanHit": "32.3%",
-      "fukuHit": "60.6%",
-      "wideHit": "29.1%",
-      "tanRoi": "87.4%",
-      "fukuRoi": "87.6%",
-      "wideRoi": "103.1%"
+      "n": 134,
+      "tanHit": "32.1%",
+      "fukuHit": "61.2%",
+      "wideHit": "29.9%",
+      "tanRoi": "86.9%",
+      "fukuRoi": "88.6%",
+      "wideRoi": "103.7%"
     }
   },
   "recentClassificationBacktest": {
-    "win": {
-      "n": 22,
-      "tanHit": "27.3%",
-      "fukuHit": "72.7%",
-      "wideHit": "31.8%",
-      "tanRoi": "48.6%",
-      "fukuRoi": "88.6%",
-      "wideRoi": "72.7%"
-    },
     "skip": {
-      "n": 13,
-      "tanHit": "23.1%",
-      "fukuHit": "30.8%",
-      "wideHit": "15.4%",
-      "tanRoi": "86.2%",
-      "fukuRoi": "56.9%",
-      "wideRoi": "82.3%"
+      "n": 11,
+      "tanHit": "18.2%",
+      "fukuHit": "36.4%",
+      "wideHit": "27.3%",
+      "tanRoi": "79.1%",
+      "fukuRoi": "59.1%",
+      "wideRoi": "129.1%"
+    },
+    "win": {
+      "n": 21,
+      "tanHit": "23.8%",
+      "fukuHit": "57.1%",
+      "wideHit": "23.8%",
+      "tanRoi": "47.6%",
+      "fukuRoi": "71.4%",
+      "wideRoi": "54.8%"
     },
     "place": {
-      "n": 15,
-      "tanHit": "26.7%",
-      "fukuHit": "60.0%",
-      "wideHit": "20.0%",
-      "tanRoi": "62.7%",
-      "fukuRoi": "76.0%",
-      "wideRoi": "46.0%"
+      "n": 18,
+      "tanHit": "22.2%",
+      "fukuHit": "61.1%",
+      "wideHit": "27.8%",
+      "tanRoi": "55.6%",
+      "fukuRoi": "83.3%",
+      "wideRoi": "73.3%"
     }
   },
   "monitoring": {
     "recordComposition": {
       "livePreRace": {
-        "n": 396,
+        "n": 411,
         "overall": {
-          "n": 396,
-          "tanHit": "30.8%",
-          "fukuHit": "61.4%",
+          "n": 411,
+          "tanHit": "30.7%",
+          "fukuHit": "61.1%",
           "wideHit": "26.3%",
           "tanRoi": "75.4%",
-          "fukuRoi": "85.4%",
+          "fukuRoi": "85.0%",
           "wideRoi": "76.6%"
         },
         "classification": {
           "win": {
-            "n": 166,
-            "tanHit": "41.6%",
-            "fukuHit": "72.3%",
-            "wideHit": "35.5%",
-            "tanRoi": "81.3%",
-            "fukuRoi": "87.3%",
-            "wideRoi": "84.8%"
+            "n": 171,
+            "tanHit": "40.9%",
+            "fukuHit": "70.8%",
+            "wideHit": "34.5%",
+            "tanRoi": "80.0%",
+            "fukuRoi": "85.4%",
+            "wideRoi": "82.3%"
           },
           "skip": {
-            "n": 122,
-            "tanHit": "13.9%",
-            "fukuHit": "44.3%",
-            "wideHit": "10.7%",
-            "tanRoi": "56.3%",
-            "fukuRoi": "75.7%",
-            "wideRoi": "42.5%"
+            "n": 125,
+            "tanHit": "14.4%",
+            "fukuHit": "44.8%",
+            "wideHit": "11.2%",
+            "tanRoi": "58.3%",
+            "fukuRoi": "76.2%",
+            "wideRoi": "44.3%"
           },
           "place": {
-            "n": 108,
-            "tanHit": "33.3%",
-            "fukuHit": "63.9%",
-            "wideHit": "29.6%",
-            "tanRoi": "87.8%",
-            "fukuRoi": "93.2%",
-            "wideRoi": "102.5%"
+            "n": 115,
+            "tanHit": "33.0%",
+            "fukuHit": "64.3%",
+            "wideHit": "30.4%",
+            "tanRoi": "87.2%",
+            "fukuRoi": "94.0%",
+            "wideRoi": "103.3%"
           }
         }
       },
@@ -383,170 +383,170 @@
     },
     "postCalibrationHoldout": {
       "cutoffDate": "2026-06-07",
-      "n": 254,
+      "n": 269,
       "dateRange": {
         "from": "2026-06-13",
-        "to": "2026-09-12"
+        "to": "2026-09-19"
       },
       "win": {
-        "rawModel": 0.6723,
-        "rawMarket": 0.5638,
-        "deployed": 0.5873,
-        "candidate": 0.5871
+        "rawModel": 0.6731,
+        "rawMarket": 0.5657,
+        "deployed": 0.5889,
+        "candidate": 0.5889
       },
       "place": {
-        "rawModel": 0.6764,
-        "deployed": 0.6362,
-        "candidate": 0.634
+        "rawModel": 0.6841,
+        "deployed": 0.6433,
+        "candidate": 0.6414
       },
       "deployedClassification": {
         "win": {
-          "n": 108,
-          "tanHit": "38.9%",
-          "fukuHit": "71.3%",
-          "wideHit": "32.4%",
-          "tanRoi": "72.9%",
-          "fukuRoi": "86.6%",
-          "wideRoi": "72.4%"
+          "n": 113,
+          "tanHit": "38.1%",
+          "fukuHit": "69.0%",
+          "wideHit": "31.0%",
+          "tanRoi": "71.3%",
+          "fukuRoi": "83.7%",
+          "wideRoi": "69.2%"
         },
         "skip": {
-          "n": 78,
-          "tanHit": "12.8%",
-          "fukuHit": "41.0%",
-          "wideHit": "10.3%",
-          "tanRoi": "46.8%",
-          "fukuRoi": "72.2%",
-          "wideRoi": "44.4%"
+          "n": 81,
+          "tanHit": "13.6%",
+          "fukuHit": "42.0%",
+          "wideHit": "11.1%",
+          "tanRoi": "50.2%",
+          "fukuRoi": "73.1%",
+          "wideRoi": "47.0%"
         },
         "place": {
-          "n": 68,
-          "tanHit": "36.8%",
-          "fukuHit": "66.2%",
-          "wideHit": "30.9%",
-          "tanRoi": "94.3%",
-          "fukuRoi": "92.2%",
-          "wideRoi": "87.4%"
+          "n": 75,
+          "tanHit": "36.0%",
+          "fukuHit": "66.7%",
+          "wideHit": "32.0%",
+          "tanRoi": "92.8%",
+          "fukuRoi": "93.5%",
+          "wideRoi": "90.0%"
         }
       },
       "candidateClassification": {
         "win": {
-          "n": 105,
-          "tanHit": "38.1%",
-          "fukuHit": "71.4%",
-          "wideHit": "33.3%",
-          "tanRoi": "70.9%",
-          "fukuRoi": "87.0%",
-          "wideRoi": "74.5%"
+          "n": 110,
+          "tanHit": "37.3%",
+          "fukuHit": "69.1%",
+          "wideHit": "31.8%",
+          "tanRoi": "69.4%",
+          "fukuRoi": "84.0%",
+          "wideRoi": "71.1%"
         },
         "skip": {
-          "n": 83,
-          "tanHit": "14.5%",
-          "fukuHit": "42.2%",
-          "wideHit": "10.8%",
-          "tanRoi": "50.5%",
-          "fukuRoi": "74.3%",
-          "wideRoi": "46.4%"
+          "n": 86,
+          "tanHit": "15.1%",
+          "fukuHit": "43.0%",
+          "wideHit": "11.6%",
+          "tanRoi": "53.6%",
+          "fukuRoi": "75.1%",
+          "wideRoi": "48.8%"
         },
         "place": {
-          "n": 66,
-          "tanHit": "37.9%",
-          "fukuHit": "66.7%",
-          "wideHit": "30.3%",
-          "tanRoi": "95.5%",
-          "fukuRoi": "90.2%",
-          "wideRoi": "84.1%"
+          "n": 73,
+          "tanHit": "37.0%",
+          "fukuHit": "67.1%",
+          "wideHit": "31.5%",
+          "tanRoi": "93.8%",
+          "fukuRoi": "91.6%",
+          "wideRoi": "87.1%"
         }
       }
     },
     "rollingRefitValidation": {
       "train": {
-        "n": 436,
+        "n": 451,
         "dateRange": {
           "from": "2026-03-06",
-          "to": "2026-08-23"
+          "to": "2026-08-30"
         },
         "winCoef": {
-          "a": -0.7149,
-          "b": 3.4374
+          "a": -0.7028,
+          "b": 3.2727
         },
         "placeCoef": {
-          "a": -0.7745,
-          "b": 1.2465
+          "a": -0.8144,
+          "b": 1.2956
         }
       },
       "test": {
         "n": 50,
         "dateRange": {
-          "from": "2026-08-23",
-          "to": "2026-09-12"
+          "from": "2026-08-30",
+          "to": "2026-09-19"
         },
         "win": {
-          "rawModel": 0.6759,
-          "rawMarket": 0.5456,
-          "deployed": 0.5711,
-          "candidate": 0.5747
+          "rawModel": 0.6765,
+          "rawMarket": 0.5426,
+          "deployed": 0.5418,
+          "candidate": 0.5457
         },
         "place": {
-          "rawModel": 0.6685,
-          "deployed": 0.6097,
-          "candidate": 0.6072
+          "rawModel": 0.7423,
+          "deployed": 0.6727,
+          "candidate": 0.6688
         },
         "deployedClassification": {
-          "win": {
-            "n": 22,
-            "tanHit": "27.3%",
-            "fukuHit": "72.7%",
-            "wideHit": "31.8%",
-            "tanRoi": "48.6%",
-            "fukuRoi": "88.6%",
-            "wideRoi": "72.7%"
-          },
           "skip": {
-            "n": 13,
-            "tanHit": "23.1%",
-            "fukuHit": "30.8%",
-            "wideHit": "15.4%",
-            "tanRoi": "86.2%",
-            "fukuRoi": "56.9%",
-            "wideRoi": "82.3%"
+            "n": 11,
+            "tanHit": "18.2%",
+            "fukuHit": "36.4%",
+            "wideHit": "27.3%",
+            "tanRoi": "79.1%",
+            "fukuRoi": "59.1%",
+            "wideRoi": "129.1%"
+          },
+          "win": {
+            "n": 21,
+            "tanHit": "23.8%",
+            "fukuHit": "57.1%",
+            "wideHit": "23.8%",
+            "tanRoi": "47.6%",
+            "fukuRoi": "71.4%",
+            "wideRoi": "54.8%"
           },
           "place": {
-            "n": 15,
-            "tanHit": "26.7%",
-            "fukuHit": "60.0%",
-            "wideHit": "20.0%",
-            "tanRoi": "62.7%",
-            "fukuRoi": "76.0%",
-            "wideRoi": "46.0%"
+            "n": 18,
+            "tanHit": "22.2%",
+            "fukuHit": "61.1%",
+            "wideHit": "27.8%",
+            "tanRoi": "55.6%",
+            "fukuRoi": "83.3%",
+            "wideRoi": "73.3%"
           }
         },
         "candidateClassification": {
-          "win": {
-            "n": 22,
-            "tanHit": "27.3%",
-            "fukuHit": "72.7%",
-            "wideHit": "31.8%",
-            "tanRoi": "48.6%",
-            "fukuRoi": "88.6%",
-            "wideRoi": "72.7%"
-          },
           "skip": {
-            "n": 13,
-            "tanHit": "23.1%",
-            "fukuHit": "30.8%",
-            "wideHit": "15.4%",
-            "tanRoi": "86.2%",
-            "fukuRoi": "56.9%",
-            "wideRoi": "82.3%"
+            "n": 11,
+            "tanHit": "18.2%",
+            "fukuHit": "36.4%",
+            "wideHit": "27.3%",
+            "tanRoi": "79.1%",
+            "fukuRoi": "59.1%",
+            "wideRoi": "129.1%"
+          },
+          "win": {
+            "n": 21,
+            "tanHit": "23.8%",
+            "fukuHit": "57.1%",
+            "wideHit": "23.8%",
+            "tanRoi": "47.6%",
+            "fukuRoi": "71.4%",
+            "wideRoi": "54.8%"
           },
           "place": {
-            "n": 15,
-            "tanHit": "26.7%",
-            "fukuHit": "60.0%",
-            "wideHit": "20.0%",
-            "tanRoi": "62.7%",
-            "fukuRoi": "76.0%",
-            "wideRoi": "46.0%"
+            "n": 18,
+            "tanHit": "22.2%",
+            "fukuHit": "61.1%",
+            "wideHit": "27.8%",
+            "tanRoi": "55.6%",
+            "fukuRoi": "83.3%",
+            "wideRoi": "73.3%"
           }
         }
       },
@@ -560,54 +560,54 @@
   },
   "splitValidation": {
     "train": {
-      "n": 243,
+      "n": 250,
       "winCoef": {
-        "a": -0.7632,
-        "b": 3.0263
+        "a": -0.7442,
+        "b": 3.1868
       },
       "placeCoef": {
-        "a": -0.657,
-        "b": 1.1802
+        "a": -0.6877,
+        "b": 1.2228
       }
     },
     "testWinLogLoss": {
-      "rawModel": 0.6713,
+      "rawModel": 0.6727,
       "rawMarket": 0.5572,
-      "deployed": 0.5863,
-      "trainFitCalibrated": 0.5866
+      "deployed": 0.5876,
+      "trainFitCalibrated": 0.5876
     },
     "testPlaceLogLoss": {
-      "rawModel": 0.6797,
-      "deployed": 0.6367,
-      "trainFitCalibrated": 0.6374
+      "rawModel": 0.6918,
+      "deployed": 0.6469,
+      "trainFitCalibrated": 0.6475
     },
     "testClassification": {
       "win": {
-        "n": 97,
-        "tanHit": "39.2%",
-        "fukuHit": "71.1%",
-        "wideHit": "34.0%",
-        "tanRoi": "71.2%",
-        "fukuRoi": "86.0%",
-        "wideRoi": "75.9%"
+        "n": 103,
+        "tanHit": "36.9%",
+        "fukuHit": "67.0%",
+        "wideHit": "32.0%",
+        "tanRoi": "67.0%",
+        "fukuRoi": "81.1%",
+        "wideRoi": "71.5%"
+      },
+      "skip": {
+        "n": 76,
+        "tanHit": "14.5%",
+        "fukuHit": "42.1%",
+        "wideHit": "11.8%",
+        "tanRoi": "53.6%",
+        "fukuRoi": "72.8%",
+        "wideRoi": "50.1%"
       },
       "place": {
         "n": 72,
         "tanHit": "36.1%",
-        "fukuHit": "65.3%",
-        "wideHit": "29.2%",
-        "tanRoi": "92.2%",
-        "fukuRoi": "90.7%",
-        "wideRoi": "82.5%"
-      },
-      "skip": {
-        "n": 74,
-        "tanHit": "13.5%",
-        "fukuHit": "40.5%",
-        "wideHit": "10.8%",
-        "tanRoi": "49.3%",
-        "fukuRoi": "70.8%",
-        "wideRoi": "46.8%"
+        "fukuHit": "66.7%",
+        "wideHit": "31.9%",
+        "tanRoi": "91.3%",
+        "fukuRoi": "92.4%",
+        "wideRoi": "85.0%"
       }
     }
   }
