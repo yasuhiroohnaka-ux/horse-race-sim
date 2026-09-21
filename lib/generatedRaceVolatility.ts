@@ -3,7 +3,7 @@
 
 import type { RaceVolatility } from "./raceVolatility";
 
-export const RACE_VOLATILITY_GENERATED_AT = "2026-09-14T05:54:22.478Z";
+export const RACE_VOLATILITY_GENERATED_AT = "2026-09-21T05:58:30.572Z";
 
 export const GENERATED_RACE_VOLATILITY: Record<string, RaceVolatility> = {
   "nakayama-turf-1800": {
