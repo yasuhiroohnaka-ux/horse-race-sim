@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
 import path from "node:path";
+import { readDataFile } from "@/lib/dataFile.mjs";
 import { loadReviewRecords } from "@/lib/reviewRecords";
 import { TANPUKU_SCORING_VERSION } from "@/lib/tanpukuSelection.mjs";
 import { VERDICT_LABELS } from "@/lib/verdictLabels.mjs";
@@ -145,7 +145,7 @@ export function buildEngineScorecard(records: RaceReviewRecord[], archiveRaces: 
 export async function readEngineScorecard(): Promise<EngineScorecard | null> {
   try {
     const [records, weeklyRaw, backtestRaw] = await Promise.all([
-      loadReviewRecords(), fs.readFile(WEEKLY_PATH, "utf8"), fs.readFile(ANALYSIS_PATH, "utf8").catch(() => null),
+      loadReviewRecords(), readDataFile(WEEKLY_PATH, "utf8"), readDataFile(ANALYSIS_PATH, "utf8").catch(() => null),
     ]);
     const weekly = JSON.parse(weeklyRaw) as { currentWeek?: { races?: ArchiveRace[] }; archives?: Array<{ races?: ArchiveRace[] }> };
     const backtest = backtestRaw ? JSON.parse(backtestRaw) as { generatedAt?: string; rows?: BacktestRow[] } : null;

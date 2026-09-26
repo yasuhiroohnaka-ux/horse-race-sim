@@ -1,5 +1,5 @@
-﻿import fs from "node:fs/promises";
 import path from "node:path";
+import { readDataFile } from "@/lib/dataFile.mjs";
 import { NextRequest, NextResponse } from "next/server";
 import type { GroundCondition, Weather, WindDirection } from "@/lib/types";
 
@@ -52,7 +52,7 @@ function normalizeSpace(value: string): string {
 }
 
 async function readWeeklyData(): Promise<WeeklyData> {
-  const raw = await fs.readFile(WEEKLY_RACES_PATH, "utf8");
+  const raw = await readDataFile(WEEKLY_RACES_PATH, "utf8");
   return JSON.parse(raw.replace(/^\uFEFF/, "")) as WeeklyData;
 }
 

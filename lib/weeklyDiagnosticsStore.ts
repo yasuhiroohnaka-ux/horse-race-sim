@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
 import path from "node:path";
+import { readDataFile, writeDataFile } from "@/lib/dataFile.mjs";
 import type {
   WeeklyDiagnostics,
   WeeklyDiagnosticsComparisonSummary,
@@ -51,7 +51,7 @@ export function buildWeeklyDiagnosticsStoreKey(diagnostics: WeeklyDiagnostics) {
 
 export async function loadWeeklyDiagnosticsStore(): Promise<WeeklyDiagnosticsStore> {
   try {
-    const raw = await fs.readFile(STORE_PATH, "utf8");
+    const raw = await readDataFile(STORE_PATH, "utf8");
     const parsed = JSON.parse(raw.replace(/^\uFEFF/, ""));
     if (parsed && typeof parsed === "object" && Array.isArray((parsed as WeeklyDiagnosticsStore).entries)) {
       return {
@@ -82,8 +82,7 @@ export async function loadWeeklyDiagnosticsStore(): Promise<WeeklyDiagnosticsSto
 }
 
 export async function saveWeeklyDiagnosticsStore(store: WeeklyDiagnosticsStore) {
-  await fs.mkdir(path.dirname(STORE_PATH), { recursive: true });
-  await fs.writeFile(STORE_PATH, `${JSON.stringify(store, null, 2)}\n`, "utf8");
+  await writeDataFile(STORE_PATH, `${JSON.stringify(store, null, 2)}\n`, "utf8");
 }
 
 export async function ensureWeeklyDiagnosticsStored(diagnostics: WeeklyDiagnostics): Promise<UpsertResult> {

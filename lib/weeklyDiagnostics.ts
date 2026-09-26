@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
 import path from "node:path";
+import { readDataFile } from "@/lib/dataFile.mjs";
 import {
   GENERATED_ARCHIVED_RACES,
   GENERATED_COMPLETED_RACES,
@@ -423,7 +423,7 @@ async function loadLatestSnapshotsByRaceId(scope: DiagnosticsAggregationScope) {
   }
 
   try {
-    const raw = await fs.readFile(SNAPSHOT_PATH, "utf8");
+    const raw = await readDataFile(SNAPSHOT_PATH, "utf8");
     for (const line of raw.split(/\r?\n/).map((entry) => entry.trim()).filter(Boolean)) {
       let parsed: unknown;
       try {
@@ -572,7 +572,7 @@ async function loadSettlementsByRaceId(scope: DiagnosticsAggregationScope) {
 
 async function loadGeneratedReviewsByRaceId() {
   try {
-    const raw = await fs.readFile(GENERATED_REVIEWS_PATH, "utf8");
+    const raw = await readDataFile(GENERATED_REVIEWS_PATH, "utf8");
     const parsed = JSON.parse(raw.replace(/^\uFEFF/, ""));
     if (!parsed || typeof parsed !== "object") return {};
     const result: Record<string, GeneratedReviewRecord> = {};

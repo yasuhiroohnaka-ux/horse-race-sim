@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
 import path from "node:path";
+import { readDataFile } from "@/lib/dataFile.mjs";
 import { NextRequest, NextResponse } from "next/server";
 import { GENERATED_DRAW_OVERRIDES } from "@/lib/generatedDrawOverrides";
 import { getRaceDayNoOddsExclusions, toJstDateString } from "@/lib/raceDayExclusions.mjs";
@@ -165,7 +165,7 @@ function getTrackCodeFromCourseId(courseId: string): string | null {
 
 async function readWeeklyData(): Promise<WeeklyData> {
   try {
-    const raw = await fs.readFile(WEEKLY_RACES_PATH, "utf8");
+    const raw = await readDataFile(WEEKLY_RACES_PATH, "utf8");
     return JSON.parse(raw.replace(/^\uFEFF/, "")) as WeeklyData;
   } catch {
     return {};

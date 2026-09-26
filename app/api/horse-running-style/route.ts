@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
 import path from "node:path";
+import { readDataFile } from "@/lib/dataFile.mjs";
 import { NextRequest, NextResponse } from "next/server";
 import {
   getRunningStyleOverrideStorageStatus,
@@ -34,7 +34,7 @@ type RunningStyleOverrideEntry = {
 type RunningStyleOverrideStore = Record<string, Record<string, RunningStyleOverrideEntry>>;
 
 async function readWeeklyRaces(): Promise<{ bom: string; data: WeeklyRacesPayload }> {
-  const raw = await fs.readFile(WEEKLY_RACES_PATH, "utf8");
+  const raw = await readDataFile(WEEKLY_RACES_PATH, "utf8");
   const bom = raw.startsWith("\uFEFF") ? "\uFEFF" : "";
   const data = JSON.parse(raw.replace(/^\uFEFF/, "")) as WeeklyRacesPayload;
   return { bom, data };

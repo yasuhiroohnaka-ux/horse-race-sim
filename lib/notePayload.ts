@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
 import path from "node:path";
+import { readDataFile } from "@/lib/dataFile.mjs";
 import type {
   PredictionSnapshot,
   RaceCommentaryActualHorse,
@@ -47,7 +47,7 @@ function formatReturnRate(value: number) {
 
 async function loadRacePayoutsByRaceId(): Promise<Record<string, RaceCommentaryPayouts>> {
   try {
-    const raw = await fs.readFile(WEEKLY_RACES_PATH, "utf8");
+    const raw = await readDataFile(WEEKLY_RACES_PATH, "utf8");
     const parsed = JSON.parse(raw.replace(/^\uFEFF/, ""));
     if (!Array.isArray(parsed)) return {};
 

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { dataStorageKind } from "@/lib/dataFile.mjs";
 import { extractRaceId } from "@/lib/reviewRecords";
 import { runReviewPipeline } from "@/lib/reviewPipeline";
 
@@ -11,6 +12,12 @@ type RepairPayload = {
 };
 
 export async function POST(request: Request) {
+  if (dataStorageKind === "cloudflare_r2") {
+    return NextResponse.json({
+      ok: false,
+      error: "Review repair runs through the GitHub Actions data pipeline.",
+    }, { status: 503 });
+  }
   try {
     const payload = ((await request.json().catch(() => ({}))) ?? {}) as RepairPayload;
     const result = await runReviewPipeline({

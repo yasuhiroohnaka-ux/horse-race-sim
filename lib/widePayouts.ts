@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
 import path from "node:path";
+import { readDataFile } from "@/lib/dataFile.mjs";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -200,7 +200,7 @@ export function getWidePayoutByHorseNumbers(
 
 export async function loadWidePayoutsByRaceId(): Promise<Record<string, RaceWidePayouts>> {
   try {
-    const raw = await fs.readFile(WEEKLY_RACES_PATH, "utf8");
+    const raw = await readDataFile(WEEKLY_RACES_PATH, "utf8");
     const parsed = JSON.parse(raw.replace(/^\uFEFF/, "")) as RawWeeklyRacesFile;
     const payoutsByRaceId: Record<string, RaceWidePayouts> = {};
 
@@ -222,7 +222,7 @@ export async function loadWidePayoutsByRaceId(): Promise<Record<string, RaceWide
 
 export async function loadHorseLookupsByRaceId(): Promise<Record<string, RaceHorseLookup>> {
   try {
-    const raw = await fs.readFile(WEEKLY_RACES_PATH, "utf8");
+    const raw = await readDataFile(WEEKLY_RACES_PATH, "utf8");
     const parsed = JSON.parse(raw.replace(/^\uFEFF/, "")) as RawWeeklyRacesFile;
     const horseLookupsByRaceId: Record<string, RaceHorseLookup> = {};
 

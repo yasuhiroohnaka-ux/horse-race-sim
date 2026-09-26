@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { readDataFile } from "@/lib/dataFile.mjs";
 import type {
   ExpectationGrade,
   PredictionSnapshot,
@@ -335,7 +336,7 @@ export function createDiscoveredReviewRecord(params: {
 
 export async function loadReviewRecordStore(): Promise<ReviewRecordStore> {
   try {
-    const raw = await fs.readFile(REVIEW_RECORDS_PATH, "utf8");
+    const raw = await readDataFile(REVIEW_RECORDS_PATH, "utf8");
     const parsed = JSON.parse(raw.replace(/^\uFEFF/, ""));
     if (
       parsed &&

@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
 import path from "node:path";
+import { readDataFile } from "@/lib/dataFile.mjs";
 import { NextResponse } from "next/server";
 import { buildCategoryReturnStatsFromReviewRecords } from "@/lib/categoryReturnStats.mjs";
 import { buildWeeklyDiagnostics, loadWeeklyDiagnosticsContext } from "@/lib/weeklyDiagnostics";
@@ -530,7 +530,7 @@ function filterScope(records: RaceReviewRecord[], scope: DiagnosticsAggregationS
 
 async function readPredictionSnapshots(): Promise<PredictionSnapshot[]> {
   try {
-    const raw = await fs.readFile(SNAPSHOT_PATH, "utf8");
+    const raw = await readDataFile(SNAPSHOT_PATH, "utf8");
     return raw
       .split(/\r?\n/)
       .map((line) => line.trim())
@@ -552,7 +552,7 @@ async function readPredictionSnapshots(): Promise<PredictionSnapshot[]> {
 
 async function readJsonFile<T>(filePath: string, fallback: T): Promise<T> {
   try {
-    const raw = await fs.readFile(filePath, "utf8");
+    const raw = await readDataFile(filePath, "utf8");
     return JSON.parse(raw.replace(/^\uFEFF/, "")) as T;
   } catch {
     return fallback;

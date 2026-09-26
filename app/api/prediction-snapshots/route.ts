@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
 import path from "node:path";
+import { appendDataFile, readDataFile } from "@/lib/dataFile.mjs";
 import { NextResponse } from "next/server";
 import {
   DEFAULT_PREDICTION_ORIGIN,
@@ -53,7 +53,7 @@ function toNormalizedSnapshot(value: PredictionSnapshot): PredictionSnapshot {
 export async function GET() {
   try {
     const [raw, reviewRecords] = await Promise.all([
-      fs.readFile(SNAPSHOT_PATH, "utf8").catch((error) => {
+      readDataFile(SNAPSHOT_PATH, "utf8").catch((error) => {
         const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";
         if (code === "ENOENT") return "";
         throw error;
@@ -114,8 +114,7 @@ export async function POST(request: Request) {
     }
     const normalizedPayload = toNormalizedSnapshot(payload);
 
-    await fs.mkdir(DATA_DIR, { recursive: true });
-    await fs.appendFile(SNAPSHOT_PATH, `${JSON.stringify(normalizedPayload)}\n`, "utf8");
+    await appendDataFile(SNAPSHOT_PATH, `${JSON.stringify(normalizedPayload)}\n`, "utf8");
 
     return NextResponse.json({
       ok: true,

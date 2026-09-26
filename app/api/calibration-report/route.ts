@@ -1,6 +1,6 @@
-import fs from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
+import { readDataFile } from "@/lib/dataFile.mjs";
 import { loadReviewRecords } from "@/lib/reviewRecords";
 import { isLivePreRaceEligible } from "@/lib/sourceStatus";
 import type { RaceReviewRecord } from "@/lib/types";
@@ -66,7 +66,7 @@ function buildWeeklyTrend(records: RaceReviewRecord[]): WeeklyTrendPoint[] {
 export async function GET() {
   try {
     const [reportRaw, reviewRecordsByRaceId] = await Promise.all([
-      fs.readFile(REPORT_PATH, "utf8"),
+      readDataFile(REPORT_PATH, "utf8"),
       loadReviewRecords(),
     ]);
     const report = JSON.parse(reportRaw.charCodeAt(0) === 0xfeff ? reportRaw.slice(1) : reportRaw) as Record<string, unknown>;

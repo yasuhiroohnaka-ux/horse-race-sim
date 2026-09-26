@@ -23,7 +23,11 @@
     "repair:live-snapshot-timezone": "npx tsx scripts/repair-live-snapshot-timezone-shift.ts",
     "routine:keiba": "node scripts/keiba-routine.mjs",
     "diagnose:selection-actions": "node scripts/diagnose-selection-actions.mjs",
-    "audit:entry-data": "node scripts/daily-entry-check.mjs"
+    "audit:entry-data": "node scripts/daily-entry-check.mjs",
+    "dev:vinext": "vinext dev --port 3001",
+    "build:vinext": "node scripts/build-cloudflare.mjs",
+    "start:vinext": "wrangler dev --config dist/server/wrangler.json",
+    "deploy:vinext": "vinext-cloudflare deploy --config dist/server/wrangler.json"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -31,23 +35,32 @@
     "@radix-ui/react-slider": "^1.3.6",
     "@radix-ui/react-switch": "^1.2.6",
     "@vercel/blob": "^2.3.3",
+    "@vinext/cloudflare": "^1.0.0-beta.10",
     "lucide-react": "^0.575.0",
     "next": "^16.1.6",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "recharts": "^3.7.0"
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-server-dom-webpack": "^19.3.0",
+    "recharts": "^3.7.0",
+    "vinext": "^1.0.0-beta.12"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.60.2",
     "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "^25.3.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.1.1",
+    "@vitejs/plugin-rsc": "^0.5.35",
     "autoprefixer": "^10.4.24",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.1.6",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.2.0",
     "tsx": "^4.20.6",
-    "typescript": "5.9.3"
-  }
+    "typescript": "5.9.3",
+    "vite": "^8.3.1",
+    "wrangler": "^4.141.0"
+  },
+  "type": "module"
 }
