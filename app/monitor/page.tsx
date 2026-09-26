@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { SiteRail } from "@/components/SiteRail";
 import Link from "next/link";
+import { VERDICT_LABELS } from "@/lib/verdictLabels.mjs";
 import {
   CartesianGrid,
   Legend,
@@ -125,9 +126,9 @@ type MonitorPayload = {
 const SERIES_COLORS = { tan: "#2a78d6", fuku: "#1baf7a", wide: "#eda100" } as const;
 
 const CLASS_LABELS: Record<"place" | "win" | "skip", string> = {
-  place: "place (複勝軸)",
-  win: "win (単勝勝負)",
-  skip: "skip (見送り)",
+  place: `place (${VERDICT_LABELS.place})`,
+  win: `win (${VERDICT_LABELS.win})`,
+  skip: `skip (${VERDICT_LABELS.skip})`,
 };
 
 function parsePct(value: string | undefined): number | null {

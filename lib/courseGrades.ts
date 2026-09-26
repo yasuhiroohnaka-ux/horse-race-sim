@@ -15,7 +15,7 @@ export const COURSE_GRADE_FILTER_OPTIONS: ReadonlyArray<{
   { value: "G3", label: "G3" },
   { value: "L", label: "L" },
   { value: "OP", label: "OP" },
-  { value: "OTHER", label: "その他" },
+  { value: "OTHER", label: "条件戦" },
 ];
 
 const COURSE_GRADE_SET = new Set<string>(COURSE_GRADE_VALUES);
@@ -36,7 +36,7 @@ export function getCourseGrade(course: CourseLike): CourseGrade {
 
 export function courseBadgeLabel(course: CourseLike): string {
   const grade = getCourseGrade(course);
-  return grade === "OTHER" ? "その他" : grade;
+  return grade === "OTHER" ? "条件戦" : grade;
 }
 
 export function filterCoursesByGrade<T extends CourseLike>(courses: readonly T[], filter: CourseGradeFilter): T[] {

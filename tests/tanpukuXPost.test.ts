@@ -140,7 +140,7 @@ test("skip classification adds cautionary wording in full post", () => {
       reason: "少頭数",
     },
   });
-  assert.match(text, /見送り寄りの読み/);
+  assert.match(text, /見送り \(参考\)/);
 });
 
 test("post with wide recommendation and skip still fits within 280 chars", () => {
@@ -165,7 +165,8 @@ test("win classification renders calibrated win prob and odds", () => {
     classificationHint: { classification: "win", confidence: 0.45 },
     honmeiStats: { calWinProb: 0.38, calPlaceProb: 0.7, odds: 4.2 },
   });
-  assert.match(text, /単勝勝負型: 校正勝率38%×4\.2倍 \(winゲートは検証中\)/);
+  assert.match(text, /単勝勝負: 校正勝率38%×4\.2倍 \(winゲートは検証中\)/);
+  assert.doesNotMatch(text, /実績帯|実績単ROI/);
 });
 
 test("place classification renders calibrated place prob", () => {
@@ -173,14 +174,14 @@ test("place classification renders calibrated place prob", () => {
     classificationHint: { classification: "place", confidence: 0.6 },
     honmeiStats: { calWinProb: 0.2, calPlaceProb: 0.68, odds: 3.0 },
   });
-  assert.match(text, /複勝軸型: 校正複勝率68%/);
+  assert.match(text, /抑え: 校正複勝率68%/);
 });
 
 test("classification line degrades gracefully without honmei stats", () => {
   const text = build({
     classificationHint: { classification: "win", confidence: 0.45 },
   });
-  assert.match(text, /単勝勝負型 \(winゲートは検証中\)/);
+  assert.match(text, /単勝勝負 \(winゲートは検証中\)/);
 });
 
 // --- P4-C: ハッシュタグのサニタイズと優先度 ---

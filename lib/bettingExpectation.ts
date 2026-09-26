@@ -202,13 +202,13 @@ function buildReasons(context: GradeContext) {
 
   if (classification === "win") {
     score += 1;
-    reasons.push("classification は単勝向き");
+    reasons.push("判定は単勝勝負");
   } else if (classification === "place") {
     score += 1;
-    reasons.push("classification は複勝向き");
+    reasons.push("判定は抑え");
   } else if (classification === "skip") {
     score -= 2;
-    reasons.push("classification は見送り寄り");
+    reasons.push("判定は見送り");
   }
 
   if (kind === "simulationLeader" && rank === 1 && row) {

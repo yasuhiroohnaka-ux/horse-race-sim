@@ -14,16 +14,16 @@ type PerfBucket = {
 };
 
 type PerfPayload = {
+  scope?: { version: string; sourceStatus: string; action: string; fieldComplete: boolean };
   performance: {
     weekly?: PerfBucket;
     total?: PerfBucket;
-    updatedAt?: string;
   } | null;
-  updatedAt?: string | null;
+  lastSettledAt?: string | null;
 };
 
 function pct(numerator: number, denominator: number): string {
-  if (!denominator) return "0.0";
+  if (!denominator) return "-";
   return ((numerator / denominator) * 100).toFixed(1);
 }
 
@@ -34,24 +34,23 @@ export function PerformancePanel() {
     let cancelled = false;
     const load = async () => {
       try {
-        const res = await fetch("/api/performance", { cache: "no-store" });
+        const res = await fetch("/api/performance/summary", { cache: "no-store" });
         const json = (await res.json()) as PerfPayload;
-        if (!cancelled) setData(json);
+        if (!cancelled) setData(res.ok ? json : null);
       } catch {
         if (!cancelled) setData(null);
       }
     };
     void load();
-    const id = setInterval(load, 60_000);
     return () => {
       cancelled = true;
-      clearInterval(id);
     };
   }, []);
 
   const weekly = data?.performance?.weekly;
   const total = data?.performance?.total;
-  const updatedAt = data?.performance?.updatedAt || data?.updatedAt || null;
+  const lastSettledAt = data?.lastSettledAt ?? null;
+  const scope = data?.scope;
 
   return (
     <section className="rounded-[var(--r-lg)] border border-line bg-card p-6 ">
@@ -61,27 +60,31 @@ export function PerformancePanel() {
           <h2 className="mt-1 text-2xl font-bold text-ink">単複おすすめ成績</h2>
         </div>
         <p className="text-xs text-ink-2">
-          {updatedAt ? `最終更新: ${new Date(updatedAt).toLocaleString("ja-JP")}` : "毎週更新"}
+          {lastSettledAt ? `最終決済: ${new Date(lastSettledAt).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}` : "集計前"}
         </p>
       </div>
+
+      <p className="mb-3 text-xs text-ink-2">
+        {scope ? `${scope.version} / ${scope.action === "win" ? "単勝勝負のみ" : scope.action} / ${scope.sourceStatus === "live_pre_race" ? "ライブ" : scope.sourceStatus} / 出走馬データ完全` : "集計範囲を読み込み中"}
+      </p>
 
       {!weekly && !total && <p className="text-sm text-ink-2">まだ集計データがありません。</p>}
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="rounded-[var(--r-md)] bg-paper-sunk p-4">
           <p className="text-sm font-bold text-ink">週次 {weekly?.weekOf ? `(${weekly.weekOf})` : ""}</p>
-          <div className="mt-3 space-y-2 text-sm text-ink-2">
-            <p>単: 的中率 {pct(weekly?.tanHits ?? 0, weekly?.bets ?? 0)}% / 回収率 {pct(weekly?.tanPayout ?? 0, weekly?.tanStake ?? 0)}%</p>
-            <p>複: 的中率 {pct(weekly?.fukuHits ?? 0, weekly?.bets ?? 0)}% / 回収率 {pct(weekly?.fukuPayout ?? 0, weekly?.fukuStake ?? 0)}%</p>
-          </div>
+          {weekly?.bets ? <div className="mt-3 space-y-2 text-sm text-ink-2">
+            <p>単: 的中率 {pct(weekly.tanHits, weekly.bets)}% / 回収率 {pct(weekly.tanPayout, weekly.tanStake)}%</p>
+            <p>本命複勝 (参考): 的中率 {pct(weekly.fukuHits, weekly.bets)}% / 回収率 {pct(weekly.fukuPayout, weekly.fukuStake)}%</p>
+          </div> : <p className="mt-3 text-sm text-ink-2">集計前</p>}
         </div>
 
         <div className="rounded-[var(--r-md)] bg-paper-sunk p-4">
           <p className="text-sm font-bold text-ink">累計</p>
-          <div className="mt-3 space-y-2 text-sm text-ink-2">
-            <p>単: 的中率 {pct(total?.tanHits ?? 0, total?.bets ?? 0)}% / 回収率 {pct(total?.tanPayout ?? 0, total?.tanStake ?? 0)}%</p>
-            <p>複: 的中率 {pct(total?.fukuHits ?? 0, total?.bets ?? 0)}% / 回収率 {pct(total?.fukuPayout ?? 0, total?.fukuStake ?? 0)}%</p>
-          </div>
+          {total?.bets ? <div className="mt-3 space-y-2 text-sm text-ink-2">
+            <p>単: 的中率 {pct(total.tanHits, total.bets)}% / 回収率 {pct(total.tanPayout, total.tanStake)}%</p>
+            <p>本命複勝 (参考): 的中率 {pct(total.fukuHits, total.bets)}% / 回収率 {pct(total.fukuPayout, total.fukuStake)}%</p>
+          </div> : <p className="mt-3 text-sm text-ink-2">集計前</p>}
         </div>
       </div>
     </section>

@@ -113,6 +113,20 @@ test("stable place credentials without win strength classify as place", () => {
   assert.match(hint.reason ?? "", /3着内安定/);
 });
 
+test("classification reasons show current inputs without fixed historical performance", () => {
+  const entries = [
+    { winProb: 0.6, placeProb: 0.85, odds: 4.5, fieldSize: 14 },
+    { winProb: 0.6, placeProb: 0.8, odds: 2.0, fieldSize: 14 },
+    { winProb: 0.5, placeProb: 0.85, odds: 3.2, fieldSize: 14 },
+    { winProb: 0.45, placeProb: 0.85, odds: 3.0, fieldSize: 14 },
+  ];
+  for (const entry of entries) {
+    const reason = classifyHonmeiPick(entry).reason;
+    assert.doesNotMatch(reason, /実績|単的中|複的中/);
+    assert.match(reason, /校正|倍/);
+  }
+});
+
 test("intermediate band falls back to relaxed place with low confidence", () => {
   // calWin(0.48)≈0.27 は win の両ゲート未満、calPlace(0.68)≈0.55 は place 本則未満、
   // calTanRoi ≈ 0.27 * 3.5 * 100 ≈ 94 は skip 基準超え → 中間帯
@@ -178,6 +192,8 @@ test("pickTanpukuPair emits v3.1 version and calibrated fields", () => {
   assert.ok(["win", "place", "skip"].includes(winPick.classificationHint.classification));
   assert.ok(Number.isFinite(winPick.calWinProb));
   assert.ok(Number.isFinite(winPick.calPlaceProb));
+  assert.match(winPick.selectionReason ?? "", /総合評価1位/);
+  assert.doesNotMatch(winPick.selectionReason ?? "", /複勝軸に選出/);
   // 校正値は生値より控えめ側に出る (本命帯の生winProbは過大)
   assert.ok(winPick.calWinProb < winPick.winProb + 1e-9);
 });
@@ -243,6 +259,7 @@ test("wideRecommendation keeps the place pair shadow-only after live OOS misses 
   assert.match(result.wideRecommendation.reason, /live OOS基準未達/);
   assert.match(result.wideRecommendation.reason, /推奨停止/);
   assert.match(result.wideRecommendation.reason, /シャドー監視は継続/);
+  assert.doesNotMatch(result.wideRecommendation.reason, /実績|\d+(?:\.\d+)?%/);
 });
 
 test("wideRecommendation is not recommended for skip classification", () => {

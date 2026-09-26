@@ -73,9 +73,17 @@ export function CourseConfig({
   const allCourses = [...ACTIVE_COURSES, ...ARCHIVED_COURSES];
   const counts = countCoursesByGrade(allCourses);
   const activeCourses = filterCoursesByGrade(ACTIVE_COURSES, effectiveGradeFilter);
-  const activeSpecialCourses = activeCourses.filter((course) => getCourseGrade(course) !== "OTHER");
-  const activeOtherCourses = activeCourses.filter((course) => getCourseGrade(course) === "OTHER");
   const archivedCourses = filterCoursesByGrade(ARCHIVED_COURSES, effectiveGradeFilter);
+  const activeDays = [
+    { key: "Sat", label: "今週 (土)" },
+    { key: "Sun", label: "今週 (日)" },
+    { key: "Other", label: "今週 (その他)" },
+  ].map(({ key, label }) => ({
+    key, label,
+    courses: activeCourses.filter((course) => key === "Other" ? course.day !== "Sat" && course.day !== "Sun" : course.day === key),
+  }));
+  const archiveDates = [...new Set(archivedCourses.map((course) => course.raceDate ?? "日付不明"))]
+    .sort((a, b) => a === "日付不明" ? 1 : b === "日付不明" ? -1 : b.localeCompare(a));
 
   const handleGradeFilterChange = (nextFilter: CourseGradeFilter) => {
     setGradeFilter(nextFilter);
@@ -138,33 +146,18 @@ export function CourseConfig({
             value={selectedCourse.id}
             onChange={(event) => onCourseChange(event.target.value)}
           >
-            {activeSpecialCourses.length > 0 && (
-              <optgroup label="今週の対象レース">
-                {activeSpecialCourses.map((course) => (
-                  <option key={course.id} value={course.id}>
-                    {course.displayName ?? course.name}
-                  </option>
+            {activeDays.filter((group) => group.courses.length > 0).map((group) => (
+              <optgroup key={group.key} label={group.label}>
+                {group.courses.map((course) => <option key={course.id} value={course.id}>{course.displayName ?? course.name}</option>)}
+              </optgroup>
+            ))}
+            {archiveDates.map((date) => (
+              <optgroup key={date} label={`過去: ${date}`}>
+                {archivedCourses.filter((course) => (course.raceDate ?? "日付不明") === date).map((course) => (
+                  <option key={course.id} value={course.id}>{date} {course.displayName ?? course.name}</option>
                 ))}
               </optgroup>
-            )}
-            {activeOtherCourses.length > 0 && (
-              <optgroup label="その他のレース">
-                {activeOtherCourses.map((course) => (
-                  <option key={course.id} value={course.id}>
-                    {course.displayName ?? course.name}
-                  </option>
-                ))}
-              </optgroup>
-            )}
-            {archivedCourses.length > 0 && (
-              <optgroup label="アーカイブ">
-                {archivedCourses.map((course) => (
-                  <option key={course.id} value={course.id}>
-                    {course.displayName ?? course.name}
-                  </option>
-                ))}
-              </optgroup>
-            )}
+            ))}
           </select>
         </label>
 

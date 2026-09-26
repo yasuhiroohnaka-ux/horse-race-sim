@@ -1,4 +1,5 @@
 import { buildPriorityHashtags, sanitizeRaceTagLabel } from "@/lib/xTagSanitize.mjs";
+import { VERDICT_LABELS } from "@/lib/verdictLabels.mjs";
 
 export interface CategoryReturnStatForPost {
   key: string;
@@ -143,18 +144,18 @@ function buildClassificationLine(params: BuildTanpukuPreRacePostParams): string 
 
   if (classification === "win") {
     if (calWinPct !== null && Number.isFinite(odds) && odds > 0) {
-      return `単勝勝負型: 校正勝率${calWinPct}%×${odds.toFixed(1)}倍 (winゲートは検証中)`;
+      return `${VERDICT_LABELS.win}: 校正勝率${calWinPct}%×${odds.toFixed(1)}倍 (winゲートは検証中)`;
     }
-    return "単勝勝負型 (winゲートは検証中)";
+    return `${VERDICT_LABELS.win} (winゲートは検証中)`;
   }
   if (classification === "place") {
     if (calPlacePct !== null) {
-      return `複勝軸型: 校正複勝率${calPlacePct}%`;
+      return `${VERDICT_LABELS.place}: 校正複勝率${calPlacePct}%`;
     }
-    return "複勝軸型";
+    return VERDICT_LABELS.place;
   }
   // skip: 見送り宣言 (文言は既存投稿と互換)
-  return "軸としては見送り寄りの読み (参考)";
+  return `${VERDICT_LABELS.skip} (参考)`;
 }
 
 function buildNoStatsPost(params: BuildTanpukuPreRacePostParams): string {

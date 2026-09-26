@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { GradeFilterChips } from "@/components/GradeFilterChips";
 import { countCoursesByGrade, courseBadgeLabel, CourseGradeFilter, filterCoursesByGrade } from "@/lib/courseGrades";
+import { buildCourseShortComment } from "@/lib/raceCardContent";
 import type { Course } from "@/lib/types";
 
 interface WeeklyRaceBrowserProps {
@@ -61,7 +62,7 @@ export function WeeklyRaceBrowser({ courses }: WeeklyRaceBrowserProps) {
                 {dayLabel(course.day) ? <span className="text-xs text-ink-3">{dayLabel(course.day)}</span> : null}
               </div>
               <p className="mt-3 text-lg font-bold text-ink">{course.displayName ?? course.name}</p>
-              <p className="mt-2 text-sm text-ink-2">{course.shortComment ?? "コース形状と市場とのズレをすぐ確認できます。"}</p>
+              <p className="mt-2 text-sm text-ink-2">{course.shortComment ?? buildCourseShortComment(course)}</p>
             </Link>
           ))}
         </div>

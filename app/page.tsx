@@ -6,6 +6,17 @@ import { WeeklyRaceBrowser } from "@/components/WeeklyRaceBrowser";
 import { ACTIVE_COURSES } from "@/lib/courses";
 import { readEngineScorecard } from "@/lib/engineScorecard";
 import { MONTE_CARLO_RUNS_LABEL } from "@/lib/simulationConfig";
+import { VERDICT_LABELS } from "@/lib/verdictLabels.mjs";
+
+export const dynamic = "force-dynamic";
+
+function pct(value: number | null, digits = 1): string {
+  return value === null ? "-" : `${value.toFixed(digits)}%`;
+}
+
+function roiCi(value: [number, number] | null): string {
+  return value ? `95%CI ${value[0].toFixed(0)}〜${value[1].toFixed(0)}%` : "95%CI -";
+}
 
 const VERDICT_STYLE = {
   win: { chip: "verdict verdict-go", bar: "var(--go)" },
@@ -17,32 +28,32 @@ const GATES = [
   {
     step: "両面弱",
     rule: "校正複勝率 < 52% かつ 校正単ROI < 85",
-    outcome: "見送り",
+    outcome: VERDICT_LABELS.skip,
   },
   {
     step: "混戦",
     rule: "本命オッズ ≥ 4.0倍",
-    outcome: "見送り",
+    outcome: VERDICT_LABELS.skip,
   },
   {
     step: "本命級",
     rule: "校正勝率 ≥ 35% かつ 校正単ROI ≥ 95",
-    outcome: "単勝勝負",
+    outcome: VERDICT_LABELS.win,
   },
   {
     step: "堅軸",
     rule: "校正勝率 ≥ 30% かつ オッズ < 4.0倍",
-    outcome: "単勝勝負",
+    outcome: VERDICT_LABELS.win,
   },
   {
     step: "3着内",
     rule: "校正複勝率 ≥ 60%",
-    outcome: "抑え",
+    outcome: VERDICT_LABELS.place,
   },
 ];
 
-export default function Home() {
-  const scorecard = readEngineScorecard();
+export default async function Home() {
+  const scorecard = await readEngineScorecard();
 
   return (
     <div className="min-h-screen bg-paper">
@@ -84,10 +95,14 @@ export default function Home() {
               <div className="rounded-[var(--r-lg)] border border-turf-line bg-turf-raised p-5">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                   <p className="t-label" style={{ color: "var(--turf-ink-2)" }}>
-                    確定 {scorecard.totalRaces} レースでの実測
+                    現行版のライブ実績 / {scorecard.pairedRaces} レース
                   </p>
                   <p className="t-num text-[11px] text-turf-ink-2">{scorecard.version}</p>
                 </div>
+
+                <p className="mt-2 text-[11px] leading-5 text-turf-ink-2">
+                  発走前の保存予測と公式単勝払戻で集計。同じレースの事前1番人気と比較。基準線不足で除外 {scorecard.baselineUnavailableCount} 件。
+                </p>
 
                 {/* レース全体をどう振り分けているか */}
                 <div className="mt-4 flex h-2 overflow-hidden rounded-full">
@@ -100,32 +115,27 @@ export default function Home() {
                   ))}
                 </div>
 
-                <dl className="mt-5 space-y-3.5">
+                <dl className="mt-5 space-y-4">
                   {scorecard.verdicts.map((v) => (
                     <div
                       key={v.key}
                       className="border-t border-turf-line pt-3.5 first:border-0 first:pt-0"
                     >
-                      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-                        <div className="flex items-center gap-2.5">
-                          <dt className={VERDICT_STYLE[v.key].chip}>{v.label}</dt>
-                          <dd className="t-num whitespace-nowrap text-[11px] text-turf-ink-2">
-                            {v.races}R / {v.share.toFixed(0)}%
-                          </dd>
-                        </div>
-                        <dd className="flex items-baseline gap-4">
-                          <span className="whitespace-nowrap">
-                            <span className="t-num text-[22px] font-bold text-turf-ink">
-                              {v.hitRate.toFixed(1)}
-                            </span>
-                            <span className="ml-0.5 text-[11px] text-turf-ink-2">% 的中</span>
-                          </span>
-                          <span className="whitespace-nowrap">
-                            <span className="t-num text-[22px] font-bold text-turf-ink">
-                              {v.roi.toFixed(0)}
-                            </span>
-                            <span className="ml-0.5 text-[11px] text-turf-ink-2">% 回収</span>
-                          </span>
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <dt className={VERDICT_STYLE[v.key].chip}>{v.label}</dt>
+                        <dd className="t-num whitespace-nowrap text-[11px] text-turf-ink-2">{v.honmei.n}R / {v.share.toFixed(0)}%</dd>
+                        {v.honmei.n < 30 && <dd className="rounded-full border border-turf-line px-2 py-0.5 text-[10px] text-turf-ink-2">サンプル不足</dd>}
+                      </div>
+                      <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                        <dd className="rounded-[var(--r-md)] bg-paper-sunk p-2 text-[11px] text-ink">
+                          <span className="font-semibold">本命</span><br />
+                          的中 {pct(v.honmei.hitRate)} / 回収 {pct(v.honmei.roi)}<br />
+                          <span className="text-ink-2">{roiCi(v.honmei.roiCi95)}</span>
+                        </dd>
+                        <dd className="rounded-[var(--r-md)] bg-paper-sunk p-2 text-[11px] text-ink">
+                          <span className="font-semibold">事前1番人気</span><br />
+                          的中 {pct(v.favorite.hitRate)} / 回収 {pct(v.favorite.roi)}<br />
+                          <span className="text-ink-2">{roiCi(v.favorite.roiCi95)}</span>
                         </dd>
                       </div>
                       <dd className="mt-1.5 text-[12px] leading-5 text-turf-ink-2">{v.blurb}</dd>
@@ -134,10 +144,18 @@ export default function Home() {
                 </dl>
 
                 <p className="mt-5 border-t border-turf-line pt-3 text-[11px] leading-5 text-turf-ink-2">
-                  全レースの本命をそのまま買うと 的中 {scorecard.overallHitRate.toFixed(1)}% /
-                  回収 {scorecard.overallRoi.toFixed(0)}%。単勝勝負だけに絞ると的中率が上がります。
-                  回収率は控除率20%を超えていないので、勝てる保証ではありません。
+                  全判定の本命単勝: 的中 {pct(scorecard.overall.honmei.hitRate)} / 回収 {pct(scorecard.overall.honmei.roi)}。
+                  同じレースの事前1番人気: 的中 {pct(scorecard.overall.favorite.hitRate)} / 回収 {pct(scorecard.overall.favorite.roi)}。
                 </p>
+                {scorecard.backtest && (
+                  <details className="mt-3 border-t border-turf-line pt-3 text-[11px] text-turf-ink-2">
+                    <summary className="cursor-pointer font-semibold">バックテスト (参考・閾値決定に使ったデータを含む)</summary>
+                    <p className="mt-2">全体 {scorecard.backtest.overall.n}R / 的中 {pct(scorecard.backtest.overall.hitRate)} / 回収 {pct(scorecard.backtest.overall.roi)}</p>
+                    {scorecard.backtest.verdicts.map((row) => (
+                      <p key={row.key}>{row.label} {row.metrics.n}R / 的中 {pct(row.metrics.hitRate)} / 回収 {pct(row.metrics.roi)}</p>
+                    ))}
+                  </details>
+                )}
               </div>
             ) : null}
           </div>
@@ -167,9 +185,9 @@ export default function Home() {
                 <span className="t-num text-[12px] text-ink-2">{gate.rule}</span>
                 <span
                   className={
-                    gate.outcome === "単勝勝負"
+                    gate.outcome === VERDICT_LABELS.win
                       ? "verdict verdict-go"
-                      : gate.outcome === "抑え"
+                      : gate.outcome === VERDICT_LABELS.place
                         ? "verdict verdict-hold"
                         : "verdict verdict-pass"
                   }
@@ -190,9 +208,9 @@ export default function Home() {
         <footer className="flex flex-wrap items-center justify-between gap-2 pb-6 pt-2 text-[11px] text-ink-3">
           <span>単勝ラボ</span>
           <span className="t-num">
-            {scorecard?.generatedAt
-              ? `成績更新 ${scorecard.generatedAt.slice(0, 10)}`
-              : "成績データ未生成"}
+            {scorecard?.lastSettledAt
+              ? `成績更新 ${new Date(scorecard.lastSettledAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}`
+              : "ライブ成績は集計前"}
           </span>
         </footer>
       </main>

@@ -98,7 +98,7 @@ test("review post matches classification against the result and sanitizes the ha
     simBestHorseId: null,
   });
   assert.ok(payload);
-  assert.match(payload.text, /分類: 複勝軸型 → 3着内/);
+  assert.match(payload.text, /分類: 抑え → 3着内/);
   const tagLine = payload.text.trimEnd().split("\n").at(-1) ?? "";
   assert.equal(tagLine, "#垂水Ｓ #AI予想");
 });

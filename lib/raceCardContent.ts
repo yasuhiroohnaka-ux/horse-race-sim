@@ -25,9 +25,8 @@ function cleanRaceLabel(label: string | undefined) {
 }
 
 function fallbackComment(course: Pick<Course, "grade" | "surface" | "distance" | "venue">) {
-  const gradeLabel = course.grade ? `${course.grade}の` : "";
-  const venueLabel = course.venue ? `${course.venue}の` : "";
-  return `${venueLabel}${surfaceLabel(course.surface)}${course.distance}mで行われる${gradeLabel}注目レース。コース適性の差が出やすい。`;
+  const gradeLabel = course.grade === "OTHER" ? "条件戦" : course.grade ?? null;
+  return [course.venue, `${surfaceLabel(course.surface)}${course.distance}m`, gradeLabel].filter(Boolean).join("・") + "のレース。";
 }
 
 export function buildCourseDisplayName(course: Pick<Course, "name" | "venue" | "surface" | "distance"> & { label?: string }) {
