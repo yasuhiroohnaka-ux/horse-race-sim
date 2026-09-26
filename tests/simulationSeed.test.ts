@@ -57,3 +57,42 @@ test("generated simulation seed is an unsigned 32-bit integer", () => {
   assert.ok(Number.isInteger(seed));
   assert.ok(seed >= 0 && seed <= 0xffffffff);
 });
+
+test("snapshot retains raw horse inputs, including zero and missing values", async () => {
+  const inputHorses: Horse[] = horses.map((horse, index) => index === 0 ? {
+    ...horse,
+    trainingScore: 0,
+    recentFormScore: null as unknown as number,
+    recentTimeIndex: -1.5,
+    lastRaceGradeScore: 3,
+    distanceChange: -200,
+    weight: 57,
+    favoriteCount: 0,
+    pedigreeScore: 72,
+  } : horse);
+  const snapshot = await buildPredictionSnapshot({
+    horses: inputHorses,
+    course,
+    condition,
+    results: runMonteCarlo(inputHorses, course, condition, 100, 123),
+    simulationCount: 100,
+    simulationSeed: 123,
+    capturedAt: "2099-01-01T05:00:00Z",
+  });
+  const inputs = snapshot.rankedRows.find((row) => row.horseId === "1")?.inputs;
+  assert.ok(inputs);
+  assert.equal(Object.keys(inputs).length, 26);
+  assert.equal(inputs.speed, 75);
+  assert.equal(inputs.trainingScore, 0);
+  assert.equal(inputs.recentFormScore, null);
+  assert.equal(inputs.recentAverageFinish, null);
+  assert.equal(inputs.recentTimeIndex, -1.5);
+  assert.equal(inputs.lastRaceGradeScore, 3);
+  assert.equal(inputs.distanceChange, -200);
+  assert.equal(inputs.weight, 57);
+  assert.equal(inputs.favoriteCount, 0);
+  assert.equal(inputs.pedigreeScore, 72);
+  assert.equal(inputs.jockeyPower, null);
+  assert.equal(JSON.parse(JSON.stringify(snapshot)).rankedRows.find((row: { horseId: string }) =>
+    row.horseId === "1")?.inputs.recentFormScore, null);
+});

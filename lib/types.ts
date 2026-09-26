@@ -295,6 +295,37 @@ export interface PredictionSnapshotSignalReason {
   signalReason: string | null;
 }
 
+// Raw horse inputs captured when the prediction is made. Null means the input
+// was absent; it must not be replaced with the engine's fallback value.
+export interface PredictionSnapshotInputs {
+  speed: number | null;
+  stamina: number | null;
+  power: number | null;
+  guts: number | null;
+  jockeyPower: number | null;
+  stablePower: number | null;
+  trainingScore: number | null;
+  recentFormScore: number | null;
+  recentAverageFinish: number | null;
+  recentTimeIndex: number | null;
+  lastRaceGradeScore: number | null;
+  previousRaceDistance: number | null;
+  lastRaceDistance: number | null;
+  distanceChange: number | null;
+  condition: number | null;
+  weight: number | null;
+  favoriteCount: number | null;
+  xBuzzScore: number | null;
+  predictionCount: number | null;
+  pedigreeScore: number | null;
+  courseFitScore: number | null;
+  distanceFitScore: number | null;
+  groundFitScore: number | null;
+  paceFitScore: number | null;
+  simulatedOdds: number | null;
+  expertOdds: number | null;
+}
+
 export interface PredictionSnapshotRow {
   horseId: string;
   externalHorseId?: string | null;
@@ -327,6 +358,8 @@ export interface PredictionSnapshotRow {
   previousFinish?: number | null;
   previousRaceSource?: string | null;
   runnerPreviousRaceOverrideApplied?: boolean | null;
+  // Added in WP-F5. Older snapshots do not contain this field.
+  inputs?: PredictionSnapshotInputs;
   majorContributors: PredictionSnapshotContributor[];
 }
 

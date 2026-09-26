@@ -327,4 +327,5 @@ node scripts/backtest-selection.mjs --baseline=<旧モジュールのパス>   #
 - 2026-09-26 の土曜09時 Actions は11:23 JSTに開始された。D0 の午後収集は12:17、13:17/47、14:17、15:47、16:17 JSTの収集専用 stage を追加して遅延・欠落に備える。この stage は routine・結果精算・投稿を実行しない。GitHub Actions の予定時刻どおりの実行は保証されないため、`npm run report:pre-race-signals` で取得実績を継続確認する。
 - WP-F2: 週次routineと日次entry checkは同じ `keiba-data-writer` グループで直列化する。待機中runの置換も避けるため `queue: max` を指定し、push前の rebase と最大3回の再試行、失敗時の生成データ artifact 保存を追加した。2026-09-26 の2本の手動runはroutine 08:23:54–08:24:21 UTC、daily 08:24:24–08:25:11 UTCの順に完了。dailyのbotコミット `f9a939a` はmainに残った。routineは変更なしだったため、双方がコミットを残す条件は次の実データ更新時に再確認する。
 - WP-F4: snapshot作成前に出馬表のraceId・レース名・頭数を照合する。レース名が異なる場合は同じ開催日・場のR番号を探し、全馬名も一致したときだけIDを修正する。未解決なら `INCORRECT_RACE_ID` としてsnapshotを抑止する。履歴の誤ID3件は `review_failed` に終端化し、曜日の不一致72件を日付から修正した。監査では誤ID3件・曜日不一致0件。2026-09-27の対象8件は公開出馬表と一致した。
+- WP-F5: 新規snapshotの各 `rankedRows[].inputs` に予想時点の馬ごとの数値入力26項目を保存する。未取得は `null`、実際の0は0のまま。過去のsnapshotは復元しない。現在の18頭立てデータで1件あたり約9.1KB増（既存18頭立てsnapshotの平均15.8KBに対し約57%増）。
 - 現在の検証コマンド: `npx tsc --noEmit --incremental false`、`npm test`、`npm run build`。数値の採用判断には計画書の時系列分割・事前 snapshot・公式払戻・信頼区間の条件を使う。

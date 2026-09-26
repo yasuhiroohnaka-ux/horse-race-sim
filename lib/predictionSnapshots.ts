@@ -15,6 +15,7 @@ import {
   PredictionSnapshotSelectionLogEntry,
   PredictionSnapshotSourceStatus,
   PredictionSnapshotExpectation,
+  PredictionSnapshotInputs,
   RaceCondition,
 } from "./types";
 
@@ -109,6 +110,42 @@ function normalizeString(value: unknown): string | null {
 function normalizeNumber(value: unknown): number | null {
   const normalized = Number(value);
   return Number.isFinite(normalized) ? normalized : null;
+}
+
+function snapshotInputNumber(value: unknown): number | null {
+  if (value === null || value === undefined || value === "" || typeof value === "boolean") return null;
+  return normalizeNumber(value);
+}
+
+function captureHorseInputs(horse: Horse): PredictionSnapshotInputs {
+  return {
+    speed: snapshotInputNumber(horse.speed),
+    stamina: snapshotInputNumber(horse.stamina),
+    power: snapshotInputNumber(horse.power),
+    guts: snapshotInputNumber(horse.guts),
+    jockeyPower: snapshotInputNumber(horse.jockeyPower),
+    stablePower: snapshotInputNumber(horse.stablePower),
+    trainingScore: snapshotInputNumber(horse.trainingScore),
+    recentFormScore: snapshotInputNumber(horse.recentFormScore),
+    recentAverageFinish: snapshotInputNumber(horse.recentAverageFinish),
+    recentTimeIndex: snapshotInputNumber(horse.recentTimeIndex),
+    lastRaceGradeScore: snapshotInputNumber(horse.lastRaceGradeScore),
+    previousRaceDistance: snapshotInputNumber(horse.previousRaceDistance),
+    lastRaceDistance: snapshotInputNumber(horse.lastRaceDistance),
+    distanceChange: snapshotInputNumber(horse.distanceChange),
+    condition: snapshotInputNumber(horse.condition),
+    weight: snapshotInputNumber(horse.weight),
+    favoriteCount: snapshotInputNumber(horse.favoriteCount),
+    xBuzzScore: snapshotInputNumber(horse.xBuzzScore),
+    predictionCount: snapshotInputNumber(horse.predictionCount),
+    pedigreeScore: snapshotInputNumber(horse.pedigreeScore),
+    courseFitScore: snapshotInputNumber(horse.courseFitScore),
+    distanceFitScore: snapshotInputNumber(horse.distanceFitScore),
+    groundFitScore: snapshotInputNumber(horse.groundFitScore),
+    paceFitScore: snapshotInputNumber(horse.paceFitScore),
+    simulatedOdds: snapshotInputNumber(horse.simulatedOdds),
+    expertOdds: snapshotInputNumber(horse.expertOdds),
+  };
 }
 
 function normalizeBoolean(value: unknown): boolean | null {
@@ -582,6 +619,7 @@ export async function buildPredictionSnapshot(params: {
       previousFinish: normalizeNumber(horse.previousFinish),
       previousRaceSource: derivePreviousRaceSource(horse as Horse & Record<string, unknown>),
       runnerPreviousRaceOverrideApplied: normalizeBoolean((horse as Horse & Record<string, unknown>).runnerPreviousRaceOverrideApplied),
+      inputs: captureHorseInputs(horse),
       majorContributors: pickMajorContributors({
         abilityScore: row.abilityScore,
         courseFit: profile.traitScores.courseFit,
