@@ -13213,6 +13213,7 @@
         {
           "courseId": "hanshin-turf-1600-202609040509",
           "raceId": "202609040509",
+          "excludedReason": "INCORRECT_RACE_ID",
           "label": "野路菊S",
           "grade": "OP",
           "day": "Sat",

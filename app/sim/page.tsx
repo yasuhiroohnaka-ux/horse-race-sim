@@ -8,6 +8,8 @@ import { CourseConfig } from "@/components/CourseConfig";
 import { HorseInput } from "@/components/HorseInput";
 import { SimulationResults } from "@/components/SimulationResults";
 import { ACTIVE_COURSES, COURSES } from "@/lib/courses";
+import { GENERATED_ARCHIVED_RACES } from "@/lib/generatedRaceSchedule";
+import { assessFieldDataQuality } from "@/lib/fieldDataQuality";
 import { getCourseGrade } from "@/lib/courseGrades";
 import { getDefaultHorses } from "@/lib/defaultHorses";
 import { dedupeHorses, findHorseDuplicates } from "@/lib/horseIntegrity";
@@ -299,6 +301,7 @@ function SimulatorContent() {
   const [isRunning, setIsRunning] = useState(false);
   const [liveConditionSummary, setLiveConditionSummary] = useState("");
   const [oddsLastFetchedAt, setOddsLastFetchedAt] = useState("");
+  const [netkeibaEntryCount, setNetkeibaEntryCount] = useState<number | null>(null);
   const [oddsRefreshError, setOddsRefreshError] = useState("");
   const [isRefreshingOdds, setIsRefreshingOdds] = useState(false);
   const [manualOddsRefreshKey, setManualOddsRefreshKey] = useState(0);
@@ -309,6 +312,11 @@ function SimulatorContent() {
 
   const selectedCourse = COURSES.find((course) => course.id === condition.courseId) ?? initialCourse;
   const isArchive = selectedCourse?.archived === true;
+  const archivedResultFieldSize = isArchive
+    ? GENERATED_ARCHIVED_RACES.find((race) => race.courseId === selectedCourse?.id)?.result?.finishers?.length ?? null
+    : null;
+  const expectedFieldSize = archivedResultFieldSize ?? netkeibaEntryCount;
+  const fieldDataQuality = assessFieldDataQuality(expectedFieldSize, horses.length);
 
   useEffect(() => {
     oddsLastFetchedAtRef.current = oddsLastFetchedAt;
@@ -330,6 +338,7 @@ function SimulatorContent() {
     setResults(null); setTanpukuPair(null);
     setLiveConditionSummary("");
     setOddsLastFetchedAt("");
+    setNetkeibaEntryCount(null);
     setOddsRefreshError("");
   };
 
@@ -352,6 +361,7 @@ function SimulatorContent() {
 
         const payload = (await response.json()) as NetkeibaOddsPayload;
         if (cancelled) return;
+        setNetkeibaEntryCount(Number.isInteger(payload.entryCount) && Number(payload.entryCount) > 0 ? Number(payload.entryCount) : null);
 
         const oddsByGate = payload.oddsByGate ?? {};
         const gateByHorseKey = payload.gateByHorseKey ?? {};
@@ -707,6 +717,7 @@ function SimulatorContent() {
           const snapshot = await buildPredictionSnapshot({
             results: simulationResults,
             horses,
+            expectedFieldSize,
             course: selectedCourse,
             condition,
             simulationCount: MONTE_CARLO_RUNS,
@@ -824,6 +835,12 @@ function SimulatorContent() {
             </div>
           )}
         </header>
+
+        {fieldDataQuality.fieldComplete === false && (
+          <div role="alert" className="mb-4 rounded-[var(--r-md)] border border-note bg-note-wash px-4 py-3 text-sm text-note">
+            出走馬データ不完全のため参考外（登録 {fieldDataQuality.actual} 頭 / 出馬表・結果 {fieldDataQuality.expected} 頭）
+          </div>
+        )}
 
         <div className="space-y-4">
           <CourseConfig

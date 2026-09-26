@@ -272,8 +272,8 @@ export function normalizeReviewRecord(record: RaceReviewRecord): RaceReviewRecor
     meta,
     snapshotSourceStatus,
     livePreRaceEligible:
-      record.livePreRaceEligible === true ||
       isLivePreRaceEligible(normalizedSnapshot, {
+        excludedReason: record.excludedReason,
         snapshotSourceStatus,
         livePreRaceEligible: record.livePreRaceEligible,
         raceDate: meta.raceDate,

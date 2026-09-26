@@ -39,6 +39,7 @@ export function resolveSnapshotSourceStatus(
   fallback?: {
     snapshotSourceStatus?: unknown;
     livePreRaceEligible?: unknown;
+    excludedReason?: unknown;
     raceDate?: unknown;
     scheduledStartTime?: unknown;
     snapshotTakenAt?: unknown;
@@ -74,11 +75,14 @@ export function isLivePreRaceEligible(
   fallback?: {
     snapshotSourceStatus?: unknown;
     livePreRaceEligible?: unknown;
+    excludedReason?: unknown;
     raceDate?: unknown;
     scheduledStartTime?: unknown;
     snapshotTakenAt?: unknown;
   }
 ): boolean {
+  if (fallback?.excludedReason) return false;
+  if (snapshot?.dataQuality?.fieldComplete === false) return false;
   if (fallback?.livePreRaceEligible === true || snapshot?.livePreRaceEligible === true) return true;
   return resolveSnapshotSourceStatus(snapshot, fallback) === "live_pre_race";
 }

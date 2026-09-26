@@ -617,12 +617,16 @@ async function handleRecommendation(day, stage) {
   const eligibleRaces = dayRaces.filter((race) =>
     isBeforeRaceStart(race, captureInstant, 5 * 60_000)
   );
-  const best = pickBestHorse(eligibleRaces, day, includeBodyWeight, applyDraw);
+  const completeRaces = eligibleRaces.filter((race) => {
+    const expected = Number(race.expectedFieldSize);
+    return !(Number.isInteger(expected) && expected > 0 && race.horses?.length !== expected);
+  });
+  const best = pickBestHorse(completeRaces, day, includeBodyWeight, applyDraw);
 
   if (!best) {
     console.warn(
       `No unstarted target race for ${day}, skip posting ` +
-        `(dayRaces=${dayRaces.length}, eligibleWith5mLead=${eligibleRaces.length}).`
+        `(dayRaces=${dayRaces.length}, eligibleWith5mLead=${eligibleRaces.length}, dataComplete=${completeRaces.length}).`
     );
     return;
   }

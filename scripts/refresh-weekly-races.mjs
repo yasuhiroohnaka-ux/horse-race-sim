@@ -346,6 +346,16 @@ function parseHorseSeedEntries(shutubaHtml) {
   return [...seen.values()].sort((a, b) => a.gateNumber - b.gateNumber);
 }
 
+function countShutubaRunners(shutubaHtml) {
+  const rows = [...shutubaHtml.matchAll(/<tr[^>]*class="[^"]*HorseList[^"]*"[^>]*>([\s\S]*?)<\/tr>/g)].map((match) => match[1]);
+  const horseNumbers = new Set();
+  for (const row of rows) {
+    const horseNumber = Number(row.match(/class="Umaban\d*[^\"]*"[^>]*>\s*(\d{1,2})\s*<\/td>/i)?.[1] ?? 0);
+    if (horseNumber > 0) horseNumbers.add(horseNumber);
+  }
+  return horseNumbers.size > 0 ? horseNumbers.size : null;
+}
+
 function parseOreproEntries(oreproHtml) {
   const rows = [...oreproHtml.matchAll(/<tr[^>]*class="[^"]*HorseList[^"]*"[^>]*>([\s\S]*?)<\/tr>/g)].map((m) => m[1]);
   const byName = new Map();
@@ -798,6 +808,7 @@ function buildRunningStyleAudit(race) {
 
 async function buildRace(seed) {
   const shutubaHtml = await fetchText(`https://race.netkeiba.com/race/shutuba.html?race_id=${seed.raceId}`);
+  const expectedFieldSize = countShutubaRunners(shutubaHtml);
   const meta = parseRaceMeta(seed.raceId, shutubaHtml, seed.dayLabel);
   if (!meta) return null;
   const shutubaPastHtml = await fetchText(`https://race.netkeiba.com/race/shutuba_past.html?race_id=${seed.raceId}`);
@@ -813,6 +824,7 @@ async function buildRace(seed) {
     ...meta,
     raceDate: seed.dateIso,
     oddsSource: raceOddsSource,
+    expectedFieldSize,
     horses: horses.sort((a, b) => a.gateNumber - b.gateNumber)
   };
 }

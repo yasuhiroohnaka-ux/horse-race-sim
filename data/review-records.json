@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-26T02:24:10.722Z",
+  "generatedAt": "2026-09-26T02:33:12.641Z",
   "records": {
     "202606030309": {
       "raceId": "202606030309",
@@ -72757,24 +72757,22 @@
     "202608030109": {
       "raceId": "202608030109",
       "courseId": "kyoto-turf-1800-202608030109",
-      "status": "retry_scheduled",
+      "status": "review_failed",
       "reviewReady": false,
       "compatibilityMode": "native_opponent",
       "createdAt": "2026-04-20T11:55:41.000Z",
-      "updatedAt": "2026-04-20T11:55:41.000Z",
+      "updatedAt": "2026-09-26T02:33:12.242Z",
       "snapshotTakenAt": null,
       "resultFetchedAt": null,
       "payoutFetchedAt": null,
       "lastTriedAt": "2026-04-20T11:55:41.000Z",
       "lastRetryAt": null,
-      "nextRetryAt": "2026-04-20T12:15:41.000Z",
+      "nextRetryAt": null,
       "retryCount": 0,
       "missingReasons": [
-        "NO_SNAPSHOT",
-        "NO_MAIN_PICK",
-        "UPSTREAM_NOT_READY"
+        "EXPIRED"
       ],
-      "lastError": null,
+      "lastError": "EXPIRED",
       "meta": {
         "raceId": "202608030109",
         "courseId": "kyoto-turf-1800-202608030109",
@@ -390894,15 +390892,15 @@
       "reviewReady": false,
       "compatibilityMode": "native_opponent",
       "createdAt": "2026-07-27T03:22:13.193Z",
-      "updatedAt": "2026-08-01T01:46:45.002Z",
+      "updatedAt": "2026-09-26T01:58:50.353Z",
       "snapshotTakenAt": "2026-08-01T01:46:45.002Z",
       "snapshotSourceStatus": "live_pre_race",
-      "livePreRaceEligible": true,
+      "livePreRaceEligible": false,
       "resultFetchedAt": null,
       "payoutFetchedAt": null,
-      "lastTriedAt": "2026-08-01T01:46:45.002Z",
-      "lastRetryAt": "2026-08-01T01:46:45.002Z",
-      "nextRetryAt": "2026-08-01T02:06:45.002Z",
+      "lastTriedAt": "2026-09-26T01:58:50.353Z",
+      "lastRetryAt": "2026-09-26T01:58:50.353Z",
+      "nextRetryAt": "2026-09-26T02:18:50.353Z",
       "retryCount": 0,
       "missingReasons": [
         "UPSTREAM_NOT_READY"
@@ -390934,7 +390932,7 @@
         "raceNumber": 10,
         "scheduledStartTime": "2026-08-01T14:50:00+09:00",
         "sourceStatus": "live_pre_race",
-        "livePreRaceEligible": true,
+        "livePreRaceEligible": false,
         "dataLineage": {
           "sourceStatus": "live_pre_race",
           "predictionOrigin": "saved_live",
@@ -391416,6 +391414,11 @@
           "fieldSize": 7,
           "oddsFetchedAt": null,
           "oddsSource": "forecast"
+        },
+        "dataQuality": {
+          "fieldComplete": false,
+          "expected": 13,
+          "actual": 7
         }
       },
       "expectation": null,
@@ -487441,8 +487444,8 @@
     "202609040110": {
       "raceId": "202609040110",
       "courseId": "hanshin-turf-1800-202609040110",
-      "status": "review_failed",
-      "reviewReady": false,
+      "status": "review_ready",
+      "reviewReady": true,
       "compatibilityMode": "native_opponent",
       "createdAt": "2026-08-31T04:22:27.401Z",
       "updatedAt": "2026-09-26T02:24:09.923Z",
@@ -487450,15 +487453,13 @@
       "snapshotSourceStatus": "live_pre_race",
       "livePreRaceEligible": true,
       "resultFetchedAt": "2026-09-06T04:07:10.574Z",
-      "payoutFetchedAt": "2026-09-07T05:47:15.157Z",
+      "payoutFetchedAt": "2026-09-26T01:45:34.530Z",
       "lastTriedAt": "2026-09-26T02:24:09.923Z",
-      "lastRetryAt": "2026-09-07T05:47:15.157Z",
+      "lastRetryAt": "2026-09-26T01:45:34.530Z",
       "nextRetryAt": null,
       "retryCount": 5,
-      "missingReasons": [
-        "NO_PAYOUT"
-      ],
-      "lastError": "NO_PAYOUT",
+      "missingReasons": [],
+      "lastError": null,
       "meta": {
         "raceId": "202609040110",
         "courseId": "hanshin-turf-1800-202609040110",
@@ -488184,9 +488185,9 @@
           ],
           "source": "explicit_live_rule"
         },
-        "settlementStatus": "pending_payouts",
+        "settlementStatus": "settled",
         "tanOutcome": "miss",
-        "fukuOutcome": "hit_missing_payout",
+        "fukuOutcome": "miss",
         "tanPayout": 0,
         "fukuPayout": 0,
         "tanPayoutSource": "official",
@@ -489382,15 +489383,15 @@
       "reviewReady": false,
       "compatibilityMode": "native_opponent",
       "createdAt": "2026-08-31T04:22:27.401Z",
-      "updatedAt": "2026-09-06T04:07:08.218Z",
+      "updatedAt": "2026-09-26T01:58:17.398Z",
       "snapshotTakenAt": "2026-09-06T04:07:08.218Z",
       "snapshotSourceStatus": "live_pre_race",
-      "livePreRaceEligible": true,
+      "livePreRaceEligible": false,
       "resultFetchedAt": null,
       "payoutFetchedAt": null,
-      "lastTriedAt": "2026-09-06T04:07:08.218Z",
-      "lastRetryAt": "2026-09-06T04:07:08.218Z",
-      "nextRetryAt": "2026-09-06T04:27:08.218Z",
+      "lastTriedAt": "2026-09-26T01:58:17.398Z",
+      "lastRetryAt": "2026-09-26T01:58:17.398Z",
+      "nextRetryAt": "2026-09-26T02:18:17.398Z",
       "retryCount": 0,
       "missingReasons": [
         "UPSTREAM_NOT_READY"
@@ -489422,7 +489423,7 @@
         "raceNumber": 9,
         "scheduledStartTime": "2026-09-06T14:20:00+09:00",
         "sourceStatus": "live_pre_race",
-        "livePreRaceEligible": true,
+        "livePreRaceEligible": false,
         "dataLineage": {
           "sourceStatus": "live_pre_race",
           "predictionOrigin": "saved_live",
@@ -489950,6 +489951,11 @@
           "fieldSize": 8,
           "oddsFetchedAt": null,
           "oddsSource": "forecast"
+        },
+        "dataQuality": {
+          "fieldComplete": false,
+          "expected": 16,
+          "actual": 8
         }
       },
       "expectation": null,
@@ -524700,15 +524706,15 @@
       "reviewReady": false,
       "compatibilityMode": "native_opponent",
       "createdAt": "2026-09-14T03:55:47.763Z",
-      "updatedAt": "2026-09-19T02:04:53.179Z",
+      "updatedAt": "2026-09-26T01:58:41.723Z",
       "snapshotTakenAt": "2026-09-19T02:04:53.179Z",
       "snapshotSourceStatus": "live_pre_race",
-      "livePreRaceEligible": true,
+      "livePreRaceEligible": false,
       "resultFetchedAt": null,
       "payoutFetchedAt": null,
-      "lastTriedAt": "2026-09-19T02:04:53.179Z",
-      "lastRetryAt": "2026-09-19T02:04:53.179Z",
-      "nextRetryAt": "2026-09-19T02:24:53.179Z",
+      "lastTriedAt": "2026-09-26T01:58:41.723Z",
+      "lastRetryAt": "2026-09-26T01:58:41.723Z",
+      "nextRetryAt": "2026-09-26T02:18:41.723Z",
       "retryCount": 0,
       "missingReasons": [
         "UPSTREAM_NOT_READY"
@@ -524740,7 +524746,7 @@
         "raceNumber": 9,
         "scheduledStartTime": "2026-09-19T14:10:00+09:00",
         "sourceStatus": "live_pre_race",
-        "livePreRaceEligible": true,
+        "livePreRaceEligible": false,
         "dataLineage": {
           "sourceStatus": "live_pre_race",
           "predictionOrigin": "saved_live",
@@ -525461,6 +525467,11 @@
           "fieldSize": 9,
           "oddsFetchedAt": null,
           "oddsSource": "forecast"
+        },
+        "dataQuality": {
+          "fieldComplete": false,
+          "expected": 14,
+          "actual": 9
         }
       },
       "expectation": {
@@ -525635,7 +525646,8 @@
         "wideOutcome": "not_settled",
         "widePayout": 0,
         "widePayoutSource": "missing"
-      }
+      },
+      "excludedReason": "INCORRECT_RACE_ID"
     },
     "202609040510": {
       "raceId": "202609040510",
@@ -536669,8 +536681,8 @@
     "202609040508": {
       "raceId": "202609040508",
       "courseId": "hanshin-turf-1600-202609040508",
-      "status": "review_failed",
-      "reviewReady": false,
+      "status": "review_ready",
+      "reviewReady": true,
       "compatibilityMode": "native_opponent",
       "createdAt": "2026-09-18T06:18:21.060Z",
       "updatedAt": "2026-09-26T02:24:09.923Z",
@@ -536678,15 +536690,13 @@
       "snapshotSourceStatus": "live_pre_race",
       "livePreRaceEligible": true,
       "resultFetchedAt": "2026-09-20T04:31:25.535Z",
-      "payoutFetchedAt": "2026-09-21T05:58:31.458Z",
+      "payoutFetchedAt": "2026-09-26T01:45:42.231Z",
       "lastTriedAt": "2026-09-26T02:24:09.923Z",
-      "lastRetryAt": "2026-09-21T05:58:31.458Z",
+      "lastRetryAt": "2026-09-26T01:45:42.231Z",
       "nextRetryAt": null,
       "retryCount": 5,
-      "missingReasons": [
-        "NO_PAYOUT"
-      ],
-      "lastError": "NO_PAYOUT",
+      "missingReasons": [],
+      "lastError": null,
       "meta": {
         "raceId": "202609040508",
         "courseId": "hanshin-turf-1600-202609040508",
@@ -537368,9 +537378,9 @@
           ],
           "source": "explicit_live_rule"
         },
-        "settlementStatus": "pending_payouts",
+        "settlementStatus": "settled",
         "tanOutcome": "miss",
-        "fukuOutcome": "hit_missing_payout",
+        "fukuOutcome": "miss",
         "tanPayout": 0,
         "fukuPayout": 0,
         "tanPayoutSource": "official",

@@ -79,3 +79,34 @@ test("deduplicates raceIds and keeps the latest refreshed entry", () => {
   assert.deepEqual(merged.races[1].result, { winnerHorseId: "3" });
   assert.deepEqual(merged.missingRaces, []);
 });
+
+test("quarantines a stale race ID when the same race is refreshed under a new ID", () => {
+  const oldRace = {
+    raceId: "202609040509",
+    day: "Sat",
+    venueKey: "hanshin",
+    label: "野路菊Ｓ",
+    isSpecialRace: true,
+  };
+  const merged = mergeRefreshedRaces({
+    previousWeekOf: "2026-09-14",
+    weekOf: "2026-09-14",
+    previousRaces: [oldRace],
+    refreshedRaces: [{ raceId: "202609040508", day: "Sat", venueKey: "hanshin", label: "野路菊S", isSpecialRace: true }],
+  });
+
+  assert.equal(merged.races.length, 2);
+  assert.equal(merged.races.find((race: { raceId: string }) => race.raceId === oldRace.raceId)?.excludedReason, "SUPERSEDED_RACE_ID");
+  assert.equal(merged.races.find((race: { raceId: string }) => race.raceId === "202609040508")?.excludedReason, undefined);
+});
+
+test("preserves same-named ordinary class races during partial refresh", () => {
+  const merged = mergeRefreshedRaces({
+    previousWeekOf: "2026-09-14",
+    weekOf: "2026-09-14",
+    previousRaces: [{ raceId: "202609040507", day: "Sat", venueKey: "hanshin", label: "3歳以上1勝クラス" }],
+    refreshedRaces: [{ raceId: "202609040509", day: "Sat", venueKey: "hanshin", label: "3歳以上1勝クラス" }],
+  });
+  assert.equal(merged.races.length, 2);
+  assert.equal(merged.races[0].excludedReason, undefined);
+});

@@ -1,4 +1,5 @@
 import { buildRaceAnalysisRows, getScenarioProfile, round1 } from "./raceAnalysis";
+import { assessFieldDataQuality } from "./fieldDataQuality";
 import {
   buildRecommendedBetDecision,
   buildUnknownRecommendedBetDecision,
@@ -439,6 +440,7 @@ export function pickMajorContributors(params: {
 export async function buildPredictionSnapshot(params: {
   results: { horseId: string; winCount: number; bestTime: number }[];
   horses: Horse[];
+  expectedFieldSize?: number | null;
   course: Course;
   condition: RaceCondition;
   simulationCount: number;
@@ -474,6 +476,7 @@ export async function buildPredictionSnapshot(params: {
   const {
     results,
     horses,
+    expectedFieldSize = null,
     course,
     condition,
     simulationCount,
@@ -633,6 +636,7 @@ export async function buildPredictionSnapshot(params: {
     simulationCount,
     condition,
     rankedRows,
+    dataQuality: assessFieldDataQuality(expectedFieldSize, rankedRows.length),
     honmeiHorseId,
     opponentHorseId,
     opponentSelectionMethod: opponentHorseId ? opponentOverride?.selectionMethod ?? "rank2" : undefined,

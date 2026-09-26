@@ -1,5 +1,6 @@
 ﻿import fs from "node:fs/promises";
 import path from "node:path";
+import { auditRaceConsistency } from "./race-consistency-audit.mjs";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -157,6 +158,16 @@ function parseShutubaEntries(shutubaHtml) {
   return entries;
 }
 
+function countShutubaRunners(shutubaHtml) {
+  const rows = [...shutubaHtml.matchAll(/<tr[^>]*class="[^"]*HorseList[^"]*"[^>]*>([\s\S]*?)<\/tr>/g)];
+  const horseNumbers = new Set();
+  for (const row of rows) {
+    const number = Number(row[1].match(/class="Umaban\d*[^"]*"[^>]*>\s*(\d{1,2})\s*<\/td>/i)?.[1] ?? 0);
+    if (number > 0) horseNumbers.add(number);
+  }
+  return horseNumbers.size > 0 ? horseNumbers.size : null;
+}
+
 function getTrackCodeFromCourseId(courseId) {
   const id = String(courseId || "").toLowerCase();
   if (id.startsWith("sapporo-")) return "01";
@@ -177,7 +188,7 @@ async function fetchDrawEntriesByRace(weekOfIso, race) {
     try {
       const html = await fetchText(`https://race.netkeiba.com/race/shutuba.html?race_id=${race.raceId}`);
       const entries = parseShutubaEntries(html);
-      if (entries.length > 0) return entries;
+      if (entries.length > 0) return { entries, expectedFieldSize: countShutubaRunners(html) };
     } catch {
       // fall through to title-based lookup
     }
@@ -204,7 +215,7 @@ async function fetchDrawEntriesByRace(weekOfIso, race) {
         const title = html.match(/<title>([\s\S]*?)<\/title>/i)?.[1] || "";
         if (!aliases.some((alias) => title.includes(alias))) continue;
         const entries = parseShutubaEntries(html);
-        if (entries.length > 0) return entries;
+        if (entries.length > 0) return { entries, expectedFieldSize: countShutubaRunners(html) };
       }
     }
   }
@@ -254,6 +265,13 @@ async function readJson(filePath, fallback) {
 
 async function main() {
   const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { races: [] } });
+  const consistency = auditRaceConsistency(weekly);
+  for (const duplicate of consistency.duplicateLabels) {
+    console.warn(`[daily-entry-check] duplicate race label: ${duplicate.weekOf} ${duplicate.day} ${duplicate.venue} ${duplicate.label}: ${duplicate.raceIds.join(", ")}`);
+  }
+  for (const mismatch of consistency.raceNumberMismatches) {
+    console.warn(`[daily-entry-check] race number mismatch: ${mismatch.raceId} has raceNumber=${mismatch.raceNumber}, expected=${mismatch.encodedRaceNumber}`);
+  }
   const netkeibaByName = await fetchNetkeibaWeightOverrides();
   const mergedNameCorrections = { ...WEIGHT_CORRECTIONS_BY_NAME, ...netkeibaByName };
   const totalRaces = (weekly.currentWeek?.races ?? []).length;
@@ -268,17 +286,20 @@ async function main() {
   const weekOf = weekly.currentWeek?.weekOf || "";
   const drawMapByCourse = new Map();
   const drawEntriesByCourse = new Map();
+  const expectedFieldSizeByCourse = new Map();
   for (const race of weekly.currentWeek?.races ?? []) {
     if (!race?.courseId || !race?.label || !race?.day) continue;
     try {
-      const entries = await fetchDrawEntriesByRace(weekOf, race);
-      if (!entries || entries.length === 0) continue;
+      const draw = await fetchDrawEntriesByRace(weekOf, race);
+      if (!draw || draw.entries.length === 0) continue;
+      const { entries } = draw;
       const localNameToGate = new Map();
       for (const e of entries) {
         localNameToGate.set(normalizeName(e.horseName), Number(e.gateNumber));
       }
       drawMapByCourse.set(race.courseId, localNameToGate);
       drawEntriesByCourse.set(race.courseId, entries);
+      if (draw.expectedFieldSize !== null) expectedFieldSizeByCourse.set(race.courseId, draw.expectedFieldSize);
     } catch (error) {
       console.warn(`[daily-entry-check] draw fetch failed: ${race.label}: ${error.message}`);
     }
@@ -301,6 +322,11 @@ async function main() {
   await writeDrawOverridesTs(mergedDrawOverrides);
 
   for (const race of weekly.currentWeek?.races ?? []) {
+    const expectedFieldSize = expectedFieldSizeByCourse.get(race.courseId);
+    if (expectedFieldSize && race.expectedFieldSize !== expectedFieldSize) {
+      race.expectedFieldSize = expectedFieldSize;
+      changed++;
+    }
     let horses = Array.isArray(race.horses) ? race.horses : [];
     const localNameToGate = drawMapByCourse.get(race.courseId);
     if (localNameToGate?.size > 0) {

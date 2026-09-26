@@ -41,15 +41,20 @@ const pct = (v) => `${(v * 100).toFixed(1)}%`;
 
 function loadSettledRecords() {
   const file = JSON.parse(fs.readFileSync(RECORDS_PATH, "utf8"));
-  return Object.values(file.records ?? {})
+  const allRecords = Object.values(file.records ?? {});
+  const dataQualityExcludedCount = allRecords.filter((x) => x.snapshot?.dataQuality?.fieldComplete === false).length;
+  const records = allRecords
     .filter(
       (x) =>
+        !x.excludedReason &&
+        x.snapshot?.dataQuality?.fieldComplete !== false &&
         x.reviewReady &&
         x.honmei &&
         x.honmei.settlementStatus === "settled" &&
         Number(x.honmei.realOdds) > 0
     )
     .sort((a, b) => String(a.meta?.raceDate ?? "").localeCompare(String(b.meta?.raceDate ?? "")));
+  return { records, dataQualityExcludedCount };
 }
 
 // 複勝オッズの線形近似 placeOdds ≈ odds * slope + intercept を
@@ -284,7 +289,7 @@ function objectTableMd(obj) {
 
 // --- main ---
 
-const records = loadSettledRecords();
+const { records, dataQualityExcludedCount } = loadSettledRecords();
 if (records.length < 30) {
   console.error(`確定済みレコードが ${records.length} 件しかありません。30件以上で実行してください。`);
   process.exit(1);
@@ -480,6 +485,7 @@ const generatedAt = new Date().toISOString();
 const reportJson = {
   generatedAt,
   sampleSize: records.length,
+  dataQualityExcludedCount,
   dateRange: { from: dateFrom, to: dateTo },
   winCalibration: {
     coef: winCoef,
@@ -513,6 +519,7 @@ const md = `# 校正レポート (tanpuku honmei)
 
 - 生成日時: ${generatedAt}
 - 対象: 確定済み本命 ${records.length} 件 (${dateFrom} 〜 ${dateTo})
+- 出走馬データ不完全として除外: ${dataQualityExcludedCount} 件
 - 再校正モデル: p_cal = sigmoid(a + b * logit(p_model)) を logLoss 最小化でフィット
 - 実運用評価: 配備済み ${CALIBRATION_META?.sampleSize ?? "?"} 件係数を、フィット期間後の live_pre_race だけで判定
 

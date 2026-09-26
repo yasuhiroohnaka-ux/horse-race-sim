@@ -54,13 +54,18 @@ function readJson(file) {
 }
 
 /** 予想時点の事前オッズ: raceId -> (horseId -> odds) */
-function loadPreRaceOdds() {
+function loadPreRaceEvidence() {
   const file = readJson(RECORDS_PATH);
   const map = new Map();
+  const excludedRaceIds = new Set();
   for (const record of Object.values(file.records ?? {})) {
+    const raceId = String(record.meta?.raceId ?? record.raceId ?? "");
+    if (record.excludedReason || record.snapshot?.dataQuality?.fieldComplete === false) {
+      excludedRaceIds.add(raceId);
+      continue;
+    }
     const rows = record.snapshot?.rankedRows ?? [];
     if (rows.length === 0) continue;
-    const raceId = String(record.meta?.raceId ?? record.raceId ?? "");
     if (!raceId) continue;
     const odds = new Map();
     for (const row of rows) {
@@ -69,7 +74,7 @@ function loadPreRaceOdds() {
     }
     if (odds.size > 0) map.set(raceId, odds);
   }
-  return map;
+  return { odds: map, excludedRaceIds };
 }
 
 /** 確定オッズ (=公式単勝払戻/100): raceId -> (horseId -> odds) */
@@ -125,8 +130,6 @@ function buildSelectionRace(race, preRaceOdds) {
 // 採点
 // ---------------------------------------------------------------------------
 
-const FUKU_UNAVAILABLE = null;
-
 function settleTan(race, finalOdds, horseId) {
   const won = String(race.result?.winnerHorseId ?? "") === String(horseId);
   if (!won) return { hit: false, payout: 0 };
@@ -137,16 +140,18 @@ function settleTan(race, finalOdds, horseId) {
 
 function settleFuku(race, horseId) {
   const top3 = (race.result?.top3HorseIds ?? []).map(String);
-  const index = top3.indexOf(String(horseId));
-  if (index < 0) return { hit: false, payout: 0 };
   const payouts = race.result?.payouts?.fukusho?.payouts ?? [];
   const numbers = race.result?.payouts?.fukusho?.resultNumbers ?? [];
-  // resultNumbers は馬番なので、finisher 経由で pick の馬番を引く
+  // 7頭立て以下の3着には複勝払戻がない。公式払戻表がある場合は着順より優先する。
   const finisher = (race.result?.finishers ?? []).find((f) => String(f.horseId) === String(horseId));
   const horseNumber = Number(finisher?.horseNumber ?? NaN);
-  const slot = numbers.findIndex((n) => Number(n) === horseNumber);
-  const payout = Number(payouts[slot >= 0 ? slot : index] ?? 0);
-  return { hit: true, payout: payout > 0 ? payout : FUKU_UNAVAILABLE ?? 0 };
+  const hasOfficialResults = Array.isArray(numbers) && numbers.length > 0;
+  const index = hasOfficialResults
+    ? numbers.findIndex((n) => Number(n) === horseNumber)
+    : top3.indexOf(String(horseId));
+  if (index < 0) return { hit: false, payout: 0 };
+  const payout = Number(payouts[index] ?? 0);
+  return { hit: true, payout: payout > 0 ? payout : 0 };
 }
 
 async function runSelection(modulePath, races, preRaceOdds) {
@@ -339,13 +344,14 @@ function renderComparison(target, baseline) {
 // ---------------------------------------------------------------------------
 
 async function main() {
-  const preRaceOdds = loadPreRaceOdds();
-  const races = loadRaces();
+  const { odds: preRaceOdds, excludedRaceIds } = loadPreRaceEvidence();
+  const allRaces = loadRaces();
+  const races = allRaces.filter((race) => !race.excludedReason && !excludedRaceIds.has(String(race.raceId)));
   const target = await runSelection(MODULE_PATH, races, preRaceOdds);
 
   const coverage = target.rows.filter((r) => r.oddsCoverage > 0.9).length;
   console.log(
-    `対象 ${races.length} レース / 選定成功 ${target.rows.length} 件 / 事前オッズ被覆 ${coverage} 件 (odds source: ${ODDS_SOURCE})`
+    `対象 ${races.length} レース / データ不完全除外 ${allRaces.length - races.length} 件 / 選定成功 ${target.rows.length} 件 / 事前オッズ被覆 ${coverage} 件 (odds source: ${ODDS_SOURCE})`
   );
   console.log("");
   console.log(renderReport(target, `target: ${MODULE_PATH}`));
@@ -365,6 +371,7 @@ async function main() {
       generatedAt: new Date().toISOString(),
       oddsSource: ODDS_SOURCE,
       splitDate: SPLIT_DATE,
+      dataQualityExcludedCount: allRaces.length - races.length,
       target: { module: MODULE_PATH, version: target.version, summary: summarize(target.rows) },
       baseline: baseline
         ? { module: BASELINE_PATH, version: baseline.version, summary: summarize(baseline.rows) }

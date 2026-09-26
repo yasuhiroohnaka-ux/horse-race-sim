@@ -204,7 +204,7 @@ async function main() {
   const raceMeta = [];
 
   for (const race of src.currentWeek?.races ?? []) {
-    if (!race?.courseId || !Array.isArray(race.horses)) continue;
+    if (!race?.courseId || race.excludedReason || !Array.isArray(race.horses)) continue;
     const horses = filterRaceDayNoOddsHorses(race.horses, race);
     raceMeta.push(mapRaceMeta(race));
     raceMap[race.courseId] = horses.map((h) => mapHorseSeed(h, race));
@@ -214,6 +214,7 @@ async function main() {
     .filter(
       (race) =>
         race?.courseId &&
+        !race.excludedReason &&
         Array.isArray(race.horses) &&
         (resolveRaceResultSource(race) || getPreferredReviewForRace(race, generatedReviews))
     )
@@ -222,7 +223,7 @@ async function main() {
   const archivedRaces = [];
   for (const archive of src.archives ?? []) {
     for (const race of archive?.races ?? []) {
-      if (!race?.courseId || !Array.isArray(race.horses)) continue;
+      if (!race?.courseId || race.excludedReason || !Array.isArray(race.horses)) continue;
       archivedRaces.push(mapReviewRace(race, archive.weekOf ?? "", archive.archivedAt ?? "", generatedReviews));
     }
   }

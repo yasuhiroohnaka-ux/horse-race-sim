@@ -38,6 +38,7 @@ type LogLossRow = {
 type CalibrationReport = {
   generatedAt?: string;
   sampleSize?: number;
+  dataQualityExcludedCount?: number;
   dateRange?: { from?: string; to?: string };
   winCalibration?: {
     coef?: { a: number; b: number };
@@ -312,7 +313,7 @@ export default function MonitorPage() {
           <p className="t-num shrink-0 text-[11px] leading-5 text-ink-3 lg:text-right">
             生成 {formatDateTime(report?.generatedAt)}
             <br />
-            確定本命 {report?.sampleSize ?? "-"} 件 ({report?.dateRange?.from ?? "-"} 〜 {report?.dateRange?.to ?? "-"})
+            確定本命 {report?.sampleSize ?? "-"} 件 ({report?.dateRange?.from ?? "-"} 〜 {report?.dateRange?.to ?? "-"}) / 出走馬データ不完全で除外 {report?.dataQualityExcludedCount ?? 0} 件
           </p>
         </header>
 

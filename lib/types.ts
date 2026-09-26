@@ -336,6 +336,12 @@ export interface PredictionSnapshotMarketMeta {
   oddsSource: string | null;
 }
 
+export interface PredictionSnapshotDataQuality {
+  fieldComplete: boolean | null;
+  expected: number | null;
+  actual: number;
+}
+
 export interface PredictionSnapshotExpectationEntry {
   horseId: string | null;
   grade: ExpectationGrade | null;
@@ -429,6 +435,7 @@ export interface PredictionSnapshot {
   simulationCount: number;
   condition: RaceCondition;
   rankedRows: PredictionSnapshotRow[];
+  dataQuality?: PredictionSnapshotDataQuality;
   honmeiHorseId: string | null;
   opponentHorseId?: string | null;
   opponentSelectionMethod?: "rank2" | "light_adjusted" | "legacy_value" | "stable_next";
@@ -458,6 +465,7 @@ export type ReviewProcessingStatus =
   | "review_failed";
 
 export type ReviewMissingReason =
+  | "EXPIRED"
   | "NO_SNAPSHOT"
   | "NO_MAIN_PICK"
   | "NO_PARTNER_PICK"
@@ -542,6 +550,7 @@ export interface ReviewLegacyValueSelection {
 export interface RaceReviewRecord {
   raceId: string;
   courseId: string;
+  excludedReason?: string;
   status: ReviewProcessingStatus;
   reviewReady: boolean;
   compatibilityMode: ReviewCompatibilityMode;

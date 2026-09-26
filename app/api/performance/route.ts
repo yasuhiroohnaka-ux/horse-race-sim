@@ -70,6 +70,7 @@ type SummaryPayload = {
     pendingCount: number;
     failedCount: number;
     legacyCount: number;
+    dataQualityExcludedCount: number;
   };
   sourceStatus: ReviewSourceStatusSummary;
   predictionSnapshotsSourceStatus: PredictionSnapshotSourceStatusSummary;
@@ -287,7 +288,7 @@ function accumulateWeeklyPerformance(records: RaceReviewRecord[]) {
   return totals;
 }
 
-function buildSummary(records: RaceReviewRecord[], snapshotSourceStatus: PredictionSnapshotSourceStatusSummary): SummaryPayload {
+function buildSummary(records: RaceReviewRecord[], snapshotSourceStatus: PredictionSnapshotSourceStatusSummary, dataQualityExcludedCount: number): SummaryPayload {
   const readyRecords = records.filter(isReadyRecord);
   const rankGapBuckets = buildGapBuckets(["1", "2", "3+", "unknown"]);
   const scoreGapBuckets = buildGapBuckets(["<0.02", "0.02-0.05", "0.05+", "unknown"]);
@@ -299,6 +300,7 @@ function buildSummary(records: RaceReviewRecord[], snapshotSourceStatus: Predict
       pendingCount: records.filter((record) => !isReadyRecord(record) && normalizeLegacyReviewStatus(record.status) !== "review_failed").length,
       failedCount: records.filter((record) => normalizeLegacyReviewStatus(record.status) === "review_failed").length,
       legacyCount: records.filter((record) => record.compatibilityMode === "legacy_value_candidate").length,
+      dataQualityExcludedCount,
     },
     sourceStatus: buildReviewSourceStatusSummary(records),
     predictionSnapshotsSourceStatus: snapshotSourceStatus,
@@ -568,14 +570,16 @@ export async function GET(request: Request) {
       readPredictionSnapshots(),
     ]);
 
-    const filteredRecords = filterScope(Object.values(reviewRecordsByRaceId), scope).sort((a, b) =>
+    const allRecords = Object.values(reviewRecordsByRaceId);
+    const dataQualityExcludedCount = allRecords.filter((record) => record.snapshot?.dataQuality?.fieldComplete === false).length;
+    const filteredRecords = filterScope(allRecords.filter((record) => !record.excludedReason && record.snapshot?.dataQuality?.fieldComplete !== false), scope).sort((a, b) =>
       String(b.meta.scheduledStartTime ?? b.updatedAt).localeCompare(String(a.meta.scheduledStartTime ?? a.updatedAt))
     );
     const currentWeek = getCurrentWeek(filteredRecords);
     const weeklyRecords = filteredRecords.filter((record) => record.meta.weekOf === currentWeek);
     const totalPerf = accumulateWeeklyPerformance(filteredRecords);
     const weeklyPerf = accumulateWeeklyPerformance(weeklyRecords);
-    const summary = buildSummary(filteredRecords, buildPredictionSnapshotSourceStatusSummary(predictionSnapshots));
+    const summary = buildSummary(filteredRecords, buildPredictionSnapshotSourceStatusSummary(predictionSnapshots), dataQualityExcludedCount);
     const diagnostics = buildWeeklyDiagnostics(diagnosticsContext);
     const categoryReturnStats = buildCategoryReturnStatsFromReviewRecords(filteredRecords, weeklyRaces);
 

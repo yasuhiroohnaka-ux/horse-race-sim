@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { buildBettingExpectationView } from "@/lib/bettingExpectation";
+import { reconcileResultFieldDataQuality } from "@/lib/fieldDataQuality";
 import { buildPredictionSnapshot } from "@/lib/predictionSnapshots";
 import { buildRaceAnalysisRows } from "@/lib/raceAnalysis";
 import {
@@ -19,6 +20,7 @@ import {
   deriveIncompleteStatus,
   getMissingReasons,
   getNextRetryAt,
+  isExpiredRetryReviewRecord,
   isReviewComplete,
   shouldRetryReviewRecord,
 } from "@/lib/reviewStatus";
@@ -54,6 +56,7 @@ export type ReviewPipelinePhase = "snapshot" | "settle" | "all";
 type WeeklyRace = {
   courseId: string;
   raceId?: string;
+  excludedReason?: string;
   label?: string;
   weekOf?: string;
   day?: string;
@@ -66,6 +69,7 @@ type WeeklyRace = {
   straightLength?: number;
   scheduledStartTime?: string;
   oddsSource?: string;
+  expectedFieldSize?: number | null;
   horses: Array<Record<string, unknown>>;
   result?: {
     winnerHorseId?: string;
@@ -192,6 +196,10 @@ function hasConfirmedResult(race: WeeklyRace) {
 
 function hasPayoutTable(table: { resultNumbers?: unknown; payouts?: unknown } | undefined) {
   return Boolean(Array.isArray(table?.resultNumbers) && table.resultNumbers.length > 0 && Array.isArray(table?.payouts) && table.payouts.length > 0);
+}
+
+function hasOfficialResultNumbers(table: { resultNumbers?: unknown } | undefined) {
+  return Array.isArray(table?.resultNumbers) && table.resultNumbers.length > 0;
 }
 
 function hasAllRequiredPayouts(race: WeeklyRace) {
@@ -483,6 +491,7 @@ async function buildSnapshotBundle(params: { race: WeeklyRace; weekOf: string | 
   const snapshot = await buildPredictionSnapshot({
     results: simulationResults,
     horses,
+    expectedFieldSize: race.expectedFieldSize,
     course,
     condition,
     simulationCount: MONTE_CARLO_RUNS,
@@ -721,11 +730,11 @@ function payoutForHorseNumber(
   return Number.isFinite(payout) ? Math.round(payout) : null;
 }
 
-function payoutForWidePair(
+function widePairIndex(
   table: { resultNumbers?: unknown[]; payouts?: unknown[] } | undefined,
   horseNumbers: [number, number] | null
 ) {
-  if (!table || !Array.isArray(table.resultNumbers) || !Array.isArray(table.payouts) || !horseNumbers) return null;
+  if (!Array.isArray(table?.resultNumbers) || !horseNumbers) return -1;
   const sortedTarget = [...horseNumbers].sort((a, b) => a - b);
   for (let index = 0; index < table.resultNumbers.length; index += 1) {
     const rawPair = table.resultNumbers[index];
@@ -735,14 +744,24 @@ function payoutForWidePair(
       .filter((value): value is number => Number.isFinite(value))
       .sort((a: number, b: number) => a - b);
     if (normalizedPair.length === 2 && normalizedPair[0] === sortedTarget[0] && normalizedPair[1] === sortedTarget[1]) {
-      const payout = Number(table.payouts[index]);
-      return Number.isFinite(payout) ? Math.round(payout) : null;
+      return index;
     }
   }
+  return -1;
+}
+
+function payoutForWidePair(
+  table: { resultNumbers?: unknown[]; payouts?: unknown[] } | undefined,
+  horseNumbers: [number, number] | null
+) {
+  const index = widePairIndex(table, horseNumbers);
+  if (index < 0 || !Array.isArray(table?.payouts)) return null;
+  const payout = Number(table.payouts[index]);
+  if (Number.isFinite(payout)) return Math.round(payout);
   return null;
 }
 
-function settleSelection(
+export function settleSelection(
   race: WeeklyRace,
   selection: ReviewSelectionHorse | null,
   includeTan: boolean
@@ -757,7 +776,10 @@ function settleSelection(
   const tanPayout = includeTan ? payoutForHorseNumber(race.result?.payouts?.tansho, horseNumber) : 0;
   const fukuPayout = payoutForHorseNumber(race.result?.payouts?.fukusho, horseNumber);
   const tanHit = includeTan && winnerHorseId === settledSelection.horseId;
-  const fukuHit = top3HorseIds.includes(settledSelection.horseId);
+  const fukuTable = race.result?.payouts?.fukusho;
+  const fukuHit = hasOfficialResultNumbers(fukuTable)
+    ? Number(horseNumber) > 0 && fukuTable!.resultNumbers!.some((value) => Number(value) === horseNumber)
+    : top3HorseIds.includes(settledSelection.horseId);
   const hasTan = includeTan ? hasPayoutTable(race.result?.payouts?.tansho) : true;
   const hasFuku = hasPayoutTable(race.result?.payouts?.fukusho);
   const settlementStatus =
@@ -871,10 +893,32 @@ export async function runReviewPipeline(options: ReviewPipelineOptions): Promise
     let repairsApplied = 0;
     let reviewsSettled = 0;
     let failedCount = 0;
+    const expiredRaceIds = new Set<string>();
+
+    for (const [recordRaceId, record] of Object.entries(recordsByRaceId)) {
+      if (raceIdFilter && recordRaceId !== raceIdFilter) continue;
+      if (dayFilter && record.meta.day !== dayFilter) continue;
+      if (!isExpiredRetryReviewRecord(record, now)) continue;
+      const expired = normalizeReviewRecord({
+        ...record,
+        status: "review_failed",
+        reviewReady: false,
+        updatedAt: toIso(now),
+        nextRetryAt: null,
+        missingReasons: ["EXPIRED"],
+        lastError: "EXPIRED",
+      });
+      recordsByRaceId[recordRaceId] = expired;
+      nextRecords.push(expired);
+      expiredRaceIds.add(recordRaceId);
+      failedCount += 1;
+    }
 
     for (const { race, weekOf, dataUpdatedAt } of races) {
+      if (race.excludedReason) continue;
       const raceId = extractRaceId(race.raceId ?? race.courseId);
       if (!raceId) continue;
+      if (expiredRaceIds.has(raceId)) continue;
       if (dayFilter && race.day !== dayFilter) continue;
       if (raceIdFilter && raceId !== raceIdFilter) continue;
 
@@ -919,7 +963,11 @@ export async function runReviewPipeline(options: ReviewPipelineOptions): Promise
 
       if (!record.snapshot || refreshExisting || !isLivePreRaceEligible(record.snapshot, record)) {
         const recovered = pickExistingSnapshot({ raceId, courseId: meta.courseId, index: snapshotIndex });
-        if (recovered.snapshot && (!record.snapshot || refreshExisting || isPreferredPredictionSnapshot(recovered.snapshot, record.snapshot))) {
+        const recoveredImprovesField =
+          refreshExisting ||
+          record.snapshot?.dataQuality?.fieldComplete !== false ||
+          (recovered.snapshot?.rankedRows?.length ?? 0) > (record.snapshot?.rankedRows?.length ?? 0);
+        if (recovered.snapshot && recoveredImprovesField && (!record.snapshot || refreshExisting || isPreferredPredictionSnapshot(recovered.snapshot, record.snapshot))) {
           record = normalizeReviewRecord({
             ...record,
             snapshot: recovered.snapshot,
@@ -1002,6 +1050,16 @@ export async function runReviewPipeline(options: ReviewPipelineOptions): Promise
 
       const resultAvailable = hasConfirmedResult(race);
       const payoutsAvailable = hasAllRequiredPayouts(race);
+      if (record.snapshot && (race.result?.finishers?.length ?? 0) > 0) {
+        const dataQuality = reconcileResultFieldDataQuality(record.snapshot, race.result?.finishers?.length ?? 0);
+        if (JSON.stringify(record.snapshot.dataQuality) !== JSON.stringify(dataQuality)) {
+          record = normalizeReviewRecord({
+            ...record,
+            snapshot: { ...record.snapshot, dataQuality },
+          });
+          changed = true;
+        }
+      }
       if (resultAvailable) {
         record = normalizeReviewRecord({
           ...record,
@@ -1019,18 +1077,17 @@ export async function runReviewPipeline(options: ReviewPipelineOptions): Promise
         const honmeiFinisher = findHorseFinisherById(race, settledHonmei?.horseId);
         const opponentFinisher = findHorseFinisherById(race, settledOpponent?.horseId);
         const top3HorseIds = Array.isArray(race.result?.top3HorseIds) ? race.result?.top3HorseIds.map((value) => String(value)) : [];
-        const widePayout = payoutForWidePair(
-          race.result?.payouts?.wide,
-          honmeiFinisher && opponentFinisher
-            ? [Number(honmeiFinisher.horseNumber), Number(opponentFinisher.horseNumber)].sort((a, b) => a - b) as [number, number]
-            : null
-        );
+        const widePair: [number, number] | null = honmeiFinisher && opponentFinisher
+          ? [Number(honmeiFinisher.horseNumber), Number(opponentFinisher.horseNumber)]
+          : null;
+        const wideTable = race.result?.payouts?.wide;
+        const widePayout = payoutForWidePair(wideTable, widePair);
         const hasWide = hasPayoutTable(race.result?.payouts?.wide);
+        const wideHit = widePair !== null && (hasOfficialResultNumbers(wideTable)
+          ? widePairIndex(wideTable, widePair) >= 0
+          : top3HorseIds.includes(String(settledHonmei?.horseId)) && top3HorseIds.includes(String(settledOpponent?.horseId)));
         const wideOutcome =
-          honmeiFinisher &&
-          opponentFinisher &&
-          top3HorseIds.includes(String(settledHonmei?.horseId)) &&
-          top3HorseIds.includes(String(settledOpponent?.horseId))
+          wideHit
             ? widePayout !== null
               ? "hit"
               : "hit_missing_payout"

@@ -7,6 +7,7 @@ import type {
 
 export const REVIEW_MAX_RETRY = 5;
 export const REVIEW_RETRY_DELAY_MINUTES = 20;
+export const REVIEW_RETRY_EXPIRY_DAYS = 14;
 
 function uniqueReasons(reasons: ReviewMissingReason[]) {
   return [...new Set(reasons)];
@@ -114,6 +115,17 @@ export function shouldRetryReviewRecord(record: Pick<RaceReviewRecord, "status" 
   return !Number.isFinite(nextRetryAt) || nextRetryAt <= now.getTime();
 }
 
+export function isExpiredRetryReviewRecord(
+  record: { status: ReviewProcessingStatus; meta: { raceDate: string | null } },
+  now: Date
+): boolean {
+  if (record.status !== "retry_scheduled") return false;
+  const raceDate = record.meta?.raceDate;
+  if (!raceDate || !/^\d{4}-\d{2}-\d{2}$/.test(raceDate)) return false;
+  const raceDateStart = Date.parse(`${raceDate}T00:00:00+09:00`);
+  return Number.isFinite(raceDateStart) && now.getTime() >= raceDateStart + REVIEW_RETRY_EXPIRY_DAYS * 86_400_000;
+}
+
 export function getNextRetryAt(now: Date, retryCount: number) {
   const delayMinutes = REVIEW_RETRY_DELAY_MINUTES * Math.max(1, retryCount + 1);
   return new Date(now.getTime() + delayMinutes * 60_000).toISOString();
@@ -138,6 +150,8 @@ export function deriveIncompleteStatus(params: {
 
 export function formatMissingReason(reason: ReviewMissingReason) {
   switch (reason) {
+    case "EXPIRED":
+      return "再試行期限切れ";
     case "NO_SNAPSHOT":
       return "snapshot 未取得";
     case "NO_MAIN_PICK":
