@@ -16,4 +16,19 @@ test("detects NFKC duplicate race names and a mismatched R number", () => {
 
   assert.deepEqual(audit.duplicateLabels.map((entry: { raceIds: string[] }) => entry.raceIds), [["202609040508", "202609040509"]]);
   assert.deepEqual(audit.raceNumberMismatches, [{ raceId: "202609040509", raceNumber: 10, encodedRaceNumber: 9 }]);
+  assert.deepEqual(audit.dayMismatches, []);
+  assert.deepEqual(audit.incorrectRaceIds, ["202609040509"]);
+});
+
+test("race date separates weekend races even when a saved day label is wrong", () => {
+  const audit = auditRaceConsistency({
+    currentWeek: { weekOf: "2026-05-11", races: [
+      { raceId: "202605020612", raceDate: "2026-05-16", day: "Sat", venueKey: "tokyo", label: "4歳以上1勝クラス" },
+      { raceId: "202605020812", raceDate: "2026-05-17", day: "Sat", venueKey: "tokyo", label: "4歳以上1勝クラス" },
+    ] },
+  });
+  assert.deepEqual(audit.duplicateLabels, []);
+  assert.deepEqual(audit.dayMismatches, [{
+    raceId: "202605020812", raceDate: "2026-05-17", day: "Sat", expectedDay: "Sun",
+  }]);
 });

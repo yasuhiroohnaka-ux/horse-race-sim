@@ -272,6 +272,9 @@ async function main() {
   for (const mismatch of consistency.raceNumberMismatches) {
     console.warn(`[daily-entry-check] race number mismatch: ${mismatch.raceId} has raceNumber=${mismatch.raceNumber}, expected=${mismatch.encodedRaceNumber}`);
   }
+  for (const mismatch of consistency.dayMismatches) {
+    console.warn(`[daily-entry-check] race day mismatch: ${mismatch.raceId} ${mismatch.raceDate} has day=${mismatch.day}, expected=${mismatch.expectedDay}`);
+  }
   const netkeibaByName = await fetchNetkeibaWeightOverrides();
   const mergedNameCorrections = { ...WEIGHT_CORRECTIONS_BY_NAME, ...netkeibaByName };
   const totalRaces = (weekly.currentWeek?.races ?? []).length;

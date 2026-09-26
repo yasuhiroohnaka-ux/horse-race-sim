@@ -468,6 +468,7 @@ export type ReviewProcessingStatus =
 
 export type ReviewMissingReason =
   | "EXPIRED"
+  | "INCORRECT_RACE_ID"
   | "NO_SNAPSHOT"
   | "NO_MAIN_PICK"
   | "NO_PARTNER_PICK"

@@ -1,5 +1,6 @@
 import { extractRaceId } from "@/lib/reviewRecords";
 import { runReviewPipeline, type ReviewPipelinePhase } from "@/lib/reviewPipeline";
+import { verifyCurrentWeekRaceIdentities } from "./race-identity-check.mjs";
 
 type DayLabel = "Sat" | "Sun";
 
@@ -22,15 +23,28 @@ async function main() {
   const forceRetryNow = hasFlag("force-retry-now");
   const debug = hasFlag("debug");
   const now = nowArg ? new Date(nowArg) : new Date();
+  let resolvedRaceIdFilter = raceIdFilter;
   if (Number.isNaN(now.getTime())) {
     throw new Error(`invalid --now value: ${nowArg}`);
+  }
+
+  if (phase === "snapshot" || phase === "all") {
+    const identity = await verifyCurrentWeekRaceIdentities({
+      now,
+      dayFilter: dayFilter === "Sat" || dayFilter === "Sun" ? dayFilter : null,
+      raceIdFilter,
+    });
+    console.log(`[review-pipeline] race identity ${JSON.stringify(identity)}`);
+    const corrections = identity.corrected as Array<{ from: string; to: string }>;
+    resolvedRaceIdFilter = corrections.find((item) =>
+      item.from === raceIdFilter)?.to ?? raceIdFilter;
   }
 
   const result = await runReviewPipeline({
     phase,
     now,
     dayFilter: dayFilter === "Sat" || dayFilter === "Sun" ? dayFilter : null,
-    raceIdFilter,
+    raceIdFilter: resolvedRaceIdFilter,
     includeArchives,
     refreshExisting,
     forceRetryNow,

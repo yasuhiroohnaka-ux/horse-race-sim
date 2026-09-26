@@ -152,6 +152,8 @@ export function formatMissingReason(reason: ReviewMissingReason) {
   switch (reason) {
     case "EXPIRED":
       return "再試行期限切れ";
+    case "INCORRECT_RACE_ID":
+      return "レースIDとレース名の不一致";
     case "NO_SNAPSHOT":
       return "snapshot 未取得";
     case "NO_MAIN_PICK":
