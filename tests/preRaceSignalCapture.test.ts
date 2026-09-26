@@ -87,7 +87,36 @@ test("unpublished weight remains missing and readiness counts distinct pre-race 
     trainingFinal1f: 1, companion: 1 });
   assert.deepEqual(summary.trackedEntriesComplete, { odds: 1, bodyWeight: 1, training: 1 });
   assert.equal(summary.jointRelativeRaces, 1);
+  assert.equal(summary.partialJointRelativeRaces, 1);
   assert.equal(summary.readyForB2, false);
   const postStart = { ...complete, capturedAt: "2026-09-26T05:12:00Z", raceId: "future" };
   assert.equal(summarizeSignalReadiness([postStart]).raceCount, 0);
+});
+
+test("partial public training never satisfies the all-runner B2 readiness gate", () => {
+  const earlier = buildPreRaceSignalCapture({ race, capturedAt: "2026-09-26T01:00:00Z",
+    sourceTimes: { shutuba: "2026-09-26T00:59:00Z" }, shutubaHtml });
+  const complete = buildPreRaceSignalCapture({ race, capturedAt: "2026-09-26T04:30:00Z",
+    sourceTimes: { shutuba: "2026-09-26T04:29:00Z", oikiri: "2026-09-26T04:28:00Z" },
+    shutubaHtml, oikiriHtml, previousCaptures: [earlier] });
+  const partial = Array.from({ length: 100 }, (_, index) => {
+    const capture = structuredClone(complete);
+    capture.raceId = `partial-${index}`;
+    capture.horses[1].training = null;
+    capture.horses[1].trainingFetchedAt = null;
+    capture.horses[1].relative.trainingFinal1fVsCourseSeconds = null;
+    return capture;
+  });
+  const partialSummary = summarizeSignalReadiness(partial);
+  assert.equal(partialSummary.partialJointRelativeRaces, 100);
+  assert.equal(partialSummary.jointRelativeRaces, 0);
+  assert.equal(partialSummary.trackedEntriesComplete.training, 0);
+  assert.equal(partialSummary.readyForB2, false);
+
+  const full = Array.from({ length: 100 }, (_, index) => ({ ...complete, raceId: `full-${index}` }));
+  assert.equal(summarizeSignalReadiness(full).readyForB2, true);
+  const missingTimestamp = structuredClone(complete);
+  missingTimestamp.raceId = "missing-time";
+  missingTimestamp.horses[0].oddsFetchedAt = null;
+  assert.equal(summarizeSignalReadiness([missingTimestamp]).jointRelativeRaces, 0);
 });
