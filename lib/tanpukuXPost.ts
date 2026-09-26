@@ -1,5 +1,6 @@
 import { buildPriorityHashtags, sanitizeRaceTagLabel } from "@/lib/xTagSanitize.mjs";
 import { VERDICT_LABELS } from "@/lib/verdictLabels.mjs";
+export { buildDailyVerdictThread } from "@/lib/dailyVerdictThread.mjs";
 
 export interface CategoryReturnStatForPost {
   key: string;

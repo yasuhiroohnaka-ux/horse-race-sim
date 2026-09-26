@@ -4,7 +4,7 @@ import { ARCHIVED_COURSES, COURSES } from "../lib/courses";
 import { buildPredictionSnapshot, DEFAULT_SCORING_VERSION } from "../lib/predictionSnapshots";
 import { ARCHIVED_RACES as LEGACY_ARCHIVED_RACES } from "../lib/raceData";
 import { MONTE_CARLO_RUNS } from "../lib/simulationConfig";
-import { runMonteCarlo } from "../lib/simulation";
+import { createSimulationSeed, runMonteCarlo } from "../lib/simulation";
 import { pickTanpukuPair as pickRoutineTanpukuPair } from "../lib/tanpukuSelection.mjs";
 import type {
   Course,
@@ -926,13 +926,15 @@ async function main() {
       const course = getArchivedCourse(race);
       const condition = createDefaultCondition(course);
       const horses = race.horses.map((horse) => ({ ...horse })) as Horse[];
-      const results = runMonteCarlo(horses, course, condition, MONTE_CARLO_RUNS);
+      const simulationSeed = createSimulationSeed();
+      const results = runMonteCarlo(horses, course, condition, MONTE_CARLO_RUNS, simulationSeed);
       snapshot = await buildPredictionSnapshot({
         results,
         horses,
         course,
         condition,
         simulationCount: MONTE_CARLO_RUNS,
+        simulationSeed,
         raceId,
         raceDate,
         raceName: race.label,

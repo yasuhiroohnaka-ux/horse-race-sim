@@ -24,6 +24,7 @@ import {
   isAfterRaceCompletionBuffer,
   isBeforeRaceStart,
 } from "../lib/raceTiming.mjs";
+import { buildDailyVerdictThread, selectWinCandidate } from "../lib/dailyVerdictThread.mjs";
 
 const ROOT = process.cwd();
 
@@ -165,6 +166,13 @@ async function publishOrQueuePost(stage, text, structuredPayload = null) {
   }
 
   await fs.appendFile(PENDING_POSTS_PATH, `${JSON.stringify(payload)}\n`, "utf8");
+}
+
+function isCompleteField(race) {
+  if (race.fieldComplete === false) return false;
+  if (!Array.isArray(race.horses) || race.horses.length === 0) return false;
+  const expected = Number(race.expectedFieldSize);
+  return !(Number.isInteger(expected) && expected > 0 && race.horses?.length !== expected);
 }
 
 function clamp(v, min, max) {
@@ -601,6 +609,60 @@ async function handleDrawConfirmed() {
   await publishOrQueuePost("fri_10", "金曜の出馬表更新を実行し、枠順と人気値を最新化しました。");
 }
 
+async function handleDailyVerdict(day, stage) {
+  const now = jstNow();
+  const today = isoDate(now);
+  const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { races: [] } });
+  const races = (weekly.currentWeek?.races ?? [])
+    .filter((race) => race.day === day && race.hasRace && race.raceDate === today)
+    .sort((left, right) => {
+      const timeOrder = String(left.scheduledStartTime ?? "").localeCompare(String(right.scheduledStartTime ?? ""));
+      return timeOrder || String(left.venue ?? "").localeCompare(String(right.venue ?? "")) ||
+        Number(left.raceNumber ?? 0) - Number(right.raceNumber ?? 0);
+    });
+  if (races.length === 0) {
+    console.warn(`No target races for ${day} ${today}; daily verdict skipped.`);
+    return;
+  }
+  const captureInstant = new Date();
+  if (races.some((race) => !isBeforeRaceStart(race, captureInstant, 5 * 60_000))) {
+    console.warn(`First target race has started or lacks a start time; daily verdict skipped for ${today}.`);
+    return;
+  }
+
+  const state = await readJson(STATE_PATH, {});
+  const progress = state.dailyVerdictPosts?.[today] ?? 0;
+  const includeBodyWeight = day === "Sat";
+  const applyDraw = Boolean(state.drawConfirmedAt) || isAfterFri10Jst(now);
+  const rows = races.map((race) => {
+    const complete = isCompleteField(race);
+    const pair = complete ? pickSharedTanpukuPair(race, includeBodyWeight, applyDraw) : null;
+    return {
+      venue: race.venue,
+      raceNumber: race.raceNumber,
+      raceName: race.label,
+      horseName: pair?.winPick?.horse?.name ?? null,
+      classification: pair?.winPick?.classificationHint?.classification ?? null,
+      fieldComplete: complete,
+    };
+  });
+  const posts = buildDailyVerdictThread(rows, { date: today });
+  for (let index = progress; index < posts.length; index += 1) {
+    await publishOrQueuePost(`${stage}_daily_verdict`, posts[index], {
+      postType: "daily_verdict_thread",
+      date: today,
+      threadId: `daily-verdict-${today}`,
+      threadIndex: index,
+      threadLength: posts.length,
+      replyToPrevious: index > 0,
+    });
+    state.dailyVerdictPosts = state.dailyVerdictPosts || {};
+    state.dailyVerdictPosts[today] = index + 1;
+    await writeJson(STATE_PATH, state);
+  }
+  console.log(`Daily verdict ${today}: ${posts.length} post(s), ${races.length} race(s).`);
+}
+
 async function handleRecommendation(day, stage) {
   const now = jstNow();
   const captureInstant = new Date();
@@ -617,10 +679,7 @@ async function handleRecommendation(day, stage) {
   const eligibleRaces = dayRaces.filter((race) =>
     isBeforeRaceStart(race, captureInstant, 5 * 60_000)
   );
-  const completeRaces = eligibleRaces.filter((race) => {
-    const expected = Number(race.expectedFieldSize);
-    return !(Number.isInteger(expected) && expected > 0 && race.horses?.length !== expected);
-  });
+  const completeRaces = eligibleRaces.filter(isCompleteField);
   const best = pickBestHorse(completeRaces, day, includeBodyWeight, applyDraw);
 
   if (!best) {
@@ -631,15 +690,24 @@ async function handleRecommendation(day, stage) {
     return;
   }
 
-  const race = best.race;
-  const horse = best.horse;
-  const undervalued = listUndervaluedHorsesInRace(race, includeBodyWeight, applyDraw);
-  const overvalued = listOvervaluedHorsesInRace(race, includeBodyWeight, applyDraw);
-  const tanpuku = pickSharedTanpukuPair(race, includeBodyWeight, applyDraw);
+  const overvalued = listOvervaluedHorsesInRace(best.race, includeBodyWeight, applyDraw);
 
   const overvaluedText = buildPackedOvervaluedText(day, overvalued);
   await publishOrQueuePost(`${stage}_overvalued`, overvaluedText);
 
+  const winCandidate = selectWinCandidate(completeRaces
+    .map((race) => ({
+      race,
+      fieldComplete: isCompleteField(race),
+      simBestHorse: pickBestHorse([race], day, includeBodyWeight, applyDraw),
+      tanpuku: pickSharedTanpukuPair(race, includeBodyWeight, applyDraw),
+    })));
+  if (!winCandidate) {
+    console.warn(`No complete, unstarted win verdict for ${day}; pre-race recommendation skipped.`);
+    return;
+  }
+
+  const { race, tanpuku, simBestHorse } = winCandidate;
   if (tanpuku) {
     const winPick = tanpuku.winPick;
     const valuePick = tanpuku.valuePick;
@@ -660,7 +728,7 @@ async function handleRecommendation(day, stage) {
     });
     winPick.recommendedBetDecision = winRecommendedBetDecision;
 
-    const preRace = buildPreRacePostPayload({ day, race, tanpukuPair: tanpuku, simBestHorse: best });
+    const preRace = buildPreRacePostPayload({ day, race, tanpukuPair: tanpuku, simBestHorse });
     await publishOrQueuePost(`${stage}_pre_race`, preRace.text, preRace);
 
     const weekOf = weekly.currentWeek?.weekOf || isoDate(startOfWeekMonday(jstNow()));
@@ -942,9 +1010,10 @@ async function main() {
       await handleMonday10(now);
       break;
     case "sat_09":
-      console.log("sat_09 pre-race snapshot capture is handled by the workflow.");
+      await handleDailyVerdict("Sat", stage);
       break;
     case "sun_09":
+      await handleDailyVerdict("Sun", stage);
       await handleNextDayReview("Sat", stage);
       break;
     case "mon_09":
@@ -965,6 +1034,13 @@ async function main() {
       break;
     case "sun_15":
       await handleRecommendation("Sun", stage);
+      break;
+    case "sat_13":
+    case "sat_14":
+    case "sat_16":
+    case "sun_13":
+    case "sun_14":
+      console.log(`${stage} captures pre-race signals in the workflow.`);
       break;
     case "sun_16":
     case "sun_18":

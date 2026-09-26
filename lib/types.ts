@@ -385,6 +385,7 @@ export interface PredictionSnapshotSelectionLogEntry {
   selectionMethod: "rank2" | "light_adjusted" | "legacy_value" | "stable_next" | "simulation_rank" | "market_watch";
   selectionReason: string | null;
   classificationHint?: PickClassificationHint;
+  shadowD1?: { policyId: string; classificationHint: PickClassificationHint };
   recommendedBetAction?: RecommendedBetAction;
   recommendedBetDecision?: RecommendedBetDecision;
   score: number | null;
@@ -433,6 +434,7 @@ export interface PredictionSnapshot {
   modelVersion: string;
   scoringConfigHash: string;
   simulationCount: number;
+  simulationSeed?: number | null;
   condition: RaceCondition;
   rankedRows: PredictionSnapshotRow[];
   dataQuality?: PredictionSnapshotDataQuality;

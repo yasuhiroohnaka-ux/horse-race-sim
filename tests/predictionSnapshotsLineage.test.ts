@@ -72,6 +72,7 @@ test("live pre-race snapshot records source lineage and row-level data provenanc
       selectionReason: "placeScore leader",
       scoreGap: 0.08,
       classificationHint: { classification: "win", confidence: 0.8, reason: "test" },
+      shadowD1: { policyId: "overbet-high-t2-to-place-v1", classificationHint: { classification: "place", confidence: 0.55, reason: "shadow test" } },
     },
   };
 
@@ -97,6 +98,8 @@ test("live pre-race snapshot records source lineage and row-level data provenanc
   assert.equal(snapshot.dataLineage?.capturedBeforeScheduledStart, true);
   assert.equal(snapshot.dataLineage?.oddsSource, "forecast");
   assert.equal(snapshot.selectionLog?.entries.find((entry) => entry.role === "honmei")?.classificationHint?.classification, "win");
+  assert.equal(snapshot.selectionLog?.entries.find((entry) => entry.role === "honmei")?.shadowD1?.classificationHint.classification, "place");
+  assert.equal(snapshot.selectionLog?.entries.find((entry) => entry.role === "honmei")?.shadowD1?.policyId, "overbet-high-t2-to-place-v1");
   assert.equal(snapshot.selectionLog?.entries.find((entry) => entry.role === "honmei")?.recommendedBetAction, "win");
   assert.equal(snapshot.selectionLog?.entries.find((entry) => entry.role === "simulation_leader")?.recommendedBetAction, "unknown");
 

@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   classifyHonmeiPick,
+  D1_SHADOW_POLICY_ID,
   pickTanpukuPair,
   TANPUKU_SCORING_VERSION,
 } from "../lib/tanpukuSelection.mjs";
+import { pickTanpukuPair as pickD1ShadowPair } from "../scripts/wp-d1-shadow-selection.mjs";
 import {
   calibrateWinProb,
   calibratePlaceProb,
@@ -113,6 +115,19 @@ test("stable place credentials without win strength classify as place", () => {
   assert.match(hint.reason ?? "", /3着内安定/);
 });
 
+test("D1 shadow demotes only an overbet-high T2 pick and leaves the live action unchanged", () => {
+  const t2 = {
+    calWinProb: 0.32, calPlaceProb: 0.7, calTanRoi: 90,
+    odds: 2.8, fieldSize: 14, overbetLabel: "overbet_high",
+  };
+  assert.equal(classifyHonmeiPick(t2).classification, "win");
+  const shadow = classifyHonmeiPick(t2, { d1Shadow: true });
+  assert.equal(shadow.classification, "place");
+  assert.match(shadow.reason, /過熱リスク大/);
+  assert.equal(classifyHonmeiPick({ ...t2, overbetLabel: "overbet_moderate" }, { d1Shadow: true }).classification, "win");
+  assert.equal(classifyHonmeiPick({ ...t2, calWinProb: 0.36, calTanRoi: 100 }, { d1Shadow: true }).classification, "win");
+});
+
 test("classification reasons show current inputs without fixed historical performance", () => {
   const entries = [
     { winProb: 0.6, placeProb: 0.85, odds: 4.5, fieldSize: 14 },
@@ -189,6 +204,9 @@ test("pickTanpukuPair emits v3.1 version and calibrated fields", () => {
   assert.equal(TANPUKU_SCORING_VERSION, "tanpuku-win-v3.1");
   const winPick = result.winPick;
   assert.ok(winPick.classificationHint);
+  assert.equal(winPick.shadowD1.policyId, D1_SHADOW_POLICY_ID);
+  assert.equal(winPick.shadowD1.classificationHint.classification, classifyHonmeiPick(winPick, { d1Shadow: true }).classification);
+  assert.equal(pickD1ShadowPair(buildRace(14))?.winPick.classificationHint.classification, winPick.shadowD1.classificationHint.classification);
   assert.ok(["win", "place", "skip"].includes(winPick.classificationHint.classification));
   assert.ok(Number.isFinite(winPick.calWinProb));
   assert.ok(Number.isFinite(winPick.calPlaceProb));

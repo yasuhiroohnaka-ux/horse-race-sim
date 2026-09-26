@@ -24,7 +24,7 @@ import {
   isReviewComplete,
   shouldRetryReviewRecord,
 } from "@/lib/reviewStatus";
-import { runMonteCarlo } from "@/lib/simulation";
+import { createSimulationSeed, runMonteCarlo } from "@/lib/simulation";
 import { MONTE_CARLO_RUNS } from "@/lib/simulationConfig";
 import { filterRaceDayNoOddsHorses } from "@/lib/raceDayExclusions.mjs";
 import {
@@ -438,7 +438,8 @@ async function buildSnapshotBundle(params: { race: WeeklyRace; weekOf: string | 
   };
   const condition = createDefaultCondition(race.courseId);
   const horses = filterRaceDayNoOddsHorses(race.horses, race) as never[];
-  const simulationResults = runMonteCarlo(horses, course, condition, MONTE_CARLO_RUNS);
+  const simulationSeed = createSimulationSeed();
+  const simulationResults = runMonteCarlo(horses, course, condition, MONTE_CARLO_RUNS, simulationSeed);
   const tanpukuSelectionModule = await import("../lib/tanpukuSelection.mjs");
   const tanpukuPair = tanpukuSelectionModule.pickTanpukuPair(
     {
@@ -495,6 +496,7 @@ async function buildSnapshotBundle(params: { race: WeeklyRace; weekOf: string | 
     course,
     condition,
     simulationCount: MONTE_CARLO_RUNS,
+    simulationSeed,
     raceId,
     raceDate,
     raceName: normalizeString(race.label),

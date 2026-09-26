@@ -20,7 +20,7 @@ import { buildPredictionSnapshot } from "@/lib/predictionSnapshots";
 import { buildBettingExpectationView, type ExpectationGrade } from "@/lib/bettingExpectation";
 import { buildRaceAnalysisRows, type RaceAnalysisRow } from "@/lib/raceAnalysis";
 import { MONTE_CARLO_RUNS, MONTE_CARLO_RUNS_LABEL } from "@/lib/simulationConfig";
-import { calculateOdds, runMonteCarlo } from "@/lib/simulation";
+import { calculateOdds, createSimulationSeed, runMonteCarlo } from "@/lib/simulation";
 import { pickTanpukuPair } from "@/lib/tanpukuSelection.mjs";
 import { buildPickExplanations } from "@/lib/pickExplanations";
 import { buildTanpukuPreRacePostText, type CategoryReturnStatForPost, type TanpukuPostHorse, type TanpukuWideRecommendation, type TanpukuClassificationHint } from "@/lib/tanpukuXPost";
@@ -657,7 +657,8 @@ function SimulatorContent() {
     if (!selectedCourse) return;
     setIsRunning(true);
     window.setTimeout(() => {
-      const simulationResults = runMonteCarlo(horses, selectedCourse, condition, MONTE_CARLO_RUNS);
+      const simulationSeed = createSimulationSeed();
+      const simulationResults = runMonteCarlo(horses, selectedCourse, condition, MONTE_CARLO_RUNS, simulationSeed);
       setResults(simulationResults);
 
       let pair: ReturnType<typeof pickTanpukuPair> | null = null;
@@ -722,6 +723,7 @@ function SimulatorContent() {
             course: selectedCourse,
             condition,
             simulationCount: MONTE_CARLO_RUNS,
+            simulationSeed,
             capturedAt: new Date().toISOString(),
             ...buildSnapshotCourseMeta(selectedCourse),
             oddsFetchedAt: oddsLastFetchedAt || null,

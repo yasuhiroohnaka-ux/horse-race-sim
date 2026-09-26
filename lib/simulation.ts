@@ -18,6 +18,23 @@ const JOCKEY_MOD_FACTOR = 0.00045;
 const STABLE_MOD_FACTOR = 0.0003;
 const MONTE_CARLO_MEAN_REVERSION = 0.34;
 
+export function createSimulationSeed(): number {
+  const values = new Uint32Array(1);
+  globalThis.crypto.getRandomValues(values);
+  return values[0];
+}
+
+function mulberry32(seed: number): () => number {
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let value = state;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 function getGroundConditionModifiers(
   groundCondition: RaceCondition["groundCondition"],
   surface: Course["surface"]
@@ -157,7 +174,8 @@ export function runRace(
   horses: Horse[],
   course: Course,
   condition: RaceCondition,
-  horseConditions?: { id: string; modifier: number }[]
+  horseConditions?: { id: string; modifier: number }[],
+  random: () => number = mulberry32(createSimulationSeed())
 ): RaceResult[] {
   const groundMod = getGroundConditionModifiers(condition.groundCondition, course.surface);
   const weatherMod = getWeatherModifiers(condition.weather);
@@ -185,7 +203,7 @@ export function runRace(
     );
     const paceMod = paceMap.get(horse.id) ?? 1;
     const drawTacticalMod = drawTacticalMap.get(horse.id) ?? 1;
-    const launchMod = 0.982 + Math.random() * 0.036;
+    const launchMod = 0.982 + random() * 0.036;
 
     return {
       id: horse.id,
@@ -226,7 +244,7 @@ export function runRace(
       if (!horse) return;
 
       const progressRatio = clamp(position.distanceCovered / Math.max(course.distance, 1), 0, 1);
-      const randomFlux = (Math.random() - 0.5) * 5.2 * position.volatility;
+      const randomFlux = (random() - 0.5) * 5.2 * position.volatility;
       const styleBonus = getRunningStyleBonus(horse.runningStyle, condition.trackBias);
       const finishKick = progressRatio > 0.7 ? position.closingKick : 1;
 
@@ -271,8 +289,13 @@ export function runMonteCarlo(
   horses: Horse[],
   course: Course,
   condition: RaceCondition,
-  iterations = MONTE_CARLO_RUNS
+  iterations = MONTE_CARLO_RUNS,
+  seed = createSimulationSeed()
 ): { horseId: string; winCount: number; bestTime: number; top3Count: number }[] {
+  if (!Number.isInteger(seed) || seed < 0 || seed > 0xffffffff) {
+    throw new RangeError("simulation seed must be a uint32");
+  }
+  const random = mulberry32(seed);
   const stats = new Map<string, { wins: number; top3: number; bestTime: number }>();
   horses.forEach((horse) => stats.set(horse.id, { wins: 0, top3: 0, bestTime: Number.POSITIVE_INFINITY }));
 
@@ -282,11 +305,11 @@ export function runMonteCarlo(
       const swing = 0.08 * profile.volatility;
       return {
         id: horse.id,
-        modifier: 1 - swing + Math.random() * swing * 2,
+        modifier: 1 - swing + random() * swing * 2,
       };
     });
 
-    const result = runRace(horses, course, condition, horseConditions);
+    const result = runRace(horses, course, condition, horseConditions, random);
     const winnerId = result[0]?.horseId;
     if (winnerId && stats.has(winnerId)) {
       stats.get(winnerId)!.wins += 1;

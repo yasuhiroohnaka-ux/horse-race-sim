@@ -1,11 +1,14 @@
 # HANDOVER
 
-更新日: 2026-03-14
+更新日: 2026-09-26
 
 ## 現在の状態
 
 - アプリ名: `単勝ラボ` (旧 KEIBA GAP LAB)
 - 目的: 能力値・適性・馬場条件と、市場オッズのズレを比較してレースを読む
+- 現行の選定・判定は `tanpuku-win-v3.1`。本命選定と購入アクションは維持し、WP-D1 の過熱 T2 案だけを新規 snapshot のシャドー判定に記録する
+- MC はシード付き mulberry32。新規 snapshot の `simulationSeed` と `modelVersion=sim-page-v1.1` で乱数列を識別する
+- 新エンジンの採用基準は全出走馬の logLoss を主とし、単勝回収率を悪化の歯止めにする。B2 で採用できる特徴量がなかったため D2/D3 は保留し、D0 の新データ源を選ぶ段階
 - 主な画面
   - `/`: 今週の対象レース一覧
   - `/sim`: レース選択、馬データ調整、シミュレーション結果
@@ -312,3 +315,13 @@ node scripts/backtest-selection.mjs --baseline=<旧モジュールのパス>   #
 ### 確認済み
 `npm test` 115本パス / `npx tsc --noEmit` エラー0 / `npm run build` 成功 /
 モバイル (375px) で横スクロールなし / フォーカスリングと `prefers-reduced-motion` 対応済み
+
+## 2026-09-26 current state
+
+- 実装順・検証条件・保留理由は Claude Code vault の `10_specs/engine-improvement-plan-2026-09.md` を参照。WP-A〜C は main に反映済み。WP-D1、WP-D5、WP-E1、WP-E2、WP-D0 の収集基盤はこの作業ツリーで実装中。
+- `/` の成績表示は現行版の発走前ライブ成績と、同一レースの1番人気基準線を表示する。`/sim` は出走馬のデータ品質、判定理由、推奨アクションを明示する。`/monitor` は評価母集団と不確実性を併記する。
+- `lib/tanpukuSelection.mjs` の `shadowD1` は過熱した T2 単勝勝負を「抑え」にする候補。`classificationHint` と `recommendedBetAction` は現行 v3.1 のまま。再評価は `node scripts/backtest-selection.mjs --module=scripts/wp-d1-shadow-selection.mjs --baseline=lib/tanpukuSelection.mjs --split=2026-06-28 --iterations=8000` と、分割日を `2026-09-04` に替えた実行で行う。
+- `lib/simulation.ts` の `runMonteCarlo` は任意の uint32 シードを第5引数に受ける。再現には保存済みの出走馬・コース・条件・試行回数・シードと、同じモデル版が必要。過去 snapshot にはシードがない。
+- 土日09時の routine は「本日の判定一覧」を発走前に作り、15時の個別推奨は判定 `win` かつデータ完全のレースだけを投稿する。外部 webhook が分割投稿をXの返信スレッドにするかは未確認。
+- WP-D0 はオッズ推移・当日馬体重/増減・調教詳細をすべて時刻付きで `data/pre-race-signals.jsonl` に追記する。09時と13/14/15/16時の土日ワークフローに収集処理を設定した。発走後に取得した情報は拒否する。相対値はオッズ変化・馬体重/増減のレース内中央値との差、調教最終1Fの同コース中央値との差を保存する。調教公開ページは一部の馬しか表示されないため欠損を保持し、未取得をゼロに置換しない。`npm run report:pre-race-signals` で3系統と同一レースで揃った件数を確認する。B2の再評価は同一レースで100件以上を蓄積してから時系列分割で実施し、D2/D3/D4は引き続き保留。
+- 現在の検証コマンド: `npx tsc --noEmit --incremental false`、`npm test`、`npm run build`。数値の採用判断には計画書の時系列分割・事前 snapshot・公式払戻・信頼区間の条件を使う。

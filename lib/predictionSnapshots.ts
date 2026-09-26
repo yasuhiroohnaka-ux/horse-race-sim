@@ -28,12 +28,13 @@ const CONTRIBUTOR_LABELS: Record<PredictionSnapshotContributorKey, string> = {
 };
 
 export const PREDICTION_SNAPSHOT_MODEL_FAMILY = "manual-sim-montecarlo";
-export const PREDICTION_SNAPSHOT_MODEL_VERSION = "sim-page-v1";
+export const PREDICTION_SNAPSHOT_MODEL_VERSION = "sim-page-v1.1";
 export const DEFAULT_PREDICTION_ORIGIN: PredictionOrigin = "saved_manual";
 export const DEFAULT_SCORING_VERSION = "tanpuku-win-v3.1";
 
 const SCORING_CONFIG_SOURCE = {
   engine: "runMonteCarlo",
+  randomGenerator: "mulberry32/uint32-seed",
   rankingSource: "buildRaceAnalysisRows",
   scoreField: "abilityScore",
   winProbabilityField: "simWinRate",
@@ -206,6 +207,10 @@ function buildSelectionLogEntryFromPair(params: {
     params.entry?.classificationHint && typeof params.entry.classificationHint === "object"
       ? (params.entry.classificationHint as PredictionSnapshotSelectionLogEntry["classificationHint"])
       : undefined;
+  const shadowD1 =
+    params.role === "honmei" && params.entry?.shadowD1 && typeof params.entry.shadowD1 === "object"
+      ? (params.entry.shadowD1 as PredictionSnapshotSelectionLogEntry["shadowD1"])
+      : undefined;
   const recommendedBetDecision = buildRecommendedBetDecision({
     sourceStatus: params.sourceStatus,
     livePreRaceEligible: params.livePreRaceEligible,
@@ -236,6 +241,7 @@ function buildSelectionLogEntryFromPair(params: {
     selectionMethod: params.selectionMethod,
     selectionReason: normalizeString(params.entry?.selectionReason),
     classificationHint,
+    shadowD1,
     recommendedBetAction: recommendedBetDecision.action,
     recommendedBetDecision,
     score: normalizeNumber(params.entry?.score),
@@ -444,6 +450,7 @@ export async function buildPredictionSnapshot(params: {
   course: Course;
   condition: RaceCondition;
   simulationCount: number;
+  simulationSeed?: number | null;
   raceId?: string | null;
   raceDate?: string | null;
   raceName?: string | null;
@@ -480,6 +487,7 @@ export async function buildPredictionSnapshot(params: {
     course,
     condition,
     simulationCount,
+    simulationSeed = null,
     raceId = null,
     raceDate = null,
     raceName = null,
@@ -634,6 +642,7 @@ export async function buildPredictionSnapshot(params: {
     modelVersion: PREDICTION_SNAPSHOT_MODEL_VERSION,
     scoringConfigHash,
     simulationCount,
+    simulationSeed,
     condition,
     rankedRows,
     dataQuality: assessFieldDataQuality(expectedFieldSize, rankedRows.length),

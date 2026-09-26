@@ -2,7 +2,7 @@
 
 on:
   schedule:
-    # JST: Sat 09:00 / Sun 09:00 / Mon 09:00 / Mon 10:00 / Wed 12:00 / Thu 12:00 / Thu 15:00 / Fri 10:30 / Sat 15:00 / Sun 15:00 / Sun 18:00
+    # JST: Sat/Sun 09:00, 13:00, 14:00, 15:00, 16:00 plus weekday routine stages.
     - cron: "0 0 * * 6"
     - cron: "0 0 * * 0"
     - cron: "0 0 * * 1"
@@ -13,11 +13,17 @@ on:
     - cron: "30 1 * * 5"
     - cron: "0 6 * * 6"
     - cron: "0 6 * * 0"
+    - cron: "0 4 * * 6"
+    - cron: "0 4 * * 0"
+    - cron: "0 5 * * 6"
+    - cron: "0 5 * * 0"
+    - cron: "0 7 * * 6"
+    - cron: "0 7 * * 0"
     - cron: "0 9 * * 0"
   workflow_dispatch:
     inputs:
       stage:
-        description: "Optional manual stage (sat_09, sun_09, mon_09, mon_10, wed_12, thu_12, thu_15, fri_10, sat_15, sun_15, sun_18)"
+        description: "Optional manual stage (sat_09/13/14/15/16, sun_09/13/14/15/16, mon_09/10, wed_12, thu_12/15, fri_10, sun_18)"
         required: false
         type: string
 
@@ -59,6 +65,12 @@ jobs:
               "30 1 * * 5") stage="fri_10" ;;
               "0 6 * * 6") stage="sat_15" ;;
               "0 6 * * 0") stage="sun_15" ;;
+              "0 4 * * 6") stage="sat_13" ;;
+              "0 4 * * 0") stage="sun_13" ;;
+              "0 5 * * 6") stage="sat_14" ;;
+              "0 5 * * 0") stage="sun_14" ;;
+              "0 7 * * 6") stage="sat_16" ;;
+              "0 7 * * 0") stage="sun_16" ;;
               "0 9 * * 0") stage="sun_18" ;;
               *)
                 echo "Unable to resolve stage from schedule: '${{ github.event.schedule }}'"
@@ -67,9 +79,21 @@ jobs:
             esac
           fi
           echo "stage=$stage" >> "$GITHUB_OUTPUT"
+          case "$stage" in
+            sat_09|sat_13|sat_14|sat_15|sat_16|sun_09|sun_13|sun_14|sun_15|sun_16)
+              echo "captureSignals=true" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Capture afternoon pre-race signals
+        if: steps.resolve-stage.outputs.captureSignals == 'true' && steps.resolve-stage.outputs.stage != 'sat_09' && steps.resolve-stage.outputs.stage != 'sun_09'
+        run: npm run capture:pre-race-signals
 
       - name: Run routine
         run: npm run routine:keiba -- --stage=${{ steps.resolve-stage.outputs.stage }}
+
+      - name: Capture morning pre-race signals
+        if: steps.resolve-stage.outputs.stage == 'sat_09' || steps.resolve-stage.outputs.stage == 'sun_09'
+        run: npm run capture:pre-race-signals
 
       - name: Capture Saturday live pre-race snapshots
         if: steps.resolve-stage.outputs.stage == 'sat_09'
@@ -86,7 +110,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/weekly-races.json data/routine-state.json data/pending-posts.jsonl data/review-records.json data/prediction-snapshots.jsonl data/analysis/calibration-report.md data/analysis/calibration-report.json lib/generatedNetkeibaData.ts lib/generatedTrainingData.ts lib/generatedRaceSchedule.ts lib/generatedRaceVolatility.ts lib/generatedDrawOverrides.ts
+          git add data/weekly-races.json data/routine-state.json data/pending-posts.jsonl data/pre-race-signals.jsonl data/review-records.json data/prediction-snapshots.jsonl data/analysis/calibration-report.md data/analysis/calibration-report.json lib/generatedNetkeibaData.ts lib/generatedTrainingData.ts lib/generatedRaceSchedule.ts lib/generatedRaceVolatility.ts lib/generatedDrawOverrides.ts
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
