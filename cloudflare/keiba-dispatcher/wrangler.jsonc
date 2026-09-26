@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "horse-race-sim-dispatcher",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-09-26",
+  "workers_dev": false,
+  "triggers": {
+    "crons": [
+      "0 0,6 * * SAT,SUN",
+      "17 3,4,5,7 * * SAT,SUN",
+      "47 4,6 * * SAT,SUN"
+    ]
+  }
+}

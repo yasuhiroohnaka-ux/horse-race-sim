@@ -1,0 +1,11 @@
+{
+  "name": "horse-race-sim-dispatcher",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "whoami": "wrangler whoami"
+  },
+  "devDependencies": {
+    "wrangler": "4.141.0"
+  }
+}
