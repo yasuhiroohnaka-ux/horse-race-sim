@@ -2,10 +2,7 @@
 import path from "node:path";
 import { spawn } from "node:child_process";
 
-import {
-  TANPUKU_SCORING_VERSION,
-  pickTanpukuPair as pickSharedTanpukuPair,
-} from "../lib/tanpukuSelection.mjs";
+import { TANPUKU_SCORING_VERSION } from "../lib/tanpukuSelection.mjs";
 import {
   buildPreRacePostPayload,
   buildReviewPostPayload,
@@ -21,10 +18,16 @@ import {
 } from "../lib/recommendedBetDecisionCore.mjs";
 import {
   classifyRecommendationTiming,
+  getRaceStartTimestamp,
   isAfterRaceCompletionBuffer,
   isBeforeRaceStart,
 } from "../lib/raceTiming.mjs";
-import { buildDailyVerdictThread, selectWinCandidate } from "../lib/dailyVerdictThread.mjs";
+import { buildDailyVerdictThread } from "../lib/dailyVerdictThread.mjs";
+import {
+  liveSnapshotForRace,
+  recommendationFromSnapshot,
+  selectSnapshotWinCandidate,
+} from "../lib/snapshotRecommendation.mjs";
 
 const ROOT = process.cwd();
 
@@ -625,18 +628,18 @@ async function handleDailyVerdict(day, stage) {
     return;
   }
   const captureInstant = new Date();
-  if (races.some((race) => !isBeforeRaceStart(race, captureInstant, 5 * 60_000))) {
-    console.warn(`First target race has started or lacks a start time; daily verdict skipped for ${today}.`);
-    return;
-  }
-
   const state = await readJson(STATE_PATH, {});
   const progress = state.dailyVerdictPosts?.[today] ?? 0;
-  const includeBodyWeight = day === "Sat";
-  const applyDraw = Boolean(state.drawConfirmedAt) || isAfterFri10Jst(now);
+  const reviewStore = await readJson(REVIEW_RECORDS_PATH, { records: {} });
   const rows = races.map((race) => {
+    const startAt = getRaceStartTimestamp(race);
+    const raceStatus = startAt === null ? "unknown_start" :
+      captureInstant.getTime() >= startAt ? "started" : null;
     const complete = isCompleteField(race);
-    const pair = complete ? pickSharedTanpukuPair(race, includeBodyWeight, applyDraw) : null;
+    const recommendation = raceStatus === null && complete
+      ? recommendationFromSnapshot(race,
+        liveSnapshotForRace(reviewStore, race, DEFAULT_SCORING_VERSION)) : null;
+    const pair = recommendation?.tanpuku ?? null;
     return {
       venue: race.venue,
       raceNumber: race.raceNumber,
@@ -644,8 +647,13 @@ async function handleDailyVerdict(day, stage) {
       horseName: pair?.winPick?.horse?.name ?? null,
       classification: pair?.winPick?.classificationHint?.classification ?? null,
       fieldComplete: complete,
+      raceStatus: raceStatus ?? (complete && !pair ? "missing_snapshot" : null),
     };
   });
+  if (rows.every((row) => row.raceStatus === "started")) {
+    console.warn(`All target races have started; daily verdict skipped for ${today}.`);
+    return;
+  }
   const posts = buildDailyVerdictThread(rows, { date: today });
   for (let index = progress; index < posts.length; index += 1) {
     await publishOrQueuePost(`${stage}_daily_verdict`, posts[index], {
@@ -663,7 +671,7 @@ async function handleDailyVerdict(day, stage) {
   console.log(`Daily verdict ${today}: ${posts.length} post(s), ${races.length} race(s).`);
 }
 
-async function handleRecommendation(day, stage) {
+async function handleRecommendation(day, stage, { includeOvervalued = true, includePreRace = true } = {}) {
   const now = jstNow();
   const captureInstant = new Date();
   const weekly = await readJson(WEEKLY_RACES_PATH, { currentWeek: { races: [] } });
@@ -680,53 +688,41 @@ async function handleRecommendation(day, stage) {
     isBeforeRaceStart(race, captureInstant, 5 * 60_000)
   );
   const completeRaces = eligibleRaces.filter(isCompleteField);
-  const best = pickBestHorse(completeRaces, day, includeBodyWeight, applyDraw);
-
-  if (!best) {
-    console.warn(
-      `No unstarted target race for ${day}, skip posting ` +
-        `(dayRaces=${dayRaces.length}, eligibleWith5mLead=${eligibleRaces.length}, dataComplete=${completeRaces.length}).`
-    );
-    return;
+  if (includeOvervalued) {
+    const best = pickBestHorse(completeRaces, day, includeBodyWeight, applyDraw);
+    const overvaluedKey = `${stage}:${isoDate(now)}`;
+    if (best && !state.overvaluedPosts?.[overvaluedKey]) {
+      const overvalued = listOvervaluedHorsesInRace(best.race, includeBodyWeight, applyDraw);
+      const overvaluedText = buildPackedOvervaluedText(day, overvalued);
+      await publishOrQueuePost(`${stage}_overvalued`, overvaluedText);
+      state.overvaluedPosts = state.overvaluedPosts || {};
+      state.overvaluedPosts[overvaluedKey] = new Date().toISOString();
+      await writeJson(STATE_PATH, state);
+    } else if (!best) {
+      console.warn(
+        `No unstarted target race for ${day}, skip overvalued post ` +
+          `(dayRaces=${dayRaces.length}, eligibleWith5mLead=${eligibleRaces.length}, dataComplete=${completeRaces.length}).`
+      );
+    }
   }
+  if (!includePreRace) return;
 
-  const overvalued = listOvervaluedHorsesInRace(best.race, includeBodyWeight, applyDraw);
-
-  const overvaluedText = buildPackedOvervaluedText(day, overvalued);
-  await publishOrQueuePost(`${stage}_overvalued`, overvaluedText);
-
-  const winCandidate = selectWinCandidate(completeRaces
-    .map((race) => ({
-      race,
-      fieldComplete: isCompleteField(race),
-      simBestHorse: pickBestHorse([race], day, includeBodyWeight, applyDraw),
-      tanpuku: pickSharedTanpukuPair(race, includeBodyWeight, applyDraw),
-    })));
+  const reviewStore = await readJson(REVIEW_RECORDS_PATH, { records: {} });
+  const winCandidate = selectSnapshotWinCandidate(completeRaces, reviewStore, DEFAULT_SCORING_VERSION);
   if (!winCandidate) {
-    console.warn(`No complete, unstarted win verdict for ${day}; pre-race recommendation skipped.`);
+    console.warn(`No complete, unstarted saved-live win snapshot for ${day}; pre-race recommendation skipped.`);
     return;
   }
 
-  const { race, tanpuku, simBestHorse } = winCandidate;
+  const { race, snapshot, tanpuku, simBestHorse } = winCandidate;
+  if (state.preRaceRecommendationPosts?.[String(race.raceId)]) {
+    console.log(`Pre-race recommendation already posted for ${race.raceId}; skipped.`);
+    return;
+  }
   if (tanpuku) {
     const winPick = tanpuku.winPick;
     const valuePick = tanpuku.valuePick;
-    // 決定を payload 生成より先に計算して winPick に載せる。
-    // 以前は payload 側のフォールバック (旧・生値閾値の複製) が毎回実行されていた。
-    const winRecommendedBetDecision = buildRecommendedBetDecision({
-      sourceStatus: "live_pre_race",
-      livePreRaceEligible: true,
-      classificationHint: winPick.classificationHint,
-      scoreGap: winPick.scoreGap,
-      placeProb: winPick.placeProb,
-      top3Stability: winPick.top3Stability,
-      valueScore: winPick.valueScore,
-      fieldSize: race.horses?.length ?? null,
-      oddsSource: winPick.horse?.oddsSource ?? null,
-      overbetLabel: winPick.overbetLabel ?? null,
-      hasSelectionLog: false,
-    });
-    winPick.recommendedBetDecision = winRecommendedBetDecision;
+    const winRecommendedBetDecision = winPick.recommendedBetDecision;
 
     const preRace = buildPreRacePostPayload({ day, race, tanpukuPair: tanpuku, simBestHorse });
     await publishOrQueuePost(`${stage}_pre_race`, preRace.text, preRace);
@@ -743,6 +739,8 @@ async function handleRecommendation(day, stage) {
       sourceStatus: "live_pre_race",
       livePreRaceEligible: true,
       scoringVersion: DEFAULT_SCORING_VERSION,
+      snapshotId: snapshot.snapshotId,
+      snapshotCapturedAt: snapshot.capturedAt,
       raceId: race.raceId ?? null,
       courseId: race.courseId,
       raceLabel: race.label,
@@ -786,6 +784,8 @@ async function handleRecommendation(day, stage) {
         sourceStatus: "live_pre_race",
         livePreRaceEligible: true,
         scoringVersion: DEFAULT_SCORING_VERSION,
+        snapshotId: snapshot.snapshotId,
+        snapshotCapturedAt: snapshot.capturedAt,
         raceId: race.raceId ?? null,
         courseId: race.courseId,
         raceLabel: race.label,
@@ -826,6 +826,11 @@ async function handleRecommendation(day, stage) {
         resolved: false,
       });
     }
+    state.preRaceRecommendationPosts = state.preRaceRecommendationPosts || {};
+    state.preRaceRecommendationPosts[String(race.raceId)] = {
+      snapshotId: snapshot.snapshotId,
+      postedAt: recommendationCreatedAt,
+    };
     await writeJson(STATE_PATH, state);
   }
 }
@@ -1011,9 +1016,11 @@ async function main() {
       break;
     case "sat_09":
       await handleDailyVerdict("Sat", stage);
+      await handleRecommendation("Sat", stage, { includeOvervalued: false });
       break;
     case "sun_09":
       await handleDailyVerdict("Sun", stage);
+      await handleRecommendation("Sun", stage, { includeOvervalued: false });
       await handleNextDayReview("Sat", stage);
       break;
     case "mon_09":
@@ -1030,10 +1037,10 @@ async function main() {
       await handleDrawConfirmed();
       break;
     case "sat_15":
-      await handleRecommendation("Sat", stage);
+      await handleRecommendation("Sat", stage, { includePreRace: false });
       break;
     case "sun_15":
-      await handleRecommendation("Sun", stage);
+      await handleRecommendation("Sun", stage, { includePreRace: false });
       break;
     case "sat_13":
     case "sat_14":

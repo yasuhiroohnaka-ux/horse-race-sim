@@ -88,14 +88,6 @@ jobs:
         if: steps.resolve-stage.outputs.captureSignals == 'true' && steps.resolve-stage.outputs.stage != 'sat_09' && steps.resolve-stage.outputs.stage != 'sun_09'
         run: npm run capture:pre-race-signals
 
-      - name: Run routine
-        if: steps.resolve-stage.outputs.stage != 'capture_only'
-        run: npm run routine:keiba -- --stage=${{ steps.resolve-stage.outputs.stage }}
-
-      - name: Capture morning pre-race signals
-        if: steps.resolve-stage.outputs.stage == 'sat_09' || steps.resolve-stage.outputs.stage == 'sun_09'
-        run: npm run capture:pre-race-signals
-
       - name: Capture Saturday live pre-race snapshots
         if: steps.resolve-stage.outputs.stage == 'sat_09'
         run: npm run review:snapshot -- --day=Sat --force-retry-now
@@ -103,6 +95,14 @@ jobs:
       - name: Capture Sunday live pre-race snapshots
         if: steps.resolve-stage.outputs.stage == 'sun_09'
         run: npm run review:snapshot -- --day=Sun --force-retry-now
+
+      - name: Run routine
+        if: steps.resolve-stage.outputs.stage != 'capture_only'
+        run: npm run routine:keiba -- --stage=${{ steps.resolve-stage.outputs.stage }}
+
+      - name: Capture morning pre-race signals
+        if: steps.resolve-stage.outputs.stage == 'sat_09' || steps.resolve-stage.outputs.stage == 'sun_09'
+        run: npm run capture:pre-race-signals
 
       - name: Run review self-heal
         if: steps.resolve-stage.outputs.stage != 'capture_only'

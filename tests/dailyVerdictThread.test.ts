@@ -27,6 +27,26 @@ test("incomplete fields are listed without a betting verdict", () => {
   assert.ok(!post.includes("参考馬"));
 });
 
+test("started race is labeled while a later race keeps its verdict", () => {
+  const [post] = buildDailyVerdictThread([
+    { venue: "中山", raceNumber: 9, raceName: "先のレース", raceStatus: "started",
+      horseName: "古い本命", classification: "win", fieldComplete: true },
+    { venue: "中山", raceNumber: 10, raceName: "次のレース", raceStatus: null,
+      horseName: "新しい本命", classification: "place", fieldComplete: true },
+  ], { date: "2026-09-26" });
+  assert.match(post, /中山9R 先のレース 発走済み/);
+  assert.doesNotMatch(post, /古い本命/);
+  assert.match(post, /中山10R 次のレース ◎新しい本命 抑え/);
+});
+
+test("missing saved verdict is shown without an inferred action", () => {
+  const [post] = buildDailyVerdictThread([{
+    venue: "阪神", raceNumber: 11, raceName: "対象レース", raceStatus: "missing_snapshot",
+    horseName: null, classification: null, fieldComplete: true,
+  }], { date: "2026-09-26" });
+  assert.match(post, /阪神11R 対象レース 事前判定未取得/);
+});
+
 test("no win verdict yields no per-race recommendation candidate", () => {
   const candidates = [
     { fieldComplete: true, simBestHorse: { score: 100 }, tanpuku: { winPick: { classificationHint: { classification: "place" } } } },
