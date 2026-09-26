@@ -1,502 +1,143 @@
 {
-  "generatedAt": "2026-09-26T02:02:39.972Z",
+  "generatedAt": "2026-09-26T02:55:27.675Z",
   "oddsSource": "snapshot",
   "splitDate": "2026-09-04",
   "dataQualityExcludedCount": 3,
+  "favoriteBaselineUnavailableCount": 59,
   "target": {
     "module": "lib/tanpukuSelection.mjs",
     "version": "tanpuku-win-v3.1",
     "summary": {
-      "n": 478,
-      "tanHits": 141,
-      "tanHitRate": 29.497907949790797,
-      "tanRoi": 74.5397489539749,
-      "fukuHitRate": 59.83263598326359,
-      "fukuRoi": 86.06694560669456
+      "n": 419,
+      "tanHits": 128,
+      "tanHitRate": 30.54892601431981,
+      "tanRoi": 75.89498806682577,
+      "fukuHitRate": 60.859188544152744,
+      "fukuRoi": 84.77326968973748
+    }
+  },
+  "favoriteBaseline": {
+    "n": 419,
+    "honmeiHitRate": 30.548926014319807,
+    "honmeiRoi": 75.89498806682577,
+    "favoriteHitRate": 28.400954653937948,
+    "favoriteRoi": 67.25536992840095,
+    "hitRateDelta": 2.1479713603818595,
+    "roiDelta": 8.639618138424822
+  },
+  "classificationComparison": {
+    "win": {
+      "n": 174,
+      "honmeiHitRate": 41.95402298850575,
+      "honmeiRoi": 81.66666666666667,
+      "favoriteHitRate": 40.804597701149426,
+      "favoriteRoi": 78.79310344827586,
+      "hitRateDelta": 1.1494252873563227,
+      "roiDelta": 2.8735632183908137
+    },
+    "place": {
+      "n": 118,
+      "honmeiHitRate": 30.508474576271187,
+      "honmeiRoi": 81.86440677966101,
+      "favoriteHitRate": 29.661016949152543,
+      "favoriteRoi": 79.83050847457628,
+      "hitRateDelta": 0.8474576271186436,
+      "roiDelta": 2.0338983050847332
+    },
+    "skip": {
+      "n": 127,
+      "honmeiHitRate": 14.960629921259843,
+      "honmeiRoi": 62.44094488188976,
+      "favoriteHitRate": 10.236220472440944,
+      "favoriteRoi": 39.76377952755905,
+      "hitRateDelta": 4.724409448818898,
+      "roiDelta": 22.67716535433071
+    }
+  },
+  "timeSplitComparison": {
+    "train": {
+      "overall": {
+        "n": 365,
+        "honmeiHitRate": 32.054794520547944,
+        "honmeiRoi": 78.21917808219177,
+        "favoriteHitRate": 30.410958904109588,
+        "favoriteRoi": 72.43835616438356,
+        "hitRateDelta": 1.6438356164383556,
+        "roiDelta": 5.780821917808211
+      },
+      "byClassification": {
+        "win": {
+          "n": 153,
+          "honmeiHitRate": 45.09803921568628,
+          "honmeiRoi": 88.03921568627452,
+          "favoriteHitRate": 43.790849673202615,
+          "favoriteRoi": 84.77124183006536,
+          "hitRateDelta": 1.3071895424836626,
+          "roiDelta": 3.267973856209153
+        },
+        "place": {
+          "n": 97,
+          "honmeiHitRate": 32.98969072164948,
+          "honmeiRoi": 89.27835051546391,
+          "favoriteHitRate": 31.95876288659794,
+          "favoriteRoi": 86.80412371134021,
+          "hitRateDelta": 1.0309278350515427,
+          "roiDelta": 2.4742268041237025
+        },
+        "skip": {
+          "n": 115,
+          "honmeiHitRate": 13.91304347826087,
+          "honmeiRoi": 55.82608695652174,
+          "favoriteHitRate": 11.304347826086957,
+          "favoriteRoi": 43.91304347826087,
+          "hitRateDelta": 2.608695652173912,
+          "roiDelta": 11.913043478260875
+        }
+      }
+    },
+    "holdout": {
+      "overall": {
+        "n": 54,
+        "honmeiHitRate": 20.37037037037037,
+        "honmeiRoi": 60.18518518518518,
+        "favoriteHitRate": 14.814814814814815,
+        "favoriteRoi": 32.22222222222222,
+        "hitRateDelta": 5.555555555555555,
+        "roiDelta": 27.962962962962962
+      },
+      "byClassification": {
+        "win": {
+          "n": 21,
+          "honmeiHitRate": 19.047619047619047,
+          "honmeiRoi": 35.23809523809524,
+          "favoriteHitRate": 19.047619047619047,
+          "favoriteRoi": 35.23809523809524,
+          "hitRateDelta": 0,
+          "roiDelta": 0
+        },
+        "place": {
+          "n": 21,
+          "honmeiHitRate": 19.047619047619047,
+          "honmeiRoi": 47.61904761904762,
+          "favoriteHitRate": 19.047619047619047,
+          "favoriteRoi": 47.61904761904762,
+          "hitRateDelta": 0,
+          "roiDelta": 0
+        },
+        "skip": {
+          "n": 12,
+          "honmeiHitRate": 25,
+          "honmeiRoi": 125.83333333333333,
+          "favoriteHitRate": 0,
+          "favoriteRoi": 0,
+          "hitRateDelta": 25,
+          "roiDelta": 125.83333333333333
+        }
+      }
     }
   },
   "baseline": null,
   "rows": [
-    {
-      "raceId": "202603010109",
-      "date": "2026-04-11",
-      "horseId": "15",
-      "horseName": "デイジー",
-      "preOdds": 6.2,
-      "finalOdds": 4.4,
-      "fieldSize": 16,
-      "classification": "skip",
-      "calWinProb": 0.2679533592533759,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202603010110",
-      "date": "2026-04-11",
-      "horseId": "4",
-      "horseName": "ヴァンヴィーヴ",
-      "preOdds": 4.3,
-      "finalOdds": 2.6,
-      "fieldSize": 16,
-      "classification": "skip",
-      "calWinProb": 0.3319086471593556,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 110,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202603010111",
-      "date": "2026-04-11",
-      "horseId": "3",
-      "horseName": "コトホドサヨウニ",
-      "preOdds": 5.1,
-      "finalOdds": 3.9,
-      "fieldSize": 15,
-      "classification": "skip",
-      "calWinProb": 0.20246510399210774,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202603010112",
-      "date": "2026-04-11",
-      "horseId": "10",
-      "horseName": "セイプリーズ",
-      "preOdds": 7.5,
-      "finalOdds": 6.5,
-      "fieldSize": 16,
-      "classification": "skip",
-      "calWinProb": 0.1645586310448422,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 210,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202606030509",
-      "date": "2026-04-11",
-      "horseId": "5",
-      "horseName": "コッツォリーノ",
-      "preOdds": 2.9,
-      "finalOdds": 1.9,
-      "fieldSize": 7,
-      "classification": "place",
-      "calWinProb": 0.2589316238532192,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 110,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202606030510",
-      "date": "2026-04-11",
-      "horseId": "2",
-      "horseName": "ワンダラー",
-      "preOdds": 4.2,
-      "finalOdds": 2.8,
-      "fieldSize": 13,
-      "classification": "skip",
-      "calWinProb": 0.31554024211340576,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 150,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202606030511",
-      "date": "2026-04-11",
-      "horseId": "7",
-      "horseName": "ロデオドライブ",
-      "preOdds": 2.3,
-      "finalOdds": 1.7,
-      "fieldSize": 15,
-      "classification": "win",
-      "calWinProb": 0.40403612505680836,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 110,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202606030512",
-      "date": "2026-04-11",
-      "horseId": "9",
-      "horseName": "モリノレッドスター",
-      "preOdds": 5,
-      "finalOdds": 3.4,
-      "fieldSize": 16,
-      "classification": "skip",
-      "calWinProb": 0.13354708600483203,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202609020509",
-      "date": "2026-04-11",
-      "horseId": "4",
-      "horseName": "アロンズロッド",
-      "preOdds": 1.6,
-      "finalOdds": 1.7,
-      "fieldSize": 8,
-      "classification": "win",
-      "calWinProb": 0.5159396837664829,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 100,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202609020510",
-      "date": "2026-04-11",
-      "horseId": "10",
-      "horseName": "ウィクトルウェルス",
-      "preOdds": 1.4,
-      "finalOdds": 1.8,
-      "fieldSize": 13,
-      "classification": "win",
-      "calWinProb": 0.6045818046320001,
-      "tanHit": true,
-      "tanPayout": 180,
-      "fukuHit": true,
-      "fukuPayout": 110,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202609020511",
-      "date": "2026-04-11",
-      "horseId": "6",
-      "horseName": "アスコリピチェーノ",
-      "preOdds": 4,
-      "finalOdds": 3.3,
-      "fieldSize": 10,
-      "classification": "skip",
-      "calWinProb": 0.3686859292044974,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202609020512",
-      "date": "2026-04-11",
-      "horseId": "16",
-      "horseName": "ミッキーマカパ",
-      "preOdds": 6.3,
-      "finalOdds": 4.6,
-      "fieldSize": 16,
-      "classification": "skip",
-      "calWinProb": 0.22608187530016777,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202603010209",
-      "date": "2026-04-12",
-      "horseId": "1",
-      "horseName": "ペネトレイトゴー",
-      "preOdds": 2.8,
-      "finalOdds": 6.3,
-      "fieldSize": 13,
-      "classification": "place",
-      "calWinProb": 0.23213399459483777,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 0
-    },
-    {
-      "raceId": "202603010210",
-      "date": "2026-04-12",
-      "horseId": "8",
-      "horseName": "イマージョン",
-      "preOdds": 5.5,
-      "finalOdds": 5.3,
-      "fieldSize": 16,
-      "classification": "skip",
-      "calWinProb": 0.17723812376040982,
-      "tanHit": true,
-      "tanPayout": 530,
-      "fukuHit": true,
-      "fukuPayout": 220,
-      "oddsCoverage": 0
-    },
-    {
-      "raceId": "202603010211",
-      "date": "2026-04-12",
-      "horseId": "3",
-      "horseName": "トゥデイイズザデイ",
-      "preOdds": 2.2,
-      "finalOdds": 37.2,
-      "fieldSize": 15,
-      "classification": "place",
-      "calWinProb": 0.10047266252313124,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202603010212",
-      "date": "2026-04-12",
-      "horseId": "15",
-      "horseName": "マテンロウカナロア",
-      "preOdds": 5.1,
-      "finalOdds": 2.5,
-      "fieldSize": 15,
-      "classification": "skip",
-      "calWinProb": 0.22010195224545076,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 140,
-      "oddsCoverage": 0
-    },
-    {
-      "raceId": "202606030609",
-      "date": "2026-04-12",
-      "horseId": "7",
-      "horseName": "オオタチ",
-      "preOdds": 3.6,
-      "finalOdds": 3.3,
-      "fieldSize": 12,
-      "classification": "place",
-      "calWinProb": 0.1894364589098125,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 130,
-      "oddsCoverage": 0
-    },
-    {
-      "raceId": "202606030610",
-      "date": "2026-04-12",
-      "horseId": "8",
-      "horseName": "ブルクトーア",
-      "preOdds": 2,
-      "finalOdds": 21.3,
-      "fieldSize": 12,
-      "classification": "win",
-      "calWinProb": 0.38712110253252635,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202606030611",
-      "date": "2026-04-12",
-      "horseId": "16",
-      "horseName": "モズナナスター",
-      "preOdds": 2,
-      "finalOdds": 74,
-      "fieldSize": 16,
-      "classification": "place",
-      "calWinProb": 0.11526127840848811,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 1400,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202606030612",
-      "date": "2026-04-12",
-      "horseId": "12",
-      "horseName": "ヴィンブルレー",
-      "preOdds": 3.8,
-      "finalOdds": 3,
-      "fieldSize": 13,
-      "classification": "place",
-      "calWinProb": 0.21669313371328686,
-      "tanHit": true,
-      "tanPayout": 300,
-      "fukuHit": true,
-      "fukuPayout": 150,
-      "oddsCoverage": 0
-    },
-    {
-      "raceId": "202609020609",
-      "date": "2026-04-12",
-      "horseId": "7",
-      "horseName": "ウィズクィーン",
-      "preOdds": 2.2,
-      "finalOdds": 65.5,
-      "fieldSize": 14,
-      "classification": "place",
-      "calWinProb": 0.2078362488459955,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202609020610",
-      "date": "2026-04-12",
-      "horseId": "3",
-      "horseName": "チルカーノ",
-      "preOdds": 2.7,
-      "finalOdds": 25.3,
-      "fieldSize": 15,
-      "classification": "skip",
-      "calWinProb": 0.08068524577195907,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202609020611",
-      "date": "2026-04-12",
-      "horseId": "15",
-      "horseName": "スターアニス",
-      "preOdds": 3.4,
-      "finalOdds": 2.9,
-      "fieldSize": 18,
-      "classification": "win",
-      "calWinProb": 0.3283607062841948,
-      "tanHit": true,
-      "tanPayout": 290,
-      "fukuHit": true,
-      "fukuPayout": 140,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202609020612",
-      "date": "2026-04-12",
-      "horseId": "2",
-      "horseName": "シンビリーブ",
-      "preOdds": 3.4,
-      "finalOdds": 3,
-      "fieldSize": 13,
-      "classification": "win",
-      "calWinProb": 0.311833087368633,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 0
-    },
-    {
-      "raceId": "202603010309",
-      "date": "2026-04-18",
-      "horseId": "6",
-      "horseName": "マイネルシンベリン",
-      "preOdds": 3.5,
-      "finalOdds": 2,
-      "fieldSize": 9,
-      "classification": "win",
-      "calWinProb": 0.3553749163249775,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202603010310",
-      "date": "2026-04-18",
-      "horseId": "7",
-      "horseName": "ウアーシュプルング",
-      "preOdds": 3,
-      "finalOdds": 5.7,
-      "fieldSize": 8,
-      "classification": "place",
-      "calWinProb": 0.2133690666126673,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202603010311",
-      "date": "2026-04-18",
-      "horseId": "3",
-      "horseName": "ホウショウマリス",
-      "preOdds": 6.5,
-      "finalOdds": 7.4,
-      "fieldSize": 15,
-      "classification": "skip",
-      "calWinProb": 0.24117057898845523,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 250,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202603010312",
-      "date": "2026-04-18",
-      "horseId": "5",
-      "horseName": "ベルファスト",
-      "preOdds": 2.4,
-      "finalOdds": 2.4,
-      "fieldSize": 16,
-      "classification": "place",
-      "calWinProb": 0.29250592661786234,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 120,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202606030709",
-      "date": "2026-04-18",
-      "horseId": "12",
-      "horseName": "アオイレーギーナ",
-      "preOdds": 3.1,
-      "finalOdds": 2.7,
-      "fieldSize": 12,
-      "classification": "place",
-      "calWinProb": 0.25575479152134406,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202606030710",
-      "date": "2026-04-18",
-      "horseId": "5",
-      "horseName": "エクリプスルバン",
-      "preOdds": 5.1,
-      "finalOdds": 3.9,
-      "fieldSize": 13,
-      "classification": "skip",
-      "calWinProb": 0.2238046441027274,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 170,
-      "oddsCoverage": 1
-    },
     {
       "raceId": "202606030712",
       "date": "2026-04-18",
@@ -511,70 +152,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202609020709",
-      "date": "2026-04-18",
-      "horseId": "4",
-      "horseName": "ヨリノレジェンド",
-      "preOdds": 5.4,
-      "finalOdds": 3.9,
-      "fieldSize": 14,
-      "classification": "skip",
-      "calWinProb": 0.19055925580576005,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 150,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202609020710",
-      "date": "2026-04-18",
-      "horseId": "4",
-      "horseName": "サーナーティオン",
-      "preOdds": 2.2,
-      "finalOdds": 3.5,
-      "fieldSize": 9,
-      "classification": "win",
-      "calWinProb": 0.3406309726514619,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202609020711",
-      "date": "2026-04-18",
-      "horseId": "4",
-      "horseName": "ムルソー",
-      "preOdds": 3.8,
-      "finalOdds": 4,
-      "fieldSize": 16,
-      "classification": "win",
-      "calWinProb": 0.3183417786404929,
-      "tanHit": true,
-      "tanPayout": 400,
-      "fukuHit": true,
-      "fukuPayout": 170,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202609020712",
-      "date": "2026-04-18",
-      "horseId": "12",
-      "horseName": "ロードヴァルカン",
-      "preOdds": 4.1,
-      "finalOdds": 2.8,
-      "fieldSize": 15,
-      "classification": "skip",
-      "calWinProb": 0.2706649976114174,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 2.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -591,6 +172,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 2.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -607,6 +192,10 @@
       "tanPayout": 290,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 3.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -623,6 +212,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -639,6 +232,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 250,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 2.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -655,6 +252,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -671,6 +272,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 5.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -687,6 +292,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -703,6 +312,10 @@
       "tanPayout": 570,
       "fukuHit": true,
       "fukuPayout": 240,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 5.8,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 570,
       "oddsCoverage": 1
     },
     {
@@ -719,6 +332,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -735,6 +352,10 @@
       "tanPayout": 230,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 2.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 230,
       "oddsCoverage": 1
     },
     {
@@ -751,6 +372,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -767,118 +392,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202603010509",
-      "date": "2026-04-25",
-      "horseId": "2",
-      "horseName": "ロジケープ",
-      "preOdds": 3.3,
-      "finalOdds": 2.1,
-      "fieldSize": 16,
-      "classification": "win",
-      "calWinProb": 0.3121671308496698,
-      "tanHit": true,
-      "tanPayout": 210,
-      "fukuHit": true,
-      "fukuPayout": 120,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202603010510",
-      "date": "2026-04-25",
-      "horseId": "7",
-      "horseName": "ヴァンヴィーヴ",
-      "preOdds": 3.4,
-      "finalOdds": 4,
-      "fieldSize": 16,
-      "classification": "win",
-      "calWinProb": 0.30031684681934967,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 150,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202603010511",
-      "date": "2026-04-25",
-      "horseId": "2",
-      "horseName": "イマージョン",
-      "preOdds": 5.7,
-      "finalOdds": 6.3,
-      "fieldSize": 12,
-      "classification": "skip",
-      "calWinProb": 0.12331915821764515,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 0.9166666666666666
-    },
-    {
-      "raceId": "202603010512",
-      "date": "2026-04-25",
-      "horseId": "16",
-      "horseName": "オリーボーレン",
-      "preOdds": 6.2,
-      "finalOdds": 5.6,
-      "fieldSize": 16,
-      "classification": "skip",
-      "calWinProb": 0.1872188057520758,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202605020109",
-      "date": "2026-04-25",
-      "horseId": "6",
-      "horseName": "ダノンミッション",
-      "preOdds": 1.9,
-      "finalOdds": 1.7,
-      "fieldSize": 9,
-      "classification": "win",
-      "calWinProb": 0.4876587284872998,
-      "tanHit": true,
-      "tanPayout": 170,
-      "fukuHit": true,
-      "fukuPayout": 110,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202605020110",
-      "date": "2026-04-25",
-      "horseId": "4",
-      "horseName": "メイショウハチロー",
-      "preOdds": 3,
-      "finalOdds": 2.3,
-      "fieldSize": 15,
-      "classification": "win",
-      "calWinProb": 0.3172751359830806,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 120,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202605020111",
-      "date": "2026-04-25",
-      "horseId": "4",
-      "horseName": "ブラックオリンピア",
-      "preOdds": 3.1,
-      "finalOdds": 2.4,
-      "fieldSize": 18,
-      "classification": "win",
-      "calWinProb": 0.3131356126178147,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 120,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -895,54 +412,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202608030110",
-      "date": "2026-04-25",
-      "horseId": "10",
-      "horseName": "パシアンジャン",
-      "preOdds": 2.4,
-      "finalOdds": 3.2,
-      "fieldSize": 11,
-      "classification": "place",
-      "calWinProb": 0.27046800860631176,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202608030111",
-      "date": "2026-04-25",
-      "horseId": "5",
-      "horseName": "メイショウホウレン",
-      "preOdds": 4.8,
-      "finalOdds": 5.6,
-      "fieldSize": 12,
-      "classification": "skip",
-      "calWinProb": 0.20057251957433603,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202608030112",
-      "date": "2026-04-25",
-      "horseId": "2",
-      "horseName": "フェアリーライク",
-      "preOdds": 3.2,
-      "finalOdds": 2.2,
-      "fieldSize": 11,
-      "classification": "win",
-      "calWinProb": 0.3227077166752379,
-      "tanHit": true,
-      "tanPayout": 220,
-      "fukuHit": true,
-      "fukuPayout": 120,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 3.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -959,6 +432,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 5.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -975,6 +452,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 2.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -991,6 +472,10 @@
       "tanPayout": 640,
       "fukuHit": true,
       "fukuPayout": 240,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 5.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1007,6 +492,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1023,6 +512,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1039,6 +532,10 @@
       "tanPayout": 290,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.5,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 290,
       "oddsCoverage": 1
     },
     {
@@ -1055,6 +552,10 @@
       "tanPayout": 220,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 220,
       "oddsCoverage": 1
     },
     {
@@ -1071,6 +572,10 @@
       "tanPayout": 120,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "15",
+      "favoritePreOdds": 1.4,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 120,
       "oddsCoverage": 1
     },
     {
@@ -1087,6 +592,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 2.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1103,6 +612,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "17",
+      "favoritePreOdds": 3.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1119,6 +632,10 @@
       "tanPayout": 410,
       "fukuHit": true,
       "fukuPayout": 190,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 410,
       "oddsCoverage": 1
     },
     {
@@ -1135,6 +652,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 220,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1151,6 +672,10 @@
       "tanPayout": 180,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 1.8,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 180,
       "oddsCoverage": 1
     },
     {
@@ -1167,6 +692,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1183,6 +712,10 @@
       "tanPayout": 420,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 5.1,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 420,
       "oddsCoverage": 1
     },
     {
@@ -1199,6 +732,10 @@
       "tanPayout": 530,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "15",
+      "favoritePreOdds": 5.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1215,6 +752,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1231,6 +772,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1247,6 +792,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1263,6 +812,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1279,6 +832,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 3.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1295,6 +852,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 2.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1311,6 +872,10 @@
       "tanPayout": 280,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 2.4,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 280,
       "oddsCoverage": 1
     },
     {
@@ -1327,6 +892,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 3.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1343,6 +912,10 @@
       "tanPayout": 200,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 200,
       "oddsCoverage": 1
     },
     {
@@ -1359,6 +932,10 @@
       "tanPayout": 300,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "16",
+      "favoritePreOdds": 2.8,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 300,
       "oddsCoverage": 1
     },
     {
@@ -1375,6 +952,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 200,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 4.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1391,6 +972,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1407,6 +992,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1423,6 +1012,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 5.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1439,6 +1032,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 2.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1455,6 +1052,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 4.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1471,6 +1072,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 100,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 1.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1487,6 +1092,10 @@
       "tanPayout": 280,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 280,
       "oddsCoverage": 1
     },
     {
@@ -1503,6 +1112,10 @@
       "tanPayout": 180,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 1.9,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 180,
       "oddsCoverage": 1
     },
     {
@@ -1519,6 +1132,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 220,
+      "favoriteHorseId": "16",
+      "favoritePreOdds": 4.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1535,6 +1152,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1551,6 +1172,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 310,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 1.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1567,6 +1192,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "14",
+      "favoritePreOdds": 4.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1583,6 +1212,10 @@
       "tanPayout": 170,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 1.8,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 170,
       "oddsCoverage": 1
     },
     {
@@ -1599,6 +1232,10 @@
       "tanPayout": 180,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 2.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 180,
       "oddsCoverage": 1
     },
     {
@@ -1615,6 +1252,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1631,6 +1272,10 @@
       "tanPayout": 410,
       "fukuHit": true,
       "fukuPayout": 190,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 4.2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 410,
       "oddsCoverage": 1
     },
     {
@@ -1647,6 +1292,10 @@
       "tanPayout": 270,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 270,
       "oddsCoverage": 1
     },
     {
@@ -1663,6 +1312,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 220,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 2.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1679,6 +1332,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1695,6 +1352,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "15",
+      "favoritePreOdds": 2.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1711,6 +1372,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1727,6 +1392,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1743,6 +1412,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "14",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1759,6 +1432,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1775,6 +1452,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1791,6 +1472,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 2.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1807,6 +1492,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1823,6 +1512,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 5.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1839,6 +1532,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 2.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1855,6 +1552,10 @@
       "tanPayout": 200,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 200,
       "oddsCoverage": 1
     },
     {
@@ -1871,6 +1572,10 @@
       "tanPayout": 180,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 1.9,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 180,
       "oddsCoverage": 1
     },
     {
@@ -1887,6 +1592,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -1903,198 +1612,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202604010509",
-      "date": "2026-05-16",
-      "horseId": "12",
-      "horseName": "ルールーリマ",
-      "preOdds": 2.7,
-      "finalOdds": 1.6,
-      "fieldSize": 16,
-      "classification": "win",
-      "calWinProb": 0.303585314058498,
-      "tanHit": true,
-      "tanPayout": 160,
-      "fukuHit": true,
-      "fukuPayout": 110,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202604010510",
-      "date": "2026-05-16",
-      "horseId": "4",
-      "horseName": "スマートスピア",
-      "preOdds": 2.2,
-      "finalOdds": 1.7,
-      "fieldSize": 9,
-      "classification": "win",
-      "calWinProb": 0.39797449263729734,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202604010511",
-      "date": "2026-05-16",
-      "horseId": "6",
-      "horseName": "ドゥラドーレス",
-      "preOdds": 3.1,
-      "finalOdds": 2.5,
-      "fieldSize": 15,
-      "classification": "win",
-      "calWinProb": 0.404509075303663,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202604010512",
-      "date": "2026-05-16",
-      "horseId": "16",
-      "horseName": "エイヘンハールト",
-      "preOdds": 3,
-      "finalOdds": 2.6,
-      "fieldSize": 16,
-      "classification": "win",
-      "calWinProb": 0.3552728499267976,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202605020709",
-      "date": "2026-05-16",
-      "horseId": "3",
-      "horseName": "シャンソンドール",
-      "preOdds": 1.6,
-      "finalOdds": 1.7,
-      "fieldSize": 9,
-      "classification": "win",
-      "calWinProb": 0.4670575481211706,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 110,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202605020710",
-      "date": "2026-05-16",
-      "horseId": "8",
-      "horseName": "メリディアンスター",
-      "preOdds": 3,
-      "finalOdds": 2.9,
-      "fieldSize": 12,
-      "classification": "win",
-      "calWinProb": 0.3958854956648786,
-      "tanHit": true,
-      "tanPayout": 290,
-      "fukuHit": true,
-      "fukuPayout": 140,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202605020711",
-      "date": "2026-05-16",
-      "horseId": "6",
-      "horseName": "トリプルコーク",
-      "preOdds": 2.4,
-      "finalOdds": 1.7,
-      "fieldSize": 15,
-      "classification": "win",
-      "calWinProb": 0.31129588409149517,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202605020712",
-      "date": "2026-05-16",
-      "horseId": "9",
-      "horseName": "ケープウィッカム",
-      "preOdds": 4.3,
-      "finalOdds": 2.9,
-      "fieldSize": 14,
-      "classification": "skip",
-      "calWinProb": 0.23353096892418854,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": true,
-      "fukuPayout": 140,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202608030709",
-      "date": "2026-05-16",
-      "horseId": "2",
-      "horseName": "レッドラージャ",
-      "preOdds": 4.4,
-      "finalOdds": 6.7,
-      "fieldSize": 10,
-      "classification": "skip",
-      "calWinProb": 0.22998806998513877,
-      "tanHit": true,
-      "tanPayout": 670,
-      "fukuHit": true,
-      "fukuPayout": 200,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202608030710",
-      "date": "2026-05-16",
-      "horseId": "10",
-      "horseName": "タガノマカシヤ",
-      "preOdds": 3.8,
-      "finalOdds": 2.3,
-      "fieldSize": 15,
-      "classification": "win",
-      "calWinProb": 0.3381533246244989,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202608030711",
-      "date": "2026-05-16",
-      "horseId": "12",
-      "horseName": "フリッカージャブ",
-      "preOdds": 2.2,
-      "finalOdds": 1.8,
-      "fieldSize": 16,
-      "classification": "win",
-      "calWinProb": 0.5068015985403831,
-      "tanHit": true,
-      "tanPayout": 180,
-      "fukuHit": true,
-      "fukuPayout": 110,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202608030712",
-      "date": "2026-05-16",
-      "horseId": "10",
-      "horseName": "ライトニングゼウス",
-      "preOdds": 3.6,
-      "finalOdds": 2.3,
-      "fieldSize": 15,
-      "classification": "win",
-      "calWinProb": 0.3287842528513855,
-      "tanHit": true,
-      "tanPayout": 230,
-      "fukuHit": true,
-      "fukuPayout": 130,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 2.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2111,6 +1632,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "15",
+      "favoritePreOdds": 4.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2127,6 +1652,10 @@
       "tanPayout": 250,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "14",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 250,
       "oddsCoverage": 1
     },
     {
@@ -2143,6 +1672,10 @@
       "tanPayout": 210,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 2.9,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 210,
       "oddsCoverage": 1
     },
     {
@@ -2159,6 +1692,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2175,6 +1712,10 @@
       "tanPayout": 240,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 240,
       "oddsCoverage": 1
     },
     {
@@ -2191,6 +1732,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 2.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2207,6 +1752,10 @@
       "tanPayout": 190,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 2.2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 190,
       "oddsCoverage": 1
     },
     {
@@ -2223,6 +1772,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2239,6 +1792,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 100,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 1.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2255,6 +1812,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 3.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2271,6 +1832,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2287,6 +1852,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 5.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2303,6 +1872,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 470,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2319,6 +1892,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 2.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2335,6 +1912,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 4.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2351,6 +1932,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 4.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2367,6 +1952,10 @@
       "tanPayout": 130,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 1.4,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 130,
       "oddsCoverage": 1
     },
     {
@@ -2383,6 +1972,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 4.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2399,6 +1992,10 @@
       "tanPayout": 190,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 2.1,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 190,
       "oddsCoverage": 1
     },
     {
@@ -2415,6 +2012,10 @@
       "tanPayout": 310,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 310,
       "oddsCoverage": 1
     },
     {
@@ -2431,6 +2032,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 3.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2447,6 +2052,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 2.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2463,6 +2072,10 @@
       "tanPayout": 250,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "14",
+      "favoritePreOdds": 2.9,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 250,
       "oddsCoverage": 1
     },
     {
@@ -2479,6 +2092,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2495,6 +2112,10 @@
       "tanPayout": 360,
       "fukuHit": true,
       "fukuPayout": 170,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 5.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 360,
       "oddsCoverage": 1
     },
     {
@@ -2511,6 +2132,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2527,6 +2152,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "15",
+      "favoritePreOdds": 5.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2543,6 +2172,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 4.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2559,6 +2192,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 2.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2575,6 +2212,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 4.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2591,6 +2232,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2607,6 +2252,10 @@
       "tanPayout": 240,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 240,
       "oddsCoverage": 1
     },
     {
@@ -2623,6 +2272,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2639,6 +2292,10 @@
       "tanPayout": 330,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "14",
+      "favoritePreOdds": 3.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2655,6 +2312,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 3.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2671,6 +2332,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2687,6 +2352,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "16",
+      "favoritePreOdds": 3.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2703,6 +2372,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 1.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2719,6 +2392,10 @@
       "tanPayout": 200,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "16",
+      "favoritePreOdds": 3.2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 200,
       "oddsCoverage": 1
     },
     {
@@ -2735,6 +2412,10 @@
       "tanPayout": 150,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 2.1,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 150,
       "oddsCoverage": 1
     },
     {
@@ -2751,6 +2432,10 @@
       "tanPayout": 180,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 1.4,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 180,
       "oddsCoverage": 1
     },
     {
@@ -2767,6 +2452,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2783,6 +2472,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 5.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2799,6 +2492,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 6.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2815,6 +2512,10 @@
       "tanPayout": 290,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "14",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 290,
       "oddsCoverage": 1
     },
     {
@@ -2831,6 +2532,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 2.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2847,6 +2552,10 @@
       "tanPayout": 270,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "17",
+      "favoritePreOdds": 2.8,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 270,
       "oddsCoverage": 1
     },
     {
@@ -2863,6 +2572,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 4,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 460,
       "oddsCoverage": 1
     },
     {
@@ -2879,6 +2592,10 @@
       "tanPayout": 240,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2895,6 +2612,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 4.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2911,6 +2632,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 3.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2927,6 +2652,10 @@
       "tanPayout": 380,
       "fukuHit": true,
       "fukuPayout": 190,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 3.5,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 380,
       "oddsCoverage": 1
     },
     {
@@ -2943,6 +2672,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 2.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2959,6 +2692,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2975,6 +2712,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 2.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -2991,6 +2732,10 @@
       "tanPayout": 120,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 1.2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 120,
       "oddsCoverage": 1
     },
     {
@@ -3007,6 +2752,10 @@
       "tanPayout": 160,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 1.8,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 160,
       "oddsCoverage": 1
     },
     {
@@ -3023,6 +2772,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 1.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3039,6 +2792,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3055,6 +2812,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3071,6 +2832,10 @@
       "tanPayout": 140,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 1.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 140,
       "oddsCoverage": 1
     },
     {
@@ -3087,6 +2852,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 1.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3103,6 +2872,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "14",
+      "favoritePreOdds": 2.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3119,6 +2892,10 @@
       "tanPayout": 190,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 2.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 190,
       "oddsCoverage": 1
     },
     {
@@ -3135,6 +2912,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3151,6 +2932,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 1.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3167,6 +2952,10 @@
       "tanPayout": 340,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 340,
       "oddsCoverage": 1
     },
     {
@@ -3183,6 +2972,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 2.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3199,6 +2992,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 1.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3215,6 +3012,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 4.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3231,6 +3032,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3247,6 +3052,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 210,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 4.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3263,6 +3072,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 1.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3279,6 +3092,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3295,6 +3112,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 180,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 4.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3311,6 +3132,10 @@
       "tanPayout": 360,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 2.8,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 360,
       "oddsCoverage": 1
     },
     {
@@ -3327,6 +3152,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 2.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3343,6 +3172,10 @@
       "tanPayout": 200,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 2.7,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 200,
       "oddsCoverage": 1
     },
     {
@@ -3359,6 +3192,10 @@
       "tanPayout": 170,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 1.9,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 170,
       "oddsCoverage": 1
     },
     {
@@ -3375,6 +3212,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 2.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3391,6 +3232,10 @@
       "tanPayout": 160,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 1.7,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 160,
       "oddsCoverage": 1
     },
     {
@@ -3407,6 +3252,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3423,6 +3272,10 @@
       "tanPayout": 390,
       "fukuHit": true,
       "fukuPayout": 200,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 3.9,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 390,
       "oddsCoverage": 1
     },
     {
@@ -3439,6 +3292,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3455,6 +3312,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 2.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3471,6 +3332,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 3.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3487,6 +3352,10 @@
       "tanPayout": 270,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 270,
       "oddsCoverage": 1
     },
     {
@@ -3503,6 +3372,10 @@
       "tanPayout": 190,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 190,
       "oddsCoverage": 1
     },
     {
@@ -3519,6 +3392,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 4.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3535,6 +3412,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 3.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3551,6 +3432,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 1.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3567,6 +3452,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 170,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3583,6 +3472,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 2.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3599,6 +3492,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 170,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 2.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3615,6 +3512,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "16",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3631,6 +3532,10 @@
       "tanPayout": 270,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 1.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 270,
       "oddsCoverage": 1
     },
     {
@@ -3647,6 +3552,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 2.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3663,6 +3572,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 1.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3679,6 +3592,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3695,6 +3612,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 2.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3711,6 +3632,10 @@
       "tanPayout": 130,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 2.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 130,
       "oddsCoverage": 1
     },
     {
@@ -3727,6 +3652,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 5.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3743,6 +3672,10 @@
       "tanPayout": 250,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.4,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 250,
       "oddsCoverage": 1
     },
     {
@@ -3759,6 +3692,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "16",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3775,6 +3712,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3791,6 +3732,10 @@
       "tanPayout": 130,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 1.2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 130,
       "oddsCoverage": 1
     },
     {
@@ -3807,6 +3752,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 4.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3823,6 +3772,10 @@
       "tanPayout": 180,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 180,
       "oddsCoverage": 1
     },
     {
@@ -3839,6 +3792,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 2.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3855,6 +3812,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 3.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3871,6 +3832,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3887,6 +3852,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3903,6 +3872,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3919,6 +3892,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3935,6 +3912,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 3.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3951,6 +3932,10 @@
       "tanPayout": 150,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 1.2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 150,
       "oddsCoverage": 1
     },
     {
@@ -3967,6 +3952,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 3.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3983,6 +3972,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 3.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -3999,6 +3992,10 @@
       "tanPayout": 380,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 4.8,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 380,
       "oddsCoverage": 1
     },
     {
@@ -4015,6 +4012,10 @@
       "tanPayout": 180,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 2.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 180,
       "oddsCoverage": 1
     },
     {
@@ -4031,6 +4032,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 2.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4047,6 +4052,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4063,6 +4072,10 @@
       "tanPayout": 170,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4079,6 +4092,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "15",
+      "favoritePreOdds": 4.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4095,6 +4112,10 @@
       "tanPayout": 130,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 1.2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 130,
       "oddsCoverage": 1
     },
     {
@@ -4111,6 +4132,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 4.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4127,6 +4152,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 200,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 5.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4143,6 +4172,10 @@
       "tanPayout": 210,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 1.7,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 210,
       "oddsCoverage": 1
     },
     {
@@ -4159,6 +4192,10 @@
       "tanPayout": 180,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 2.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 180,
       "oddsCoverage": 1
     },
     {
@@ -4175,6 +4212,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 310,
       "oddsCoverage": 1
     },
     {
@@ -4191,6 +4232,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 6.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4207,6 +4252,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 4.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4223,6 +4272,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4239,6 +4292,10 @@
       "tanPayout": 170,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 170,
       "oddsCoverage": 1
     },
     {
@@ -4255,6 +4312,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 200,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 5.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4271,6 +4332,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 180,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4287,6 +4352,10 @@
       "tanPayout": 230,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 2.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 230,
       "oddsCoverage": 1
     },
     {
@@ -4303,6 +4372,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 4.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4319,6 +4392,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4335,6 +4412,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 4.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4351,6 +4432,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 2.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4367,6 +4452,10 @@
       "tanPayout": 190,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 190,
       "oddsCoverage": 1
     },
     {
@@ -4383,6 +4472,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 5.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4399,6 +4492,10 @@
       "tanPayout": 190,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 1.7,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 190,
       "oddsCoverage": 1
     },
     {
@@ -4415,6 +4512,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 1.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4431,6 +4532,10 @@
       "tanPayout": 270,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 2.7,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 270,
       "oddsCoverage": 1
     },
     {
@@ -4447,6 +4552,10 @@
       "tanPayout": 160,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 2.1,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 160,
       "oddsCoverage": 1
     },
     {
@@ -4463,6 +4572,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "14",
+      "favoritePreOdds": 4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4479,6 +4592,10 @@
       "tanPayout": 230,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 230,
       "oddsCoverage": 1
     },
     {
@@ -4495,6 +4612,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4511,6 +4632,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 2.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4527,6 +4652,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 4.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4543,6 +4672,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 170,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 4.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4559,6 +4692,10 @@
       "tanPayout": 180,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 2.1,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 180,
       "oddsCoverage": 1
     },
     {
@@ -4575,6 +4712,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 230,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4591,6 +4732,10 @@
       "tanPayout": 230,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 2.8,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 230,
       "oddsCoverage": 1
     },
     {
@@ -4607,6 +4752,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 180,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4623,6 +4772,10 @@
       "tanPayout": 130,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 1.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 130,
       "oddsCoverage": 1
     },
     {
@@ -4639,6 +4792,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 4.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4655,6 +4812,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "15",
+      "favoritePreOdds": 4.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4671,6 +4832,10 @@
       "tanPayout": 170,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 1.9,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 170,
       "oddsCoverage": 1
     },
     {
@@ -4687,6 +4852,10 @@
       "tanPayout": 310,
       "fukuHit": true,
       "fukuPayout": 170,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 4.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 310,
       "oddsCoverage": 1
     },
     {
@@ -4703,6 +4872,10 @@
       "tanPayout": 300,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 300,
       "oddsCoverage": 1
     },
     {
@@ -4719,6 +4892,10 @@
       "tanPayout": 170,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 2.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 170,
       "oddsCoverage": 1
     },
     {
@@ -4735,6 +4912,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4751,6 +4932,10 @@
       "tanPayout": 320,
       "fukuHit": true,
       "fukuPayout": 190,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 3.2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 320,
       "oddsCoverage": 1
     },
     {
@@ -4767,6 +4952,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 4.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4783,6 +4972,10 @@
       "tanPayout": 150,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 1.4,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 150,
       "oddsCoverage": 1
     },
     {
@@ -4799,6 +4992,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 3.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4815,6 +5012,10 @@
       "tanPayout": 200,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 200,
       "oddsCoverage": 1
     },
     {
@@ -4831,6 +5032,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 200,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 4.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4847,6 +5052,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4863,22 +5072,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202610020510",
-      "date": "2026-07-11",
-      "horseId": "17",
-      "horseName": "タナスーペルノーバ",
-      "preOdds": 2.8,
-      "finalOdds": 2.8,
-      "fieldSize": 18,
-      "classification": "place",
-      "calWinProb": 0.21822558517640553,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 3.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4895,6 +5092,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4911,6 +5112,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 3.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4927,6 +5132,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 220,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 1.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4943,6 +5152,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4959,6 +5172,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 170,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 4.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4975,6 +5192,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 1.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -4991,6 +5212,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5007,6 +5232,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 4.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5023,6 +5252,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5039,6 +5272,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 3.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5055,6 +5292,10 @@
       "tanPayout": 150,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 1.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 150,
       "oddsCoverage": 1
     },
     {
@@ -5071,6 +5312,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 1.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5087,6 +5332,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 3.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5103,6 +5352,10 @@
       "tanPayout": 420,
       "fukuHit": true,
       "fukuPayout": 180,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 4.7,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 420,
       "oddsCoverage": 1
     },
     {
@@ -5119,6 +5372,10 @@
       "tanPayout": 220,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 3.9,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 220,
       "oddsCoverage": 1
     },
     {
@@ -5135,6 +5392,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 2.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5151,6 +5412,10 @@
       "tanPayout": 370,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 4.7,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 370,
       "oddsCoverage": 1
     },
     {
@@ -5167,6 +5432,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 4.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5183,6 +5452,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 2.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5199,6 +5472,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5215,6 +5492,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 5.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5231,6 +5512,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 3.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5247,6 +5532,10 @@
       "tanPayout": 190,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "16",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 190,
       "oddsCoverage": 1
     },
     {
@@ -5263,6 +5552,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5279,6 +5572,10 @@
       "tanPayout": 180,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 2.4,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 180,
       "oddsCoverage": 1
     },
     {
@@ -5295,6 +5592,10 @@
       "tanPayout": 160,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 1.7,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 160,
       "oddsCoverage": 1
     },
     {
@@ -5311,6 +5612,10 @@
       "tanPayout": 150,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 1.8,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 150,
       "oddsCoverage": 1
     },
     {
@@ -5327,6 +5632,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 1.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5343,6 +5652,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 3.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5359,6 +5672,10 @@
       "tanPayout": 330,
       "fukuHit": true,
       "fukuPayout": 170,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 330,
       "oddsCoverage": 1
     },
     {
@@ -5375,6 +5692,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 190,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 4.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5391,6 +5712,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5407,6 +5732,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 4.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5423,6 +5752,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 5.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5439,6 +5772,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 1.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5455,6 +5792,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "14",
+      "favoritePreOdds": 4.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5471,6 +5812,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "17",
+      "favoritePreOdds": 3.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5487,6 +5832,10 @@
       "tanPayout": 220,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 2.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 220,
       "oddsCoverage": 1
     },
     {
@@ -5503,6 +5852,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 4.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5519,6 +5872,10 @@
       "tanPayout": 210,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 2.9,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 210,
       "oddsCoverage": 1
     },
     {
@@ -5535,6 +5892,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 2.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5551,6 +5912,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5567,6 +5932,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5583,6 +5952,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5599,6 +5972,10 @@
       "tanPayout": 210,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 1.9,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 210,
       "oddsCoverage": 1
     },
     {
@@ -5615,6 +5992,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 3.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5631,6 +6012,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 4.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5647,6 +6032,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 190,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 4.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5663,6 +6052,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 2.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5679,6 +6072,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5695,6 +6092,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 1.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5711,6 +6112,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 180,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 3.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5727,6 +6132,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 2.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5743,6 +6152,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5759,6 +6172,10 @@
       "tanPayout": 440,
       "fukuHit": true,
       "fukuPayout": 170,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 3.8,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 440,
       "oddsCoverage": 1
     },
     {
@@ -5775,6 +6192,10 @@
       "tanPayout": 170,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 2.1,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 170,
       "oddsCoverage": 1
     },
     {
@@ -5791,6 +6212,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5807,6 +6232,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "14",
+      "favoritePreOdds": 1.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5823,6 +6252,10 @@
       "tanPayout": 270,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 270,
       "oddsCoverage": 1
     },
     {
@@ -5839,6 +6272,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "14",
+      "favoritePreOdds": 2.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5855,6 +6292,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5871,6 +6312,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5887,6 +6332,10 @@
       "tanPayout": 250,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 2.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 250,
       "oddsCoverage": 1
     },
     {
@@ -5903,6 +6352,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 3.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5919,6 +6372,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 170,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5935,6 +6392,10 @@
       "tanPayout": 310,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 310,
       "oddsCoverage": 1
     },
     {
@@ -5951,6 +6412,10 @@
       "tanPayout": 240,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 2.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 240,
       "oddsCoverage": 1
     },
     {
@@ -5967,6 +6432,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5983,6 +6452,10 @@
       "tanPayout": 350,
       "fukuHit": true,
       "fukuPayout": 180,
+      "favoriteHorseId": "18",
+      "favoritePreOdds": 5.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -5999,6 +6472,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 2.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6015,6 +6492,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 4.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6031,6 +6512,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 2.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6047,6 +6532,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6063,6 +6552,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 190,
+      "favoriteHorseId": "15",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6079,6 +6572,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 190,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 4.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6095,6 +6592,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 3.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6111,6 +6612,10 @@
       "tanPayout": 330,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 330,
       "oddsCoverage": 1
     },
     {
@@ -6127,6 +6632,10 @@
       "tanPayout": 190,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 2.7,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 190,
       "oddsCoverage": 1
     },
     {
@@ -6143,6 +6652,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6159,6 +6672,10 @@
       "tanPayout": 180,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 2.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 180,
       "oddsCoverage": 1
     },
     {
@@ -6175,6 +6692,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 170,
+      "favoriteHorseId": "15",
+      "favoritePreOdds": 4.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6191,6 +6712,10 @@
       "tanPayout": 310,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "15",
+      "favoritePreOdds": 2.7,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 310,
       "oddsCoverage": 1
     },
     {
@@ -6207,6 +6732,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 6.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6223,6 +6752,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 2.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6239,6 +6772,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 4.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6255,6 +6792,10 @@
       "tanPayout": 120,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 1.1,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 120,
       "oddsCoverage": 1
     },
     {
@@ -6271,6 +6812,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 4.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6287,6 +6832,10 @@
       "tanPayout": 370,
       "fukuHit": true,
       "fukuPayout": 170,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 4.8,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 370,
       "oddsCoverage": 1
     },
     {
@@ -6303,6 +6852,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 3.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6319,6 +6872,10 @@
       "tanPayout": 260,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 2.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 260,
       "oddsCoverage": 1
     },
     {
@@ -6335,6 +6892,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6351,22 +6912,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
-      "oddsCoverage": 1
-    },
-    {
-      "raceId": "202601020111",
-      "date": "2026-08-22",
-      "horseId": "3",
-      "horseName": "フクノブルーレイク",
-      "preOdds": 4.9,
-      "finalOdds": 0,
-      "fieldSize": 14,
-      "classification": "skip",
-      "calWinProb": 0.25560525508561965,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6383,6 +6932,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 2.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6399,6 +6952,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 4.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6415,6 +6972,10 @@
       "tanPayout": 170,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 2.4,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 170,
       "oddsCoverage": 1
     },
     {
@@ -6431,6 +6992,10 @@
       "tanPayout": 330,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 5.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6447,6 +7012,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 4.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6463,6 +7032,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 280,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6479,6 +7052,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 2.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6495,6 +7072,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 5.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6511,6 +7092,10 @@
       "tanPayout": 280,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 280,
       "oddsCoverage": 1
     },
     {
@@ -6527,6 +7112,10 @@
       "tanPayout": 140,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 1.4,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 140,
       "oddsCoverage": 1
     },
     {
@@ -6543,6 +7132,10 @@
       "tanPayout": 310,
       "fukuHit": true,
       "fukuPayout": 190,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 4.4,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 310,
       "oddsCoverage": 1
     },
     {
@@ -6559,6 +7152,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 5.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6575,6 +7172,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 2.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6591,6 +7192,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6607,6 +7212,10 @@
       "tanPayout": 120,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 1.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 120,
       "oddsCoverage": 1
     },
     {
@@ -6623,6 +7232,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 2.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6639,6 +7252,10 @@
       "tanPayout": 210,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 210,
       "oddsCoverage": 1
     },
     {
@@ -6655,6 +7272,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6671,6 +7292,10 @@
       "tanPayout": 360,
       "fukuHit": true,
       "fukuPayout": 190,
+      "favoriteHorseId": "16",
+      "favoritePreOdds": 3.9,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 360,
       "oddsCoverage": 1
     },
     {
@@ -6687,6 +7312,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 4.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6703,6 +7332,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 3.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6719,6 +7352,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 3.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6735,6 +7372,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 3.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6751,6 +7392,10 @@
       "tanPayout": 250,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 1.9,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 250,
       "oddsCoverage": 1
     },
     {
@@ -6767,6 +7412,10 @@
       "tanPayout": 170,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 170,
       "oddsCoverage": 1
     },
     {
@@ -6783,6 +7432,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "11",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6799,6 +7452,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 170,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 3.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6815,6 +7472,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6831,6 +7492,10 @@
       "tanPayout": 110,
       "fukuHit": true,
       "fukuPayout": 100,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 1.2,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 110,
       "oddsCoverage": 1
     },
     {
@@ -6847,6 +7512,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6863,6 +7532,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6879,6 +7552,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 1.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6895,23 +7572,11 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 5.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
-    },
-    {
-      "raceId": "202606040112",
-      "date": "2026-09-05",
-      "horseId": "10",
-      "horseName": "レイズレガシー",
-      "preOdds": 2.8,
-      "finalOdds": 3,
-      "fieldSize": 14,
-      "classification": "win",
-      "calWinProb": 0.32857310834452486,
-      "tanHit": false,
-      "tanPayout": 0,
-      "fukuHit": false,
-      "fukuPayout": 0,
-      "oddsCoverage": 0.9285714285714286
     },
     {
       "raceId": "202609040109",
@@ -6927,6 +7592,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 2.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6943,6 +7612,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 1.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6959,6 +7632,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 5.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6975,6 +7652,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 2.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -6991,6 +7672,10 @@
       "tanPayout": 190,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 190,
       "oddsCoverage": 1
     },
     {
@@ -7007,6 +7692,10 @@
       "tanPayout": 260,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 3.8,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 260,
       "oddsCoverage": 1
     },
     {
@@ -7023,6 +7712,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 5.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7039,6 +7732,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 2.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7055,6 +7752,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "16",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7071,6 +7772,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 2.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7087,6 +7792,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 2.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7103,6 +7812,10 @@
       "tanPayout": 450,
       "fukuHit": true,
       "fukuPayout": 210,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 5.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7119,6 +7832,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 2.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7135,6 +7852,10 @@
       "tanPayout": 280,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 280,
       "oddsCoverage": 1
     },
     {
@@ -7151,6 +7872,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 3.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7167,6 +7892,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 120,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7183,6 +7912,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 4.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7199,6 +7932,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 5.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7215,6 +7952,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7231,6 +7972,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 3.7,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7247,6 +7992,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 3.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7263,6 +8012,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 4.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7279,6 +8032,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 3.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7295,6 +8052,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "1",
+      "favoritePreOdds": 2.8,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7311,6 +8072,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 140,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 4.4,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7327,6 +8092,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 4.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7343,6 +8112,10 @@
       "tanPayout": 180,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 180,
       "oddsCoverage": 1
     },
     {
@@ -7359,6 +8132,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "5",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7375,6 +8152,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 130,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 3.3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7391,6 +8172,10 @@
       "tanPayout": 190,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 2.3,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 190,
       "oddsCoverage": 1
     },
     {
@@ -7407,6 +8192,10 @@
       "tanPayout": 370,
       "fukuHit": true,
       "fukuPayout": 180,
+      "favoriteHorseId": "14",
+      "favoritePreOdds": 2.7,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 370,
       "oddsCoverage": 1
     },
     {
@@ -7423,6 +8212,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7439,6 +8232,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7455,6 +8252,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "13",
+      "favoritePreOdds": 3.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7471,6 +8272,10 @@
       "tanPayout": 420,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "15",
+      "favoritePreOdds": 5.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7487,6 +8292,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "2",
+      "favoritePreOdds": 1.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7503,6 +8312,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "6",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7519,6 +8332,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "15",
+      "favoritePreOdds": 2.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7535,6 +8352,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 150,
+      "favoriteHorseId": "14",
+      "favoritePreOdds": 3.2,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7551,6 +8372,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 160,
+      "favoriteHorseId": "10",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7567,6 +8392,10 @@
       "tanPayout": 0,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "8",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7583,6 +8412,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "7",
+      "favoritePreOdds": 3,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7599,6 +8432,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "12",
+      "favoritePreOdds": 5.1,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7615,6 +8452,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "4",
+      "favoritePreOdds": 2.5,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7631,6 +8472,10 @@
       "tanPayout": 0,
       "fukuHit": false,
       "fukuPayout": 0,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 3.6,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7647,6 +8492,10 @@
       "tanPayout": 640,
       "fukuHit": true,
       "fukuPayout": 200,
+      "favoriteHorseId": "9",
+      "favoritePreOdds": 4.9,
+      "favoriteTanHit": false,
+      "favoriteTanPayout": 0,
       "oddsCoverage": 1
     },
     {
@@ -7663,6 +8512,10 @@
       "tanPayout": 160,
       "fukuHit": true,
       "fukuPayout": 110,
+      "favoriteHorseId": "3",
+      "favoritePreOdds": 1.7,
+      "favoriteTanHit": true,
+      "favoriteTanPayout": 160,
       "oddsCoverage": 1
     }
   ]

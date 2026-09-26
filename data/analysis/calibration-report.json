@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T02:01:40.180Z",
+  "generatedAt": "2026-09-26T02:59:31.031Z",
   "sampleSize": 511,
   "dataQualityExcludedCount": 3,
   "dateRange": {
@@ -295,6 +295,88 @@
       "tanRoi": "35.0%",
       "fukuRoi": "55.0%",
       "wideRoi": "71.1%"
+    }
+  },
+  "marketBaseline": {
+    "eligibleLiveCount": 421,
+    "unavailableCount": 2,
+    "overall": {
+      "n": 419,
+      "honmeiHitRate": 30.548926014319807,
+      "honmeiRoi": 75.89498806682577,
+      "favoriteHitRate": 28.400954653937948,
+      "favoriteRoi": 67.25536992840095,
+      "hitRateDelta": 2.1479713603818595,
+      "roiDelta": 8.639618138424822
+    },
+    "byClassification": {
+      "win": {
+        "n": 176,
+        "honmeiHitRate": 40.34090909090909,
+        "honmeiRoi": 78.63636363636364,
+        "favoriteHitRate": 39.77272727272727,
+        "favoriteRoi": 76.76136363636364,
+        "hitRateDelta": 0.5681818181818201,
+        "roiDelta": 1.875
+      },
+      "place": {
+        "n": 117,
+        "honmeiHitRate": 32.47863247863248,
+        "honmeiRoi": 85.72649572649573,
+        "favoriteHitRate": 30.76923076923077,
+        "favoriteRoi": 82.22222222222223,
+        "hitRateDelta": 1.7094017094017069,
+        "roiDelta": 3.504273504273499
+      },
+      "skip": {
+        "n": 126,
+        "honmeiHitRate": 15.079365079365079,
+        "honmeiRoi": 62.93650793650794,
+        "favoriteHitRate": 10.317460317460318,
+        "favoriteRoi": 40.07936507936508,
+        "hitRateDelta": 4.761904761904761,
+        "roiDelta": 22.857142857142854
+      }
+    },
+    "disagreement": {
+      "overall": {
+        "n": 41,
+        "honmeiHitRate": 26.829268292682926,
+        "honmeiRoi": 107.07317073170732,
+        "favoriteHitRate": 4.878048780487805,
+        "favoriteRoi": 18.78048780487805,
+        "hitRateDelta": 21.95121951219512,
+        "roiDelta": 88.29268292682927
+      },
+      "byClassification": {
+        "win": {
+          "n": 2,
+          "honmeiHitRate": 50,
+          "honmeiRoi": 165,
+          "favoriteHitRate": 0,
+          "favoriteRoi": 0,
+          "hitRateDelta": 50,
+          "roiDelta": 165
+        },
+        "place": {
+          "n": 4,
+          "honmeiHitRate": 50,
+          "honmeiRoi": 102.5,
+          "favoriteHitRate": 0,
+          "favoriteRoi": 0,
+          "hitRateDelta": 50,
+          "roiDelta": 102.5
+        },
+        "skip": {
+          "n": 35,
+          "honmeiHitRate": 22.857142857142858,
+          "honmeiRoi": 104.28571428571429,
+          "favoriteHitRate": 5.714285714285714,
+          "favoriteRoi": 22,
+          "hitRateDelta": 17.142857142857142,
+          "roiDelta": 82.28571428571429
+        }
+      }
     }
   },
   "monitoring": {

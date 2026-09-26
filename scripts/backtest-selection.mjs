@@ -25,6 +25,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { pickPreRaceFavorite, settleOfficialTan, summarizeFavoriteComparison } from "./market-baseline.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARCHIVE_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -64,6 +65,11 @@ function loadPreRaceEvidence() {
       excludedRaceIds.add(raceId);
       continue;
     }
+    if (
+      record.snapshot?.sourceStatus !== "live_pre_race" ||
+      record.snapshot?.predictionOrigin !== "saved_live" ||
+      record.snapshot?.livePreRaceEligible !== true
+    ) continue;
     const rows = record.snapshot?.rankedRows ?? [];
     if (rows.length === 0) continue;
     if (!raceId) continue;
@@ -130,14 +136,6 @@ function buildSelectionRace(race, preRaceOdds) {
 // 採点
 // ---------------------------------------------------------------------------
 
-function settleTan(race, finalOdds, horseId) {
-  const won = String(race.result?.winnerHorseId ?? "") === String(horseId);
-  if (!won) return { hit: false, payout: 0 };
-  const odds = finalOdds.get(String(horseId));
-  const official = Number(race.result?.payouts?.tansho?.payouts?.[0] ?? 0);
-  return { hit: true, payout: official > 0 ? official : Math.round((odds ?? 0) * 100) };
-}
-
 function settleFuku(race, horseId) {
   const top3 = (race.result?.top3HorseIds ?? []).map(String);
   const payouts = race.result?.payouts?.fukusho?.payouts ?? [];
@@ -160,7 +158,18 @@ async function runSelection(modulePath, races, preRaceOdds) {
   if (typeof pick !== "function") throw new Error(`${modulePath} does not export pickTanpukuPair`);
   const rows = [];
   const failures = [];
+  let baselineUnavailable = 0;
   for (const race of races) {
+    const snapshotOdds = preRaceOdds.get(String(race.raceId));
+    const favorite = pickPreRaceFavorite(
+      snapshotOdds ? [...snapshotOdds].map(([horseId, realOdds]) => ({ horseId, realOdds })) : [],
+      race.horses.map((horse) => horse.id)
+    );
+    const favoriteSettlement = favorite ? settleOfficialTan(race.result, favorite.horseId) : null;
+    if (!favorite || !favoriteSettlement) {
+      baselineUnavailable += 1;
+      continue;
+    }
     const { race: selectionRace, oddsCoverage } = buildSelectionRace(race, preRaceOdds);
     let pair = null;
     try {
@@ -173,7 +182,11 @@ async function runSelection(modulePath, races, preRaceOdds) {
     const entry = pair.winPick;
     const horseId = String(entry.horse.id);
     const finalOdds = buildFinalOdds(race);
-    const tan = settleTan(race, finalOdds, horseId);
+    const tan = settleOfficialTan(race.result, horseId);
+    if (!tan) {
+      baselineUnavailable += 1;
+      continue;
+    }
     const fuku = settleFuku(race, horseId);
     rows.push({
       raceId: String(race.raceId),
@@ -189,10 +202,14 @@ async function runSelection(modulePath, races, preRaceOdds) {
       tanPayout: tan.payout,
       fukuHit: fuku.hit,
       fukuPayout: fuku.payout,
+      favoriteHorseId: favorite.horseId,
+      favoritePreOdds: favorite.odds,
+      favoriteTanHit: favoriteSettlement.hit,
+      favoriteTanPayout: favoriteSettlement.payout,
       oddsCoverage,
     });
   }
-  return { rows, failures, version: mod.TANPUKU_SCORING_VERSION ?? "unknown" };
+  return { rows, failures, baselineUnavailable, version: mod.TANPUKU_SCORING_VERSION ?? "unknown" };
 }
 
 // ---------------------------------------------------------------------------
@@ -214,6 +231,15 @@ function summarize(rows) {
     fukuHitRate: (fukuHits / n) * 100,
     fukuRoi: (fukuReturn / (n * 100)) * 100,
   };
+}
+
+function compareFavorite(rows) {
+  return summarizeFavoriteComparison(rows.map((row) => ({
+    honmeiHit: row.tanHit,
+    honmeiPayout: row.tanPayout,
+    favoriteHit: row.favoriteTanHit,
+    favoritePayout: row.favoriteTanPayout,
+  })));
 }
 
 /** 単勝 ROI のブートストラップ 95% 信頼区間 */
@@ -274,9 +300,23 @@ const pad = (v, width) => String(v).padStart(width);
 function renderBlock(label, rows, { withCi = true } = {}) {
   const s = summarize(rows);
   if (s.n === 0) return `  ${label.padEnd(14)} n=0`;
+  const favorite = compareFavorite(rows);
   const ci = withCi ? bootstrapRoiCi(rows, Math.min(BOOTSTRAP_ITERATIONS, 8000)) : [NaN, NaN];
   const ciText = withCi && Number.isFinite(ci[0]) ? `  CI95[${f1(ci[0])}, ${f1(ci[1])}]` : "";
-  return `  ${label.padEnd(14)} n=${pad(s.n, 3)}  単的中 ${pad(f1(s.tanHitRate), 5)}%  単ROI ${pad(f1(s.tanRoi), 6)}%  複的中 ${pad(f1(s.fukuHitRate), 5)}%  複ROI ${pad(f1(s.fukuRoi), 6)}%${ciText}`;
+  return `  ${label.padEnd(14)} n=${pad(s.n, 3)}  単的中 ${pad(f1(s.tanHitRate), 5)}%  単ROI ${pad(f1(s.tanRoi), 6)}%  1人気単的中 ${pad(f1(favorite.favoriteHitRate), 5)}%  1人気単ROI ${pad(f1(favorite.favoriteRoi), 6)}%  差 ${pad(f1(favorite.hitRateDelta), 5)}pt / ${pad(f1(favorite.roiDelta), 6)}pt  複的中 ${pad(f1(s.fukuHitRate), 5)}%  複ROI ${pad(f1(s.fukuRoi), 6)}%${ciText}`;
+}
+
+function splitReportRows(rows) {
+  const half = Math.floor(rows.length / 2);
+  return SPLIT_DATE
+    ? [
+        { key: "train", rows: rows.filter((row) => row.date < SPLIT_DATE) },
+        { key: "holdout", rows: rows.filter((row) => row.date >= SPLIT_DATE) },
+      ]
+    : [
+        { key: "1st half", rows: rows.slice(0, half) },
+        { key: "2nd half", rows: rows.slice(half) },
+      ];
 }
 
 function renderReport(result, label) {
@@ -290,15 +330,7 @@ function renderReport(result, label) {
   for (const g of grouped.byOdds) lines.push(renderBlock(g.key, g.rows, { withCi: false }));
   lines.push("  -- 頭数 --");
   for (const g of grouped.byField) lines.push(renderBlock(g.key, g.rows, { withCi: false }));
-  const half = Math.floor(result.rows.length / 2);
-  const [firstLabel, first, secondLabel, second] = SPLIT_DATE
-    ? [
-        "train",
-        result.rows.filter((r) => r.date < SPLIT_DATE),
-        "holdout",
-        result.rows.filter((r) => r.date >= SPLIT_DATE),
-      ]
-    : ["1st half", result.rows.slice(0, half), "2nd half", result.rows.slice(half)];
+  const [{ key: firstLabel, rows: first }, { key: secondLabel, rows: second }] = splitReportRows(result.rows);
   lines.push(SPLIT_DATE ? `  -- 時系列分割 (split=${SPLIT_DATE}) --` : "  -- 前後半 --");
   lines.push(renderBlock(firstLabel, first));
   lines.push(renderBlock(secondLabel, second));
@@ -309,6 +341,7 @@ function renderReport(result, label) {
   if (result.failures.length > 0) {
     lines.push(`  !! 選定失敗 ${result.failures.length} 件: ${result.failures.slice(0, 3).map((f) => f.raceId).join(", ")}`);
   }
+  if (result.baselineUnavailable > 0) lines.push(`  事前オッズまたは公式単勝払戻の不足で除外: ${result.baselineUnavailable} 件`);
   return lines.join("\n");
 }
 
@@ -351,7 +384,7 @@ async function main() {
 
   const coverage = target.rows.filter((r) => r.oddsCoverage > 0.9).length;
   console.log(
-    `対象 ${races.length} レース / データ不完全除外 ${allRaces.length - races.length} 件 / 選定成功 ${target.rows.length} 件 / 事前オッズ被覆 ${coverage} 件 (odds source: ${ODDS_SOURCE})`
+    `対象 ${races.length} レース / データ不完全除外 ${allRaces.length - races.length} 件 / 1人気基準線なし ${target.baselineUnavailable} 件 / 選定成功 ${target.rows.length} 件 / 事前オッズ被覆 ${coverage} 件 (odds source: ${ODDS_SOURCE})`
   );
   console.log("");
   console.log(renderReport(target, `target: ${MODULE_PATH}`));
@@ -372,7 +405,14 @@ async function main() {
       oddsSource: ODDS_SOURCE,
       splitDate: SPLIT_DATE,
       dataQualityExcludedCount: allRaces.length - races.length,
+      favoriteBaselineUnavailableCount: target.baselineUnavailable,
       target: { module: MODULE_PATH, version: target.version, summary: summarize(target.rows) },
+      favoriteBaseline: compareFavorite(target.rows),
+      classificationComparison: Object.fromEntries(groupRows(target.rows).byClass.map((group) => [group.key, compareFavorite(group.rows)])),
+      timeSplitComparison: Object.fromEntries(splitReportRows(target.rows).map((group) => [group.key, {
+        overall: compareFavorite(group.rows),
+        byClassification: Object.fromEntries(groupRows(group.rows).byClass.map((classified) => [classified.key, compareFavorite(classified.rows)])),
+      }])),
       baseline: baseline
         ? { module: BASELINE_PATH, version: baseline.version, summary: summarize(baseline.rows) }
         : null,

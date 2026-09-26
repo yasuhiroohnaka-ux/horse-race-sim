@@ -22,9 +22,11 @@ import {
   WIN_CALIBRATION,
 } from "../lib/generatedCalibration.mjs";
 import { classifyHonmeiPick } from "../lib/tanpukuSelection.mjs";
+import { pickPreRaceFavorite, settleOfficialTan, summarizeFavoriteComparison } from "./market-baseline.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const RECORDS_PATH = path.join(ROOT, "data", "review-records.json");
+const ARCHIVE_PATH = path.join(ROOT, "data", "weekly-races.json");
 const ANALYSIS_DIR = path.join(ROOT, "data", "analysis");
 const GENERATED_PATH = path.join(ROOT, "lib", "generatedCalibration.mjs");
 const VAULT_LOG_DIR = "C:/Users/kouyu/OneDrive/デスクトップ/markdowns/HorseRaceSim/50_logs";
@@ -55,6 +57,56 @@ function loadSettledRecords() {
     )
     .sort((a, b) => String(a.meta?.raceDate ?? "").localeCompare(String(b.meta?.raceDate ?? "")));
   return { records, dataQualityExcludedCount };
+}
+
+function loadArchivedRaces() {
+  const weekly = JSON.parse(fs.readFileSync(ARCHIVE_PATH, "utf8"));
+  const races = [
+    ...(weekly.currentWeek?.races ?? []),
+    ...(weekly.archives ?? []).flatMap((archive) => archive.races ?? []),
+  ];
+  return new Map(races.filter((race) => !race.excludedReason).map((race) => [String(race.raceId), race]));
+}
+
+function buildMarketBaselineReport(liveRecords) {
+  const racesById = loadArchivedRaces();
+  const rows = [];
+  for (const record of liveRecords) {
+    const race = racesById.get(String(record.raceId));
+    if (!race?.result || !Array.isArray(race.horses)) continue;
+    const favorite = pickPreRaceFavorite(record.snapshot?.rankedRows, race.horses.map((horse) => horse.id));
+    const settled = favorite ? settleOfficialTan(race.result, favorite.horseId) : null;
+    if (!favorite || !settled) continue;
+    const classification = classifyHonmeiPick(buildClassifierEntry(record, WIN_CALIBRATION, PLACE_CALIBRATION)).classification;
+    const honmeiSettlement = settleOfficialTan(race.result, record.honmei.horseId);
+    if (!honmeiSettlement) continue;
+    rows.push({
+      raceId: String(record.raceId),
+      classification,
+      disagrees: String(record.honmei.horseId) !== favorite.horseId,
+      honmeiHit: honmeiSettlement.hit,
+      honmeiPayout: honmeiSettlement.payout,
+      favoriteHit: settled.hit,
+      favoritePayout: settled.payout,
+    });
+  }
+  const byClassification = (subset) => Object.fromEntries(
+    ["win", "place", "skip"].map((classification) => [
+      classification,
+      summarizeFavoriteComparison(subset.filter((row) => row.classification === classification)),
+    ])
+  );
+  const disagreementRows = rows.filter((row) => row.disagrees);
+  return {
+    eligibleLiveCount: liveRecords.length,
+    unavailableCount: liveRecords.length - rows.length,
+    overall: summarizeFavoriteComparison(rows),
+    byClassification: byClassification(rows),
+    disagreement: {
+      overall: summarizeFavoriteComparison(disagreementRows),
+      byClassification: byClassification(disagreementRows),
+    },
+  };
 }
 
 // 複勝オッズの線形近似 placeOdds ≈ odds * slope + intercept を
@@ -287,6 +339,25 @@ function objectTableMd(obj) {
   return tableMd(rows, cols);
 }
 
+function marketComparisonTableMd(overall, byClassification) {
+  const format = (value) => typeof value === "number" ? `${value.toFixed(1)}%` : "-";
+  const formatPt = (value) => typeof value === "number" ? `${value > 0 ? "+" : ""}${value.toFixed(1)}pt` : "-";
+  const row = (label, value) => ({
+    "区分": label,
+    n: value.n,
+    "本命単的中": format(value.honmeiHitRate),
+    "1人気単的中": format(value.favoriteHitRate),
+    "的中差": formatPt(value.hitRateDelta),
+    "本命単ROI": format(value.honmeiRoi),
+    "1人気単ROI": format(value.favoriteRoi),
+    "ROI差": formatPt(value.roiDelta),
+  });
+  return tableMd(
+    [row("全体", overall), ...["win", "place", "skip"].map((key) => row(key, byClassification[key]))],
+    ["区分", "n", "本命単的中", "1人気単的中", "的中差", "本命単ROI", "1人気単ROI", "ROI差"]
+  );
+}
+
 // --- main ---
 
 const { records, dataQualityExcludedCount } = loadSettledRecords();
@@ -391,6 +462,7 @@ const recentBacktest = classificationBacktest(recentRecords, WIN_CALIBRATION, PL
 // retrospective/backfill と全件再フィットの in-sample 指標を運用判断へ混ぜない。
 const deployedCutoffDate = String(CALIBRATION_META?.dateRange?.to ?? "");
 const livePreRaceRecords = records.filter(isLivePreRaceRecord);
+const marketBaseline = buildMarketBaselineReport(livePreRaceRecords);
 const retrospectiveRecords = records.filter((record) => !isLivePreRaceRecord(record));
 const postCalibrationRecords = livePreRaceRecords.filter(
   (record) => String(record.meta?.raceDate ?? "") > deployedCutoffDate
@@ -507,6 +579,7 @@ const reportJson = {
   classificationBacktest: fullBacktest,
   candidateClassificationBacktest: candidateFullBacktest,
   recentClassificationBacktest: recentBacktest,
+  marketBaseline,
   monitoring: {
     recordComposition,
     postCalibrationHoldout,
@@ -540,6 +613,15 @@ const md = `# 校正レポート (tanpuku honmei)
 | retrospective / backfill | ${recordComposition.retrospective.n} | ${recordComposition.retrospective.overall.tanRoi} | ${recordComposition.retrospective.overall.fukuRoi} | ${recordComposition.retrospective.overall.wideRoi} |
 
 成績評価と採用判断は live_pre_race を正とし、retrospective はフィット補助・診断に限定する。
+
+## 事前1番人気との比較 (live_pre_race)
+
+事前 snapshot オッズが全馬分あり、公式単勝払戻がある同一レース集合で比較。基準線を作れない ${marketBaseline.unavailableCount} 件は両側から除外。
+
+${marketComparisonTableMd(marketBaseline.overall, marketBaseline.byClassification)}
+### 本命が1番人気と異なるレース
+
+${marketComparisonTableMd(marketBaseline.disagreement.overall, marketBaseline.disagreement.byClassification)}
 
 ## 配備係数の事後 holdout (${postCalibrationHoldout.n} 件)
 

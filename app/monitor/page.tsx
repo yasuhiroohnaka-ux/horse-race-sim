@@ -28,6 +28,21 @@ type ClassStat = {
 
 type ClassMap = Partial<Record<"place" | "win" | "skip", ClassStat>>;
 
+type MarketComparison = {
+  n: number;
+  honmeiHitRate: number | null;
+  honmeiRoi: number | null;
+  favoriteHitRate: number | null;
+  favoriteRoi: number | null;
+  hitRateDelta: number | null;
+  roiDelta: number | null;
+};
+
+type MarketComparisonGroup = {
+  overall: MarketComparison;
+  byClassification: Partial<Record<"place" | "win" | "skip", MarketComparison>>;
+};
+
 type LogLossRow = {
   rawModel?: number;
   rawMarket?: number;
@@ -60,6 +75,11 @@ type CalibrationReport = {
   overall?: ClassStat;
   classificationBacktest?: ClassMap;
   recentClassificationBacktest?: ClassMap;
+  marketBaseline?: MarketComparisonGroup & {
+    eligibleLiveCount: number;
+    unavailableCount: number;
+    disagreement: MarketComparisonGroup;
+  };
   monitoring?: {
     recordComposition?: {
       livePreRace?: { n: number; overall: ClassStat; classification: ClassMap };
@@ -199,6 +219,48 @@ function ClassStatTable({ data, caption }: { data: ClassMap | undefined; caption
   );
 }
 
+function MarketComparisonTable({ group, caption }: { group: MarketComparisonGroup; caption: string }) {
+  const rows: Array<[string, MarketComparison | undefined]> = [
+    ["全体", group.overall],
+    ...(["win", "place", "skip"] as const).map((key): [string, MarketComparison | undefined] => [CLASS_LABELS[key], group.byClassification[key]]),
+  ];
+  const pct = (value: number | null) => value === null ? "-" : `${value.toFixed(1)}%`;
+  const pt = (value: number | null) => value === null ? "-" : `${value > 0 ? "+" : ""}${value.toFixed(1)}pt`;
+  return (
+    <div className="overflow-x-auto">
+      <p className="mb-2 text-xs font-semibold text-ink-2">{caption}</p>
+      <table className="w-full min-w-[640px] text-xs">
+        <thead>
+          <tr className="border-b border-line text-ink-2">
+            <th className="px-2 py-2 text-left">分類</th>
+            <th className="px-2 py-2 text-right">n</th>
+            <th className="px-2 py-2 text-right">本命単的中</th>
+            <th className="px-2 py-2 text-right">1番人気単的中</th>
+            <th className="px-2 py-2 text-right">差</th>
+            <th className="px-2 py-2 text-right">本命単ROI</th>
+            <th className="px-2 py-2 text-right">1番人気単ROI</th>
+            <th className="px-2 py-2 text-right">差</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(([label, row]) => row && (
+            <tr key={label} className="border-b border-line-soft">
+              <td className="px-2 py-2 font-semibold text-ink">{label}</td>
+              <td className="px-2 py-2 text-right text-ink-2">{row.n}</td>
+              <td className="px-2 py-2 text-right text-ink-2">{pct(row.honmeiHitRate)}</td>
+              <td className="px-2 py-2 text-right text-ink-2">{pct(row.favoriteHitRate)}</td>
+              <td className="px-2 py-2 text-right text-ink-2">{pt(row.hitRateDelta)}</td>
+              <td className={`px-2 py-2 text-right ${roiCellClass(pct(row.honmeiRoi))}`}>{pct(row.honmeiRoi)}</td>
+              <td className={`px-2 py-2 text-right ${roiCellClass(pct(row.favoriteRoi))}`}>{pct(row.favoriteRoi)}</td>
+              <td className="px-2 py-2 text-right font-semibold text-ink">{pt(row.roiDelta)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function LogLossTable({ win, place }: { win: LogLossRow | undefined; place: LogLossRow | undefined }) {
   return (
     <div className="overflow-x-auto">
@@ -284,6 +346,7 @@ export default function MonitorPage() {
   const gate = refit?.adoptionGate;
   const composition = report?.monitoring?.recordComposition;
   const recentPlace = report?.recentClassificationBacktest?.place;
+  const marketBaseline = report?.marketBaseline;
 
   const calibrationDegraded =
     Number(holdout?.n ?? 0) >= 50 &&
@@ -396,6 +459,19 @@ export default function MonitorPage() {
                 <ClassStatTable data={holdout?.deployedClassification} caption="holdout 期間の分類別成績" />
               </div>
             </SectionCard>
+
+            {marketBaseline && (
+              <SectionCard
+                label="MARKET BASELINE"
+                title="事前1番人気との比較"
+                description={`発走前 snapshot オッズと公式単勝払戻による同一レース集合の比較。対象 ${marketBaseline.overall.n} 件 / 基準線不足で除外 ${marketBaseline.unavailableCount} 件。差は本命 − 1番人気。`}
+              >
+                <MarketComparisonTable group={marketBaseline} caption="全レース" />
+                <div className="mt-5">
+                  <MarketComparisonTable group={marketBaseline.disagreement} caption="本命が1番人気と異なるレース" />
+                </div>
+              </SectionCard>
+            )}
 
             <SectionCard
               label="WEEKLY TREND"

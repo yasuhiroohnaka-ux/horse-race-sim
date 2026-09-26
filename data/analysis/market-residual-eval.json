@@ -1,0 +1,477 @@
+{
+  "generatedAt": "2026-09-26T03:09:29.141Z",
+  "method": "conditional logit; race-wise z-score; paired time-split test NLL; race bootstrap; Bonferroni family-wise CI",
+  "split": {
+    "date": null,
+    "mode": "primary_60_40",
+    "trainN": 252,
+    "testN": 168,
+    "testFrom": "2026-07-12"
+  },
+  "eligibility": {
+    "raceN": 420,
+    "excluded": {
+      "not_eligible_live_complete_review": 116,
+      "roster_count_missing_or_mismatch": 1
+    },
+    "archiveAudit": {
+      "archiveHorseRows": 5723,
+      "reviewUpdatedAfterSnapshot": 5723,
+      "archiveHorseUpdatedAtPresent": 0,
+      "oddsDifferences": 2465,
+      "gateDifferences": 0,
+      "runningStyleDifferences": 6
+    }
+  },
+  "fullMarket": {
+    "trainCoefficient": 1.2410648438445429,
+    "testNll": 2.130656928863161,
+    "rawMarketTestNll": 2.1301063860672813
+  },
+  "multipleTesting": {
+    "testedCount": 14,
+    "alpha": 0.05,
+    "correction": "Bonferroni"
+  },
+  "features": [
+    {
+      "feature": "snapshot.winProb",
+      "status": "tested",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 0,
+      "marketCoefficient": 1.2410648438445429,
+      "coefficient": 0.05680839905254369,
+      "modelMarketCoefficient": 1.2069853073563126,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.130656928863161,
+      "modelNll": 2.131749495530544,
+      "deltaNll": 0.0010925666673829127,
+      "ci95": [
+        -0.008424175878035314,
+        0.010245883102507129
+      ],
+      "bonferroniCi": [
+        -0.01319313576756676,
+        0.014478807973719627
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "snapshot.simTop3Rate",
+      "status": "tested",
+      "trainN": 110,
+      "testN": 168,
+      "missingRaces": 142,
+      "constantRaces": 0,
+      "marketCoefficient": 1.1173803607374304,
+      "coefficient": 0.10415619783186283,
+      "modelMarketCoefficient": 1.0540339863949293,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.12598795550844,
+      "modelNll": 2.1228017286160603,
+      "deltaNll": -0.003186226892377344,
+      "ci95": [
+        -0.01776757300899226,
+        0.011056410106924016
+      ],
+      "bonferroniCi": [
+        -0.024705675823068464,
+        0.01743799335306196
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "snapshot.score",
+      "status": "tested",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 0,
+      "marketCoefficient": 1.2410648438445429,
+      "coefficient": 0.07819087032896778,
+      "modelMarketCoefficient": 1.1961390439299575,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.130656928863161,
+      "modelNll": 2.1307248136157577,
+      "deltaNll": 0.00006788475259736492,
+      "ci95": [
+        -0.00781945659131057,
+        0.007885469809919133
+      ],
+      "bonferroniCi": [
+        -0.011453900324482172,
+        0.012671199217383253
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "snapshot.edge",
+      "status": "tested",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 0,
+      "marketCoefficient": 1.2410648438445429,
+      "coefficient": 0.04425859689387181,
+      "modelMarketCoefficient": 1.2806979040787656,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.130656928863161,
+      "modelNll": 2.1320924929197025,
+      "deltaNll": 0.0014355640565419407,
+      "ci95": [
+        -0.00640191320902332,
+        0.009035494821985776
+      ],
+      "bonferroniCi": [
+        -0.00997759746594759,
+        0.012298090828099897
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "snapshot.gateNumber",
+      "status": "tested",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 0,
+      "marketCoefficient": 1.2410648438445429,
+      "coefficient": -0.009834715353286016,
+      "modelMarketCoefficient": 1.2414903507590493,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.130656928863161,
+      "modelNll": 2.1310823144928515,
+      "deltaNll": 0.0004253856296913698,
+      "ci95": [
+        -0.0010145780643144493,
+        0.0018404887462817056
+      ],
+      "bonferroniCi": [
+        -0.0017894595403431276,
+        0.002618633247951361
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "snapshot.previousFinish",
+      "status": "insufficient",
+      "trainN": 0,
+      "testN": 0,
+      "missingRaces": 420,
+      "constantRaces": 0
+    },
+    {
+      "feature": "snapshot.majorContributors.abilityScore掲載",
+      "status": "no_variation",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 420
+    },
+    {
+      "feature": "snapshot.majorContributors.marketEdge掲載",
+      "status": "tested",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 4,
+      "marketCoefficient": 1.2410648438445429,
+      "coefficient": -0.027272211493004725,
+      "modelMarketCoefficient": 1.231319677176128,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.130656928863161,
+      "modelNll": 2.131448080336849,
+      "deltaNll": 0.0007911514736888116,
+      "ci95": [
+        -0.001978055482078218,
+        0.00380050634093766
+      ],
+      "bonferroniCi": [
+        -0.0033803783079303117,
+        0.005432188597527474
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "snapshot.majorContributors.courseFit掲載",
+      "status": "tested",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 7,
+      "marketCoefficient": 1.2410648438445429,
+      "coefficient": 0.025091944549175463,
+      "modelMarketCoefficient": 1.235800022883419,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.130656928863161,
+      "modelNll": 2.1304654970679096,
+      "deltaNll": -0.00019143179524963317,
+      "ci95": [
+        -0.003873828043410386,
+        0.0034113312104417474
+      ],
+      "bonferroniCi": [
+        -0.005864652265250976,
+        0.005045820521055204
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "snapshot.majorContributors.distanceFit掲載",
+      "status": "tested",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 91,
+      "marketCoefficient": 1.2410648438445429,
+      "coefficient": 0.0653115634673794,
+      "modelMarketCoefficient": 1.2179553838783255,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.130656928863161,
+      "modelNll": 2.1156788851629127,
+      "deltaNll": -0.014978043700249159,
+      "ci95": [
+        -0.026043027387217987,
+        -0.0039724480241390015
+      ],
+      "bonferroniCi": [
+        -0.031525722901869405,
+        0.0010367500388055967
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "snapshot.majorContributors.groundFit掲載",
+      "status": "tested",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 16,
+      "marketCoefficient": 1.2410648438445429,
+      "coefficient": 0.05092621931148014,
+      "modelMarketCoefficient": 1.2248767761036787,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.130656928863161,
+      "modelNll": 2.143422510449972,
+      "deltaNll": 0.01276558158681117,
+      "ci95": [
+        0.0055282270145560015,
+        0.019698926807305853
+      ],
+      "bonferroniCi": [
+        0.0024079189076303804,
+        0.02276993765024859
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "snapshot.majorContributors.paceFit掲載",
+      "status": "tested",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 3,
+      "marketCoefficient": 1.2410648438445429,
+      "coefficient": -0.0719022614723216,
+      "modelMarketCoefficient": 1.2054640553157412,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.130656928863161,
+      "modelNll": 2.129410611196281,
+      "deltaNll": -0.001246317666879064,
+      "ci95": [
+        -0.0128119393052574,
+        0.009924123967244822
+      ],
+      "bonferroniCi": [
+        -0.018091488341793034,
+        0.015961670176581587
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "snapshot.runningStyle=Nige",
+      "status": "tested",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 3,
+      "marketCoefficient": 1.2410648438445429,
+      "coefficient": 0.08053693127425836,
+      "modelMarketCoefficient": 1.2401792372589255,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.130656928863161,
+      "modelNll": 2.1300164382597027,
+      "deltaNll": -0.0006404906034564166,
+      "ci95": [
+        -0.014226660087328096,
+        0.012162416430811708
+      ],
+      "bonferroniCi": [
+        -0.021228247231342957,
+        0.018128252008688072
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "snapshot.runningStyle=Senko",
+      "status": "tested",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 66,
+      "marketCoefficient": 1.2410648438445429,
+      "coefficient": -0.03145400137534172,
+      "modelMarketCoefficient": 1.247611034366046,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.130656928863161,
+      "modelNll": 2.135134237470403,
+      "deltaNll": 0.004477308607242464,
+      "ci95": [
+        0.0002442184793945344,
+        0.009076709279590383
+      ],
+      "bonferroniCi": [
+        -0.0019718051855534442,
+        0.010743067320967616
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "snapshot.runningStyle=Sashi",
+      "status": "tested",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 3,
+      "marketCoefficient": 1.2410648438445429,
+      "coefficient": -0.014093206595913899,
+      "modelMarketCoefficient": 1.2386068856467778,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.130656928863161,
+      "modelNll": 2.1282832023238347,
+      "deltaNll": -0.0023737265393256927,
+      "ci95": [
+        -0.004333848112734838,
+        -0.00040367173912263737
+      ],
+      "bonferroniCi": [
+        -0.005246632316327983,
+        0.0005170460406004574
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "snapshot.runningStyle=Oikomi",
+      "status": "tested",
+      "trainN": 252,
+      "testN": 168,
+      "missingRaces": 0,
+      "constantRaces": 253,
+      "marketCoefficient": 1.2410648438445429,
+      "coefficient": -6.776155672160214,
+      "modelMarketCoefficient": 1.2220848787847771,
+      "rawMarketNll": 2.1301063860672813,
+      "marketNll": 2.130656928863161,
+      "modelNll": 2.2526051082629186,
+      "deltaNll": 0.12194817939975915,
+      "ci95": [
+        -0.03007289620122239,
+        0.4179170048631867
+      ],
+      "bonferroniCi": [
+        -0.03530236051857719,
+        0.7048661743000846
+      ],
+      "passesGate": false
+    }
+  ],
+  "excludedArchiveFeatures": [
+    {
+      "feature": "archive.horses.speed",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.stamina",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.power",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.guts",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.trainingScore",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.recentFormScore",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.recentAverageFinish",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.recentTimeIndex",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.lastRaceGradeScore",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.distanceChange",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.favoriteCount",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.xBuzzScore",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.predictionCount",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.weight",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.runningStyle",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.gateNumber",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.realOdds",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; final odds can overwrite this field"
+    }
+  ]
+}
