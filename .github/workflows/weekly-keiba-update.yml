@@ -30,6 +30,11 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: keiba-data-writer
+  queue: max
+  cancel-in-progress: false
+
 jobs:
   routine:
     runs-on: ubuntu-latest
@@ -113,4 +118,38 @@ jobs:
             exit 0
           fi
           git commit -m "chore: routine keiba update"
-          git push
+          for attempt in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              exit 0
+            fi
+            if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
+              git rebase --abort
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              sleep "$((attempt * 2))"
+            fi
+          done
+          echo "Failed to rebase and push after 3 attempts." >&2
+          exit 1
+
+      - name: Preserve generated data after failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: keiba-routine-data-${{ github.run_id }}
+          retention-days: 7
+          if-no-files-found: ignore
+          path: |
+            data/weekly-races.json
+            data/routine-state.json
+            data/pending-posts.jsonl
+            data/pre-race-signals.jsonl
+            data/review-records.json
+            data/prediction-snapshots.jsonl
+            data/analysis/calibration-report.md
+            data/analysis/calibration-report.json
+            lib/generatedNetkeibaData.ts
+            lib/generatedTrainingData.ts
+            lib/generatedRaceSchedule.ts
+            lib/generatedRaceVolatility.ts
+            lib/generatedDrawOverrides.ts
