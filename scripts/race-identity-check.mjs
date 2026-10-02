@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { parseShutubaSignals } from "../lib/preRaceSignalCapture.mjs";
+import { parseShutubaEntries } from "../lib/preRaceSignalCapture.mjs";
 import { getRaceStartTimestamp } from "../lib/raceTiming.mjs";
 import { terminalizeIncorrectRaceRecord } from "./repair-race-identity-f4.mjs";
 
@@ -14,25 +14,55 @@ export function parseRacePageIdentity(html) {
   const title = String(html ?? "").match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? "";
   const label = title.split("|")[0].replace(/<[^>]*>/g, "")
     .replace(/&amp;/gi, "&").replace(/\s*出馬表\s*$/i, "").trim();
-  const horses = [...parseShutubaSignals(html).values()];
+  // HorseList is also used in prediction tables below the actual entry table.
+  const tables = String(html ?? "").match(/<table\b[^>]*class="[^"]*\bShutubaTable\b[^"]*"[^>]*>[\s\S]*?<\/table>/gi) ?? [];
+  const horses = parseShutubaEntries(tables.length === 1 ? tables[0] : "");
+  const horseNames = horses.map((horse) => normalized(horse.horseName));
+  const horseIds = horses.map((horse) => horse.externalHorseId);
+  const fieldData = String(html ?? "").match(/class="RaceData02"[^>]*>([\s\S]*?)<\/div>/i)?.[1] ?? "";
+  const declaredSize = Number(fieldData.replace(/<[^>]*>/g, " ").normalize("NFKC").match(/\b(\d+)\s*頭/)?.[1]);
+  const completeRoster = declaredSize > 0 && horses.length === declaredSize &&
+    horseNames.every(Boolean) && new Set(horseNames).size === horses.length &&
+    horseIds.every(Boolean) && new Set(horseIds).size === horses.length;
+  // Navigation links contain other races; only the page's canonical URL binds the
+  // fetched roster to the requested race, even when two races share a name.
+  const canonical = String(html ?? "").match(/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*>/gi) ?? [];
+  let raceId = null;
+  if (canonical.length === 1) {
+    const href = canonical[0].match(/\bhref=["']([^"']+)["']/i)?.[1];
+    try {
+      const id = new URL(href).searchParams.get("race_id");
+      if (/^\d{12}$/.test(id ?? "")) raceId = id;
+    } catch { /* Missing or malformed page identity remains unavailable. */ }
+  }
   const raceData = String(html ?? "").match(/class="RaceData01"[^>]*>([\s\S]*?)<\/div>/i)?.[1] ?? "";
   const time = raceData.replace(/<[^>]*>/g, " ").match(/(\d{1,2}):(\d{2})\s*発走/);
-  return { label, fieldSize: horses.length || null,
-    horseNames: horses.map((horse) => normalized(horse.horseName)),
+  return { raceId, label, fieldSize: completeRoster ? declaredSize : null,
+    horseNames,
     scheduledStartTime: time ? `${time[1].padStart(2, "0")}:${time[2]}` : null };
 }
 
 export async function resolveRaceIdentity({ raceId, label, horseNames, fetchHtml }) {
   const expectedLabel = normalized(label);
-  const expectedNames = new Set((horseNames ?? []).map(normalized).filter(Boolean));
-  const read = async (id) => parseRacePageIdentity(await fetchHtml(id));
+  const names = (horseNames ?? []).map(normalized);
+  const expectedNames = new Set(names);
+  if (!expectedLabel || names.length === 0 || names.some((name) => !name) || expectedNames.size !== names.length) {
+    return { status: "unavailable", raceId, error: "expected race name or unique horse names unavailable" };
+  }
+  const read = async (id) => {
+    const page = parseRacePageIdentity(await fetchHtml(id));
+    if (page.raceId !== String(id)) throw new Error("source page race ID missing or mismatched");
+    return page;
+  };
   let original;
   try { original = await read(raceId); }
   catch (error) { return { status: "unavailable", raceId, error: String(error) }; }
   if (!original.label || !original.fieldSize) {
     return { status: "unavailable", raceId, error: "race name or field size unavailable" };
   }
-  if (normalized(original.label) === expectedLabel) {
+  // The stored roster can be partial, but every known runner must be present.
+  if (normalized(original.label) === expectedLabel &&
+    names.every((name) => original.horseNames.includes(name))) {
     return { status: "verified", raceId, page: original };
   }
 

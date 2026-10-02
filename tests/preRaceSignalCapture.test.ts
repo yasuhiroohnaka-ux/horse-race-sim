@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildPreRaceSignalCapture, parseShutubaSignals, parseTrainingSignals,
+import { buildPreRaceSignalCapture, parseShutubaEntries, parseShutubaSignals, parseTrainingSignals,
   summarizeSignalReadiness } from "../lib/preRaceSignalCapture.mjs";
 
 const race = {
@@ -35,6 +35,26 @@ test("public HTML yields body weight, lap and companion details", () => {
   assert.deepEqual(training.get("101")?.lapSeconds, [15, 11.8]);
   assert.equal(training.get("101")?.companionOutcome, 1);
   assert.equal(training.get("102")?.companionOutcome, -1);
+});
+
+test("unnumbered roster rows never supply gate-based odds or body weights", () => {
+  const html = shutubaHtml.replace(/(<td class="Umaban\d+">)\d+/g, "$1");
+  const entries = parseShutubaEntries(html);
+  assert.deepEqual(entries.map((entry) => [entry.externalHorseId, entry.horseName, entry.gateNumber]),
+    [["101", "アルファ", null], ["102", "ベータ", null]]);
+  assert.equal(parseShutubaSignals(html).size, 0);
+  const capture = buildPreRaceSignalCapture({ race, capturedAt: "2026-09-26T04:30:00Z",
+    sourceTimes: { shutuba: "2026-09-26T04:29:00Z" }, shutubaHtml: html });
+  assert.deepEqual(capture.coverage, { odds: 0, bodyWeight: 0, training: 0 });
+  for (const horse of capture.horses) {
+    assert.equal(horse.odds, null);
+    assert.equal(horse.bodyWeightKg, null);
+  }
+
+  const malformed = shutubaHtml.replaceAll("ベータ", "");
+  assert.equal(parseShutubaEntries(malformed).length, 2);
+  assert.equal(parseShutubaEntries(malformed)[1].horseName, "");
+  assert.deepEqual([...parseShutubaSignals(malformed).keys()], [1]);
 });
 
 test("capture stores only pre-race values and race-relative features", () => {
