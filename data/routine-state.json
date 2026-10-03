@@ -7772,6 +7772,123 @@
       "settledAt": "2026-08-30T14:21:03.678Z",
       "tanHit": false,
       "fukuHit": true
+    },
+    {
+      "weekOf": "2026-09-28",
+      "day": "Sat",
+      "stage": "sat_09",
+      "postedAt": "2026-10-03T02:44:42.393Z",
+      "predictionOrigin": "saved_live",
+      "sourceStatus": "live_pre_race",
+      "livePreRaceEligible": true,
+      "scoringVersion": "tanpuku-win-v3.1",
+      "snapshotId": "16c13fdc-9ba1-4df9-b44a-d0eeb4f47848",
+      "snapshotCapturedAt": "2026-10-03T02:44:31.070Z",
+      "raceId": "202605040109",
+      "courseId": "tokyo-turf-1800-202605040109",
+      "raceLabel": "八ヶ岳特別(2勝クラス)",
+      "raceDate": "2026-10-03",
+      "scheduledStartTime": "14:35",
+      "pickType": "win",
+      "classificationHint": {
+        "classification": "win",
+        "confidence": 0.7,
+        "reason": "単勝勝負(本命級): 校正勝率40%・校正単ROI112% (市場と校正が一致する適正評価帯)"
+      },
+      "recommendedBetAction": "win",
+      "recommendedBetDecision": {
+        "action": "win",
+        "confidence": "medium",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "classification_hint_win",
+          "valid_odds_source",
+          "selection_log_available",
+          "engine_agreement",
+          "classification_aligned_action"
+        ],
+        "riskFlags": [],
+        "source": "explicit_live_rule"
+      },
+      "horseId": "4",
+      "horseName": "フィールドノート",
+      "realOdds": 2.8,
+      "placeOdds": 1.4,
+      "winProb": 0.527,
+      "placeProb": 0.776,
+      "placeScore": 0.692,
+      "valueScore": 0.47,
+      "selectionReason": "総合評価1位。複勝確率78%・上位安定度72%を重視。 2位差0.206",
+      "scoreGap": 0.206,
+      "runnerUpHorseId": "7",
+      "runnerUpHorseName": "ミッキージャンプ",
+      "runnerUpPlaceScore": 0.486,
+      "runnerUpPlaceProb": 0.609,
+      "overbetLabel": null,
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
+    },
+    {
+      "weekOf": "2026-09-28",
+      "day": "Sat",
+      "stage": "sat_09",
+      "postedAt": "2026-10-03T02:44:42.393Z",
+      "predictionOrigin": "saved_live",
+      "sourceStatus": "live_pre_race",
+      "livePreRaceEligible": true,
+      "scoringVersion": "tanpuku-win-v3.1",
+      "snapshotId": "16c13fdc-9ba1-4df9-b44a-d0eeb4f47848",
+      "snapshotCapturedAt": "2026-10-03T02:44:31.070Z",
+      "raceId": "202605040109",
+      "courseId": "tokyo-turf-1800-202605040109",
+      "raceLabel": "八ヶ岳特別(2勝クラス)",
+      "raceDate": "2026-10-03",
+      "scheduledStartTime": "14:35",
+      "pickType": "value",
+      "classificationHint": null,
+      "recommendedBetAction": "unknown",
+      "recommendedBetDecision": {
+        "action": "unknown",
+        "confidence": "unknown",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "valid_odds_source"
+        ],
+        "riskFlags": [
+          "missing_classification_hint",
+          "missing_selection_log"
+        ],
+        "source": "safety_rule"
+      },
+      "horseId": "11",
+      "horseName": "ホウオウシンデレラ",
+      "realOdds": 23.4,
+      "placeOdds": 4.8,
+      "winProb": 0.42,
+      "placeProb": 0.564,
+      "placeScore": 0.431,
+      "valueScore": 0.582,
+      "selectionReason": "本命次点ではなく、複勝寄り期待値62% / valueScore 0.582 / 複勝率56% / 次点差0.073を見てワイド高配当狙いに選出。",
+      "scoreGap": 0.073,
+      "runnerUpHorseId": "8",
+      "runnerUpHorseName": "ドッグウッド",
+      "runnerUpPlaceScore": 0.459,
+      "runnerUpPlaceProb": 0.58,
+      "overbetLabel": null,
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
     }
   ],
   "reviewPosts": {
@@ -8003,5 +8120,14 @@
   "lastResultReviewRun": {
     "sun_09": "2026-09-20T04:31:22.389Z",
     "mon_09": "2026-09-21T03:55:04.451Z"
+  },
+  "dailyVerdictPosts": {
+    "2026-10-03": 2
+  },
+  "preRaceRecommendationPosts": {
+    "202605040109": {
+      "snapshotId": "16c13fdc-9ba1-4df9-b44a-d0eeb4f47848",
+      "postedAt": "2026-10-03T02:44:42.393Z"
+    }
   }
 }

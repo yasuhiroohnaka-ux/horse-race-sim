@@ -2076,7 +2076,7 @@
         "hasRace": true,
         "raceDate": "2026-10-04",
         "oddsSource": "official",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 15,
         "horses": [
           {
             "id": "1",
@@ -3095,7 +3095,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "tokyo-turf-1800-202605040211",
@@ -3687,7 +3688,7 @@
         "hasRace": true,
         "raceDate": "2026-10-04",
         "oddsSource": "official",
-        "expectedFieldSize": 12,
+        "expectedFieldSize": 16,
         "horses": [
           {
             "id": "1",
@@ -5620,7 +5621,8 @@
             "lastRaceDistance": 1200,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-dirt-1800-202608040112",
@@ -6694,7 +6696,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-dirt-1200-202608040210",
@@ -7231,7 +7234,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-turf-2400-202608040211",
@@ -7855,7 +7859,7 @@
         "hasRace": true,
         "raceDate": "2026-10-04",
         "oddsSource": "official",
-        "expectedFieldSize": 14,
+        "expectedFieldSize": 18,
         "horses": [
           {
             "id": "1",
