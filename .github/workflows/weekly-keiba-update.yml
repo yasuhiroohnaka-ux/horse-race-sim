@@ -112,7 +112,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/weekly-races.json data/routine-state.json data/pending-posts.jsonl data/pre-race-signals.jsonl data/review-records.json data/prediction-snapshots.jsonl data/analysis/calibration-report.md data/analysis/calibration-report.json lib/generatedNetkeibaData.ts lib/generatedTrainingData.ts lib/generatedRaceSchedule.ts lib/generatedRaceVolatility.ts lib/generatedDrawOverrides.ts
+          git add data/weekly-races.json data/generated-reviews.json data/routine-state.json data/pending-posts.jsonl data/pre-race-signals.jsonl data/review-records.json data/prediction-snapshots.jsonl data/analysis/calibration-report.md data/analysis/calibration-report.json lib/generatedNetkeibaData.ts lib/generatedTrainingData.ts lib/generatedRaceSchedule.ts lib/generatedRaceVolatility.ts lib/generatedDrawOverrides.ts
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
@@ -141,6 +141,7 @@ jobs:
           if-no-files-found: ignore
           path: |
             data/weekly-races.json
+            data/generated-reviews.json
             data/routine-state.json
             data/pending-posts.jsonl
             data/pre-race-signals.jsonl
