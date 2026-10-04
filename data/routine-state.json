@@ -4,25 +4,25 @@
   "drawConfirmedAt": "2026-10-02T11:11:31.615Z",
   "performance": {
     "weekly": {
-      "weekOf": "2026-09-14",
-      "bets": 0,
+      "weekOf": "2026-09-28",
+      "bets": 2,
       "tanHits": 0,
-      "fukuHits": 0,
-      "tanStake": 0,
+      "fukuHits": 1,
+      "tanStake": 200,
       "tanPayout": 0,
-      "fukuStake": 0,
-      "fukuPayout": 0
+      "fukuStake": 200,
+      "fukuPayout": 120
     },
     "total": {
-      "bets": 20,
+      "bets": 22,
       "tanHits": 6,
-      "fukuHits": 10,
-      "tanStake": 2000,
+      "fukuHits": 11,
+      "tanStake": 2200,
       "tanPayout": 1250,
-      "fukuStake": 2000,
-      "fukuPayout": 1310
+      "fukuStake": 2200,
+      "fukuPayout": 1430
     },
-    "updatedAt": "2026-09-20T13:31:10.221Z"
+    "updatedAt": "2026-10-04T14:43:00.320Z"
   },
   "tanpukuRecommendations": [
     {
@@ -7825,14 +7825,23 @@
       "runnerUpPlaceScore": 0.486,
       "runnerUpPlaceProb": 0.609,
       "overbetLabel": null,
-      "settlementStatus": "pending_result",
-      "tanOutcome": "not_settled",
-      "fukuOutcome": "not_settled",
-      "actualWinnerHorseId": null,
-      "actualTop3HorseIds": [],
-      "tanPayoutSource": "missing",
-      "fukuPayoutSource": "missing",
-      "resolved": false
+      "settlementStatus": "settled",
+      "tanOutcome": "miss",
+      "fukuOutcome": "hit",
+      "actualWinnerHorseId": "9",
+      "actualTop3HorseIds": [
+        "9",
+        "8",
+        "4"
+      ],
+      "tanPayoutSource": "official",
+      "fukuPayoutSource": "official",
+      "resolved": true,
+      "tanPayout": 0,
+      "fukuPayout": 120,
+      "settledAt": "2026-10-04T14:43:00.319Z",
+      "tanHit": false,
+      "fukuHit": true
     },
     {
       "weekOf": "2026-09-28",
@@ -7881,14 +7890,23 @@
       "runnerUpPlaceScore": 0.459,
       "runnerUpPlaceProb": 0.58,
       "overbetLabel": null,
-      "settlementStatus": "pending_result",
-      "tanOutcome": "not_settled",
-      "fukuOutcome": "not_settled",
-      "actualWinnerHorseId": null,
-      "actualTop3HorseIds": [],
-      "tanPayoutSource": "missing",
-      "fukuPayoutSource": "missing",
-      "resolved": false
+      "settlementStatus": "settled",
+      "tanOutcome": "miss",
+      "fukuOutcome": "miss",
+      "actualWinnerHorseId": "9",
+      "actualTop3HorseIds": [
+        "9",
+        "8",
+        "4"
+      ],
+      "tanPayoutSource": "official",
+      "fukuPayoutSource": "official",
+      "resolved": true,
+      "tanPayout": 0,
+      "fukuPayout": 0,
+      "settledAt": "2026-10-04T14:43:00.320Z",
+      "tanHit": false,
+      "fukuHit": false
     }
   ],
   "reviewPosts": {
