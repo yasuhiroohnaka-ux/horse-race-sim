@@ -53,6 +53,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Import Cloudflare saved snapshots
+        if: vars.CLOUDFLARE_SNAPSHOT_SYNC_ENABLED == 'true'
+        env:
+          CLOUDFLARE_R2_ENDPOINT: ${{ vars.CLOUDFLARE_R2_ENDPOINT }}
+          CLOUDFLARE_R2_BUCKET: ${{ vars.CLOUDFLARE_R2_BUCKET }}
+          CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+          CLOUDFLARE_R2_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
+        run: npm run sync:cloudflare-snapshots
+
       - name: Resolve routine stage
         id: resolve-stage
         shell: bash

@@ -1,3 +1,4 @@
+import { buildRunningStylesResponse } from "@/lib/runningStyleData.mjs";
 import path from "node:path";
 import { readDataFile } from "@/lib/dataFile.mjs";
 import { NextRequest, NextResponse } from "next/server";
@@ -55,25 +56,6 @@ function readRunningStyleOverrides(request: NextRequest): RunningStyleOverrideMa
   } catch {
     return {};
   }
-}
-
-function buildRunningStylesResponse(
-  race: NonNullable<ReturnType<typeof findRace>>,
-  overrides: Record<string, { runningStyle?: string }>,
-  cookieOverrides: Record<string, string>
-) {
-  return Object.fromEntries(
-    (race.horses ?? [])
-      .map((horse) => {
-        const horseId = String(horse?.id ?? "").trim();
-        const overrideStyle = String(overrides[horseId]?.runningStyle ?? "").trim();
-        const cookieStyle = String(cookieOverrides[horseId] ?? "").trim();
-        const runningStyle = overrideStyle || cookieStyle || String(horse?.runningStyle ?? "").trim();
-        if (!horseId || !VALID_STYLES.has(runningStyle)) return null;
-        return [horseId, runningStyle];
-      })
-      .filter((entry): entry is [string, string] => entry !== null)
-  );
 }
 
 function withOverrideCookie(

@@ -1,3 +1,4 @@
+import { raceDayLabel, raceDiscoveryDates, calendarRaceDates, selectRaceDiscoveryDates, raceOddsOpening, mergeDatedRaceSeed } from '../lib/raceCalendar.mjs';
 import fs from "node:fs/promises";
 import path from "node:path";
 import {
@@ -204,12 +205,7 @@ function raceDateFromSeed(seed) {
   return localDateFromIsoDate(seed.dateIso) ?? new Date(NaN);
 }
 
-function dayLabelFromDate(dateIso) {
-  const parts = parseIsoDateParts(dateIso);
-  if (!parts) return "Sat";
-  const day = new Date(Date.UTC(parts.year, parts.month - 1, parts.day)).getUTCDay();
-  return day === 0 ? "Sun" : "Sat";
-}
+function dayLabelFromDate(dateIso) { return raceDayLabel(dateIso); }
 
 function parseRaceMeta(raceId, shutubaHtml, dayLabel) {
   const venue = TRACK_CODE_TO_VENUE[raceId.slice(4, 6)];
@@ -647,11 +643,9 @@ function buildAbilityStats(base, runningStyle, seed) {
 }
 
 function getRaceFriday1930(raceDate) {
-  const d = new Date(raceDate);
-  const offset = raceDate.getDay() === 6 ? -1 : -2;
-  d.setDate(d.getDate() + offset);
-  d.setHours(19, 30, 0, 0);
-  return d;
+  // jstNow uses a wall-clock Date, so return the same representation.
+  const opening = new Date(raceOddsOpening(isoDate(raceDate)));
+  return new Date(opening.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
 }
 
 function parseRaceSeedFromJraCname(cname) {
@@ -666,12 +660,17 @@ function parseRaceSeedFromJraCname(cname) {
 async function fetchCurrentWeekRaceSeeds() {
   const unique = new Map();
   const weekStart = startOfWeekMonday(jstNow());
-  const raceDates = [5, 6].map((offset) => {
-    const d = new Date(weekStart);
-    d.setDate(d.getDate() + offset);
-    return d;
-  });
-
+  const weekOf=isoDate(weekStart);
+  const window=raceDiscoveryDates(weekOf);
+  const calendarDates=[];
+  for(const month of [...new Set(window.map(date=>date.slice(0,7)))]) {
+    const [year,monthNumber]=month.split('-');
+    try { calendarDates.push(...calendarRaceDates(await fetchText('https://race.netkeiba.com/top/calendar.html?year='+year+'&month='+Number(monthNumber)))); }
+    catch(error) { console.warn('[race-calendar] Calendar unavailable; probing dated race lists:',error.message); }
+  }
+  const previous=await readJson(WEEKLY_RACES_PATH,{currentWeek:null});
+  const knownDates=(previous.currentWeek?.races??[]).map(race=>race.raceDate).filter(Boolean);
+  const raceDates=selectRaceDiscoveryDates(weekOf,calendarDates,knownDates).map(localDateFromIsoDate);
   for (const raceDate of raceDates) {
     const dateIso = isoDate(raceDate);
     const dateYmd = yyyymmddFromDate(raceDate);
@@ -685,13 +684,11 @@ async function fetchCurrentWeekRaceSeeds() {
     const raceIds = extractRaceIds(activeSection);
 
     for (const raceId of raceIds) {
-      if (!unique.has(raceId)) {
-        unique.set(raceId, {
+        mergeDatedRaceSeed(unique, {
           raceId,
           dateIso,
           dayLabel: dayLabelFromDate(dateIso)
         });
-      }
     }
   }
 
@@ -942,6 +939,5 @@ main().catch((error) => {
   console.error(error);
   process.exit(1);
 });
-
 
 

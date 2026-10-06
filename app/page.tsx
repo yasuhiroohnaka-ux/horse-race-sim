@@ -84,8 +84,8 @@ export default async function Home() {
                 <Link href="/sim" className="btn btn-go">
                   今週のレースを分析する
                 </Link>
-                <Link href="/archive" className="btn btn-quiet">
-                  回顧を見る
+                <Link href="/#performance" className="btn btn-quiet">
+                  成績を見る
                 </Link>
               </div>
             </div>

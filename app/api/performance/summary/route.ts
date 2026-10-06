@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import path from "node:path";
+import { readDataFile } from "@/lib/dataFile.mjs";
+import { buildCategoryReturnStatsFromReviewRecords } from "@/lib/categoryReturnStats.mjs";
 import { loadReviewRecords } from "@/lib/reviewRecords";
 import { normalizeRecommendedBetAction } from "@/lib/recommendedBetAction";
 import { isLivePreRaceEligible, resolveReviewRecordSourceStatus } from "@/lib/sourceStatus";
@@ -42,7 +45,16 @@ export async function GET(request: Request) {
   const sourceStatus = sourceValue as SourceFilter;
   const action = actionValue as ActionFilter;
   try {
-    const byRaceId = await loadReviewRecords();
+    const [byRaceId, weeklyRaw] = await Promise.all([
+      loadReviewRecords(),
+      readDataFile(path.join(process.cwd(), "data", "weekly-races.json"), "utf8"),
+    ]);
+    // Keep the previous post text's all-history category scope separate from the
+    // panel's current-version/live/win scope. Neither needs detailed diagnostics.
+    const categoryRecords = Object.values(byRaceId).filter((record) =>
+      !record.excludedReason && record.snapshot?.dataQuality?.fieldComplete !== false
+    ).sort((a, b) => String(b.meta.scheduledStartTime ?? b.updatedAt).localeCompare(String(a.meta.scheduledStartTime ?? a.updatedAt)));
+    const categoryReturnStats = buildCategoryReturnStatsFromReviewRecords(categoryRecords, JSON.parse(weeklyRaw.replace(/^\uFEFF/, "")));
     const scoped = Object.values(byRaceId).filter((record) =>
       !record.excludedReason && record.snapshot?.dataQuality?.fieldComplete !== false &&
       record.snapshot?.scoringVersion === version &&
@@ -58,6 +70,7 @@ export async function GET(request: Request) {
       scope: { version, sourceStatus, action, fieldComplete: true },
       performance: { weekly: { weekOf: latestWeek, ...aggregate(settled.filter((record) => record.meta.weekOf === latestWeek)) }, total: aggregate(settled) },
       lastSettledAt,
+      categoryReturnStats,
     });
   } catch {
     return NextResponse.json({ error: "failed to load performance summary" }, { status: 500 });

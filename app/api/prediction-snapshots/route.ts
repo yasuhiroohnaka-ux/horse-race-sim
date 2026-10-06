@@ -1,108 +1,22 @@
-import path from "node:path";
-import { appendDataFile, readDataFile } from "@/lib/dataFile.mjs";
-import { NextResponse } from "next/server";
-import {
-  DEFAULT_PREDICTION_ORIGIN,
-  DEFAULT_SCORING_VERSION,
-  normalizePredictionOrigin,
-  normalizeScoringVersion,
-} from "@/lib/predictionSnapshots";
-import { loadReviewRecords } from "@/lib/reviewRecords";
-import {
-  isLivePreRaceEligible,
-  isPreferredPredictionSnapshot,
-  resolveSnapshotSourceStatus,
-} from "@/lib/sourceStatus";
-import type { PredictionSnapshot } from "@/lib/types";
+import path from 'node:path';
+import { NextResponse } from 'next/server';
+import { appendDataFile } from '@/lib/dataFile.mjs';
+import { isPredictionSnapshot, toNormalizedSnapshot } from '@/lib/predictionSnapshotApi';
+import { loadPreferredPredictionSnapshots } from '@/lib/readPredictionSnapshots';
+import { validPredictionRaceId } from '@/lib/predictionRaceId.mjs';
 
-const ROOT = process.cwd();
-const DATA_DIR = path.join(ROOT, "data");
-const SNAPSHOT_PATH = path.join(DATA_DIR, "prediction-snapshots.jsonl");
+const SNAPSHOT_PATH = path.join(process.cwd(), 'data', 'prediction-snapshots.jsonl');
 
-function isPredictionSnapshot(value: unknown): value is PredictionSnapshot {
-  if (!value || typeof value !== "object") return false;
-
-  const snapshot = value as Partial<PredictionSnapshot>;
-  return (
-    typeof snapshot.snapshotId === "string" &&
-    typeof snapshot.raceId === "string" &&
-    typeof snapshot.courseId === "string" &&
-    typeof snapshot.capturedAt === "string" &&
-    typeof snapshot.modelFamily === "string" &&
-    typeof snapshot.modelVersion === "string" &&
-    typeof snapshot.scoringConfigHash === "string" &&
-    typeof snapshot.simulationCount === "number" &&
-    Array.isArray(snapshot.rankedRows) &&
-    snapshot.condition !== undefined &&
-    snapshot.signalReasons !== undefined &&
-    snapshot.marketMeta !== undefined
-  );
-}
-
-function toNormalizedSnapshot(value: PredictionSnapshot): PredictionSnapshot {
-  const sourceStatus = resolveSnapshotSourceStatus(value);
-  return {
-    ...value,
-    predictionOrigin: normalizePredictionOrigin(value.predictionOrigin, DEFAULT_PREDICTION_ORIGIN),
-    scoringVersion: normalizeScoringVersion(value.scoringVersion, DEFAULT_SCORING_VERSION),
-    sourceStatus,
-    livePreRaceEligible: isLivePreRaceEligible(value),
-  };
-}
-
-export async function GET() {
+export async function GET(request: Request) {
+  const raceId = new URL(request.url).searchParams.get('raceId');
+  if (!raceId || !validPredictionRaceId(raceId)) {
+    return NextResponse.json({ok: false, error: 'A valid raceId is required.'}, {status: 400});
+  }
   try {
-    const [raw, reviewRecords] = await Promise.all([
-      readDataFile(SNAPSHOT_PATH, "utf8").catch((error) => {
-        const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";
-        if (code === "ENOENT") return "";
-        throw error;
-      }),
-      loadReviewRecords(),
-    ]);
-    const lines = raw
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter(Boolean);
-
-    const latestByRaceId: Record<string, PredictionSnapshot> = {};
-    for (const [raceId, record] of Object.entries(reviewRecords)) {
-      if (record.snapshot) {
-        latestByRaceId[raceId] = toNormalizedSnapshot(record.snapshot);
-      }
-    }
-
-    for (const line of lines) {
-      let parsed;
-      try {
-        parsed = JSON.parse(line);
-      } catch {
-        continue;
-      }
-
-      if (!isPredictionSnapshot(parsed)) continue;
-      const normalized = toNormalizedSnapshot(parsed);
-      const raceId = String(normalized.raceId ?? "");
-      if (!raceId) continue;
-
-      const existing = latestByRaceId[raceId];
-      if (isPreferredPredictionSnapshot(normalized, existing)) {
-        latestByRaceId[raceId] = normalized;
-      }
-    }
-
-    return NextResponse.json({
-      ok: true,
-      snapshotsByRaceId: latestByRaceId,
-    });
-  } catch (error) {
-    const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";
-    if (code === "ENOENT") {
-      return NextResponse.json({ ok: true, snapshotsByRaceId: {} });
-    }
-
-    const message = error instanceof Error ? error.message : "failed to read prediction snapshots";
-    return NextResponse.json({ ok: false, error: message, snapshotsByRaceId: {} }, { status: 500 });
+    const snapshots = await loadPreferredPredictionSnapshots();
+    return NextResponse.json({ok: true, snapshotsByRaceId: snapshots[raceId] ? {[raceId]: snapshots[raceId]} : {}});
+  } catch {
+    return NextResponse.json({ok: false, error: 'Failed to read prediction snapshot.'}, {status: 500});
   }
 }
 
