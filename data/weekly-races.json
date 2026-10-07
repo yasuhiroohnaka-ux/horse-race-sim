@@ -24,7 +24,7 @@
         "hasRace": true,
         "raceDate": "2026-10-10",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 16,
         "horses": [
           {
             "id": "1",
@@ -561,7 +561,7 @@
         "hasRace": true,
         "raceDate": "2026-10-10",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 25,
         "horses": [
           {
             "id": "1",
@@ -1386,7 +1386,7 @@
         "hasRace": true,
         "raceDate": "2026-10-10",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 12,
         "horses": [
           {
             "id": "1",
@@ -1795,7 +1795,7 @@
         "hasRace": true,
         "raceDate": "2026-10-11",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 17,
         "horses": [
           {
             "id": "1",
@@ -2364,7 +2364,7 @@
         "hasRace": true,
         "raceDate": "2026-10-11",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 26,
         "horses": [
           {
             "id": "1",
@@ -3221,7 +3221,7 @@
         "hasRace": true,
         "raceDate": "2026-10-11",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 18,
         "horses": [
           {
             "id": "1",
@@ -3822,7 +3822,7 @@
         "hasRace": true,
         "raceDate": "2026-10-10",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 7,
         "horses": [
           {
             "id": "1",
@@ -4071,7 +4071,7 @@
         "hasRace": true,
         "raceDate": "2026-10-10",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 18,
         "horses": [
           {
             "id": "1",
@@ -4672,7 +4672,7 @@
         "hasRace": true,
         "raceDate": "2026-10-10",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 14,
         "horses": [
           {
             "id": "1",
@@ -5145,7 +5145,7 @@
         "hasRace": true,
         "raceDate": "2026-10-11",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 29,
         "horses": [
           {
             "id": "1",
@@ -6098,7 +6098,7 @@
         "hasRace": true,
         "raceDate": "2026-10-11",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 18,
         "horses": [
           {
             "id": "1",
@@ -6699,7 +6699,7 @@
         "hasRace": true,
         "raceDate": "2026-10-11",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 15,
         "horses": [
           {
             "id": "1",
