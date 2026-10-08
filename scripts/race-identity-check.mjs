@@ -103,7 +103,7 @@ function preserveJsonStyle(raw, value) {
   return raw.endsWith("\n") ? json + newline : json;
 }
 
-/** @param {{now?: Date, dayFilter?: "Sat" | "Sun" | null, raceIdFilter?: string | null,
+/** @param {{now?: Date, dayFilter?: "Sun" | "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | null, raceIdFilter?: string | null,
  * fetchHtml?: (raceId: string) => Promise<string>, root?: string}} options */
 export async function verifyCurrentWeekRaceIdentities({ now = new Date(), dayFilter = null,
   raceIdFilter = null, fetchHtml = fetchShutubaHtml, root = process.cwd() } = {}) {

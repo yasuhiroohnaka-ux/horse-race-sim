@@ -1,3 +1,4 @@
+import { raceDateFromWeek } from './raceCalendar.mjs';
 import fs from "node:fs/promises";
 import path from "node:path";
 import { readDataFile } from "@/lib/dataFile.mjs";
@@ -76,13 +77,7 @@ export function extractRaceId(value: string | null | undefined): string | null {
 }
 
 export function buildRaceDateFromWeekOf(weekOf: string | null | undefined, day: string | null | undefined): string | null {
-  const [year, month, date] = String(weekOf ?? "")
-    .split("-")
-    .map((value) => Number.parseInt(value, 10));
-  if (![year, month, date].every(Number.isFinite)) return null;
-  const offset = day === "Sat" ? 5 : day === "Sun" ? 6 : 0;
-  const base = new Date(Date.UTC(year, month - 1, date + offset));
-  return `${base.getUTCFullYear()}-${String(base.getUTCMonth() + 1).padStart(2, "0")}-${String(base.getUTCDate()).padStart(2, "0")}`;
+  return raceDateFromWeek(weekOf, day);
 }
 
 export function combineRaceDateAndTime(raceDate: string | null | undefined, hhmm: string | null | undefined): string | null {

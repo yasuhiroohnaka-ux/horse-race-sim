@@ -1,0 +1,129 @@
+{
+  "provenance": {
+    "date": "2026-10-06",
+    "base": "13428b5ccfe6403c307cf18aa8acb1d9058c5688",
+    "originalPatchSha256": "42542c7243e9c88ba799e4a09cb9a5d98755f3b43761012d050d46ecdeb7258f",
+    "note": "Selected existing verification results; no private snapshot body, local path, token, or request identifier is included."
+  },
+  "dataRegression": {
+    "checkedAt": "2026-10-06T16:48:29.808Z",
+    "samePanel": true,
+    "sameCategoryStats": true,
+    "snapshotAssets": 556,
+    "protectedFiles": 14,
+    "rawDataAndCalibrationUnchanged": true,
+    "currentWeekUnchanged": true,
+    "liveWeeklyBytes": 137666
+  },
+  "localWorker": {
+    "checkedAt": "2026-10-06T16:53:06.975Z",
+    "samePlainResponse": true,
+    "cookieWithEmptyLocalR2": true,
+    "originalPostValidation": true,
+    "summaryAvailable": true,
+    "remoteWrites": 0
+  },
+  "cpuComparison": {
+    "checkedAt": "2026-10-06T17:04:04.062Z",
+    "beforeVersion": "020ce14c-0de2-4a51-b7ed-be4012ed97c2",
+    "afterVersion": "fab9a365-23f3-436c-ba77-755b5944272f",
+    "unit": "microseconds",
+    "rows": {
+      "after": [
+        {
+          "dimensions": {
+            "datetime": "2026-10-06T16:58:02Z",
+            "scriptVersion": "fab9a365-23f3-436c-ba77-755b5944272f",
+            "status": "success"
+          },
+          "quantiles": {
+            "cpuTimeP50": 4534,
+            "cpuTimeP90": 4534,
+            "cpuTimeP99": 4534
+          },
+          "sum": {
+            "errors": 0,
+            "requests": 1,
+            "subrequests": 1
+          }
+        },
+        {
+          "dimensions": {
+            "datetime": "2026-10-06T16:58:04Z",
+            "scriptVersion": "fab9a365-23f3-436c-ba77-755b5944272f",
+            "status": "success"
+          },
+          "quantiles": {
+            "cpuTimeP50": 2998,
+            "cpuTimeP90": 2998,
+            "cpuTimeP99": 2998
+          },
+          "sum": {
+            "errors": 0,
+            "requests": 1,
+            "subrequests": 1
+          }
+        }
+      ],
+      "before": [
+        {
+          "dimensions": {
+            "datetime": "2026-10-06T16:41:39Z",
+            "scriptVersion": "020ce14c-0de2-4a51-b7ed-be4012ed97c2",
+            "status": "success"
+          },
+          "quantiles": {
+            "cpuTimeP50": 6477,
+            "cpuTimeP90": 6477,
+            "cpuTimeP99": 6477
+          },
+          "sum": {
+            "errors": 0,
+            "requests": 1,
+            "subrequests": 1
+          }
+        },
+        {
+          "dimensions": {
+            "datetime": "2026-10-06T16:41:40Z",
+            "scriptVersion": "020ce14c-0de2-4a51-b7ed-be4012ed97c2",
+            "status": "success"
+          },
+          "quantiles": {
+            "cpuTimeP50": 6364,
+            "cpuTimeP90": 6364,
+            "cpuTimeP99": 6364
+          },
+          "sum": {
+            "errors": 0,
+            "requests": 1,
+            "subrequests": 1
+          }
+        }
+      ]
+    },
+    "sampleLimit": "Two GETs per version; not a guarantee for every route, cold start, or load."
+  },
+  "protectedFileHashes": {
+    "recordedAt": "2026-10-06T16:04:00.633Z",
+    "hashes": {
+      "lib/simulation.ts": "b86e49511af48fa718f54d016ad5b933b30efd52889d55ad580a8faf908d3454",
+      "lib/raceAnalysis.ts": "7cedbac7d310c0d73a358049735530442e59750c769de75744673c944386c1ef",
+      "lib/tanpukuSelection.mjs": "e2b1f7a7113915ef9987b7a0333711b2d734eb726a20e10f6c26bec660638b8b",
+      "lib/generatedCalibration.mjs": "5c8fc9b0b7d7d6566b95795156e9c8872f3bf01955be1096e01b7a8dcc96af6f",
+      "lib/reviewPipeline.ts": "f0c0c906fbf10244838ba3c8f22767893599821c9b073994594adfe1e3094a21",
+      "lib/raceCalendar.mjs": "95724322b0807952c77cb9591d78a45b8713b5b20e402da394877062440b0586",
+      "scripts/update-race-results.mjs": "c2ed2e54efb5bbac51a140ce286cfc4cd0018de116ac290042601ebac56db3af",
+      ".github/workflows/weekly-keiba-update.yml": "26623d77928b0f7d1ee30d3c33094128922fa91f4ace4a7e5ad56b3a43535783",
+      "cloudflare/keiba-dispatcher/wrangler.jsonc": "642b14dd2907930b494daa6d299ebdb125c79ddae421d947cf7d60e3dd6ad14f",
+      "data/generated-reviews.json": "47e1f525005f34451d572bc15b05c0b6f9de782e6f480f1460d368f59e8d0170",
+      "data/prediction-snapshots.jsonl": "7f581850817fd76b856dddf231e515cbbc792fda8d7a04a12ea8a4bc8ac642eb",
+      "data/review-records.json": "001a2709d607e4b6323a3bf5cb380fe4a5ade84122efad66fbb0d7d509c42e51",
+      "data/weekly-diagnostics.json": "8971e38b25d2cf8df258930a870acd4e5da7b52b637c06ce812c6aa7f7d83786",
+      "data/weekly-races.json": "9dd08a9d762e7ccc6a4f26d497f28ee1365d2ed2f52eaadb5698a0012415ddfd"
+    }
+  },
+  "unchangedRunningStylePost": {
+    "sha256": "c02fb2f6d04d753e99529dd19d807db07e291636274f7b23a100463ac4be17c0"
+  }
+}

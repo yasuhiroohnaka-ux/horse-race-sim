@@ -49,7 +49,7 @@ const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
 const SNAPSHOT_PATH = path.join(ROOT, "data", "prediction-snapshots.jsonl");
 const PROCESS_LOCK_PATH = path.join(ROOT, "data", "review-records.lock");
 
-type DayLabel = "Sat" | "Sun";
+type DayLabel = "Sun" | "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat";
 
 export type ReviewPipelinePhase = "snapshot" | "settle" | "all";
 

@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "horse-race-sim",
+  "account_id": "e3ca9adb0cdca33a34e39a640db7d45f",
   "compatibility_date": "2026-09-26",
   "compatibility_flags": [
     "nodejs_compat"
