@@ -6624,7 +6624,8 @@
             "lastRaceDistance": 1600,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-dirt-1800-202608040411",
@@ -7097,7 +7098,8 @@
             "lastRaceDistance": 2000,
             "distanceChange": -200
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-turf-1600-202608040412",
