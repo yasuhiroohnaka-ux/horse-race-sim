@@ -24,7 +24,7 @@
         "hasRace": true,
         "raceDate": "2026-10-18",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 18,
         "horses": [
           {
             "id": "1",
