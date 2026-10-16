@@ -7,10 +7,7 @@ const files = [
   "data/weekly-races.json",
   "data/review-records.json",
   "data/prediction-snapshots.jsonl",
-  "data/weekly-diagnostics.json",
-  "data/generated-reviews.json",
   "data/analysis/calibration-report.json",
-  "data/analysis/backtest-selection.json",
 ];
 const assetsRoot = path.resolve("public", "__data");
 const copied = [];
@@ -53,6 +50,11 @@ try {
   buildAttempted = true;
   const code = await runCli(cli, ["build"]);
   if (code !== 0) process.exitCode = code;
+  if (code === 0) {
+    const prepare = fileURLToPath(new URL("./prepare-cloudflare-static.mjs", import.meta.url));
+    const prepareCode = await runCli(prepare, []);
+    if (prepareCode !== 0) process.exitCode = prepareCode;
+  }
 } finally {
   for (const target of copied) await fs.rm(target, { force: true });
   for (const directory of [

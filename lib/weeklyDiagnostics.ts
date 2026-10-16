@@ -164,7 +164,7 @@ type GeneratedReviewRecord = {
   xPostText?: string | null;
 };
 
-type DiagnosticsContext = {
+export type DiagnosticsContext = {
   scope: DiagnosticsAggregationScope;
   races: GeneratedReviewRace[];
   snapshotsByRaceId: Record<string, PredictionSnapshot>;
@@ -1156,7 +1156,7 @@ export async function loadWeeklyDiagnosticsContext(scope: DiagnosticsAggregation
   };
 }
 
-function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDiagnostics, "segments"> {
+function buildDiagnosticsMeta(context: DiagnosticsContext) {
   const confirmedRaces = context.races.filter(hasConfirmedResult);
   const dateRange = getDateRange(context.races);
   const weekKey = buildWeekKey(context.races);
@@ -1195,6 +1195,25 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
     )
   ).sort();
 
+  return {
+      weekKey,
+      generatedAt: new Date().toISOString(),
+      aggregationScope: context.scope,
+      sourceStatusSummary: context.sourceStatusSummary,
+      scoringVersion: scoringVersions.length === 1 ? scoringVersions[0] : null,
+      modelVersion: modelVersions.length === 1 ? modelVersions[0] : null,
+      scoringConfigHash: scoringConfigHashes.length === 1 ? scoringConfigHashes[0] : null,
+      scoringVersions,
+      modelVersions,
+      scoringConfigHashes,
+      raceCount: context.races.length,
+      settledRaceCount: confirmedRaces.length,
+      dateRange,
+    };
+}
+
+export function collectDiagnosticsState(context: DiagnosticsContext) {
+  const confirmedRaces = context.races.filter(hasConfirmedResult);
   const placeCore = {
     snapshotHonmei: { raceCount: 0, placeHitCount: 0, placeRate: 0 },
     routineHonmei: { raceCount: 0, placeHitCount: 0, placeRate: 0, placeReturnRate: 0 },
@@ -1578,6 +1597,11 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
     }
   }
 
+  return { placeCore, valueBandMap, valueCore, wideStats, agreement, disagreement, missPatternCounts, honmeiValueComparableRaceCount, honmeiValueDivergenceCount, marketHeatCounts, expectationGradeCounts, bestHitCandidates, worstMissCandidates, disagreementCandidates, valueHitCandidates, raceMisses };
+}
+
+export function finishDiagnosticsState(state: ReturnType<typeof collectDiagnosticsState>, meta: ReturnType<typeof buildDiagnosticsMeta>): Omit<WeeklyDiagnostics, "segments"> {
+  const { placeCore, valueBandMap, valueCore, wideStats, agreement, disagreement, missPatternCounts, honmeiValueComparableRaceCount, honmeiValueDivergenceCount, marketHeatCounts, expectationGradeCounts, bestHitCandidates, worstMissCandidates, disagreementCandidates, valueHitCandidates, raceMisses } = state;
   placeCore.snapshotHonmei.placeRate = percentage(
     placeCore.snapshotHonmei.placeHitCount,
     placeCore.snapshotHonmei.raceCount
@@ -1705,21 +1729,7 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
   };
 
   const diagnosticsBase = {
-    meta: {
-      weekKey,
-      generatedAt: new Date().toISOString(),
-      aggregationScope: context.scope,
-      sourceStatusSummary: context.sourceStatusSummary,
-      scoringVersion: scoringVersions.length === 1 ? scoringVersions[0] : null,
-      modelVersion: modelVersions.length === 1 ? modelVersions[0] : null,
-      scoringConfigHash: scoringConfigHashes.length === 1 ? scoringConfigHashes[0] : null,
-      scoringVersions,
-      modelVersions,
-      scoringConfigHashes,
-      raceCount: context.races.length,
-      settledRaceCount: confirmedRaces.length,
-      dateRange,
-    },
+    meta: { ...meta, generatedAt: new Date().toISOString() },
     placeCore,
     valueCore,
     wideStats,
@@ -1735,6 +1745,9 @@ function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDia
     ...diagnosticsBase,
     recommendations: buildDiagnosticRecommendations(diagnosticsBase),
   };
+}
+function buildWeeklyDiagnosticsBase(context: DiagnosticsContext): Omit<WeeklyDiagnostics, "segments"> {
+  return finishDiagnosticsState(collectDiagnosticsState(context), buildDiagnosticsMeta(context));
 }
 
 function buildSegmentSummary(
@@ -1771,6 +1784,97 @@ export function buildWeeklyDiagnostics(context: DiagnosticsContext): WeeklyDiagn
     ...diagnostics,
     segments,
   };
+}
+
+type PreparedDiagnosticsGroup = {
+  state: ReturnType<typeof collectDiagnosticsState>;
+  meta: ReturnType<typeof buildDiagnosticsMeta>;
+  recommendationVersions: boolean;
+  versionsByRaceId: Record<string, { scoringVersion?: string; modelVersion?: string; scoringConfigHash?: string }>;
+};
+export type PreparedWeeklyDiagnostics = {
+  raceOrder: Record<string, number>;
+  groups: Record<string, PreparedDiagnosticsGroup>;
+};
+
+/** Build-only materialization. Runtime reads this small accumulator, never the raw history. */
+export function prepareWeeklyDiagnostics(context: DiagnosticsContext): PreparedWeeklyDiagnostics {
+  const groups: Record<string, PreparedDiagnosticsGroup> = {};
+  for (const key of ['all', ...RACE_DIAGNOSTIC_SEGMENTS]) {
+    const races = key === 'all' ? context.races : context.races.filter(race => matchesRaceDiagnosticSegment(race, key));
+    const selected = { ...context, races };
+    const confirmed = races.filter(hasConfirmedResult);
+    groups[key] = {
+      state: collectDiagnosticsState(selected),
+      meta: buildDiagnosticsMeta(selected),
+      recommendationVersions: confirmed.some(race => {
+        const settlement = context.settlementsByRaceId[String(race.raceId ?? '')];
+        return Boolean(settlement?.win?.scoringVersion || settlement?.value?.scoringVersion);
+      }),
+      versionsByRaceId: Object.fromEntries(confirmed.map(race => {
+        const id = String(race.raceId ?? '');
+        const snapshot = context.snapshotsByRaceId[id];
+        return [id, { scoringVersion: snapshot?.scoringVersion, modelVersion: snapshot?.modelVersion, scoringConfigHash: snapshot?.scoringConfigHash }];
+      })),
+    };
+  }
+  return { raceOrder: Object.fromEntries(context.races.map((race, index) => [String(race.raceId ?? ''), index])), groups };
+}
+
+// Only these arrays contain individual races; all other arrays are fixed numeric buckets.
+const RACE_STATE_ARRAYS = new Set(['bestHitCandidates', 'worstMissCandidates', 'disagreementCandidates', 'valueHitCandidates', 'raceMisses', 'pendingDetails']);
+function stateRaceId(value: unknown): string {
+  const entry = value as { raceId?: string; raceKey?: string; race?: { raceId?: string } };
+  return String(entry.raceId ?? entry.raceKey ?? entry.race?.raceId ?? '');
+}
+function applyStateDelta(target: unknown, before: unknown, after: unknown, raceId: string, order: Record<string, number>, key = ''): unknown {
+  if (typeof target === 'number') return target + Number(after ?? 0) - Number(before ?? 0);
+  if (Array.isArray(target)) {
+    if (RACE_STATE_ARRAYS.has(key)) {
+      return [...target.filter(entry => stateRaceId(entry) !== raceId), ...(after as unknown[])]
+        .sort((a, b) => order[stateRaceId(a)] - order[stateRaceId(b)]);
+    }
+    return target.map((entry, index) => applyStateDelta(entry, (before as unknown[])[index], (after as unknown[])[index], raceId, order));
+  }
+  if (target && typeof target === 'object') {
+    const object = target as Record<string, unknown>;
+    for (const name of Object.keys(object)) object[name] = applyStateDelta(object[name], (before as Record<string, unknown>)[name], (after as Record<string, unknown>)[name], raceId, order, name);
+  }
+  return target;
+}
+
+/** Replace one race's contribution, preserving original order for stable tie-breaking. */
+export function updatePreparedDiagnostics(prepared: PreparedWeeklyDiagnostics, oneRace: DiagnosticsContext, next: PredictionSnapshot) {
+  if (oneRace.races.length !== 1) throw new Error('Expected exactly one diagnostic race');
+  const race = oneRace.races[0];
+  const id = String(race.raceId ?? '');
+  if (!(id in prepared.raceOrder) || !hasConfirmedResult(race)) return;
+  const before = collectDiagnosticsState(oneRace);
+  const after = collectDiagnosticsState({ ...oneRace, snapshotsByRaceId: { [id]: next } });
+  for (const [key, group] of Object.entries(prepared.groups)) {
+    if (key !== 'all' && !matchesRaceDiagnosticSegment(race, key)) continue;
+    applyStateDelta(group.state, before, after, id, prepared.raceOrder);
+    group.versionsByRaceId[id] = { scoringVersion: next.scoringVersion, modelVersion: next.modelVersion, scoringConfigHash: next.scoringConfigHash };
+    for (const [field, plural] of [['scoringVersion', 'scoringVersions'], ['modelVersion', 'modelVersions'], ['scoringConfigHash', 'scoringConfigHashes']] as const) {
+      if (field === 'scoringVersion' && group.recommendationVersions) continue;
+      const values = [...new Set(Object.values(group.versionsByRaceId).map(value => value[field]).filter((value): value is string => Boolean(value)))].sort();
+      group.meta[plural] = values;
+      group.meta[field] = values.length === 1 ? values[0] : null;
+    }
+  }
+}
+
+/** Consumes a fresh parsed prepared object; finalization intentionally mutates its counters. */
+export function finishPreparedDiagnostics(prepared: PreparedWeeklyDiagnostics): WeeklyDiagnostics {
+  const diagnostics = finishDiagnosticsState(prepared.groups.all.state, prepared.groups.all.meta);
+  const segments = Object.fromEntries(RACE_DIAGNOSTIC_SEGMENTS.map(key => {
+    const group = prepared.groups[key];
+    const value = finishDiagnosticsState(group.state, group.meta);
+    return [key, { key, label: SEGMENT_LABELS[key], raceCount: group.meta.raceCount, settledRaceCount: group.meta.settledRaceCount,
+      placeCore: value.placeCore, valueCore: value.valueCore, wideStats: value.wideStats,
+      agreement: value.agreement, disagreement: value.disagreement, missDiagnostics: value.missDiagnostics }];
+  })) as Record<RaceDiagnosticsSegmentKey, WeeklyDiagnosticsSegmentSummary>;
+  return { ...diagnostics, segments };
 }
 
 export async function getWeeklyDiagnostics(scope: DiagnosticsAggregationScope = "all"): Promise<WeeklyDiagnostics> {

@@ -2,7 +2,7 @@ import { extractRaceId } from "@/lib/reviewRecords";
 import { runReviewPipeline, type ReviewPipelinePhase } from "@/lib/reviewPipeline";
 import { verifyCurrentWeekRaceIdentities } from "./race-identity-check.mjs";
 
-type DayLabel = "Sat" | "Sun";
+type DayLabel = "Sun" | "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat";
 
 function argValue(name: string): string | null {
   const matched = process.argv.find((arg) => arg.startsWith(`--${name}=`));
@@ -31,7 +31,7 @@ async function main() {
   if (phase === "snapshot" || phase === "all") {
     const identity = await verifyCurrentWeekRaceIdentities({
       now,
-      dayFilter: dayFilter === "Sat" || dayFilter === "Sun" ? dayFilter : null,
+      dayFilter: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].includes(dayFilter) ? dayFilter as DayLabel : null,
       raceIdFilter,
     });
     console.log(`[review-pipeline] race identity ${JSON.stringify(identity)}`);
@@ -43,7 +43,7 @@ async function main() {
   const result = await runReviewPipeline({
     phase,
     now,
-    dayFilter: dayFilter === "Sat" || dayFilter === "Sun" ? dayFilter : null,
+    dayFilter: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].includes(dayFilter) ? dayFilter as DayLabel : null,
     raceIdFilter: resolvedRaceIdFilter,
     includeArchives,
     refreshExisting,
