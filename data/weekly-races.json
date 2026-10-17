@@ -2204,7 +2204,7 @@
         "hasRace": true,
         "raceDate": "2026-10-18",
         "oddsSource": "official",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 14,
         "horses": [
           {
             "id": "1",
@@ -2677,7 +2677,7 @@
         "hasRace": true,
         "raceDate": "2026-10-18",
         "oddsSource": "official",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 18,
         "horses": [
           {
             "id": "1",
@@ -3278,7 +3278,7 @@
         "hasRace": true,
         "raceDate": "2026-10-18",
         "oddsSource": "official",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 10,
         "horses": [
           {
             "id": "1",
@@ -3623,7 +3623,7 @@
         "hasRace": true,
         "raceDate": "2026-10-18",
         "oddsSource": "official",
-        "expectedFieldSize": 17,
+        "expectedFieldSize": 10,
         "horses": [
           {
             "id": "1",
@@ -5796,7 +5796,7 @@
         "hasRace": true,
         "raceDate": "2026-10-18",
         "oddsSource": "official",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 9,
         "horses": [
           {
             "id": "1",
@@ -6109,7 +6109,7 @@
         "hasRace": true,
         "raceDate": "2026-10-18",
         "oddsSource": "official",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 13,
         "horses": [
           {
             "id": "1",
@@ -6550,7 +6550,7 @@
         "hasRace": true,
         "raceDate": "2026-10-18",
         "oddsSource": "official",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 16,
         "horses": [
           {
             "id": "1",
@@ -9229,7 +9229,7 @@
         "hasRace": true,
         "raceDate": "2026-10-18",
         "oddsSource": "official",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 8,
         "horses": [
           {
             "id": "1",
@@ -9510,7 +9510,7 @@
         "hasRace": true,
         "raceDate": "2026-10-18",
         "oddsSource": "official",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 10,
         "horses": [
           {
             "id": "1",
@@ -10424,7 +10424,7 @@
         "hasRace": true,
         "raceDate": "2026-10-18",
         "oddsSource": "official",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 12,
         "horses": [
           {
             "id": "1",
