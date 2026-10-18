@@ -259,7 +259,7 @@ function GradeBadge({ label, grade, title }: { label: string; grade: Expectation
 
 async function loadCategoryReturnStatsForPost(): Promise<CategoryReturnStatForPost[] | null> {
   try {
-    const response = await fetch("/api/performance", { cache: "no-store" });
+    const response = await fetch("/api/performance/summary", { cache: "no-store" });
     if (!response.ok) return null;
 
     const payload = (await response.json()) as PerformancePayload;
@@ -1015,8 +1015,8 @@ function SimulatorContent() {
             トップへ
           </Link>
           <span className="mx-2">|</span>
-          <Link href="/archive" className="transition hover:text-ink-2">
-            レース履歴
+          <Link href="/#performance" className="transition hover:text-ink-2">
+            成績を見る
           </Link>
           <span className="mx-2">|</span>
           Powered by Next.js

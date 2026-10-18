@@ -1,3 +1,4 @@
+import { raceDateFromWeek } from '../lib/raceCalendar.mjs';
 import fs from "node:fs/promises";
 import path from "node:path";
 import { getRaceTargetFlags } from "../lib/raceSegmentation.mjs";
@@ -19,15 +20,7 @@ function reviewKeyForRace(race) {
   return String(race?.raceId ?? race?.courseId ?? "");
 }
 
-function isoDateFromWeekAndDay(weekOf, day) {
-  const [year, month, date] = String(weekOf ?? "")
-    .split("-")
-    .map((value) => Number.parseInt(value, 10));
-  if (![year, month, date].every(Number.isFinite)) return "";
-  const offset = day === "Sat" ? 5 : day === "Sun" ? 6 : 0;
-  const base = new Date(Date.UTC(year, month - 1, date + offset));
-  return `${base.getUTCFullYear()}-${String(base.getUTCMonth() + 1).padStart(2, "0")}-${String(base.getUTCDate()).padStart(2, "0")}`;
-}
+function isoDateFromWeekAndDay(weekOf, day) { return raceDateFromWeek(weekOf,day) ?? ''; }
 
 function mapHorseSeed(h, race) {
   return {
