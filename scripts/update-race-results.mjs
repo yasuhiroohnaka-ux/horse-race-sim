@@ -7,7 +7,9 @@ const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
 const GENERATED_REVIEWS_PATH = path.join(ROOT, "data", "generated-reviews.json");
 
 const ARG_DAY = process.argv.find((arg) => arg.startsWith("--day="))?.split("=")[1] ?? "";
-const TARGET_DAY = ARG_DAY === "Sat" || ARG_DAY === "Sun" ? ARG_DAY : null;
+const TARGET_DAY = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].includes(ARG_DAY) ? ARG_DAY : null;
+const TARGET_DATE = process.argv.find(arg=>arg.startsWith('--date='))?.slice(7) ?? null;
+if(TARGET_DATE && !/^\d{4}-\d{2}-\d{2}$/.test(TARGET_DATE))throw new Error('Invalid --date');
 const INCLUDE_ARCHIVES = process.argv.includes("--include-archives");
 const SKIP_CURRENT_WEEK = process.argv.includes("--skip-current-week");
 const TARGET_ARCHIVE_WEEK = process.argv.find((arg) => arg.startsWith("--archive-week="))?.split("=")[1] ?? "";
@@ -385,7 +387,7 @@ async function updateRaceCollection(races, generatedReviews) {
   const nextRaces = [];
 
   for (const race of races) {
-    if (TARGET_DAY && race.day !== TARGET_DAY) {
+    if ((TARGET_DAY && race.day !== TARGET_DAY) || (TARGET_DATE && race.raceDate !== TARGET_DATE)) {
       nextRaces.push(race);
       continue;
     }

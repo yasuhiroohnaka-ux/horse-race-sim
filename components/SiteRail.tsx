@@ -4,7 +4,7 @@ import { TANPUKU_SCORING_VERSION } from "@/lib/tanpukuSelection.mjs";
 
 const NAV = [
   { href: "/sim", label: "レースを分析" },
-  { href: "/archive", label: "回顧" },
+  { href: "/#performance", label: "成績" },
   { href: "/monitor", label: "モデル監視" },
 ];
 

@@ -53,7 +53,7 @@ export function PerformancePanel() {
   const scope = data?.scope;
 
   return (
-    <section className="rounded-[var(--r-lg)] border border-line bg-card p-6 ">
+    <section id="performance" className="rounded-[var(--r-lg)] border border-line bg-card p-6 ">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
           <p className="t-label">TRACK RECORD</p>
