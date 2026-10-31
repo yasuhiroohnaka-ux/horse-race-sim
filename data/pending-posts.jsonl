@@ -528,3 +528,5 @@
 {"stage":"thu_12","text":"木曜12時点の調教データ更新を実行しました。(generatedAt=2026-10-29T09:00:03.463Z)","postedAt":"2026-10-29T09:00:03.469Z"}
 {"stage":"thu_15","text":"木曜時点の出馬表更新を記録しました。","postedAt":"2026-10-29T12:22:22.654Z"}
 {"stage":"fri_10","text":"金曜の出馬表更新を実行し、枠順と人気値を最新化しました。","postedAt":"2026-10-30T07:33:06.791Z"}
+{"stage":"sat_09_daily_verdict","text":"本日の判定一覧（2026-10-31・東京）\n東京9R オキザリス賞(1勝クラス) 事前判定未取得\n東京10R 国立特別(2勝クラス) 事前判定未取得\n東京11R ペルセウスＳ 事前判定未取得\n東京12R ３歳以上１勝クラス 事前判定未取得\n#競馬予想","postedAt":"2026-10-31T03:06:11.042Z","payload":{"postType":"daily_verdict_thread","date":"2026-10-31","threadId":"daily-verdict-2026-10-31","threadIndex":0,"threadLength":2,"replyToPrevious":false}}
+{"stage":"sat_09_daily_verdict","text":"本日の判定一覧（2026-10-31・京都）\n京都9R 北野特別(2勝クラス) 事前判定未取得\n京都10R ハロウィンＳ(3勝クラス) ◎システマソラー 見送り\n京都11R ファンタジーＳ 事前判定未取得\n京都12R ３歳以上１勝クラス ◎パスコード 見送り\n#競馬予想","postedAt":"2026-10-31T03:06:11.122Z","payload":{"postType":"daily_verdict_thread","date":"2026-10-31","threadId":"daily-verdict-2026-10-31","threadIndex":1,"threadLength":2,"replyToPrevious":true}}

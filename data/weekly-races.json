@@ -2238,7 +2238,8 @@
             "lastRaceDistance": 1400,
             "distanceChange": 200
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "tokyo-dirt-1300-202605041110",
@@ -2775,7 +2776,8 @@
             "lastRaceDistance": 1400,
             "distanceChange": -100
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "tokyo-turf-2000-202605041111",
@@ -6335,7 +6337,8 @@
             "lastRaceDistance": 2200,
             "distanceChange": 800
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-turf-1600-202608041111",
@@ -6776,7 +6779,8 @@
             "lastRaceDistance": 1600,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-turf-1400-202608041112",
