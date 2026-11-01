@@ -4,14 +4,14 @@
   "drawConfirmedAt": "2026-10-30T07:33:06.785Z",
   "performance": {
     "weekly": {
-      "weekOf": "2026-10-19",
-      "bets": 4,
-      "tanHits": 1,
-      "fukuHits": 2,
-      "tanStake": 400,
-      "tanPayout": 160,
-      "fukuStake": 400,
-      "fukuPayout": 240
+      "weekOf": "2026-10-26",
+      "bets": 0,
+      "tanHits": 0,
+      "fukuHits": 0,
+      "tanStake": 0,
+      "tanPayout": 0,
+      "fukuStake": 0,
+      "fukuPayout": 0
     },
     "total": {
       "bets": 30,
@@ -22,7 +22,7 @@
       "fukuStake": 3000,
       "fukuPayout": 1990
     },
-    "updatedAt": "2026-10-25T13:38:14.658Z"
+    "updatedAt": "2026-11-01T15:54:38.903Z"
   },
   "tanpukuRecommendations": [
     {
@@ -4385,7 +4385,7 @@
       "settledAt": "2026-05-10T08:51:46.274Z",
       "tanHit": true,
       "fukuHit": true,
-      "sourceStatus": "retrospective",
+      "sourceStatus": "unknown",
       "livePreRaceEligible": false,
       "lineageInvalidReason": "posted_at_or_after_race_start"
     },
@@ -4431,7 +4431,7 @@
       "settledAt": "2026-05-10T08:51:46.274Z",
       "tanHit": false,
       "fukuHit": false,
-      "sourceStatus": "retrospective",
+      "sourceStatus": "unknown",
       "livePreRaceEligible": false,
       "lineageInvalidReason": "posted_at_or_after_race_start"
     },
