@@ -1658,7 +1658,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "fukushima-turf-1200-202603030110",
@@ -2611,7 +2612,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "fukushima-turf-1200-202603030111",
@@ -3564,7 +3566,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "fukushima-dirt-1700-202603030112",
@@ -5342,7 +5345,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "fukushima-dirt-1700-202603030210",
@@ -6103,7 +6107,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "fukushima-turf-1200-202603030211",
@@ -7120,7 +7125,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "fukushima-turf-1200-202603030212",
@@ -7778,7 +7784,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "tokyo-turf-2000-202605050110",
@@ -7801,7 +7808,7 @@
         "hasRace": true,
         "raceDate": "2026-11-07",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 11,
         "horses": [
           {
             "id": "1",
@@ -8178,7 +8185,7 @@
         "hasRace": true,
         "raceDate": "2026-11-07",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 10,
         "horses": [
           {
             "id": "1",
@@ -8966,7 +8973,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "tokyo-dirt-1600-202605050210",
@@ -9375,7 +9383,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "tokyo-turf-2500-202605050211",
@@ -10104,7 +10113,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "tokyo-turf-1400-202605050212",
@@ -10602,7 +10612,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-dirt-1200-202608050110",
@@ -11107,7 +11118,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-dirt-1200-202608050111",
@@ -11932,7 +11944,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-turf-2000-202608050112",
@@ -12590,7 +12603,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-turf-1600-202608050210",
@@ -13031,7 +13045,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-dirt-1800-202608050211",
@@ -13664,7 +13679,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-turf-1400-202608050212",
