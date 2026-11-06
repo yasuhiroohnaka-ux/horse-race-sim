@@ -53,6 +53,16 @@ test("per-race post uses the saved morning decision and odds despite later race 
   assert.match(dailyPost, /保存本命 単勝勝負/);
 });
 
+test("betting honmei is found by role when honmeiHorseId is the simulation leader", () => {
+  // Real snapshots store the sim rank-1 horse in honmeiHorseId (e.g. 2026 天皇賞秋).
+  const simLeaderSnapshot = { ...snapshot, honmeiHorseId: "2" };
+  const reviewStore = { records: { [race.raceId]: { snapshot: simLeaderSnapshot } } };
+  const candidate = selectSnapshotWinCandidate([race], reviewStore, "tanpuku-win-v3.1");
+  assert.ok(candidate);
+  assert.equal(candidate.tanpuku.winPick.horse.id, "1");
+  assert.equal(candidate.tanpuku.winPick.horse.name, "保存本命");
+});
+
 test("missing or retrospective snapshot never falls back to a fresh verdict", () => {
   assert.equal(selectSnapshotWinCandidate([race], { records: {} }, "tanpuku-win-v3.1"), null);
   const retrospective = { ...snapshot, sourceStatus: "retrospective" };
