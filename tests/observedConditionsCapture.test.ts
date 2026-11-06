@@ -46,6 +46,8 @@ test("records ground from confirmed earlier results and past runs per horse", as
   assert.equal(observed.innerOuterToday, null);
   assert.equal(observed.horses?.length, 2);
   assert.equal(observed.horses?.[0]?.pastRuns?.length, 4);
+  assert.equal(observed.horses?.[0]?.profile?.intervalWeeks, 19);
+  assert.deepEqual(observed.horses?.[0]?.profile?.freshRecord, [3, 1, 0, 0]);
   assert.equal(observed.horses?.[1]?.horseNumber, 2);
   assert.ok(calls.some((url) => url.includes("shutuba_past")));
 });

@@ -18,6 +18,10 @@ test("shutuba_past cells expose ground, passing order and margin per run", () =>
     last3f: 35.2, bodyWeight: 514, timeDiff: 0.1,
   });
   assert.equal(croix.runs[2]!.timeDiff, -0.1);
+  assert.deepEqual(croix.profile, {
+    sex: "M", age: 4, runningStyleLabel: "先", intervalLabel: "中19週", intervalWeeks: 19,
+    layoffLabel: "4ヵ月半休養", freshRecord: [3, 1, 0, 0], secondRunRecord: [3, 0, 0, 1],
+  });
   // Only runs before the race are shown on the page for that race.
   assert.ok(croix.runs.every((run) => run!.date < "2026-11-01"));
 });

@@ -493,6 +493,17 @@ export interface PredictionSnapshot {
 export interface ObservedConditionsHorse {
   horseId: string;
   horseNumber: number | null;
+  /** 性別 (G = せん馬)・年齢・今回の間隔 (中N週)・直近の長期休養と休み明け成績 [1着.2着.3着.着外]. */
+  profile?: {
+    sex: "M" | "F" | "G" | null;
+    age: number | null;
+    runningStyleLabel: string | null;
+    intervalLabel: string | null;
+    intervalWeeks: number | null;
+    layoffLabel: string | null;
+    freshRecord: number[] | null;
+    secondRunRecord: number[] | null;
+  } | null;
   pastRuns: Record<string, unknown>[] | null;
   gateBiasFit: number | null;
   styleBiasFit: number | null;
