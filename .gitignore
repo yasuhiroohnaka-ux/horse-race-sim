@@ -52,3 +52,6 @@ next-env.d.ts
 .wrangler/
 .wrangler-config/
 /public/__data/
+
+# phase-G page cache
+/data/cache/

@@ -513,6 +513,19 @@ async function buildSnapshotBundle(params: { race: WeeklyRace; weekOf: string | 
     expectation,
     tanpukuPair,
   });
+  // Phase G (WP-G6): record today's ground / bias and past runs. Recording only; the
+  // simulation above already ran with the unchanged default condition.
+  if (process.env.REVIEW_CAPTURE_OBSERVED_CONDITIONS !== "0") {
+    const { captureObservedConditions } = await import("../lib/observedConditionsCapture.mjs");
+    snapshot.observedConditions = await captureObservedConditions({
+      raceId,
+      raceDate,
+      courseId: race.courseId,
+      capturedAt: snapshot.capturedAt,
+      scheduledStartTime: snapshot.scheduledStartTime ?? null,
+      rankedRows: snapshot.rankedRows,
+    }) as PredictionSnapshot["observedConditions"];
+  }
   const eligibleScoredRows = createTieBrokenScoredRows(
     scoredRows.filter((entry: Record<string, unknown>) => !isCancelledHorse((entry.horse ?? null) as Record<string, unknown> | null))
   );

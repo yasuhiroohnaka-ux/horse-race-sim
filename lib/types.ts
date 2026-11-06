@@ -486,6 +486,32 @@ export interface PredictionSnapshot {
   selectionLog?: PredictionSnapshotSelectionLog;
   signalReasons: Record<string, PredictionSnapshotSignalReason>;
   marketMeta: PredictionSnapshotMarketMeta;
+  /** Recorded only (phase G); not used by the simulation or selection. */
+  observedConditions?: ObservedConditions | null;
+}
+
+export interface ObservedConditionsHorse {
+  horseId: string;
+  horseNumber: number | null;
+  pastRuns: Record<string, unknown>[] | null;
+  gateBiasFit: number | null;
+  styleBiasFit: number | null;
+  wetFit: number | null;
+}
+
+export interface ObservedConditions {
+  version: string;
+  surface: "Turf" | "Dirt" | null;
+  error?: string;
+  groundToday?: GroundCondition | null;
+  groundSource?: "result" | "shutuba" | null;
+  announcedGround?: GroundCondition | null;
+  innerOuterToday?: number | null;
+  frontBackToday?: number | null;
+  n?: number;
+  biasRaceIds?: string[];
+  fetchedAt?: string;
+  horses?: ObservedConditionsHorse[];
 }
 
 export type ReviewProcessingStatus =

@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { buildRaceHashtag } from "../lib/xTagSanitize.mjs";
+import { parseResultPassing, parseResultRaceData } from "../lib/raceResultParser.mjs";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -272,6 +273,9 @@ function mergeRaceResult(race, resultHtml) {
   );
   const horseByName = new Map(horses.map((horse) => [normalizeName(horse.name), horse]));
 
+  const passingByHorseNumber = new Map(
+    parseResultPassing(resultHtml).map((entry) => [entry.horseNumber, entry.passing])
+  );
   const finishers = parsedFinishers.map((entry) => {
     const localHorse =
       horseByExternalId.get(String(entry.externalHorseId)) ??
@@ -280,6 +284,7 @@ function mergeRaceResult(race, resultHtml) {
 
     return {
       ...entry,
+      passing: passingByHorseNumber.get(entry.horseNumber) ?? null,
       horseId: localHorse?.id ? String(localHorse.id) : undefined,
     };
   });
@@ -306,6 +311,7 @@ function mergeRaceResult(race, resultHtml) {
     top3HorseNames: top3.map((entry) => entry.name),
     finishers,
     payouts,
+    groundCondition: parseResultRaceData(resultHtml).groundCondition,
   };
 
   const prevResultComparable = race.result ? { ...race.result, updatedAt: undefined } : null;

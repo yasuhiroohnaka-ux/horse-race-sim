@@ -1,0 +1,182 @@
+{
+  "generatedAt": "2026-11-06T13:04:50.728Z",
+  "method": "conditional logit; race-wise z-score; paired time-split test NLL; race bootstrap; Bonferroni family-wise CI",
+  "split": {
+    "date": null,
+    "mode": "primary_60_40",
+    "trainN": 219,
+    "testN": 147,
+    "testFrom": "2026-08-02"
+  },
+  "eligibility": {
+    "raceN": 366,
+    "excluded": {
+      "not_eligible_live_complete_review": 204,
+      "roster_count_missing_or_mismatch": 87
+    },
+    "archiveAudit": {
+      "archiveHorseRows": 4961,
+      "reviewUpdatedAfterSnapshot": 4961,
+      "archiveHorseUpdatedAtPresent": 0,
+      "oddsDifferences": 2448,
+      "gateDifferences": 0,
+      "runningStyleDifferences": 0
+    }
+  },
+  "fullMarket": {
+    "trainCoefficient": 1.1734959240541956,
+    "testNll": 2.1350269109873223,
+    "rawMarketTestNll": 2.141867327231746
+  },
+  "multipleTesting": {
+    "testedCount": 2,
+    "alpha": 0.05,
+    "correction": "Bonferroni"
+  },
+  "externalFeatures": "data\\analysis\\ground-bias-features.jsonl",
+  "features": [
+    {
+      "feature": "ground-bias.gateBiasFit (枠×当日内外)",
+      "status": "tested",
+      "trainN": 178,
+      "testN": 113,
+      "missingRaces": 75,
+      "constantRaces": 4,
+      "marketCoefficient": 1.1570016025728855,
+      "coefficient": -0.03349666904346015,
+      "modelMarketCoefficient": 1.1568658321039882,
+      "rawMarketNll": 2.202214255739667,
+      "marketNll": 2.2053190820301696,
+      "modelNll": 2.2075831669693895,
+      "deltaNll": 0.0022640849392183645,
+      "ci95": [
+        -0.003942981566233193,
+        0.008465204594972518
+      ],
+      "bonferroniCi": [
+        -0.004639743355269483,
+        0.009196265810747974
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "ground-bias.styleBiasFit (位置取り×当日前後)",
+      "status": "tested",
+      "trainN": 178,
+      "testN": 112,
+      "missingRaces": 76,
+      "constantRaces": 0,
+      "marketCoefficient": 1.1570016025728855,
+      "coefficient": 0.12923159278780386,
+      "modelMarketCoefficient": 1.1226879698344843,
+      "rawMarketNll": 2.2039736645769468,
+      "marketNll": 2.2072974696241197,
+      "modelNll": 2.197503176669478,
+      "deltaNll": -0.009794292954643943,
+      "ci95": [
+        -0.031634983749860554,
+        0.012327490814291178
+      ],
+      "bonferroniCi": [
+        -0.03461115165884365,
+        0.01479441508391305
+      ],
+      "passesGate": false
+    },
+    {
+      "feature": "ground-bias.wetFit (道悪実績×当日道悪)",
+      "status": "insufficient",
+      "trainN": 47,
+      "testN": 21,
+      "missingRaces": 298,
+      "constantRaces": 0
+    }
+  ],
+  "excludedArchiveFeatures": [
+    {
+      "feature": "archive.horses.speed",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.stamina",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.power",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.guts",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.trainingScore",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.recentFormScore",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.recentAverageFinish",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.recentTimeIndex",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.lastRaceGradeScore",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.distanceChange",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.favoriteCount",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.xBuzzScore",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.predictionCount",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.weight",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.runningStyle",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.gateNumber",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; using snapshot-only values where available"
+    },
+    {
+      "feature": "archive.horses.realOdds",
+      "status": "excluded_unverified_pre_race_value",
+      "reason": "archive horse entries lack per-field pre-race timestamp; final odds can overwrite this field"
+    }
+  ]
+}

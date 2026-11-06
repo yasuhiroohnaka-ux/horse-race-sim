@@ -1,5 +1,6 @@
 // 発走前市場オッズを基準に、保存 snapshot の特徴量だけで増分情報を時系列評価する。
-// Usage: node scripts/market-residual-eval.mjs [--split=YYYY-MM-DD] [--iterations=2000]
+// Usage: node scripts/market-residual-eval.mjs [--split=YYYY-MM-DD] [--iterations=2000] [--features=path.jsonl]
+// --features evaluates only the external phase-G features (ground-bias-v1) and writes a separate report.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -7,7 +8,9 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const REVIEW_PATH = path.join(ROOT, "data", "review-records.json");
 const ARCHIVE_PATH = path.join(ROOT, "data", "weekly-races.json");
-const OUT_BASE = path.join(ROOT, "data", "analysis", "market-residual-eval");
+const featuresArg = process.argv.find((arg) => arg.startsWith("--features="));
+const externalFeaturesPath = featuresArg ? path.resolve(ROOT, featuresArg.slice(11)) : null;
+const OUT_BASE = path.join(ROOT, "data", "analysis", externalFeaturesPath ? "market-residual-eval-ground-bias" : "market-residual-eval");
 const splitArg = process.argv.find((arg) => arg.startsWith("--split="));
 const splitDate = splitArg?.slice(8) ?? null;
 if (splitDate && !/^\d{4}-\d{2}-\d{2}$/.test(splitDate)) throw new Error("--split must be YYYY-MM-DD");
@@ -39,6 +42,36 @@ const SNAPSHOT_FEATURES = [
     value: (row) => Number(row.runningStyle === style),
   })),
 ];
+
+const WET_GROUNDS = new Set(["Good", "Yielding", "Soft"]);
+// Pre-registered missing-value rule (plan WP-G4): a race without the race-level value is dropped;
+// a horse without its own history counts as neutral 0; a race where more than half the field lacks
+// history is dropped.
+function externalFeature(key, label, raceHasValue) {
+  return {
+    key, label,
+    values(race) {
+      const ext = race.external;
+      if (!ext || !raceHasValue(ext.day)) return null;
+      const byHorse = new Map(ext.horses.map((horse) => [String(horse.horseId), horse]));
+      const values = race.rows.map((row) => byHorse.get(String(row.horseId))?.[key]);
+      const lacking = values.filter((value) => value === null || value === undefined).length;
+      if (lacking * 2 > values.length) return null;
+      return values.map((value) => (value === null || value === undefined ? 0 : value));
+    },
+  };
+}
+const EXTERNAL_FEATURES = [
+  externalFeature("gateBiasFit", "ground-bias.gateBiasFit (枠×当日内外)", (day) => day.innerOuterToday !== null),
+  externalFeature("styleBiasFit", "ground-bias.styleBiasFit (位置取り×当日前後)", (day) => day.frontBackToday !== null),
+  externalFeature("wetFit", "ground-bias.wetFit (道悪実績×当日道悪)", (day) => WET_GROUNDS.has(day.groundToday)),
+];
+function loadExternalFeatures() {
+  if (!externalFeaturesPath) return null;
+  const lines = fs.readFileSync(externalFeaturesPath, "utf8").split(/\r?\n/).filter(Boolean).map((line) => JSON.parse(line));
+  if (lines.some((line) => line.leakFree !== true)) throw new Error("external features contain a leak-check failure");
+  return new Map(lines.map((line) => [String(line.raceId), line]));
+}
 
 function loadArchiveMap() {
   const data = JSON.parse(fs.readFileSync(ARCHIVE_PATH, "utf8"));
@@ -113,7 +146,8 @@ function featureRaces(races, feature) {
   let constant = 0;
   const usable = [];
   for (const race of races) {
-    const rawValues = race.rows.map((row) => feature.value(row));
+    const rawValues = feature.values ? feature.values(race) : race.rows.map((row) => feature.value(row));
+    if (rawValues === null) { missing += 1; continue; }
     if (rawValues.some((value) => value === null || value === undefined || value === "" || !Number.isFinite(Number(value)))) { missing += 1; continue; }
     const values = rawValues.map(Number);
     const mean = values.reduce((a, b) => a + b, 0) / values.length;
@@ -203,11 +237,14 @@ function bootstrapDelta(deltas, iterations, seed, alpha) {
 }
 
 const { races, excluded, audit } = buildSamples();
+const externalMap = loadExternalFeatures();
+if (externalMap) for (const race of races) race.external = externalMap.get(race.raceId) ?? null;
+const CANDIDATES = externalMap ? EXTERNAL_FEATURES : SNAPSHOT_FEATURES;
 if (races.length < 30) throw new Error(`Too few eligible races: ${races.length}`);
 const splitIndex = splitDate ? races.findIndex((race) => race.date >= splitDate) : Math.floor(races.length * 0.6);
 if (splitIndex < 30 || races.length - splitIndex < 30) throw new Error("At least 30 races are required on each side of the time split");
 const trainIds = new Set(races.slice(0, splitIndex).map((race) => race.raceId));
-const featureSets = SNAPSHOT_FEATURES.map((feature) => ({ feature, ...featureRaces(races, feature) }));
+const featureSets = CANDIDATES.map((feature) => ({ feature, ...featureRaces(races, feature) }));
 const hasEnoughData = (train, test) => train.length >= 30 && test.length >= 30 && train.some((race) => race.hasVariation) && test.some((race) => race.hasVariation);
 const testedCount = featureSets.filter((set) => hasEnoughData(
   set.races.filter((race) => trainIds.has(race.raceId)),
@@ -253,6 +290,7 @@ const output = {
   eligibility: { raceN: races.length, excluded, archiveAudit: audit },
   fullMarket: { trainCoefficient: fullMarket.a, testNll: meanNll(fullTest, fullMarket.a, 0), rawMarketTestNll: meanNll(fullTest, 1, 0) },
   multipleTesting: { testedCount, alpha: 0.05, correction: "Bonferroni" },
+  externalFeatures: externalFeaturesPath ? path.relative(ROOT, externalFeaturesPath) : null,
   features: results,
   excludedArchiveFeatures: archiveAudit,
 };
