@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T13:04:50.728Z",
+  "generatedAt": "2026-11-06T13:14:08.412Z",
   "method": "conditional logit; race-wise z-score; paired time-split test NLL; race bootstrap; Bonferroni family-wise CI",
   "split": {
     "date": null,
@@ -67,19 +67,19 @@
       "missingRaces": 76,
       "constantRaces": 0,
       "marketCoefficient": 1.1570016025728855,
-      "coefficient": 0.12923159278780386,
-      "modelMarketCoefficient": 1.1226879698344843,
+      "coefficient": 0.12169744141321424,
+      "modelMarketCoefficient": 1.1236593896804699,
       "rawMarketNll": 2.2039736645769468,
       "marketNll": 2.2072974696241197,
-      "modelNll": 2.197503176669478,
-      "deltaNll": -0.009794292954643943,
+      "modelNll": 2.1978438543427097,
+      "deltaNll": -0.009453615281412456,
       "ci95": [
-        -0.031634983749860554,
-        0.012327490814291178
+        -0.03010811303171456,
+        0.011303320706134507
       ],
       "bonferroniCi": [
-        -0.03461115165884365,
-        0.01479441508391305
+        -0.032821936715375075,
+        0.013877675313020314
       ],
       "passesGate": false
     },

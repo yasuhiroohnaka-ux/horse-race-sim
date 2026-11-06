@@ -11,6 +11,7 @@ import {
 } from "../lib/runningStyleOverrides.mjs";
 import { filterRaceDayNoOddsHorses } from "../lib/raceDayExclusions.mjs";
 import { mergeRefreshedRaces } from "./weekly-race-merge.mjs";
+import { parseCarriedWeight } from "../lib/shutubaWeight.mjs";
 
 const ROOT = process.cwd();
 const WEEKLY_RACES_PATH = path.join(ROOT, "data", "weekly-races.json");
@@ -315,7 +316,7 @@ function parseHorseSeedEntries(shutubaHtml) {
     );
     const sexLabel = row.match(/(牡|牝|セ)\s*\d/i)?.[1] ?? "牡";
     const sex = sexLabel === "牝" ? "F" : "M";
-    const weight = Number.parseFloat(row.match(/class="Weight"[^>]*>\s*([0-9]{2}(?:\.[0-9])?)\s*<\/td>/i)?.[1] ?? "0");
+    const weight = parseCarriedWeight(row);
     const odds = parseOdds(
       row.match(/id="odds-[^"]+"[^>]*>\s*([^<]+)\s*<\/span>/i)?.[1] ??
       row.match(/class="Txt_R Popular"[^>]*>\s*([^<]+)\s*</i)?.[1] ??

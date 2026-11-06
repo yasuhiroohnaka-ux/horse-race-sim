@@ -29,6 +29,17 @@ test("overseas runs without passing order keep missing values as null", () => {
   for (const run of overseas) assert.equal(run!.last3f, null);
 });
 
+test("horse names with an icon span (マル外) are read from Horse02, not from a rival in a past cell", () => {
+  const row = '<table><tr class="HorseList"><td class="Waku">6</td><td class="Horse_Info"><div class="Horse02">' +
+    '<a href="https://db.netkeiba.com/horse/2024110012"><span class="Icon_HorseMark Icon_MaruGai"></span>インパルスドライブ</a>' +
+    '</div></td><td class="Past"><div class="Data01"><span>2026.09.20 阪神</span><span class="Num">1</span></div>' +
+    '<div class="Data07"><a href="https://db.netkeiba.com/horse/2024108337">ジャスパーレーブ</a>(-0.1)</div></td></tr></table>';
+  const [entry] = parseShutubaPastRuns(row);
+  assert.equal(entry!.horseName, "インパルスドライブ");
+  assert.equal(entry!.externalHorseId, "2024110012");
+  assert.equal(entry!.runs[0]!.timeDiff, -0.1);
+});
+
 test("ground labels map 稍重 and 不良 correctly", () => {
   assert.equal(mapGroundLabel("稍"), "Good");
   assert.equal(mapGroundLabel("稍重"), "Good");
