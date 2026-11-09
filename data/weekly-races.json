@@ -1,7 +1,7 @@
 {
   "currentWeek": {
     "weekOf": "2026-11-09",
-    "updatedAt": "2026-11-09T01:19:27.424Z",
+    "updatedAt": "2026-11-09T07:44:56.871Z",
     "races": [
       {
         "courseId": "fukushima-turf-1800-202603030309",
@@ -24,7 +24,7 @@
         "hasRace": true,
         "raceDate": "2026-11-14",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 52,
         "horses": [
           {
             "id": "1",
@@ -1713,7 +1713,7 @@
         "hasRace": true,
         "raceDate": "2026-11-14",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 25,
         "horses": [
           {
             "id": "1",
@@ -2538,7 +2538,7 @@
         "hasRace": true,
         "raceDate": "2026-11-14",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 22,
         "horses": [
           {
             "id": "1",
@@ -3267,7 +3267,7 @@
         "hasRace": true,
         "raceDate": "2026-11-15",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 13,
         "horses": [
           {
             "id": "1",
@@ -3708,7 +3708,7 @@
         "hasRace": true,
         "raceDate": "2026-11-15",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 25,
         "horses": [
           {
             "id": "1",
@@ -3722,7 +3722,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 1,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -3754,7 +3754,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 2,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -3786,7 +3786,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 3,
             "sex": "F",
-            "weight": 55,
+            "weight": 52,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -3850,7 +3850,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 5,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -3882,7 +3882,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 6,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -3914,7 +3914,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 7,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -3946,7 +3946,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 8,
             "sex": "M",
-            "weight": 57,
+            "weight": 53,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -3978,7 +3978,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 9,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4010,7 +4010,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 10,
             "sex": "F",
-            "weight": 55,
+            "weight": 53,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4042,7 +4042,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 11,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4074,7 +4074,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 12,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4106,7 +4106,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 13,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4138,7 +4138,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 14,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4170,7 +4170,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 15,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4202,7 +4202,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 16,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4234,7 +4234,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 17,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4266,7 +4266,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 18,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4298,7 +4298,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 19,
             "sex": "M",
-            "weight": 57,
+            "weight": 53,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4330,7 +4330,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 20,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4362,7 +4362,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 21,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4394,7 +4394,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 22,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4426,7 +4426,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 23,
             "sex": "F",
-            "weight": 55,
+            "weight": 51,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4458,7 +4458,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 24,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4490,7 +4490,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 25,
             "sex": "F",
-            "weight": 55,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -4533,7 +4533,7 @@
         "hasRace": true,
         "raceDate": "2026-11-15",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 17,
         "horses": [
           {
             "id": "1",
@@ -4550,8 +4550,8 @@
             "weight": 57,
             "favoriteCount": 3,
             "xBuzzScore": 0,
-            "predictionCount": 28,
-            "realOdds": 50,
+            "predictionCount": 26,
+            "realOdds": 54.9,
             "oddsSource": "forecast",
             "speed": 67,
             "stamina": 72,
@@ -4582,8 +4582,8 @@
             "weight": 55,
             "favoriteCount": 3,
             "xBuzzScore": 0,
-            "predictionCount": 33,
-            "realOdds": 41.5,
+            "predictionCount": 28,
+            "realOdds": 50.4,
             "oddsSource": "forecast",
             "speed": 69,
             "stamina": 75,
@@ -4614,8 +4614,8 @@
             "weight": 57,
             "favoriteCount": 14,
             "xBuzzScore": 0,
-            "predictionCount": 65,
-            "realOdds": 10.6,
+            "predictionCount": 61,
+            "realOdds": 12.5,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 70,
@@ -4644,10 +4644,10 @@
             "gateNumber": 4,
             "sex": "M",
             "weight": 58,
-            "favoriteCount": 18,
+            "favoriteCount": 27,
             "xBuzzScore": 0,
-            "predictionCount": 72,
-            "realOdds": 7.9,
+            "predictionCount": 75,
+            "realOdds": 6.8,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 74,
@@ -4678,8 +4678,8 @@
             "weight": 58,
             "favoriteCount": 8,
             "xBuzzScore": 0,
-            "predictionCount": 50,
-            "realOdds": 19.4,
+            "predictionCount": 46,
+            "realOdds": 23.7,
             "oddsSource": "forecast",
             "speed": 69,
             "stamina": 75,
@@ -4710,8 +4710,8 @@
             "weight": 57,
             "favoriteCount": 6,
             "xBuzzScore": 0,
-            "predictionCount": 45,
-            "realOdds": 24.1,
+            "predictionCount": 41,
+            "realOdds": 29.5,
             "oddsSource": "forecast",
             "speed": 67,
             "stamina": 75,
@@ -4740,10 +4740,10 @@
             "gateNumber": 7,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 37,
+            "favoriteCount": 50,
             "xBuzzScore": 0,
-            "predictionCount": 88,
-            "realOdds": 3.9,
+            "predictionCount": 91,
+            "realOdds": 3.5,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 68,
@@ -4774,8 +4774,8 @@
             "weight": 57,
             "favoriteCount": 3,
             "xBuzzScore": 0,
-            "predictionCount": 26,
-            "realOdds": 55.7,
+            "predictionCount": 21,
+            "realOdds": 67.1,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 74,
@@ -4806,8 +4806,8 @@
             "weight": 57,
             "favoriteCount": 4,
             "xBuzzScore": 0,
-            "predictionCount": 37,
-            "realOdds": 34.2,
+            "predictionCount": 33,
+            "realOdds": 41.7,
             "oddsSource": "forecast",
             "speed": 72,
             "stamina": 72,
@@ -4836,10 +4836,10 @@
             "gateNumber": 10,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 18,
+            "favoriteCount": 22,
             "xBuzzScore": 0,
             "predictionCount": 71,
-            "realOdds": 8,
+            "realOdds": 8.2,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 72,
@@ -4868,10 +4868,10 @@
             "gateNumber": 11,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 9,
+            "favoriteCount": 12,
             "xBuzzScore": 0,
             "predictionCount": 54,
-            "realOdds": 17,
+            "realOdds": 16.6,
             "oddsSource": "forecast",
             "speed": 69,
             "stamina": 71,
@@ -4900,10 +4900,10 @@
             "gateNumber": 12,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 56,
+            "favoriteCount": 72,
             "xBuzzScore": 0,
-            "predictionCount": 93,
-            "realOdds": 3.2,
+            "predictionCount": 94,
+            "realOdds": 3,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 72,
@@ -4935,7 +4935,7 @@
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 213.3,
+            "realOdds": 239.1,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 70,
@@ -4964,10 +4964,10 @@
             "gateNumber": 14,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 7,
+            "favoriteCount": 8,
             "xBuzzScore": 0,
-            "predictionCount": 49,
-            "realOdds": 20.6,
+            "predictionCount": 48,
+            "realOdds": 21.2,
             "oddsSource": "forecast",
             "speed": 67,
             "stamina": 74,
@@ -4998,8 +4998,8 @@
             "weight": 57,
             "favoriteCount": 3,
             "xBuzzScore": 0,
-            "predictionCount": 31,
-            "realOdds": 45.3,
+            "predictionCount": 28,
+            "realOdds": 50.4,
             "oddsSource": "forecast",
             "speed": 74,
             "stamina": 68,
@@ -5028,10 +5028,10 @@
             "gateNumber": 16,
             "sex": "M",
             "weight": 58,
-            "favoriteCount": 6,
+            "favoriteCount": 7,
             "xBuzzScore": 0,
-            "predictionCount": 45,
-            "realOdds": 24.1,
+            "predictionCount": 44,
+            "realOdds": 25.2,
             "oddsSource": "forecast",
             "speed": 68,
             "stamina": 75,
@@ -5060,10 +5060,10 @@
             "gateNumber": 17,
             "sex": "M",
             "weight": 58,
-            "favoriteCount": 14,
+            "favoriteCount": 15,
             "xBuzzScore": 0,
-            "predictionCount": 62,
-            "realOdds": 11.9,
+            "predictionCount": 58,
+            "realOdds": 13.8,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 71,
@@ -5102,7 +5102,7 @@
         "hasRace": true,
         "raceDate": "2026-11-14",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 22,
         "horses": [
           {
             "id": "1",
@@ -5831,7 +5831,7 @@
         "hasRace": true,
         "raceDate": "2026-11-14",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 24,
         "horses": [
           {
             "id": "1",
@@ -6624,7 +6624,7 @@
         "hasRace": true,
         "raceDate": "2026-11-14",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 20,
         "horses": [
           {
             "id": "1",
@@ -6639,10 +6639,10 @@
             "gateNumber": 1,
             "sex": "F",
             "weight": 55,
-            "favoriteCount": 2,
+            "favoriteCount": 4,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 131.8,
+            "realOdds": 98.9,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 75,
@@ -6671,10 +6671,10 @@
             "gateNumber": 2,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 58,
+            "favoriteCount": 68,
             "xBuzzScore": 0,
             "predictionCount": 75,
-            "realOdds": 6.9,
+            "realOdds": 6.8,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 72,
@@ -6703,10 +6703,10 @@
             "gateNumber": 3,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 26,
+            "favoriteCount": 30,
             "xBuzzScore": 0,
-            "predictionCount": 57,
-            "realOdds": 14.8,
+            "predictionCount": 56,
+            "realOdds": 15.1,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 69,
@@ -6737,8 +6737,8 @@
             "weight": 57,
             "favoriteCount": 6,
             "xBuzzScore": 0,
-            "predictionCount": 19,
-            "realOdds": 73.2,
+            "predictionCount": 18,
+            "realOdds": 78.6,
             "oddsSource": "forecast",
             "speed": 72,
             "stamina": 66,
@@ -6770,7 +6770,7 @@
             "favoriteCount": 3,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 105.5,
+            "realOdds": 118.1,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 74,
@@ -6799,10 +6799,10 @@
             "gateNumber": 6,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 32,
+            "favoriteCount": 37,
             "xBuzzScore": 0,
             "predictionCount": 62,
-            "realOdds": 11.9,
+            "realOdds": 11.7,
             "oddsSource": "forecast",
             "speed": 73,
             "stamina": 68,
@@ -6831,10 +6831,10 @@
             "gateNumber": 7,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 49,
+            "favoriteCount": 52,
             "xBuzzScore": 0,
-            "predictionCount": 70,
-            "realOdds": 8.4,
+            "predictionCount": 69,
+            "realOdds": 8.9,
             "oddsSource": "forecast",
             "speed": 72,
             "stamina": 66,
@@ -6866,7 +6866,7 @@
             "favoriteCount": 1,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 175.8,
+            "realOdds": 192.5,
             "oddsSource": "forecast",
             "speed": 73,
             "stamina": 71,
@@ -6895,10 +6895,10 @@
             "gateNumber": 9,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 20,
+            "favoriteCount": 26,
             "xBuzzScore": 0,
-            "predictionCount": 53,
-            "realOdds": 17.3,
+            "predictionCount": 54,
+            "realOdds": 16.5,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 70,
@@ -6929,8 +6929,8 @@
             "weight": 57,
             "favoriteCount": 7,
             "xBuzzScore": 0,
-            "predictionCount": 26,
-            "realOdds": 56.1,
+            "predictionCount": 24,
+            "realOdds": 61.2,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 75,
@@ -6959,7 +6959,7 @@
             "gateNumber": 11,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 223,
+            "favoriteCount": 260,
             "xBuzzScore": 0,
             "predictionCount": 103,
             "realOdds": 2.1,
@@ -6991,10 +6991,10 @@
             "gateNumber": 12,
             "sex": "M",
             "weight": 56,
-            "favoriteCount": 57,
+            "favoriteCount": 61,
             "xBuzzScore": 0,
-            "predictionCount": 80,
-            "realOdds": 5.5,
+            "predictionCount": 79,
+            "realOdds": 5.7,
             "oddsSource": "forecast",
             "speed": 75,
             "stamina": 67,
@@ -7026,7 +7026,7 @@
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 329.8,
+            "realOdds": 281.1,
             "oddsSource": "forecast",
             "speed": 69,
             "stamina": 75,
@@ -7055,10 +7055,10 @@
             "gateNumber": 14,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 12,
+            "favoriteCount": 14,
             "xBuzzScore": 0,
-            "predictionCount": 35,
-            "realOdds": 37.7,
+            "predictionCount": 36,
+            "realOdds": 36,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 73,
@@ -7087,10 +7087,10 @@
             "gateNumber": 15,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 29,
+            "favoriteCount": 35,
             "xBuzzScore": 0,
             "predictionCount": 60,
-            "realOdds": 13,
+            "realOdds": 12.9,
             "oddsSource": "forecast",
             "speed": 68,
             "stamina": 71,
@@ -7119,10 +7119,10 @@
             "gateNumber": 16,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 5,
+            "favoriteCount": 8,
             "xBuzzScore": 0,
-            "predictionCount": 17,
-            "realOdds": 79.9,
+            "predictionCount": 25,
+            "realOdds": 57.8,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 72,
@@ -7151,10 +7151,10 @@
             "gateNumber": 17,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 5,
+            "favoriteCount": 6,
             "xBuzzScore": 0,
             "predictionCount": 27,
-            "realOdds": 53.8,
+            "realOdds": 53.7,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 73,
@@ -7186,7 +7186,7 @@
             "favoriteCount": 1,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 239.8,
+            "realOdds": 257.4,
             "oddsSource": "forecast",
             "speed": 74,
             "stamina": 66,
@@ -7215,10 +7215,10 @@
             "gateNumber": 19,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 9,
+            "favoriteCount": 13,
             "xBuzzScore": 0,
-            "predictionCount": 32,
-            "realOdds": 41.8,
+            "predictionCount": 36,
+            "realOdds": 36.4,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 75,
@@ -7250,7 +7250,7 @@
             "favoriteCount": 4,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 101.4,
+            "realOdds": 113.7,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 68,
@@ -7289,7 +7289,7 @@
         "hasRace": true,
         "raceDate": "2026-11-15",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 20,
         "horses": [
           {
             "id": "1",
@@ -7303,7 +7303,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 1,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7335,7 +7335,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 2,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7367,7 +7367,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 3,
             "sex": "M",
-            "weight": 57,
+            "weight": 52,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7399,7 +7399,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 4,
             "sex": "F",
-            "weight": 55,
+            "weight": 52,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7431,7 +7431,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 5,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7463,7 +7463,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 6,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7495,7 +7495,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 7,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7527,7 +7527,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 8,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7559,7 +7559,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 9,
             "sex": "M",
-            "weight": 57,
+            "weight": 52,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7591,7 +7591,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 10,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7623,7 +7623,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 11,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7655,7 +7655,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 12,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7687,7 +7687,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 13,
             "sex": "F",
-            "weight": 55,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7719,7 +7719,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 14,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7751,7 +7751,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 15,
             "sex": "F",
-            "weight": 55,
+            "weight": 52,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7783,7 +7783,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 16,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7815,7 +7815,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 17,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7847,7 +7847,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 18,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7879,7 +7879,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 19,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7911,7 +7911,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 20,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -7954,7 +7954,7 @@
         "hasRace": true,
         "raceDate": "2026-11-15",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 13,
         "horses": [
           {
             "id": "1",
@@ -8395,7 +8395,7 @@
         "hasRace": true,
         "raceDate": "2026-11-15",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 26,
         "horses": [
           {
             "id": "1",
@@ -8409,11 +8409,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 1,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 6,
             "xBuzzScore": 0,
-            "predictionCount": 38,
-            "realOdds": 32.5,
+            "predictionCount": 34,
+            "realOdds": 38.9,
             "oddsSource": "forecast",
             "speed": 68,
             "stamina": 72,
@@ -8441,11 +8441,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 2,
             "sex": "F",
-            "weight": 55,
+            "weight": 53,
             "favoriteCount": 6,
             "xBuzzScore": 0,
-            "predictionCount": 43,
-            "realOdds": 26.5,
+            "predictionCount": 39,
+            "realOdds": 31.7,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 73,
@@ -8473,11 +8473,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 3,
             "sex": "M",
-            "weight": 57,
-            "favoriteCount": 8,
+            "weight": 56,
+            "favoriteCount": 9,
             "xBuzzScore": 0,
-            "predictionCount": 48,
-            "realOdds": 21.5,
+            "predictionCount": 47,
+            "realOdds": 22.8,
             "oddsSource": "forecast",
             "speed": 73,
             "stamina": 66,
@@ -8505,11 +8505,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 4,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 5,
             "xBuzzScore": 0,
-            "predictionCount": 36,
-            "realOdds": 35.6,
+            "predictionCount": 33,
+            "realOdds": 40,
             "oddsSource": "forecast",
             "speed": 74,
             "stamina": 72,
@@ -8538,10 +8538,10 @@
             "gateNumber": 5,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 97,
+            "favoriteCount": 123,
             "xBuzzScore": 0,
-            "predictionCount": 102,
-            "realOdds": 2.2,
+            "predictionCount": 103,
+            "realOdds": 2.1,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 71,
@@ -8569,11 +8569,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 6,
             "sex": "M",
-            "weight": 57,
-            "favoriteCount": 5,
+            "weight": 56,
+            "favoriteCount": 6,
             "xBuzzScore": 0,
-            "predictionCount": 36,
-            "realOdds": 35.6,
+            "predictionCount": 35,
+            "realOdds": 36.8,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 69,
@@ -8601,11 +8601,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 7,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 3,
             "xBuzzScore": 0,
-            "predictionCount": 29,
-            "realOdds": 47.5,
+            "predictionCount": 27,
+            "realOdds": 52.1,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 68,
@@ -8633,11 +8633,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 8,
             "sex": "F",
-            "weight": 55,
+            "weight": 53,
             "favoriteCount": 7,
             "xBuzzScore": 0,
-            "predictionCount": 47,
-            "realOdds": 22.8,
+            "predictionCount": 43,
+            "realOdds": 26.2,
             "oddsSource": "forecast",
             "speed": 69,
             "stamina": 73,
@@ -8665,11 +8665,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 9,
             "sex": "M",
-            "weight": 57,
-            "favoriteCount": 12,
+            "weight": 56.5,
+            "favoriteCount": 14,
             "xBuzzScore": 0,
-            "predictionCount": 70,
-            "realOdds": 8.5,
+            "predictionCount": 68,
+            "realOdds": 9,
             "oddsSource": "forecast",
             "speed": 73,
             "stamina": 70,
@@ -8698,10 +8698,10 @@
             "gateNumber": 10,
             "sex": "F",
             "weight": 55,
-            "favoriteCount": 13,
+            "favoriteCount": 14,
             "xBuzzScore": 0,
-            "predictionCount": 58,
-            "realOdds": 13.9,
+            "predictionCount": 56,
+            "realOdds": 15,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 68,
@@ -8729,11 +8729,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 11,
             "sex": "M",
-            "weight": 57,
-            "favoriteCount": 2,
+            "weight": 55,
+            "favoriteCount": 3,
             "xBuzzScore": 0,
-            "predictionCount": 24,
-            "realOdds": 60.1,
+            "predictionCount": 25,
+            "realOdds": 56.4,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 75,
@@ -8764,8 +8764,8 @@
             "weight": 57,
             "favoriteCount": 3,
             "xBuzzScore": 0,
-            "predictionCount": 38,
-            "realOdds": 33.5,
+            "predictionCount": 35,
+            "realOdds": 37.8,
             "oddsSource": "forecast",
             "speed": 73,
             "stamina": 70,
@@ -8793,11 +8793,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 13,
             "sex": "M",
-            "weight": 57,
-            "favoriteCount": 13,
+            "weight": 58,
+            "favoriteCount": 16,
             "xBuzzScore": 0,
-            "predictionCount": 58,
-            "realOdds": 13.9,
+            "predictionCount": 59,
+            "realOdds": 13.6,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 69,
@@ -8825,11 +8825,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 14,
             "sex": "F",
-            "weight": 55,
-            "favoriteCount": 10,
+            "weight": 54,
+            "favoriteCount": 11,
             "xBuzzScore": 0,
-            "predictionCount": 52,
-            "realOdds": 18,
+            "predictionCount": 50,
+            "realOdds": 20.1,
             "oddsSource": "forecast",
             "speed": 67,
             "stamina": 74,
@@ -8857,11 +8857,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 15,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 394.1,
+            "realOdds": 409.1,
             "oddsSource": "forecast",
             "speed": 66,
             "stamina": 73,
@@ -8889,11 +8889,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 16,
             "sex": "M",
-            "weight": 57,
-            "favoriteCount": 17,
+            "weight": 58,
+            "favoriteCount": 28,
             "xBuzzScore": 0,
-            "predictionCount": 69,
-            "realOdds": 8.7,
+            "predictionCount": 76,
+            "realOdds": 6.6,
             "oddsSource": "forecast",
             "speed": 67,
             "stamina": 74,
@@ -8921,11 +8921,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 17,
             "sex": "F",
-            "weight": 55,
+            "weight": 54,
             "favoriteCount": 1,
             "xBuzzScore": 0,
             "predictionCount": 13,
-            "realOdds": 95.5,
+            "realOdds": 95.7,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 71,
@@ -8953,11 +8953,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 18,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 3,
             "xBuzzScore": 0,
-            "predictionCount": 23,
-            "realOdds": 63.5,
+            "predictionCount": 19,
+            "realOdds": 74.9,
             "oddsSource": "forecast",
             "speed": 72,
             "stamina": 68,
@@ -8985,11 +8985,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 19,
             "sex": "M",
-            "weight": 57,
-            "favoriteCount": 1,
+            "weight": 56,
+            "favoriteCount": 2,
             "xBuzzScore": 0,
-            "predictionCount": 12,
-            "realOdds": 114.9,
+            "predictionCount": 15,
+            "realOdds": 89.5,
             "oddsSource": "forecast",
             "speed": 67,
             "stamina": 75,
@@ -9017,11 +9017,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 20,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 6,
             "xBuzzScore": 0,
-            "predictionCount": 41,
-            "realOdds": 29.2,
+            "predictionCount": 38,
+            "realOdds": 33.2,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 71,
@@ -9049,11 +9049,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 21,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 5,
             "xBuzzScore": 0,
-            "predictionCount": 39,
-            "realOdds": 31.6,
+            "predictionCount": 35,
+            "realOdds": 37.8,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 73,
@@ -9081,11 +9081,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 22,
             "sex": "M",
-            "weight": 57,
+            "weight": 57.5,
             "favoriteCount": 4,
             "xBuzzScore": 0,
-            "predictionCount": 35,
-            "realOdds": 36.8,
+            "predictionCount": 31,
+            "realOdds": 43.8,
             "oddsSource": "forecast",
             "speed": 73,
             "stamina": 69,
@@ -9113,11 +9113,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 23,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 394.1,
+            "realOdds": 409.1,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 68,
@@ -9145,11 +9145,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 24,
             "sex": "F",
-            "weight": 55,
+            "weight": 52,
             "favoriteCount": 1,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 144,
+            "realOdds": 164.4,
             "oddsSource": "forecast",
             "speed": 72,
             "stamina": 66,
@@ -9177,11 +9177,11 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 25,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 9,
             "xBuzzScore": 0,
-            "predictionCount": 52,
-            "realOdds": 18.3,
+            "predictionCount": 50,
+            "realOdds": 20.1,
             "oddsSource": "forecast",
             "speed": 66,
             "stamina": 75,
@@ -9213,7 +9213,7 @@
             "favoriteCount": 1,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 144,
+            "realOdds": 164.4,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 76,
@@ -9252,7 +9252,7 @@
         "hasRace": true,
         "raceDate": "2026-11-14",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 12,
         "horses": [
           {
             "id": "1",
@@ -9266,7 +9266,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 1,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -9298,7 +9298,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 2,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -9330,7 +9330,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 3,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -9394,7 +9394,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 5,
             "sex": "F",
-            "weight": 55,
+            "weight": 53,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -9458,7 +9458,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 7,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -9490,7 +9490,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 8,
             "sex": "F",
-            "weight": 55,
+            "weight": 53,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -9522,7 +9522,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 9,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -9554,7 +9554,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 10,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -9586,7 +9586,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 11,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -9618,7 +9618,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 12,
             "sex": "F",
-            "weight": 55,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -9661,7 +9661,7 @@
         "hasRace": true,
         "raceDate": "2026-11-14",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 15,
         "horses": [
           {
             "id": "1",
@@ -9676,10 +9676,10 @@
             "gateNumber": 1,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 7,
+            "favoriteCount": 9,
             "xBuzzScore": 0,
-            "predictionCount": 43,
-            "realOdds": 26.9,
+            "predictionCount": 44,
+            "realOdds": 26.1,
             "oddsSource": "forecast",
             "speed": 68,
             "stamina": 72,
@@ -9710,8 +9710,8 @@
             "weight": 55,
             "favoriteCount": 2,
             "xBuzzScore": 0,
-            "predictionCount": 19,
-            "realOdds": 75.6,
+            "predictionCount": 15,
+            "realOdds": 89,
             "oddsSource": "forecast",
             "speed": 75,
             "stamina": 66,
@@ -9740,10 +9740,10 @@
             "gateNumber": 3,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 34,
+            "favoriteCount": 39,
             "xBuzzScore": 0,
-            "predictionCount": 78,
-            "realOdds": 6,
+            "predictionCount": 77,
+            "realOdds": 6.2,
             "oddsSource": "forecast",
             "speed": 67,
             "stamina": 71,
@@ -9772,10 +9772,10 @@
             "gateNumber": 4,
             "sex": "M",
             "weight": 58,
-            "favoriteCount": 58,
+            "favoriteCount": 80,
             "xBuzzScore": 0,
-            "predictionCount": 91,
-            "realOdds": 3.5,
+            "predictionCount": 93,
+            "realOdds": 3.1,
             "oddsSource": "forecast",
             "speed": 67,
             "stamina": 71,
@@ -9806,8 +9806,8 @@
             "weight": 57,
             "favoriteCount": 4,
             "xBuzzScore": 0,
-            "predictionCount": 37,
-            "realOdds": 34.2,
+            "predictionCount": 33,
+            "realOdds": 41,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 74,
@@ -9838,8 +9838,8 @@
             "weight": 57,
             "favoriteCount": 5,
             "xBuzzScore": 0,
-            "predictionCount": 43,
-            "realOdds": 26.9,
+            "predictionCount": 39,
+            "realOdds": 32.3,
             "oddsSource": "forecast",
             "speed": 73,
             "stamina": 68,
@@ -9868,10 +9868,10 @@
             "gateNumber": 7,
             "sex": "M",
             "weight": 55,
-            "favoriteCount": 32,
+            "favoriteCount": 37,
             "xBuzzScore": 0,
             "predictionCount": 80,
-            "realOdds": 5.5,
+            "realOdds": 5.6,
             "oddsSource": "forecast",
             "speed": 68,
             "stamina": 76,
@@ -9900,10 +9900,10 @@
             "gateNumber": 8,
             "sex": "M",
             "weight": 58,
-            "favoriteCount": 40,
+            "favoriteCount": 49,
             "xBuzzScore": 0,
             "predictionCount": 87,
-            "realOdds": 4.1,
+            "realOdds": 4,
             "oddsSource": "forecast",
             "speed": 74,
             "stamina": 68,
@@ -9934,8 +9934,8 @@
             "weight": 58,
             "favoriteCount": 6,
             "xBuzzScore": 0,
-            "predictionCount": 47,
-            "realOdds": 22.1,
+            "predictionCount": 43,
+            "realOdds": 26.7,
             "oddsSource": "forecast",
             "speed": 69,
             "stamina": 72,
@@ -9966,8 +9966,8 @@
             "weight": 55,
             "favoriteCount": 3,
             "xBuzzScore": 0,
-            "predictionCount": 33,
-            "realOdds": 40.3,
+            "predictionCount": 31,
+            "realOdds": 45.1,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 72,
@@ -9996,10 +9996,10 @@
             "gateNumber": 11,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 11,
+            "favoriteCount": 13,
             "xBuzzScore": 0,
-            "predictionCount": 61,
-            "realOdds": 12.5,
+            "predictionCount": 60,
+            "realOdds": 12.9,
             "oddsSource": "forecast",
             "speed": 73,
             "stamina": 67,
@@ -10028,10 +10028,10 @@
             "gateNumber": 12,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 14,
+            "favoriteCount": 17,
             "xBuzzScore": 0,
             "predictionCount": 60,
-            "realOdds": 12.7,
+            "realOdds": 12.9,
             "oddsSource": "forecast",
             "speed": 69,
             "stamina": 76,
@@ -10062,8 +10062,8 @@
             "weight": 57,
             "favoriteCount": 8,
             "xBuzzScore": 0,
-            "predictionCount": 45,
-            "realOdds": 24,
+            "predictionCount": 42,
+            "realOdds": 27.7,
             "oddsSource": "forecast",
             "speed": 75,
             "stamina": 67,
@@ -10092,10 +10092,10 @@
             "gateNumber": 14,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 6,
+            "favoriteCount": 7,
             "xBuzzScore": 0,
             "predictionCount": 44,
-            "realOdds": 25.1,
+            "realOdds": 26.1,
             "oddsSource": "forecast",
             "speed": 74,
             "stamina": 71,
@@ -10124,10 +10124,10 @@
             "gateNumber": 15,
             "sex": "M",
             "weight": 57,
-            "favoriteCount": 8,
+            "favoriteCount": 10,
             "xBuzzScore": 0,
             "predictionCount": 52,
-            "realOdds": 18.5,
+            "realOdds": 18.2,
             "oddsSource": "forecast",
             "speed": 68,
             "stamina": 72,
@@ -10166,7 +10166,7 @@
         "hasRace": true,
         "raceDate": "2026-11-14",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 13,
         "horses": [
           {
             "id": "1",
@@ -10181,10 +10181,10 @@
             "gateNumber": 1,
             "sex": "M",
             "weight": 56,
-            "favoriteCount": 35,
+            "favoriteCount": 36,
             "xBuzzScore": 0,
-            "predictionCount": 60,
-            "realOdds": 12.8,
+            "predictionCount": 58,
+            "realOdds": 14.3,
             "oddsSource": "forecast",
             "speed": 69,
             "stamina": 76,
@@ -10213,7 +10213,7 @@
             "gateNumber": 2,
             "sex": "F",
             "weight": 55,
-            "favoriteCount": 147,
+            "favoriteCount": 171,
             "xBuzzScore": 0,
             "predictionCount": 97,
             "realOdds": 2.7,
@@ -10247,8 +10247,8 @@
             "weight": 56,
             "favoriteCount": 3,
             "xBuzzScore": 0,
-            "predictionCount": 17,
-            "realOdds": 82.3,
+            "predictionCount": 15,
+            "realOdds": 87.5,
             "oddsSource": "forecast",
             "speed": 68,
             "stamina": 72,
@@ -10277,10 +10277,10 @@
             "gateNumber": 4,
             "sex": "M",
             "weight": 56,
-            "favoriteCount": 11,
+            "favoriteCount": 14,
             "xBuzzScore": 0,
-            "predictionCount": 38,
-            "realOdds": 33.1,
+            "predictionCount": 39,
+            "realOdds": 31.2,
             "oddsSource": "forecast",
             "speed": 69,
             "stamina": 71,
@@ -10309,7 +10309,7 @@
             "gateNumber": 5,
             "sex": "F",
             "weight": 55,
-            "favoriteCount": 59,
+            "favoriteCount": 70,
             "xBuzzScore": 0,
             "predictionCount": 76,
             "realOdds": 6.6,
@@ -10341,10 +10341,10 @@
             "gateNumber": 6,
             "sex": "M",
             "weight": 56,
-            "favoriteCount": 2,
+            "favoriteCount": 3,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 159.9,
+            "realOdds": 135.7,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 69,
@@ -10373,10 +10373,10 @@
             "gateNumber": 7,
             "sex": "M",
             "weight": 56,
-            "favoriteCount": 60,
+            "favoriteCount": 68,
             "xBuzzScore": 0,
             "predictionCount": 78,
-            "realOdds": 5.9,
+            "realOdds": 6,
             "oddsSource": "forecast",
             "speed": 67,
             "stamina": 74,
@@ -10407,8 +10407,8 @@
             "weight": 56,
             "favoriteCount": 5,
             "xBuzzScore": 0,
-            "predictionCount": 24,
-            "realOdds": 59.3,
+            "predictionCount": 23,
+            "realOdds": 61.9,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 75,
@@ -10437,7 +10437,7 @@
             "gateNumber": 9,
             "sex": "M",
             "weight": 56,
-            "favoriteCount": 182,
+            "favoriteCount": 210,
             "xBuzzScore": 0,
             "predictionCount": 99,
             "realOdds": 2.4,
@@ -10469,10 +10469,10 @@
             "gateNumber": 10,
             "sex": "M",
             "weight": 56,
-            "favoriteCount": 25,
+            "favoriteCount": 35,
             "xBuzzScore": 0,
-            "predictionCount": 56,
-            "realOdds": 15.2,
+            "predictionCount": 59,
+            "realOdds": 13.3,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 72,
@@ -10503,8 +10503,8 @@
             "weight": 56,
             "favoriteCount": 6,
             "xBuzzScore": 0,
-            "predictionCount": 25,
-            "realOdds": 57.9,
+            "predictionCount": 23,
+            "realOdds": 63.2,
             "oddsSource": "forecast",
             "speed": 68,
             "stamina": 74,
@@ -10533,10 +10533,10 @@
             "gateNumber": 12,
             "sex": "M",
             "weight": 56,
-            "favoriteCount": 4,
+            "favoriteCount": 6,
             "xBuzzScore": 0,
-            "predictionCount": 23,
-            "realOdds": 63.7,
+            "predictionCount": 26,
+            "realOdds": 54,
             "oddsSource": "forecast",
             "speed": 66,
             "stamina": 75,
@@ -10568,7 +10568,7 @@
             "favoriteCount": 2,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 116.1,
+            "realOdds": 129.7,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 73,
@@ -10607,7 +10607,7 @@
         "hasRace": true,
         "raceDate": "2026-11-15",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 10,
         "horses": [
           {
             "id": "1",
@@ -10952,7 +10952,7 @@
         "hasRace": true,
         "raceDate": "2026-11-15",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 15,
         "horses": [
           {
             "id": "1",
@@ -11457,7 +11457,7 @@
         "hasRace": true,
         "raceDate": "2026-11-15",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 23,
         "horses": [
           {
             "id": "1",
@@ -11472,7 +11472,7 @@
             "gateNumber": 1,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 135,
+            "favoriteCount": 147,
             "xBuzzScore": 0,
             "predictionCount": 74,
             "realOdds": 7.2,
@@ -11507,7 +11507,7 @@
             "favoriteCount": 1,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 349.9,
+            "realOdds": 359.6,
             "oddsSource": "forecast",
             "speed": 72,
             "stamina": 68,
@@ -11536,10 +11536,10 @@
             "gateNumber": 3,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 33,
+            "favoriteCount": 36,
             "xBuzzScore": 0,
-            "predictionCount": 45,
-            "realOdds": 24.9,
+            "predictionCount": 44,
+            "realOdds": 26,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 75,
@@ -11568,10 +11568,10 @@
             "gateNumber": 4,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 9,
+            "favoriteCount": 12,
             "xBuzzScore": 0,
-            "predictionCount": 18,
-            "realOdds": 78.7,
+            "predictionCount": 20,
+            "realOdds": 72.2,
             "oddsSource": "forecast",
             "speed": 74,
             "stamina": 68,
@@ -11603,7 +11603,7 @@
             "favoriteCount": 2,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 275.6,
+            "realOdds": 287.2,
             "oddsSource": "forecast",
             "speed": 70,
             "stamina": 72,
@@ -11635,7 +11635,7 @@
             "favoriteCount": 1,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 349.9,
+            "realOdds": 359.6,
             "oddsSource": "forecast",
             "speed": 68,
             "stamina": 74,
@@ -11664,7 +11664,7 @@
             "gateNumber": 7,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 431,
+            "favoriteCount": 472,
             "xBuzzScore": 0,
             "predictionCount": 99,
             "realOdds": 2.5,
@@ -11696,10 +11696,10 @@
             "gateNumber": 8,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 100,
+            "favoriteCount": 114,
             "xBuzzScore": 0,
             "predictionCount": 67,
-            "realOdds": 9.7,
+            "realOdds": 9.4,
             "oddsSource": "forecast",
             "speed": 73,
             "stamina": 70,
@@ -11731,7 +11731,7 @@
             "favoriteCount": 4,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 172.9,
+            "realOdds": 183.7,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 75,
@@ -11760,10 +11760,10 @@
             "gateNumber": 10,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 27,
+            "favoriteCount": 29,
             "xBuzzScore": 0,
             "predictionCount": 38,
-            "realOdds": 33.1,
+            "realOdds": 33.7,
             "oddsSource": "forecast",
             "speed": 67,
             "stamina": 72,
@@ -11795,7 +11795,7 @@
             "favoriteCount": 7,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 133.8,
+            "realOdds": 143.2,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 70,
@@ -11824,10 +11824,10 @@
             "gateNumber": 12,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 22,
+            "favoriteCount": 25,
             "xBuzzScore": 0,
             "predictionCount": 36,
-            "realOdds": 36.2,
+            "realOdds": 35.4,
             "oddsSource": "forecast",
             "speed": 74,
             "stamina": 68,
@@ -11856,10 +11856,10 @@
             "gateNumber": 13,
             "sex": "F",
             "weight": 54,
-            "favoriteCount": 232,
+            "favoriteCount": 244,
             "xBuzzScore": 0,
-            "predictionCount": 87,
-            "realOdds": 4,
+            "predictionCount": 86,
+            "realOdds": 4.2,
             "oddsSource": "forecast",
             "speed": 67,
             "stamina": 73,
@@ -11888,10 +11888,10 @@
             "gateNumber": 14,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 80,
+            "favoriteCount": 93,
             "xBuzzScore": 0,
-            "predictionCount": 64,
-            "realOdds": 11,
+            "predictionCount": 65,
+            "realOdds": 10.5,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 71,
@@ -11923,7 +11923,7 @@
             "favoriteCount": 3,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 145.8,
+            "realOdds": 155.7,
             "oddsSource": "forecast",
             "speed": 74,
             "stamina": 72,
@@ -11952,10 +11952,10 @@
             "gateNumber": 16,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 13,
+            "favoriteCount": 14,
             "xBuzzScore": 0,
-            "predictionCount": 22,
-            "realOdds": 65.9,
+            "predictionCount": 21,
+            "realOdds": 66.8,
             "oddsSource": "forecast",
             "speed": 73,
             "stamina": 71,
@@ -11984,10 +11984,10 @@
             "gateNumber": 17,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 18,
+            "favoriteCount": 19,
             "xBuzzScore": 0,
             "predictionCount": 29,
-            "realOdds": 49.4,
+            "realOdds": 48.3,
             "oddsSource": "forecast",
             "speed": 67,
             "stamina": 76,
@@ -12016,10 +12016,10 @@
             "gateNumber": 18,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 3,
+            "favoriteCount": 4,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 187.9,
+            "realOdds": 174.7,
             "oddsSource": "forecast",
             "speed": 72,
             "stamina": 67,
@@ -12048,10 +12048,10 @@
             "gateNumber": 19,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 18,
+            "favoriteCount": 19,
             "xBuzzScore": 0,
             "predictionCount": 30,
-            "realOdds": 46.6,
+            "realOdds": 47,
             "oddsSource": "forecast",
             "speed": 67,
             "stamina": 73,
@@ -12080,10 +12080,10 @@
             "gateNumber": 20,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 22,
+            "favoriteCount": 25,
             "xBuzzScore": 0,
             "predictionCount": 37,
-            "realOdds": 34.6,
+            "realOdds": 35,
             "oddsSource": "forecast",
             "speed": 69,
             "stamina": 75,
@@ -12112,10 +12112,10 @@
             "gateNumber": 21,
             "sex": "F",
             "weight": 54,
-            "favoriteCount": 137,
+            "favoriteCount": 153,
             "xBuzzScore": 0,
-            "predictionCount": 73,
-            "realOdds": 7.3,
+            "predictionCount": 74,
+            "realOdds": 7.2,
             "oddsSource": "forecast",
             "speed": 71,
             "stamina": 68,
@@ -12144,10 +12144,10 @@
             "gateNumber": 22,
             "sex": "F",
             "weight": 54,
-            "favoriteCount": 4,
+            "favoriteCount": 5,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 193.5,
+            "realOdds": 179.1,
             "oddsSource": "forecast",
             "speed": 74,
             "stamina": 70,
@@ -12176,10 +12176,10 @@
             "gateNumber": 23,
             "sex": "F",
             "weight": 56,
-            "favoriteCount": 5,
+            "favoriteCount": 6,
             "xBuzzScore": 0,
             "predictionCount": 12,
-            "realOdds": 133.8,
+            "realOdds": 125.5,
             "oddsSource": "forecast",
             "speed": 72,
             "stamina": 66,
@@ -12218,7 +12218,7 @@
         "hasRace": true,
         "raceDate": "2026-11-15",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 18,
         "horses": [
           {
             "id": "1",
@@ -12232,7 +12232,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 1,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12264,7 +12264,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 2,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12296,7 +12296,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 3,
             "sex": "F",
-            "weight": 55,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12328,7 +12328,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 4,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12360,7 +12360,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 5,
             "sex": "F",
-            "weight": 55,
+            "weight": 52,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12392,7 +12392,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 6,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12424,7 +12424,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 7,
             "sex": "F",
-            "weight": 55,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12456,7 +12456,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 8,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12520,7 +12520,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 10,
             "sex": "F",
-            "weight": 55,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12584,7 +12584,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 12,
             "sex": "M",
-            "weight": 57,
+            "weight": 54,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12616,7 +12616,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 13,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12648,7 +12648,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 14,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12680,7 +12680,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 15,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12712,7 +12712,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 16,
             "sex": "M",
-            "weight": 57,
+            "weight": 55,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12744,7 +12744,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 17,
             "sex": "F",
-            "weight": 55,
+            "weight": 53,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -12776,7 +12776,7 @@
             "runningStyleSource": "guessed_fallback",
             "gateNumber": 18,
             "sex": "M",
-            "weight": 57,
+            "weight": 56,
             "favoriteCount": 0,
             "xBuzzScore": 0,
             "predictionCount": 10,
@@ -13343,7 +13343,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T05:39:54.153Z",
+            "updatedAt": "2026-11-09T07:44:46.109Z",
             "winnerHorseId": "9",
             "winnerHorseName": "ダノンハドソン",
             "top3HorseIds": [
@@ -13368,7 +13368,12 @@
                 "margin": "",
                 "popularity": 11,
                 "odds": 63.3,
-                "passing": null,
+                "passing": [
+                  11,
+                  11,
+                  2,
+                  1
+                ],
                 "horseId": "9"
               },
               {
@@ -13382,7 +13387,12 @@
                 "margin": "1.3/4",
                 "popularity": 14,
                 "odds": 202,
-                "passing": null,
+                "passing": [
+                  14,
+                  14,
+                  15,
+                  14
+                ],
                 "horseId": "5"
               },
               {
@@ -13396,7 +13406,12 @@
                 "margin": "1",
                 "popularity": 8,
                 "odds": 16.1,
-                "passing": null,
+                "passing": [
+                  4,
+                  3,
+                  7,
+                  5
+                ],
                 "horseId": "4"
               },
               {
@@ -13410,7 +13425,12 @@
                 "margin": "1",
                 "popularity": 1,
                 "odds": 2.3,
-                "passing": null,
+                "passing": [
+                  3,
+                  3,
+                  2,
+                  3
+                ],
                 "horseId": "16"
               },
               {
@@ -13424,7 +13444,12 @@
                 "margin": "1",
                 "popularity": 16,
                 "odds": 275.9,
-                "passing": null,
+                "passing": [
+                  16,
+                  16,
+                  16,
+                  16
+                ],
                 "horseId": "2"
               },
               {
@@ -13438,7 +13463,12 @@
                 "margin": "ハナ",
                 "popularity": 4,
                 "odds": 11.6,
-                "passing": null,
+                "passing": [
+                  10,
+                  9,
+                  11,
+                  14
+                ],
                 "horseId": "10"
               },
               {
@@ -13452,7 +13482,12 @@
                 "margin": "アタマ",
                 "popularity": 10,
                 "odds": 56.4,
-                "passing": null,
+                "passing": [
+                  12,
+                  13,
+                  1,
+                  2
+                ],
                 "horseId": "11"
               },
               {
@@ -13466,7 +13501,12 @@
                 "margin": "クビ",
                 "popularity": 13,
                 "odds": 107,
-                "passing": null,
+                "passing": [
+                  8,
+                  9,
+                  7,
+                  6
+                ],
                 "horseId": "14"
               },
               {
@@ -13480,7 +13520,12 @@
                 "margin": "クビ",
                 "popularity": 15,
                 "odds": 220.9,
-                "passing": null,
+                "passing": [
+                  14,
+                  15,
+                  11,
+                  8
+                ],
                 "horseId": "8"
               },
               {
@@ -13494,7 +13539,12 @@
                 "margin": "3/4",
                 "popularity": 9,
                 "odds": 24.4,
-                "passing": null,
+                "passing": [
+                  8,
+                  7,
+                  11,
+                  8
+                ],
                 "horseId": "1"
               },
               {
@@ -13508,7 +13558,12 @@
                 "margin": "1",
                 "popularity": 7,
                 "odds": 13.5,
-                "passing": null,
+                "passing": [
+                  6,
+                  7,
+                  7,
+                  13
+                ],
                 "horseId": "7"
               },
               {
@@ -13522,7 +13577,12 @@
                 "margin": "2",
                 "popularity": 2,
                 "odds": 5.3,
-                "passing": null,
+                "passing": [
+                  12,
+                  11,
+                  11,
+                  8
+                ],
                 "horseId": "12"
               },
               {
@@ -13536,7 +13596,12 @@
                 "margin": "1/2",
                 "popularity": 3,
                 "odds": 7,
-                "passing": null,
+                "passing": [
+                  4,
+                  5,
+                  7,
+                  8
+                ],
                 "horseId": "6"
               },
               {
@@ -13550,7 +13615,12 @@
                 "margin": "クビ",
                 "popularity": 5,
                 "odds": 12.1,
-                "passing": null,
+                "passing": [
+                  1,
+                  1,
+                  2,
+                  3
+                ],
                 "horseId": "3"
               },
               {
@@ -13564,7 +13634,12 @@
                 "margin": "1/2",
                 "popularity": 12,
                 "odds": 85.3,
-                "passing": null,
+                "passing": [
+                  6,
+                  5,
+                  2,
+                  6
+                ],
                 "horseId": "15"
               },
               {
@@ -13578,7 +13653,12 @@
                 "margin": "10",
                 "popularity": 6,
                 "odds": 13,
-                "passing": null,
+                "passing": [
+                  2,
+                  2,
+                  2,
+                  8
+                ],
                 "horseId": "13"
               }
             ],
@@ -14165,7 +14245,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T05:39:54.366Z",
+            "updatedAt": "2026-11-09T07:44:46.358Z",
             "winnerHorseId": "8",
             "winnerHorseName": "カレンデュラ",
             "top3HorseIds": [
@@ -14190,7 +14270,10 @@
                 "margin": "",
                 "popularity": 11,
                 "odds": 16.8,
-                "passing": null,
+                "passing": [
+                  5,
+                  5
+                ],
                 "horseId": "8"
               },
               {
@@ -14204,7 +14287,10 @@
                 "margin": "3/4",
                 "popularity": 16,
                 "odds": 120.9,
-                "passing": null,
+                "passing": [
+                  10,
+                  9
+                ],
                 "horseId": "13"
               },
               {
@@ -14218,7 +14304,10 @@
                 "margin": "1",
                 "popularity": 4,
                 "odds": 8,
-                "passing": null,
+                "passing": [
+                  2,
+                  2
+                ],
                 "horseId": "16"
               },
               {
@@ -14232,7 +14321,10 @@
                 "margin": "クビ",
                 "popularity": 6,
                 "odds": 9.3,
-                "passing": null,
+                "passing": [
+                  12,
+                  14
+                ],
                 "horseId": "6"
               },
               {
@@ -14246,7 +14338,10 @@
                 "margin": "アタマ",
                 "popularity": 12,
                 "odds": 23.5,
-                "passing": null,
+                "passing": [
+                  7,
+                  7
+                ],
                 "horseId": "12"
               },
               {
@@ -14260,7 +14355,10 @@
                 "margin": "アタマ",
                 "popularity": 8,
                 "odds": 14.7,
-                "passing": null,
+                "passing": [
+                  16,
+                  16
+                ],
                 "horseId": "9"
               },
               {
@@ -14274,7 +14372,10 @@
                 "margin": "1/2",
                 "popularity": 1,
                 "odds": 5.7,
-                "passing": null,
+                "passing": [
+                  10,
+                  11
+                ],
                 "horseId": "5"
               },
               {
@@ -14288,7 +14389,10 @@
                 "margin": "クビ",
                 "popularity": 10,
                 "odds": 16.2,
-                "passing": null,
+                "passing": [
+                  12,
+                  11
+                ],
                 "horseId": "10"
               },
               {
@@ -14302,7 +14406,10 @@
                 "margin": "1",
                 "popularity": 9,
                 "odds": 15,
-                "passing": null,
+                "passing": [
+                  15,
+                  14
+                ],
                 "horseId": "7"
               },
               {
@@ -14316,7 +14423,10 @@
                 "margin": "ハナ",
                 "popularity": 3,
                 "odds": 7.8,
-                "passing": null,
+                "passing": [
+                  8,
+                  7
+                ],
                 "horseId": "1"
               },
               {
@@ -14330,7 +14440,10 @@
                 "margin": "1",
                 "popularity": 15,
                 "odds": 93.9,
-                "passing": null,
+                "passing": [
+                  12,
+                  11
+                ],
                 "horseId": "4"
               },
               {
@@ -14344,7 +14457,10 @@
                 "margin": "ハナ",
                 "popularity": 2,
                 "odds": 6,
-                "passing": null,
+                "passing": [
+                  8,
+                  9
+                ],
                 "horseId": "11"
               },
               {
@@ -14358,7 +14474,10 @@
                 "margin": "クビ",
                 "popularity": 13,
                 "odds": 26.7,
-                "passing": null,
+                "passing": [
+                  5,
+                  3
+                ],
                 "horseId": "3"
               },
               {
@@ -14372,7 +14491,10 @@
                 "margin": "1/2",
                 "popularity": 5,
                 "odds": 9,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "15"
               },
               {
@@ -14386,7 +14508,10 @@
                 "margin": "5",
                 "popularity": 7,
                 "odds": 14.4,
-                "passing": null,
+                "passing": [
+                  1,
+                  1
+                ],
                 "horseId": "2"
               },
               {
@@ -14400,7 +14525,10 @@
                 "margin": "2",
                 "popularity": 14,
                 "odds": 58.1,
-                "passing": null,
+                "passing": [
+                  3,
+                  5
+                ],
                 "horseId": "14"
               }
             ],
@@ -14987,7 +15115,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T05:39:54.530Z",
+            "updatedAt": "2026-11-09T07:44:46.892Z",
             "winnerHorseId": "12",
             "winnerHorseName": "ハリウッドメモリー",
             "top3HorseIds": [
@@ -15012,7 +15140,10 @@
                 "margin": "",
                 "popularity": 5,
                 "odds": 10.7,
-                "passing": null,
+                "passing": [
+                  14,
+                  11
+                ],
                 "horseId": "12"
               },
               {
@@ -15026,7 +15157,10 @@
                 "margin": "クビ",
                 "popularity": 1,
                 "odds": 3.3,
-                "passing": null,
+                "passing": [
+                  4,
+                  7
+                ],
                 "horseId": "6"
               },
               {
@@ -15040,7 +15174,10 @@
                 "margin": "1",
                 "popularity": 10,
                 "odds": 28.6,
-                "passing": null,
+                "passing": [
+                  15,
+                  14
+                ],
                 "horseId": "11"
               },
               {
@@ -15054,7 +15191,10 @@
                 "margin": "1.1/4",
                 "popularity": 7,
                 "odds": 18.5,
-                "passing": null,
+                "passing": [
+                  9,
+                  8
+                ],
                 "horseId": "15"
               },
               {
@@ -15068,7 +15208,10 @@
                 "margin": "ハナ",
                 "popularity": 12,
                 "odds": 30.1,
-                "passing": null,
+                "passing": [
+                  12,
+                  14
+                ],
                 "horseId": "8"
               },
               {
@@ -15082,7 +15225,10 @@
                 "margin": "1.3/4",
                 "popularity": 2,
                 "odds": 5.8,
-                "passing": null,
+                "passing": [
+                  1,
+                  1
+                ],
                 "horseId": "10"
               },
               {
@@ -15096,7 +15242,10 @@
                 "margin": "1/2",
                 "popularity": 3,
                 "odds": 6.1,
-                "passing": null,
+                "passing": [
+                  9,
+                  11
+                ],
                 "horseId": "5"
               },
               {
@@ -15110,7 +15259,10 @@
                 "margin": "クビ",
                 "popularity": 13,
                 "odds": 39.6,
-                "passing": null,
+                "passing": [
+                  4,
+                  4
+                ],
                 "horseId": "14"
               },
               {
@@ -15124,7 +15276,10 @@
                 "margin": "クビ",
                 "popularity": 4,
                 "odds": 7,
-                "passing": null,
+                "passing": [
+                  4,
+                  4
+                ],
                 "horseId": "16"
               },
               {
@@ -15138,7 +15293,10 @@
                 "margin": "クビ",
                 "popularity": 8,
                 "odds": 19.7,
-                "passing": null,
+                "passing": [
+                  9,
+                  9
+                ],
                 "horseId": "3"
               },
               {
@@ -15152,7 +15310,10 @@
                 "margin": "1.1/4",
                 "popularity": 16,
                 "odds": 143.5,
-                "passing": null,
+                "passing": [
+                  12,
+                  11
+                ],
                 "horseId": "9"
               },
               {
@@ -15166,7 +15327,10 @@
                 "margin": "クビ",
                 "popularity": 6,
                 "odds": 17.9,
-                "passing": null,
+                "passing": [
+                  2,
+                  2
+                ],
                 "horseId": "13"
               },
               {
@@ -15180,7 +15344,10 @@
                 "margin": "1.1/2",
                 "popularity": 9,
                 "odds": 20.7,
-                "passing": null,
+                "passing": [
+                  4,
+                  4
+                ],
                 "horseId": "2"
               },
               {
@@ -15194,7 +15361,10 @@
                 "margin": "1",
                 "popularity": 14,
                 "odds": 49.6,
-                "passing": null,
+                "passing": [
+                  4,
+                  9
+                ],
                 "horseId": "7"
               },
               {
@@ -15208,7 +15378,10 @@
                 "margin": "1.1/4",
                 "popularity": 11,
                 "odds": 29.2,
-                "passing": null,
+                "passing": [
+                  2,
+                  2
+                ],
                 "horseId": "4"
               },
               {
@@ -15222,7 +15395,10 @@
                 "margin": "8",
                 "popularity": 15,
                 "odds": 50.9,
-                "passing": null,
+                "passing": [
+                  16,
+                  16
+                ],
                 "horseId": "1"
               }
             ],
@@ -15777,7 +15953,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T05:39:54.684Z",
+            "updatedAt": "2026-11-09T07:44:47.052Z",
             "winnerHorseId": "15",
             "winnerHorseName": "イサギ",
             "top3HorseIds": [
@@ -15802,7 +15978,12 @@
                 "margin": "",
                 "popularity": 13,
                 "odds": 143.9,
-                "passing": null,
+                "passing": [
+                  9,
+                  10,
+                  6,
+                  6
+                ],
                 "horseId": "15"
               },
               {
@@ -15816,7 +15997,12 @@
                 "margin": "1",
                 "popularity": 7,
                 "odds": 16,
-                "passing": null,
+                "passing": [
+                  6,
+                  6,
+                  5,
+                  5
+                ],
                 "horseId": "12"
               },
               {
@@ -15830,7 +16016,12 @@
                 "margin": "2",
                 "popularity": 2,
                 "odds": 3.9,
-                "passing": null,
+                "passing": [
+                  4,
+                  3,
+                  4,
+                  3
+                ],
                 "horseId": "6"
               },
               {
@@ -15844,7 +16035,12 @@
                 "margin": "クビ",
                 "popularity": 8,
                 "odds": 20.9,
-                "passing": null,
+                "passing": [
+                  4,
+                  3,
+                  3,
+                  3
+                ],
                 "horseId": "10"
               },
               {
@@ -15858,7 +16054,12 @@
                 "margin": "クビ",
                 "popularity": 5,
                 "odds": 9.8,
-                "passing": null,
+                "passing": [
+                  2,
+                  2,
+                  2,
+                  2
+                ],
                 "horseId": "9"
               },
               {
@@ -15872,7 +16073,12 @@
                 "margin": "1/2",
                 "popularity": 6,
                 "odds": 10.9,
-                "passing": null,
+                "passing": [
+                  11,
+                  11,
+                  10,
+                  10
+                ],
                 "horseId": "8"
               },
               {
@@ -15886,7 +16092,12 @@
                 "margin": "1",
                 "popularity": 12,
                 "odds": 76.8,
-                "passing": null,
+                "passing": [
+                  11,
+                  11,
+                  12,
+                  11
+                ],
                 "horseId": "3"
               },
               {
@@ -15900,7 +16111,12 @@
                 "margin": "クビ",
                 "popularity": 3,
                 "odds": 7.1,
-                "passing": null,
+                "passing": [
+                  6,
+                  6,
+                  6,
+                  6
+                ],
                 "horseId": "7"
               },
               {
@@ -15914,7 +16130,12 @@
                 "margin": "1",
                 "popularity": 4,
                 "odds": 8.2,
-                "passing": null,
+                "passing": [
+                  9,
+                  9,
+                  9,
+                  8
+                ],
                 "horseId": "4"
               },
               {
@@ -15928,7 +16149,12 @@
                 "margin": "1/2",
                 "popularity": 1,
                 "odds": 3,
-                "passing": null,
+                "passing": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
                 "horseId": "5"
               },
               {
@@ -15942,7 +16168,12 @@
                 "margin": "アタマ",
                 "popularity": 9,
                 "odds": 24.5,
-                "passing": null,
+                "passing": [
+                  15,
+                  15,
+                  8,
+                  8
+                ],
                 "horseId": "14"
               },
               {
@@ -15956,7 +16187,12 @@
                 "margin": "クビ",
                 "popularity": 15,
                 "odds": 154,
-                "passing": null,
+                "passing": [
+                  14,
+                  14,
+                  12,
+                  12
+                ],
                 "horseId": "13"
               },
               {
@@ -15970,7 +16206,12 @@
                 "margin": "クビ",
                 "popularity": 11,
                 "odds": 53.5,
-                "passing": null,
+                "passing": [
+                  13,
+                  13,
+                  10,
+                  12
+                ],
                 "horseId": "1"
               },
               {
@@ -15984,7 +16225,12 @@
                 "margin": "大",
                 "popularity": 10,
                 "odds": 53,
-                "passing": null,
+                "passing": [
+                  2,
+                  3,
+                  12,
+                  14
+                ],
                 "horseId": "11"
               }
             ],
@@ -16571,7 +16817,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T15:52:40.255Z",
+            "updatedAt": "2026-11-09T07:44:50.881Z",
             "winnerHorseId": "13",
             "winnerHorseName": "カクウチ",
             "top3HorseIds": [
@@ -16596,7 +16842,12 @@
                 "margin": "",
                 "popularity": 6,
                 "odds": 12.9,
-                "passing": null,
+                "passing": [
+                  3,
+                  3,
+                  3,
+                  2
+                ],
                 "horseId": "13"
               },
               {
@@ -16610,7 +16861,12 @@
                 "margin": "1/2",
                 "popularity": 9,
                 "odds": 18.4,
-                "passing": null,
+                "passing": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
                 "horseId": "6"
               },
               {
@@ -16624,7 +16880,12 @@
                 "margin": "3/4",
                 "popularity": 1,
                 "odds": 4.9,
-                "passing": null,
+                "passing": [
+                  4,
+                  4,
+                  4,
+                  4
+                ],
                 "horseId": "9"
               },
               {
@@ -16638,7 +16899,12 @@
                 "margin": "クビ",
                 "popularity": 5,
                 "odds": 10,
-                "passing": null,
+                "passing": [
+                  6,
+                  4,
+                  4,
+                  2
+                ],
                 "horseId": "3"
               },
               {
@@ -16652,7 +16918,12 @@
                 "margin": "クビ",
                 "popularity": 13,
                 "odds": 31.8,
-                "passing": null,
+                "passing": [
+                  16,
+                  16,
+                  14,
+                  13
+                ],
                 "horseId": "2"
               },
               {
@@ -16666,7 +16937,12 @@
                 "margin": "1.1/4",
                 "popularity": 7,
                 "odds": 13.2,
-                "passing": null,
+                "passing": [
+                  9,
+                  9,
+                  7,
+                  6
+                ],
                 "horseId": "4"
               },
               {
@@ -16680,7 +16956,12 @@
                 "margin": "3/4",
                 "popularity": 4,
                 "odds": 7,
-                "passing": null,
+                "passing": [
+                  7,
+                  7,
+                  7,
+                  10
+                ],
                 "horseId": "5"
               },
               {
@@ -16694,7 +16975,12 @@
                 "margin": "ハナ",
                 "popularity": 14,
                 "odds": 54.1,
-                "passing": null,
+                "passing": [
+                  14,
+                  12,
+                  11,
+                  10
+                ],
                 "horseId": "16"
               },
               {
@@ -16708,7 +16994,12 @@
                 "margin": "アタマ",
                 "popularity": 10,
                 "odds": 18.6,
-                "passing": null,
+                "passing": [
+                  11,
+                  9,
+                  11,
+                  10
+                ],
                 "horseId": "10"
               },
               {
@@ -16722,7 +17013,12 @@
                 "margin": "1.3/4",
                 "popularity": 15,
                 "odds": 70.9,
-                "passing": null,
+                "passing": [
+                  7,
+                  7,
+                  7,
+                  9
+                ],
                 "horseId": "12"
               },
               {
@@ -16736,7 +17032,12 @@
                 "margin": "4",
                 "popularity": 3,
                 "odds": 6.6,
-                "passing": null,
+                "passing": [
+                  4,
+                  4,
+                  4,
+                  6
+                ],
                 "horseId": "8"
               },
               {
@@ -16750,7 +17051,12 @@
                 "margin": "クビ",
                 "popularity": 2,
                 "odds": 5.4,
-                "passing": null,
+                "passing": [
+                  15,
+                  15,
+                  7,
+                  6
+                ],
                 "horseId": "7"
               },
               {
@@ -16764,7 +17070,12 @@
                 "margin": "ハナ",
                 "popularity": 11,
                 "odds": 21,
-                "passing": null,
+                "passing": [
+                  13,
+                  12,
+                  14,
+                  14
+                ],
                 "horseId": "15"
               },
               {
@@ -16778,7 +17089,12 @@
                 "margin": "1.1/4",
                 "popularity": 12,
                 "odds": 30.7,
-                "passing": null,
+                "passing": [
+                  2,
+                  2,
+                  2,
+                  4
+                ],
                 "horseId": "11"
               },
               {
@@ -16792,7 +17108,12 @@
                 "margin": "1.1/2",
                 "popularity": 8,
                 "odds": 17.3,
-                "passing": null,
+                "passing": [
+                  11,
+                  12,
+                  16,
+                  16
+                ],
                 "horseId": "1"
               },
               {
@@ -16806,7 +17127,12 @@
                 "margin": "4",
                 "popularity": 16,
                 "odds": 112,
-                "passing": null,
+                "passing": [
+                  9,
+                  11,
+                  11,
+                  14
+                ],
                 "horseId": "14"
               }
             ],
@@ -17361,7 +17687,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T15:52:40.622Z",
+            "updatedAt": "2026-11-09T07:44:51.106Z",
             "winnerHorseId": "6",
             "winnerHorseName": "ハイクオリティ",
             "top3HorseIds": [
@@ -17386,7 +17712,12 @@
                 "margin": "",
                 "popularity": 3,
                 "odds": 7.4,
-                "passing": null,
+                "passing": [
+                  2,
+                  2,
+                  2,
+                  2
+                ],
                 "horseId": "6"
               },
               {
@@ -17401,6 +17732,7 @@
                 "popularity": 1,
                 "odds": 3.1,
                 "passing": [
+                  3,
                   3,
                   4,
                   3
@@ -17418,7 +17750,12 @@
                 "margin": "クビ",
                 "popularity": 2,
                 "odds": 4.8,
-                "passing": null,
+                "passing": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
                 "horseId": "3"
               },
               {
@@ -17432,7 +17769,12 @@
                 "margin": "クビ",
                 "popularity": 4,
                 "odds": 8.4,
-                "passing": null,
+                "passing": [
+                  3,
+                  3,
+                  3,
+                  3
+                ],
                 "horseId": "14"
               },
               {
@@ -17446,7 +17788,12 @@
                 "margin": "クビ",
                 "popularity": 7,
                 "odds": 13.1,
-                "passing": null,
+                "passing": [
+                  5,
+                  5,
+                  5,
+                  5
+                ],
                 "horseId": "4"
               },
               {
@@ -17460,7 +17807,12 @@
                 "margin": "2.1/2",
                 "popularity": 5,
                 "odds": 9.2,
-                "passing": null,
+                "passing": [
+                  12,
+                  12,
+                  11,
+                  11
+                ],
                 "horseId": "9"
               },
               {
@@ -17474,7 +17826,12 @@
                 "margin": "3.1/2",
                 "popularity": 9,
                 "odds": 23.5,
-                "passing": null,
+                "passing": [
+                  9,
+                  8,
+                  8,
+                  8
+                ],
                 "horseId": "10"
               },
               {
@@ -17488,7 +17845,12 @@
                 "margin": "3/4",
                 "popularity": 14,
                 "odds": 142.9,
-                "passing": null,
+                "passing": [
+                  9,
+                  10,
+                  12,
+                  11
+                ],
                 "horseId": "2"
               },
               {
@@ -17502,7 +17864,12 @@
                 "margin": "クビ",
                 "popularity": 11,
                 "odds": 40.5,
-                "passing": null,
+                "passing": [
+                  12,
+                  13,
+                  8,
+                  6
+                ],
                 "horseId": "12"
               },
               {
@@ -17516,7 +17883,12 @@
                 "margin": "2",
                 "popularity": 10,
                 "odds": 32.6,
-                "passing": null,
+                "passing": [
+                  7,
+                  7,
+                  7,
+                  8
+                ],
                 "horseId": "8"
               },
               {
@@ -17530,7 +17902,12 @@
                 "margin": "1.1/2",
                 "popularity": 13,
                 "odds": 75.1,
-                "passing": null,
+                "passing": [
+                  12,
+                  13,
+                  14,
+                  13
+                ],
                 "horseId": "7"
               },
               {
@@ -17544,7 +17921,12 @@
                 "margin": "1.1/2",
                 "popularity": 15,
                 "odds": 144.1,
-                "passing": null,
+                "passing": [
+                  15,
+                  15,
+                  15,
+                  15
+                ],
                 "horseId": "5"
               },
               {
@@ -17558,7 +17940,12 @@
                 "margin": "1.1/2",
                 "popularity": 6,
                 "odds": 10.7,
-                "passing": null,
+                "passing": [
+                  5,
+                  5,
+                  5,
+                  6
+                ],
                 "horseId": "11"
               },
               {
@@ -17572,7 +17959,12 @@
                 "margin": "2",
                 "popularity": 12,
                 "odds": 68,
-                "passing": null,
+                "passing": [
+                  8,
+                  8,
+                  8,
+                  8
+                ],
                 "horseId": "13"
               },
               {
@@ -17586,7 +17978,12 @@
                 "margin": "2.1/2",
                 "popularity": 8,
                 "odds": 17.1,
-                "passing": null,
+                "passing": [
+                  9,
+                  10,
+                  12,
+                  14
+                ],
                 "horseId": "15"
               }
             ],
@@ -18173,7 +18570,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T15:52:40.854Z",
+            "updatedAt": "2026-11-09T07:44:51.392Z",
             "winnerHorseId": "8",
             "winnerHorseName": "ギリーズボール",
             "top3HorseIds": [
@@ -18198,7 +18595,10 @@
                 "margin": "",
                 "popularity": 2,
                 "odds": 5.6,
-                "passing": null,
+                "passing": [
+                  8,
+                  9
+                ],
                 "horseId": "8"
               },
               {
@@ -18212,7 +18612,10 @@
                 "margin": "1/2",
                 "popularity": 10,
                 "odds": 18.1,
-                "passing": null,
+                "passing": [
+                  2,
+                  2
+                ],
                 "horseId": "6"
               },
               {
@@ -18226,7 +18629,10 @@
                 "margin": "3/4",
                 "popularity": 5,
                 "odds": 9.2,
-                "passing": null,
+                "passing": [
+                  4,
+                  3
+                ],
                 "horseId": "7"
               },
               {
@@ -18240,7 +18646,10 @@
                 "margin": "1.1/4",
                 "popularity": 16,
                 "odds": 71.5,
-                "passing": null,
+                "passing": [
+                  6,
+                  6
+                ],
                 "horseId": "10"
               },
               {
@@ -18268,10 +18677,13 @@
                 "name": "マーブルパレス",
                 "jockey": "高杉",
                 "finishTime": "1:10.7",
-                "margin": "同着",
+                "margin": "アタマ",
                 "popularity": 6,
                 "odds": 10.2,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "14"
               },
               {
@@ -18285,7 +18697,10 @@
                 "margin": "1/2",
                 "popularity": 1,
                 "odds": 4.9,
-                "passing": null,
+                "passing": [
+                  4,
+                  3
+                ],
                 "horseId": "2"
               },
               {
@@ -18299,7 +18714,10 @@
                 "margin": "1/2",
                 "popularity": 4,
                 "odds": 7.6,
-                "passing": null,
+                "passing": [
+                  8,
+                  9
+                ],
                 "horseId": "5"
               },
               {
@@ -18313,7 +18731,10 @@
                 "margin": "クビ",
                 "popularity": 8,
                 "odds": 16.6,
-                "passing": null,
+                "passing": [
+                  1,
+                  1
+                ],
                 "horseId": "1"
               },
               {
@@ -18327,7 +18748,10 @@
                 "margin": "クビ",
                 "popularity": 9,
                 "odds": 17.8,
-                "passing": null,
+                "passing": [
+                  8,
+                  6
+                ],
                 "horseId": "4"
               },
               {
@@ -18341,7 +18765,10 @@
                 "margin": "クビ",
                 "popularity": 7,
                 "odds": 15.2,
-                "passing": null,
+                "passing": [
+                  11,
+                  11
+                ],
                 "horseId": "9"
               },
               {
@@ -18355,7 +18782,10 @@
                 "margin": "1/2",
                 "popularity": 15,
                 "odds": 70.1,
-                "passing": null,
+                "passing": [
+                  11,
+                  11
+                ],
                 "horseId": "16"
               },
               {
@@ -18369,7 +18799,10 @@
                 "margin": "2",
                 "popularity": 12,
                 "odds": 36.9,
-                "passing": null,
+                "passing": [
+                  6,
+                  6
+                ],
                 "horseId": "13"
               },
               {
@@ -18383,7 +18816,10 @@
                 "margin": "3/4",
                 "popularity": 3,
                 "odds": 5.9,
-                "passing": null,
+                "passing": [
+                  16,
+                  16
+                ],
                 "horseId": "11"
               },
               {
@@ -18397,7 +18833,10 @@
                 "margin": "3.1/2",
                 "popularity": 13,
                 "odds": 39.7,
-                "passing": null,
+                "passing": [
+                  14,
+                  14
+                ],
                 "horseId": "3"
               },
               {
@@ -18411,7 +18850,10 @@
                 "margin": "7",
                 "popularity": 14,
                 "odds": 64.8,
-                "passing": null,
+                "passing": [
+                  14,
+                  14
+                ],
                 "horseId": "15"
               }
             ],
@@ -18998,7 +19440,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T15:52:41.132Z",
+            "updatedAt": "2026-11-09T07:44:51.606Z",
             "winnerHorseId": "16",
             "winnerHorseName": "ルクスコスモス",
             "top3HorseIds": [
@@ -19023,7 +19465,10 @@
                 "margin": "",
                 "popularity": 4,
                 "odds": 9.3,
-                "passing": null,
+                "passing": [
+                  6,
+                  6
+                ],
                 "horseId": "16"
               },
               {
@@ -19037,7 +19482,10 @@
                 "margin": "2",
                 "popularity": 9,
                 "odds": 22.9,
-                "passing": null,
+                "passing": [
+                  4,
+                  3
+                ],
                 "horseId": "12"
               },
               {
@@ -19051,7 +19499,10 @@
                 "margin": "クビ",
                 "popularity": 11,
                 "odds": 47.3,
-                "passing": null,
+                "passing": [
+                  9,
+                  9
+                ],
                 "horseId": "15"
               },
               {
@@ -19065,7 +19516,10 @@
                 "margin": "1",
                 "popularity": 6,
                 "odds": 11.8,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "9"
               },
               {
@@ -19079,7 +19533,10 @@
                 "margin": "クビ",
                 "popularity": 2,
                 "odds": 4.1,
-                "passing": null,
+                "passing": [
+                  4,
+                  5
+                ],
                 "horseId": "4"
               },
               {
@@ -19093,7 +19550,10 @@
                 "margin": "クビ",
                 "popularity": 5,
                 "odds": 11.8,
-                "passing": null,
+                "passing": [
+                  8,
+                  9
+                ],
                 "horseId": "11"
               },
               {
@@ -19107,7 +19567,10 @@
                 "margin": "ハナ",
                 "popularity": 12,
                 "odds": 62.2,
-                "passing": null,
+                "passing": [
+                  13,
+                  13
+                ],
                 "horseId": "14"
               },
               {
@@ -19121,7 +19584,10 @@
                 "margin": "1.1/2",
                 "popularity": 7,
                 "odds": 12.1,
-                "passing": null,
+                "passing": [
+                  6,
+                  6
+                ],
                 "horseId": "7"
               },
               {
@@ -19135,7 +19601,10 @@
                 "margin": "1/2",
                 "popularity": 1,
                 "odds": 3.3,
-                "passing": null,
+                "passing": [
+                  9,
+                  8
+                ],
                 "horseId": "6"
               },
               {
@@ -19149,7 +19618,10 @@
                 "margin": "アタマ",
                 "popularity": 10,
                 "odds": 32.2,
-                "passing": null,
+                "passing": [
+                  16,
+                  15
+                ],
                 "horseId": "3"
               },
               {
@@ -19163,7 +19635,10 @@
                 "margin": "1/2",
                 "popularity": 13,
                 "odds": 65.1,
-                "passing": null,
+                "passing": [
+                  9,
+                  9
+                ],
                 "horseId": "10"
               },
               {
@@ -19177,7 +19652,10 @@
                 "margin": "3/4",
                 "popularity": 15,
                 "odds": 112.4,
-                "passing": null,
+                "passing": [
+                  9,
+                  12
+                ],
                 "horseId": "13"
               },
               {
@@ -19191,7 +19669,10 @@
                 "margin": "1/2",
                 "popularity": 8,
                 "odds": 13.1,
-                "passing": null,
+                "passing": [
+                  2,
+                  2
+                ],
                 "horseId": "5"
               },
               {
@@ -19205,7 +19686,10 @@
                 "margin": "1.3/4",
                 "popularity": 14,
                 "odds": 85.5,
-                "passing": null,
+                "passing": [
+                  13,
+                  13
+                ],
                 "horseId": "8"
               },
               {
@@ -19219,7 +19703,10 @@
                 "margin": "3",
                 "popularity": 16,
                 "odds": 230.7,
-                "passing": null,
+                "passing": [
+                  15,
+                  15
+                ],
                 "horseId": "2"
               },
               {
@@ -19233,7 +19720,10 @@
                 "margin": "3.1/2",
                 "popularity": 3,
                 "odds": 8.2,
-                "passing": null,
+                "passing": [
+                  1,
+                  1
+                ],
                 "horseId": "1"
               }
             ],
@@ -19788,7 +20278,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T05:39:55.366Z",
+            "updatedAt": "2026-11-09T07:44:47.325Z",
             "winnerHorseId": "6",
             "winnerHorseName": "ボクマダネムイヨ",
             "top3HorseIds": [
@@ -19813,7 +20303,12 @@
                 "margin": "",
                 "popularity": 1,
                 "odds": 2.5,
-                "passing": null,
+                "passing": [
+                  5,
+                  5,
+                  3,
+                  2
+                ],
                 "horseId": "6"
               },
               {
@@ -19827,7 +20322,12 @@
                 "margin": "1.3/4",
                 "popularity": 3,
                 "odds": 6.9,
-                "passing": null,
+                "passing": [
+                  3,
+                  4,
+                  5,
+                  4
+                ],
                 "horseId": "13"
               },
               {
@@ -19841,7 +20341,12 @@
                 "margin": "3.1/2",
                 "popularity": 6,
                 "odds": 16.1,
-                "passing": null,
+                "passing": [
+                  12,
+                  12,
+                  8,
+                  7
+                ],
                 "horseId": "14"
               },
               {
@@ -19855,7 +20360,12 @@
                 "margin": "クビ",
                 "popularity": 5,
                 "odds": 8.5,
-                "passing": null,
+                "passing": [
+                  2,
+                  1,
+                  1,
+                  1
+                ],
                 "horseId": "5"
               },
               {
@@ -19869,7 +20379,12 @@
                 "margin": "1.1/4",
                 "popularity": 10,
                 "odds": 86.2,
-                "passing": null,
+                "passing": [
+                  9,
+                  9,
+                  5,
+                  7
+                ],
                 "horseId": "11"
               },
               {
@@ -19883,7 +20398,12 @@
                 "margin": "アタマ",
                 "popularity": 4,
                 "odds": 7.6,
-                "passing": null,
+                "passing": [
+                  14,
+                  13,
+                  11,
+                  9
+                ],
                 "horseId": "1"
               },
               {
@@ -19897,7 +20417,12 @@
                 "margin": "3",
                 "popularity": 13,
                 "odds": 178.5,
-                "passing": null,
+                "passing": [
+                  10,
+                  9,
+                  11,
+                  13
+                ],
                 "horseId": "7"
               },
               {
@@ -19911,7 +20436,12 @@
                 "margin": "1.1/4",
                 "popularity": 11,
                 "odds": 103.5,
-                "passing": null,
+                "passing": [
+                  13,
+                  13,
+                  14,
+                  9
+                ],
                 "horseId": "4"
               },
               {
@@ -19925,7 +20455,12 @@
                 "margin": "2",
                 "popularity": 9,
                 "odds": 58.8,
-                "passing": null,
+                "passing": [
+                  11,
+                  11,
+                  14,
+                  15
+                ],
                 "horseId": "9"
               },
               {
@@ -19939,7 +20474,12 @@
                 "margin": "2",
                 "popularity": 2,
                 "odds": 3.8,
-                "passing": null,
+                "passing": [
+                  1,
+                  2,
+                  2,
+                  2
+                ],
                 "horseId": "15"
               },
               {
@@ -19953,7 +20493,12 @@
                 "margin": "アタマ",
                 "popularity": 12,
                 "odds": 109.7,
-                "passing": null,
+                "passing": [
+                  15,
+                  13,
+                  11,
+                  13
+                ],
                 "horseId": "10"
               },
               {
@@ -19967,7 +20512,12 @@
                 "margin": "クビ",
                 "popularity": 8,
                 "odds": 40.3,
-                "passing": null,
+                "passing": [
+                  4,
+                  2,
+                  3,
+                  4
+                ],
                 "horseId": "3"
               },
               {
@@ -19981,7 +20531,12 @@
                 "margin": "アタマ",
                 "popularity": 14,
                 "odds": 263.7,
-                "passing": null,
+                "passing": [
+                  6,
+                  8,
+                  8,
+                  9
+                ],
                 "horseId": "8"
               },
               {
@@ -19995,7 +20550,12 @@
                 "margin": "9",
                 "popularity": 15,
                 "odds": 373.2,
-                "passing": null,
+                "passing": [
+                  6,
+                  6,
+                  5,
+                  6
+                ],
                 "horseId": "12"
               },
               {
@@ -20009,7 +20569,12 @@
                 "margin": "大",
                 "popularity": 7,
                 "odds": 17.8,
-                "passing": null,
+                "passing": [
+                  8,
+                  6,
+                  8,
+                  9
+                ],
                 "horseId": "2"
               }
             ],
@@ -20436,7 +21001,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T05:39:55.590Z",
+            "updatedAt": "2026-11-09T07:44:47.536Z",
             "winnerHorseId": "10",
             "winnerHorseName": "ボウウィンドウ",
             "top3HorseIds": [
@@ -20461,7 +21026,11 @@
                 "margin": "",
                 "popularity": 1,
                 "odds": 2.2,
-                "passing": null,
+                "passing": [
+                  5,
+                  5,
+                  5
+                ],
                 "horseId": "10"
               },
               {
@@ -20475,7 +21044,11 @@
                 "margin": "1/2",
                 "popularity": 9,
                 "odds": 31.8,
-                "passing": null,
+                "passing": [
+                  3,
+                  3,
+                  3
+                ],
                 "horseId": "2"
               },
               {
@@ -20489,7 +21062,11 @@
                 "margin": "クビ",
                 "popularity": 3,
                 "odds": 5.2,
-                "passing": null,
+                "passing": [
+                  7,
+                  6,
+                  8
+                ],
                 "horseId": "8"
               },
               {
@@ -20503,7 +21080,11 @@
                 "margin": "ハナ",
                 "popularity": 8,
                 "odds": 24.7,
-                "passing": null,
+                "passing": [
+                  1,
+                  1,
+                  1
+                ],
                 "horseId": "3"
               },
               {
@@ -20517,7 +21098,11 @@
                 "margin": "アタマ",
                 "popularity": 2,
                 "odds": 4.2,
-                "passing": null,
+                "passing": [
+                  7,
+                  8,
+                  6
+                ],
                 "horseId": "1"
               },
               {
@@ -20531,7 +21116,11 @@
                 "margin": "1.1/4",
                 "popularity": 7,
                 "odds": 19.4,
-                "passing": null,
+                "passing": [
+                  4,
+                  3,
+                  3
+                ],
                 "horseId": "9"
               },
               {
@@ -20545,7 +21134,11 @@
                 "margin": "1/2",
                 "popularity": 6,
                 "odds": 19.1,
-                "passing": null,
+                "passing": [
+                  9,
+                  8,
+                  9
+                ],
                 "horseId": "4"
               },
               {
@@ -20559,7 +21152,11 @@
                 "margin": "クビ",
                 "popularity": 10,
                 "odds": 138.8,
-                "passing": null,
+                "passing": [
+                  9,
+                  8,
+                  9
+                ],
                 "horseId": "6"
               },
               {
@@ -20573,7 +21170,11 @@
                 "margin": "2.1/2",
                 "popularity": 4,
                 "odds": 8.5,
-                "passing": null,
+                "passing": [
+                  6,
+                  6,
+                  6
+                ],
                 "horseId": "5"
               },
               {
@@ -20587,7 +21188,11 @@
                 "margin": "1",
                 "popularity": 5,
                 "odds": 13.7,
-                "passing": null,
+                "passing": [
+                  2,
+                  2,
+                  2
+                ],
                 "horseId": "7"
               },
               {
@@ -20601,7 +21206,11 @@
                 "margin": "クビ",
                 "popularity": 11,
                 "odds": 151.1,
-                "passing": null,
+                "passing": [
+                  11,
+                  11,
+                  9
+                ],
                 "horseId": "11"
               }
             ],
@@ -20996,7 +21605,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T05:39:55.748Z",
+            "updatedAt": "2026-11-09T07:44:48.349Z",
             "winnerHorseId": "9",
             "winnerHorseName": "ブルージェイ",
             "top3HorseIds": [
@@ -21021,7 +21630,10 @@
                 "margin": "",
                 "popularity": 1,
                 "odds": 2.8,
-                "passing": null,
+                "passing": [
+                  2,
+                  1
+                ],
                 "horseId": "9"
               },
               {
@@ -21035,7 +21647,10 @@
                 "margin": "ハナ",
                 "popularity": 2,
                 "odds": 3.6,
-                "passing": null,
+                "passing": [
+                  3,
+                  4
+                ],
                 "horseId": "2"
               },
               {
@@ -21049,7 +21664,10 @@
                 "margin": "1/2",
                 "popularity": 7,
                 "odds": 20,
-                "passing": null,
+                "passing": [
+                  9,
+                  9
+                ],
                 "horseId": "5"
               },
               {
@@ -21063,7 +21681,10 @@
                 "margin": "3/4",
                 "popularity": 6,
                 "odds": 9.5,
-                "passing": null,
+                "passing": [
+                  3,
+                  4
+                ],
                 "horseId": "8"
               },
               {
@@ -21077,7 +21698,10 @@
                 "margin": "1.1/4",
                 "popularity": 9,
                 "odds": 59.3,
-                "passing": null,
+                "passing": [
+                  10,
+                  10
+                ],
                 "horseId": "3"
               },
               {
@@ -21091,7 +21715,10 @@
                 "margin": "クビ",
                 "popularity": 8,
                 "odds": 37.3,
-                "passing": null,
+                "passing": [
+                  8,
+                  8
+                ],
                 "horseId": "7"
               },
               {
@@ -21105,7 +21732,10 @@
                 "margin": "2",
                 "popularity": 5,
                 "odds": 8.4,
-                "passing": null,
+                "passing": [
+                  7,
+                  7
+                ],
                 "horseId": "4"
               },
               {
@@ -21119,7 +21749,10 @@
                 "margin": "1/2",
                 "popularity": 4,
                 "odds": 7.6,
-                "passing": null,
+                "passing": [
+                  3,
+                  2
+                ],
                 "horseId": "10"
               },
               {
@@ -21133,7 +21766,10 @@
                 "margin": "9",
                 "popularity": 3,
                 "odds": 5.9,
-                "passing": null,
+                "passing": [
+                  6,
+                  4
+                ],
                 "horseId": "6"
               },
               {
@@ -21147,7 +21783,10 @@
                 "margin": "2.1/2",
                 "popularity": 10,
                 "odds": 74.3,
-                "passing": null,
+                "passing": [
+                  1,
+                  2
+                ],
                 "horseId": "1"
               }
             ],
@@ -21798,7 +22437,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T05:39:55.942Z",
+            "updatedAt": "2026-11-09T07:44:48.589Z",
             "winnerHorseId": "15",
             "winnerHorseName": "ミッキーダムール",
             "top3HorseIds": [
@@ -21823,7 +22462,10 @@
                 "margin": "",
                 "popularity": 2,
                 "odds": 2.9,
-                "passing": null,
+                "passing": [
+                  10,
+                  9
+                ],
                 "horseId": "15"
               },
               {
@@ -21837,7 +22479,10 @@
                 "margin": "2.1/2",
                 "popularity": 4,
                 "odds": 14.8,
-                "passing": null,
+                "passing": [
+                  10,
+                  12
+                ],
                 "horseId": "14"
               },
               {
@@ -21851,7 +22496,10 @@
                 "margin": "1/2",
                 "popularity": 7,
                 "odds": 27.9,
-                "passing": null,
+                "passing": [
+                  15,
+                  15
+                ],
                 "horseId": "5"
               },
               {
@@ -21865,7 +22513,10 @@
                 "margin": "クビ",
                 "popularity": 8,
                 "odds": 43.7,
-                "passing": null,
+                "passing": [
+                  6,
+                  6
+                ],
                 "horseId": "18"
               },
               {
@@ -21879,7 +22530,10 @@
                 "margin": "クビ",
                 "popularity": 9,
                 "odds": 43.9,
-                "passing": null,
+                "passing": [
+                  5,
+                  4
+                ],
                 "horseId": "10"
               },
               {
@@ -21893,7 +22547,10 @@
                 "margin": "3/4",
                 "popularity": 11,
                 "odds": 70.1,
-                "passing": null,
+                "passing": [
+                  14,
+                  12
+                ],
                 "horseId": "17"
               },
               {
@@ -21907,7 +22564,10 @@
                 "margin": "クビ",
                 "popularity": 5,
                 "odds": 20.8,
-                "passing": null,
+                "passing": [
+                  13,
+                  12
+                ],
                 "horseId": "13"
               },
               {
@@ -21921,7 +22581,10 @@
                 "margin": "クビ",
                 "popularity": 10,
                 "odds": 46.7,
-                "passing": null,
+                "passing": [
+                  10,
+                  9
+                ],
                 "horseId": "9"
               },
               {
@@ -21935,7 +22598,10 @@
                 "margin": "1/2",
                 "popularity": 6,
                 "odds": 22.1,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "1"
               },
               {
@@ -21949,7 +22615,10 @@
                 "margin": "クビ",
                 "popularity": 3,
                 "odds": 5.5,
-                "passing": null,
+                "passing": [
+                  8,
+                  8
+                ],
                 "horseId": "16"
               },
               {
@@ -21963,7 +22632,10 @@
                 "margin": "1/2",
                 "popularity": 14,
                 "odds": 94.2,
-                "passing": null,
+                "passing": [
+                  4,
+                  4
+                ],
                 "horseId": "6"
               },
               {
@@ -21977,7 +22649,10 @@
                 "margin": "クビ",
                 "popularity": 1,
                 "odds": 2.4,
-                "passing": null,
+                "passing": [
+                  2,
+                  2
+                ],
                 "horseId": "12"
               },
               {
@@ -21991,7 +22666,10 @@
                 "margin": "1.3/4",
                 "popularity": 18,
                 "odds": 355.2,
-                "passing": null,
+                "passing": [
+                  17,
+                  17
+                ],
                 "horseId": "11"
               },
               {
@@ -22005,7 +22683,10 @@
                 "margin": "1",
                 "popularity": 12,
                 "odds": 76.7,
-                "passing": null,
+                "passing": [
+                  15,
+                  15
+                ],
                 "horseId": "4"
               },
               {
@@ -22019,7 +22700,10 @@
                 "margin": "1/2",
                 "popularity": 16,
                 "odds": 291,
-                "passing": null,
+                "passing": [
+                  6,
+                  6
+                ],
                 "horseId": "2"
               },
               {
@@ -22033,7 +22717,10 @@
                 "margin": "3.1/2",
                 "popularity": 17,
                 "odds": 295.9,
-                "passing": null,
+                "passing": [
+                  8,
+                  9
+                ],
                 "horseId": "8"
               },
               {
@@ -22047,7 +22734,10 @@
                 "margin": "クビ",
                 "popularity": 15,
                 "odds": 222.2,
-                "passing": null,
+                "passing": [
+                  1,
+                  1
+                ],
                 "horseId": "3"
               },
               {
@@ -22061,7 +22751,10 @@
                 "margin": "1.3/4",
                 "popularity": 13,
                 "odds": 84.7,
-                "passing": null,
+                "passing": [
+                  18,
+                  17
+                ],
                 "horseId": "7"
               }
             ],
@@ -22424,7 +23117,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T15:52:41.313Z",
+            "updatedAt": "2026-11-09T07:44:51.763Z",
             "winnerHorseId": "7",
             "winnerHorseName": "エスクアドラ",
             "top3HorseIds": [
@@ -22449,7 +23142,11 @@
                 "margin": "",
                 "popularity": 2,
                 "odds": 3.9,
-                "passing": null,
+                "passing": [
+                  5,
+                  6,
+                  7
+                ],
                 "horseId": "7"
               },
               {
@@ -22463,7 +23160,11 @@
                 "margin": "クビ",
                 "popularity": 1,
                 "odds": 2.2,
-                "passing": null,
+                "passing": [
+                  5,
+                  4,
+                  5
+                ],
                 "horseId": "6"
               },
               {
@@ -22477,7 +23178,11 @@
                 "margin": "クビ",
                 "popularity": 4,
                 "odds": 5,
-                "passing": null,
+                "passing": [
+                  4,
+                  4,
+                  3
+                ],
                 "horseId": "3"
               },
               {
@@ -22491,7 +23196,11 @@
                 "margin": "1.1/2",
                 "popularity": 3,
                 "odds": 4.6,
-                "passing": null,
+                "passing": [
+                  7,
+                  6,
+                  5
+                ],
                 "horseId": "2"
               },
               {
@@ -22505,7 +23214,11 @@
                 "margin": "4",
                 "popularity": 5,
                 "odds": 11.1,
-                "passing": null,
+                "passing": [
+                  8,
+                  8,
+                  8
+                ],
                 "horseId": "9"
               },
               {
@@ -22519,7 +23232,11 @@
                 "margin": "1",
                 "popularity": 8,
                 "odds": 185,
-                "passing": null,
+                "passing": [
+                  2,
+                  2,
+                  2
+                ],
                 "horseId": "5"
               },
               {
@@ -22533,7 +23250,11 @@
                 "margin": "5",
                 "popularity": 6,
                 "odds": 41.4,
-                "passing": null,
+                "passing": [
+                  3,
+                  3,
+                  3
+                ],
                 "horseId": "8"
               },
               {
@@ -22547,7 +23268,11 @@
                 "margin": "3/4",
                 "popularity": 7,
                 "odds": 153.9,
-                "passing": null,
+                "passing": [
+                  1,
+                  1,
+                  1
+                ],
                 "horseId": "4"
               },
               {
@@ -22561,7 +23286,11 @@
                 "margin": "8",
                 "popularity": 9,
                 "odds": 267.8,
-                "passing": null,
+                "passing": [
+                  9,
+                  8,
+                  8
+                ],
                 "horseId": "1"
               }
             ],
@@ -22988,7 +23717,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T15:52:42.041Z",
+            "updatedAt": "2026-11-09T07:44:52.193Z",
             "winnerHorseId": "8",
             "winnerHorseName": "ワイドクリーガー",
             "top3HorseIds": [
@@ -23013,7 +23742,10 @@
                 "margin": "",
                 "popularity": 9,
                 "odds": 89.4,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "8"
               },
               {
@@ -23027,7 +23759,10 @@
                 "margin": "アタマ",
                 "popularity": 2,
                 "odds": 4.5,
-                "passing": null,
+                "passing": [
+                  1,
+                  1
+                ],
                 "horseId": "3"
               },
               {
@@ -23041,7 +23776,10 @@
                 "margin": "3/4",
                 "popularity": 7,
                 "odds": 15.7,
-                "passing": null,
+                "passing": [
+                  2,
+                  2
+                ],
                 "horseId": "7"
               },
               {
@@ -23055,7 +23793,10 @@
                 "margin": "2.1/2",
                 "popularity": 3,
                 "odds": 4.5,
-                "passing": null,
+                "passing": [
+                  10,
+                  10
+                ],
                 "horseId": "5"
               },
               {
@@ -23069,7 +23810,10 @@
                 "margin": "1",
                 "popularity": 4,
                 "odds": 11.4,
-                "passing": null,
+                "passing": [
+                  8,
+                  8
+                ],
                 "horseId": "9"
               },
               {
@@ -23083,7 +23827,10 @@
                 "margin": "ハナ",
                 "popularity": 1,
                 "odds": 2.3,
-                "passing": null,
+                "passing": [
+                  6,
+                  5
+                ],
                 "horseId": "10"
               },
               {
@@ -23097,7 +23844,10 @@
                 "margin": "1/2",
                 "popularity": 6,
                 "odds": 13,
-                "passing": null,
+                "passing": [
+                  8,
+                  8
+                ],
                 "horseId": "11"
               },
               {
@@ -23111,7 +23861,10 @@
                 "margin": "1",
                 "popularity": 11,
                 "odds": 129.7,
-                "passing": null,
+                "passing": [
+                  5,
+                  5
+                ],
                 "horseId": "4"
               },
               {
@@ -23125,7 +23878,10 @@
                 "margin": "クビ",
                 "popularity": 5,
                 "odds": 12.7,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "1"
               },
               {
@@ -23139,7 +23895,10 @@
                 "margin": "1/2",
                 "popularity": 10,
                 "odds": 96,
-                "passing": null,
+                "passing": [
+                  6,
+                  7
+                ],
                 "horseId": "2"
               },
               {
@@ -23153,7 +23912,10 @@
                 "margin": "2.1/2",
                 "popularity": 8,
                 "odds": 20.2,
-                "passing": null,
+                "passing": [
+                  10,
+                  10
+                ],
                 "horseId": "6"
               }
             ],
@@ -23804,7 +24566,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T15:52:42.902Z",
+            "updatedAt": "2026-11-09T07:44:52.476Z",
             "winnerHorseId": "6",
             "winnerHorseName": "ファミリータイム",
             "top3HorseIds": [
@@ -23829,7 +24591,12 @@
                 "margin": "",
                 "popularity": 16,
                 "odds": 74.2,
-                "passing": null,
+                "passing": [
+                  4,
+                  4,
+                  4,
+                  4
+                ],
                 "horseId": "6"
               },
               {
@@ -23843,7 +24610,12 @@
                 "margin": "クビ",
                 "popularity": 13,
                 "odds": 37.9,
-                "passing": null,
+                "passing": [
+                  6,
+                  6,
+                  6,
+                  6
+                ],
                 "horseId": "15"
               },
               {
@@ -23857,7 +24629,12 @@
                 "margin": "クビ",
                 "popularity": 12,
                 "odds": 36.9,
-                "passing": null,
+                "passing": [
+                  2,
+                  2,
+                  2,
+                  2
+                ],
                 "horseId": "12"
               },
               {
@@ -23871,7 +24648,12 @@
                 "margin": "クビ",
                 "popularity": 9,
                 "odds": 18.2,
-                "passing": null,
+                "passing": [
+                  5,
+                  5,
+                  5,
+                  5
+                ],
                 "horseId": "3"
               },
               {
@@ -23885,7 +24667,12 @@
                 "margin": "クビ",
                 "popularity": 14,
                 "odds": 52.3,
-                "passing": null,
+                "passing": [
+                  3,
+                  3,
+                  3,
+                  3
+                ],
                 "horseId": "1"
               },
               {
@@ -23899,7 +24686,12 @@
                 "margin": "1.1/2",
                 "popularity": 1,
                 "odds": 5.7,
-                "passing": null,
+                "passing": [
+                  10,
+                  8,
+                  8,
+                  8
+                ],
                 "horseId": "4"
               },
               {
@@ -23913,7 +24705,12 @@
                 "margin": "クビ",
                 "popularity": 4,
                 "odds": 7.1,
-                "passing": null,
+                "passing": [
+                  12,
+                  10,
+                  11,
+                  10
+                ],
                 "horseId": "5"
               },
               {
@@ -23927,7 +24724,12 @@
                 "margin": "1.1/4",
                 "popularity": 3,
                 "odds": 5.8,
-                "passing": null,
+                "passing": [
+                  15,
+                  15,
+                  11,
+                  11
+                ],
                 "horseId": "7"
               },
               {
@@ -23941,7 +24743,12 @@
                 "margin": "ハナ",
                 "popularity": 11,
                 "odds": 28.1,
-                "passing": null,
+                "passing": [
+                  9,
+                  10,
+                  10,
+                  8
+                ],
                 "horseId": "16"
               },
               {
@@ -23955,7 +24762,12 @@
                 "margin": "ハナ",
                 "popularity": 2,
                 "odds": 5.7,
-                "passing": null,
+                "passing": [
+                  7,
+                  7,
+                  6,
+                  6
+                ],
                 "horseId": "9"
               },
               {
@@ -23969,7 +24781,12 @@
                 "margin": "ハナ",
                 "popularity": 7,
                 "odds": 12.5,
-                "passing": null,
+                "passing": [
+                  7,
+                  8,
+                  8,
+                  11
+                ],
                 "horseId": "11"
               },
               {
@@ -23983,7 +24800,12 @@
                 "margin": "クビ",
                 "popularity": 10,
                 "odds": 20.3,
-                "passing": null,
+                "passing": [
+                  12,
+                  13,
+                  15,
+                  13
+                ],
                 "horseId": "17"
               },
               {
@@ -23997,7 +24819,12 @@
                 "margin": "1",
                 "popularity": 6,
                 "odds": 10.6,
-                "passing": null,
+                "passing": [
+                  15,
+                  15,
+                  16,
+                  13
+                ],
                 "horseId": "2"
               },
               {
@@ -24011,7 +24838,12 @@
                 "margin": "クビ",
                 "popularity": 5,
                 "odds": 10.6,
-                "passing": null,
+                "passing": [
+                  17,
+                  17,
+                  17,
+                  17
+                ],
                 "horseId": "8"
               },
               {
@@ -24025,7 +24857,12 @@
                 "margin": "3",
                 "popularity": 17,
                 "odds": 105.1,
-                "passing": null,
+                "passing": [
+                  14,
+                  13,
+                  13,
+                  13
+                ],
                 "horseId": "10"
               },
               {
@@ -24039,7 +24876,12 @@
                 "margin": "2",
                 "popularity": 18,
                 "odds": 128.8,
-                "passing": null,
+                "passing": [
+                  10,
+                  12,
+                  13,
+                  13
+                ],
                 "horseId": "13"
               },
               {
@@ -24053,7 +24895,12 @@
                 "margin": "クビ",
                 "popularity": 15,
                 "odds": 67.4,
-                "passing": null,
+                "passing": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
                 "horseId": "18"
               },
               {
@@ -24067,7 +24914,12 @@
                 "margin": "2.1/2",
                 "popularity": 8,
                 "odds": 15.6,
-                "passing": null,
+                "passing": [
+                  18,
+                  18,
+                  18,
+                  17
+                ],
                 "horseId": "14"
               }
             ],
@@ -24526,7 +25378,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T15:52:43.203Z",
+            "updatedAt": "2026-11-09T07:44:52.751Z",
             "winnerHorseId": "4",
             "winnerHorseName": "デンプシー",
             "top3HorseIds": [
@@ -24551,7 +25403,10 @@
                 "margin": "",
                 "popularity": 3,
                 "odds": 7.2,
-                "passing": null,
+                "passing": [
+                  6,
+                  6
+                ],
                 "horseId": "4"
               },
               {
@@ -24565,7 +25420,10 @@
                 "margin": "1.1/2",
                 "popularity": 4,
                 "odds": 12.1,
-                "passing": null,
+                "passing": [
+                  9,
+                  8
+                ],
                 "horseId": "7"
               },
               {
@@ -24579,7 +25437,10 @@
                 "margin": "ハナ",
                 "popularity": 5,
                 "odds": 15.3,
-                "passing": null,
+                "passing": [
+                  4,
+                  3
+                ],
                 "horseId": "8"
               },
               {
@@ -24593,7 +25454,10 @@
                 "margin": "1",
                 "popularity": 1,
                 "odds": 1.9,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "3"
               },
               {
@@ -24607,7 +25471,10 @@
                 "margin": "3/4",
                 "popularity": 6,
                 "odds": 17.1,
-                "passing": null,
+                "passing": [
+                  10,
+                  11
+                ],
                 "horseId": "9"
               },
               {
@@ -24621,7 +25488,10 @@
                 "margin": "クビ",
                 "popularity": 7,
                 "odds": 38.1,
-                "passing": null,
+                "passing": [
+                  12,
+                  12
+                ],
                 "horseId": "12"
               },
               {
@@ -24635,7 +25505,10 @@
                 "margin": "クビ",
                 "popularity": 11,
                 "odds": 113.4,
-                "passing": null,
+                "passing": [
+                  10,
+                  10
+                ],
                 "horseId": "10"
               },
               {
@@ -24649,7 +25522,10 @@
                 "margin": "3/4",
                 "popularity": 8,
                 "odds": 42.2,
-                "passing": null,
+                "passing": [
+                  2,
+                  2
+                ],
                 "horseId": "6"
               },
               {
@@ -24663,7 +25539,10 @@
                 "margin": "1/2",
                 "popularity": 10,
                 "odds": 81.4,
-                "passing": null,
+                "passing": [
+                  7,
+                  8
+                ],
                 "horseId": "11"
               },
               {
@@ -24677,7 +25556,10 @@
                 "margin": "1/2",
                 "popularity": 2,
                 "odds": 3.2,
-                "passing": null,
+                "passing": [
+                  4,
+                  3
+                ],
                 "horseId": "5"
               },
               {
@@ -24691,7 +25573,10 @@
                 "margin": "アタマ",
                 "popularity": 12,
                 "odds": 126,
-                "passing": null,
+                "passing": [
+                  1,
+                  1
+                ],
                 "horseId": "2"
               },
               {
@@ -24705,7 +25590,10 @@
                 "margin": "クビ",
                 "popularity": 9,
                 "odds": 73.8,
-                "passing": null,
+                "passing": [
+                  7,
+                  6
+                ],
                 "horseId": "1"
               }
             ],
@@ -25100,7 +25988,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T05:39:56.167Z",
+            "updatedAt": "2026-11-09T07:44:49.400Z",
             "winnerHorseId": "9",
             "winnerHorseName": "ランスオブヒーロー",
             "top3HorseIds": [
@@ -25125,7 +26013,10 @@
                 "margin": "",
                 "popularity": 1,
                 "odds": 3.1,
-                "passing": null,
+                "passing": [
+                  10,
+                  9
+                ],
                 "horseId": "9"
               },
               {
@@ -25139,7 +26030,10 @@
                 "margin": "3/4",
                 "popularity": 2,
                 "odds": 3.7,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "5"
               },
               {
@@ -25153,7 +26047,10 @@
                 "margin": "クビ",
                 "popularity": 4,
                 "odds": 4.4,
-                "passing": null,
+                "passing": [
+                  5,
+                  5
+                ],
                 "horseId": "4"
               },
               {
@@ -25167,7 +26064,10 @@
                 "margin": "1",
                 "popularity": 3,
                 "odds": 4.3,
-                "passing": null,
+                "passing": [
+                  9,
+                  9
+                ],
                 "horseId": "8"
               },
               {
@@ -25181,7 +26081,10 @@
                 "margin": "アタマ",
                 "popularity": 5,
                 "odds": 15,
-                "passing": null,
+                "passing": [
+                  7,
+                  7
+                ],
                 "horseId": "10"
               },
               {
@@ -25195,7 +26098,10 @@
                 "margin": "クビ",
                 "popularity": 6,
                 "odds": 15.9,
-                "passing": null,
+                "passing": [
+                  1,
+                  1
+                ],
                 "horseId": "6"
               },
               {
@@ -25209,7 +26115,10 @@
                 "margin": "1/2",
                 "popularity": 7,
                 "odds": 23.2,
-                "passing": null,
+                "passing": [
+                  7,
+                  7
+                ],
                 "horseId": "1"
               },
               {
@@ -25223,7 +26132,10 @@
                 "margin": "2.1/2",
                 "popularity": 8,
                 "odds": 42.8,
-                "passing": null,
+                "passing": [
+                  2,
+                  2
+                ],
                 "horseId": "7"
               },
               {
@@ -25237,7 +26149,10 @@
                 "margin": "3/4",
                 "popularity": 10,
                 "odds": 176,
-                "passing": null,
+                "passing": [
+                  5,
+                  5
+                ],
                 "horseId": "3"
               },
               {
@@ -25251,7 +26166,10 @@
                 "margin": "3",
                 "popularity": 9,
                 "odds": 164.8,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "2"
               }
             ],
@@ -25774,7 +26692,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T05:39:56.780Z",
+            "updatedAt": "2026-11-09T07:44:49.569Z",
             "winnerHorseId": "5",
             "winnerHorseName": "ルクスデイジー",
             "top3HorseIds": [
@@ -25799,7 +26717,10 @@
                 "margin": "",
                 "popularity": 2,
                 "odds": 3.7,
-                "passing": null,
+                "passing": [
+                  6,
+                  6
+                ],
                 "horseId": "5"
               },
               {
@@ -25813,7 +26734,10 @@
                 "margin": "1/2",
                 "popularity": 4,
                 "odds": 5.8,
-                "passing": null,
+                "passing": [
+                  8,
+                  8
+                ],
                 "horseId": "6"
               },
               {
@@ -25827,7 +26751,10 @@
                 "margin": "クビ",
                 "popularity": 5,
                 "odds": 12,
-                "passing": null,
+                "passing": [
+                  7,
+                  6
+                ],
                 "horseId": "13"
               },
               {
@@ -25841,7 +26768,10 @@
                 "margin": "クビ",
                 "popularity": 1,
                 "odds": 2.5,
-                "passing": null,
+                "passing": [
+                  1,
+                  1
+                ],
                 "horseId": "1"
               },
               {
@@ -25855,7 +26785,10 @@
                 "margin": "1.1/2",
                 "popularity": 9,
                 "odds": 38.3,
-                "passing": null,
+                "passing": [
+                  12,
+                  13
+                ],
                 "horseId": "12"
               },
               {
@@ -25869,7 +26802,10 @@
                 "margin": "1.1/4",
                 "popularity": 12,
                 "odds": 149.1,
-                "passing": null,
+                "passing": [
+                  12,
+                  11
+                ],
                 "horseId": "3"
               },
               {
@@ -25883,7 +26819,10 @@
                 "margin": "クビ",
                 "popularity": 11,
                 "odds": 93,
-                "passing": null,
+                "passing": [
+                  10,
+                  11
+                ],
                 "horseId": "8"
               },
               {
@@ -25897,7 +26836,10 @@
                 "margin": "クビ",
                 "popularity": 6,
                 "odds": 21.2,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "11"
               },
               {
@@ -25911,7 +26853,10 @@
                 "margin": "3/4",
                 "popularity": 3,
                 "odds": 5.7,
-                "passing": null,
+                "passing": [
+                  2,
+                  2
+                ],
                 "horseId": "10"
               },
               {
@@ -25925,7 +26870,10 @@
                 "margin": "1.1/4",
                 "popularity": 13,
                 "odds": 181.5,
-                "passing": null,
+                "passing": [
+                  8,
+                  8
+                ],
                 "horseId": "9"
               },
               {
@@ -25939,7 +26887,10 @@
                 "margin": "3/4",
                 "popularity": 7,
                 "odds": 36.1,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "14"
               },
               {
@@ -25953,7 +26904,10 @@
                 "margin": "クビ",
                 "popularity": 14,
                 "odds": 211.5,
-                "passing": null,
+                "passing": [
+                  14,
+                  14
+                ],
                 "horseId": "7"
               },
               {
@@ -25967,7 +26921,10 @@
                 "margin": "ハナ",
                 "popularity": 8,
                 "odds": 37.8,
-                "passing": null,
+                "passing": [
+                  10,
+                  8
+                ],
                 "horseId": "2"
               },
               {
@@ -25981,7 +26938,10 @@
                 "margin": "2.1/2",
                 "popularity": 10,
                 "odds": 91.5,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "4"
               }
             ],
@@ -26568,7 +27528,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T05:39:56.948Z",
+            "updatedAt": "2026-11-09T07:44:49.866Z",
             "winnerHorseId": "3",
             "winnerHorseName": "エコロレーヴ",
             "top3HorseIds": [
@@ -26593,7 +27553,10 @@
                 "margin": "",
                 "popularity": 2,
                 "odds": 5,
-                "passing": null,
+                "passing": [
+                  1,
+                  1
+                ],
                 "horseId": "3"
               },
               {
@@ -26607,7 +27570,10 @@
                 "margin": "1.3/4",
                 "popularity": 5,
                 "odds": 15,
-                "passing": null,
+                "passing": [
+                  4,
+                  5
+                ],
                 "horseId": "13"
               },
               {
@@ -26621,7 +27587,10 @@
                 "margin": "1.1/4",
                 "popularity": 8,
                 "odds": 23.3,
-                "passing": null,
+                "passing": [
+                  7,
+                  6
+                ],
                 "horseId": "10"
               },
               {
@@ -26635,7 +27604,10 @@
                 "margin": "1.3/4",
                 "popularity": 3,
                 "odds": 6,
-                "passing": null,
+                "passing": [
+                  7,
+                  6
+                ],
                 "horseId": "14"
               },
               {
@@ -26649,7 +27621,10 @@
                 "margin": "1/2",
                 "popularity": 14,
                 "odds": 63.3,
-                "passing": null,
+                "passing": [
+                  15,
+                  14
+                ],
                 "horseId": "1"
               },
               {
@@ -26660,10 +27635,13 @@
                 "name": "ジョーローリット",
                 "jockey": "松若",
                 "finishTime": "1:11.3",
-                "margin": "同着",
+                "margin": "1/2",
                 "popularity": 6,
                 "odds": 15.8,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "11"
               },
               {
@@ -26677,7 +27655,10 @@
                 "margin": "1/2",
                 "popularity": 10,
                 "odds": 27.6,
-                "passing": null,
+                "passing": [
+                  12,
+                  8
+                ],
                 "horseId": "12"
               },
               {
@@ -26691,7 +27672,10 @@
                 "margin": "3/4",
                 "popularity": 7,
                 "odds": 17.6,
-                "passing": null,
+                "passing": [
+                  13,
+                  12
+                ],
                 "horseId": "5"
               },
               {
@@ -26705,7 +27689,10 @@
                 "margin": "クビ",
                 "popularity": 1,
                 "odds": 2.5,
-                "passing": null,
+                "passing": [
+                  10,
+                  12
+                ],
                 "horseId": "9"
               },
               {
@@ -26719,7 +27706,10 @@
                 "margin": "1",
                 "popularity": 9,
                 "odds": 24.4,
-                "passing": null,
+                "passing": [
+                  2,
+                  2
+                ],
                 "horseId": "6"
               },
               {
@@ -26733,7 +27723,10 @@
                 "margin": "1/2",
                 "popularity": 15,
                 "odds": 120.4,
-                "passing": null,
+                "passing": [
+                  16,
+                  16
+                ],
                 "horseId": "2"
               },
               {
@@ -26747,7 +27740,10 @@
                 "margin": "4",
                 "popularity": 4,
                 "odds": 14.6,
-                "passing": null,
+                "passing": [
+                  7,
+                  9
+                ],
                 "horseId": "8"
               },
               {
@@ -26761,7 +27757,10 @@
                 "margin": "クビ",
                 "popularity": 16,
                 "odds": 131.9,
-                "passing": null,
+                "passing": [
+                  10,
+                  9
+                ],
                 "horseId": "15"
               },
               {
@@ -26775,7 +27774,10 @@
                 "margin": "1/2",
                 "popularity": 11,
                 "odds": 33,
-                "passing": null,
+                "passing": [
+                  4,
+                  4
+                ],
                 "horseId": "4"
               },
               {
@@ -26789,7 +27791,10 @@
                 "margin": "1",
                 "popularity": 13,
                 "odds": 38.3,
-                "passing": null,
+                "passing": [
+                  13,
+                  14
+                ],
                 "horseId": "16"
               },
               {
@@ -26803,7 +27808,10 @@
                 "margin": "1.3/4",
                 "popularity": 12,
                 "odds": 38.2,
-                "passing": null,
+                "passing": [
+                  4,
+                  9
+                ],
                 "horseId": "7"
               }
             ],
@@ -27422,7 +28430,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T05:39:57.638Z",
+            "updatedAt": "2026-11-09T07:44:50.236Z",
             "winnerHorseId": "16",
             "winnerHorseName": "プレスバーン",
             "top3HorseIds": [
@@ -27447,7 +28455,12 @@
                 "margin": "",
                 "popularity": 2,
                 "odds": 4.9,
-                "passing": null,
+                "passing": [
+                  9,
+                  10,
+                  11,
+                  11
+                ],
                 "horseId": "16"
               },
               {
@@ -27461,7 +28474,12 @@
                 "margin": "クビ",
                 "popularity": 4,
                 "odds": 8.1,
-                "passing": null,
+                "passing": [
+                  12,
+                  12,
+                  12,
+                  12
+                ],
                 "horseId": "15"
               },
               {
@@ -27475,7 +28493,12 @@
                 "margin": "1.1/2",
                 "popularity": 15,
                 "odds": 135.9,
-                "passing": null,
+                "passing": [
+                  14,
+                  15,
+                  14,
+                  14
+                ],
                 "horseId": "8"
               },
               {
@@ -27489,7 +28512,12 @@
                 "margin": "1/2",
                 "popularity": 5,
                 "odds": 8.3,
-                "passing": null,
+                "passing": [
+                  6,
+                  6,
+                  7,
+                  6
+                ],
                 "horseId": "4"
               },
               {
@@ -27503,7 +28531,12 @@
                 "margin": "3/4",
                 "popularity": 16,
                 "odds": 211.7,
-                "passing": null,
+                "passing": [
+                  9,
+                  8,
+                  9,
+                  9
+                ],
                 "horseId": "14"
               },
               {
@@ -27517,7 +28550,12 @@
                 "margin": "クビ",
                 "popularity": 14,
                 "odds": 86.9,
-                "passing": null,
+                "passing": [
+                  3,
+                  4,
+                  4,
+                  3
+                ],
                 "horseId": "1"
               },
               {
@@ -27531,7 +28569,12 @@
                 "margin": "クビ",
                 "popularity": 17,
                 "odds": 218.8,
-                "passing": null,
+                "passing": [
+                  9,
+                  10,
+                  9,
+                  9
+                ],
                 "horseId": "17"
               },
               {
@@ -27545,7 +28588,12 @@
                 "margin": "ハナ",
                 "popularity": 11,
                 "odds": 42.6,
-                "passing": null,
+                "passing": [
+                  16,
+                  16,
+                  16,
+                  15
+                ],
                 "horseId": "10"
               },
               {
@@ -27559,7 +28607,12 @@
                 "margin": "アタマ",
                 "popularity": 10,
                 "odds": 31.8,
-                "passing": null,
+                "passing": [
+                  16,
+                  16,
+                  16,
+                  15
+                ],
                 "horseId": "11"
               },
               {
@@ -27573,7 +28626,12 @@
                 "margin": "クビ",
                 "popularity": 7,
                 "odds": 13.4,
-                "passing": null,
+                "passing": [
+                  3,
+                  4,
+                  4,
+                  3
+                ],
                 "horseId": "7"
               },
               {
@@ -27587,7 +28645,12 @@
                 "margin": "クビ",
                 "popularity": 8,
                 "odds": 16.8,
-                "passing": null,
+                "passing": [
+                  2,
+                  2,
+                  1,
+                  2
+                ],
                 "horseId": "3"
               },
               {
@@ -27601,7 +28664,12 @@
                 "margin": "1/2",
                 "popularity": 12,
                 "odds": 64.1,
-                "passing": null,
+                "passing": [
+                  6,
+                  6,
+                  7,
+                  6
+                ],
                 "horseId": "5"
               },
               {
@@ -27615,7 +28683,12 @@
                 "margin": "1.1/2",
                 "popularity": 3,
                 "odds": 5.2,
-                "passing": null,
+                "passing": [
+                  1,
+                  1,
+                  2,
+                  1
+                ],
                 "horseId": "2"
               },
               {
@@ -27629,7 +28702,12 @@
                 "margin": "1",
                 "popularity": 6,
                 "odds": 10.7,
-                "passing": null,
+                "passing": [
+                  14,
+                  13,
+                  2,
+                  3
+                ],
                 "horseId": "13"
               },
               {
@@ -27643,7 +28721,12 @@
                 "margin": "1",
                 "popularity": 1,
                 "odds": 4.4,
-                "passing": null,
+                "passing": [
+                  3,
+                  3,
+                  4,
+                  6
+                ],
                 "horseId": "9"
               },
               {
@@ -27657,7 +28740,12 @@
                 "margin": "1",
                 "popularity": 13,
                 "odds": 78.9,
-                "passing": null,
+                "passing": [
+                  13,
+                  13,
+                  15,
+                  15
+                ],
                 "horseId": "6"
               },
               {
@@ -27671,7 +28759,12 @@
                 "margin": "3/4",
                 "popularity": 9,
                 "odds": 19.4,
-                "passing": null,
+                "passing": [
+                  6,
+                  8,
+                  12,
+                  12
+                ],
                 "horseId": "12"
               }
             ],
@@ -28226,7 +29319,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T15:52:43.465Z",
+            "updatedAt": "2026-11-09T07:44:52.924Z",
             "winnerHorseId": "4",
             "winnerHorseName": "ホットロッドハート",
             "top3HorseIds": [
@@ -28251,7 +29344,12 @@
                 "margin": "",
                 "popularity": 13,
                 "odds": 91.5,
-                "passing": null,
+                "passing": [
+                  15,
+                  15,
+                  15,
+                  15
+                ],
                 "horseId": "4"
               },
               {
@@ -28265,7 +29363,12 @@
                 "margin": "クビ",
                 "popularity": 5,
                 "odds": 10.8,
-                "passing": null,
+                "passing": [
+                  14,
+                  14,
+                  14,
+                  7
+                ],
                 "horseId": "10"
               },
               {
@@ -28279,7 +29382,12 @@
                 "margin": "1.1/2",
                 "popularity": 2,
                 "odds": 3.5,
-                "passing": null,
+                "passing": [
+                  10,
+                  10,
+                  9,
+                  10
+                ],
                 "horseId": "3"
               },
               {
@@ -28293,7 +29401,12 @@
                 "margin": "クビ",
                 "popularity": 3,
                 "odds": 8.9,
-                "passing": null,
+                "passing": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
                 "horseId": "1"
               },
               {
@@ -28307,7 +29420,12 @@
                 "margin": "3/4",
                 "popularity": 1,
                 "odds": 2.5,
-                "passing": null,
+                "passing": [
+                  3,
+                  3,
+                  3,
+                  3
+                ],
                 "horseId": "13"
               },
               {
@@ -28321,7 +29439,12 @@
                 "margin": "ハナ",
                 "popularity": 6,
                 "odds": 13.6,
-                "passing": null,
+                "passing": [
+                  10,
+                  10,
+                  11,
+                  13
+                ],
                 "horseId": "15"
               },
               {
@@ -28335,7 +29458,12 @@
                 "margin": "アタマ",
                 "popularity": 7,
                 "odds": 19.4,
-                "passing": null,
+                "passing": [
+                  12,
+                  12,
+                  11,
+                  7
+                ],
                 "horseId": "11"
               },
               {
@@ -28349,7 +29477,12 @@
                 "margin": "2",
                 "popularity": 15,
                 "odds": 155.9,
-                "passing": null,
+                "passing": [
+                  12,
+                  12,
+                  13,
+                  13
+                ],
                 "horseId": "9"
               },
               {
@@ -28363,7 +29496,12 @@
                 "margin": "1/2",
                 "popularity": 14,
                 "odds": 98.3,
-                "passing": null,
+                "passing": [
+                  8,
+                  8,
+                  7,
+                  7
+                ],
                 "horseId": "6"
               },
               {
@@ -28377,7 +29515,12 @@
                 "margin": "ハナ",
                 "popularity": 12,
                 "odds": 60.1,
-                "passing": null,
+                "passing": [
+                  6,
+                  7,
+                  9,
+                  10
+                ],
                 "horseId": "12"
               },
               {
@@ -28391,7 +29534,12 @@
                 "margin": "2",
                 "popularity": 8,
                 "odds": 22.9,
-                "passing": null,
+                "passing": [
+                  3,
+                  3,
+                  3,
+                  4
+                ],
                 "horseId": "2"
               },
               {
@@ -28405,7 +29553,12 @@
                 "margin": "3/4",
                 "popularity": 10,
                 "odds": 45.4,
-                "passing": null,
+                "passing": [
+                  2,
+                  2,
+                  2,
+                  2
+                ],
                 "horseId": "7"
               },
               {
@@ -28419,7 +29572,12 @@
                 "margin": "10",
                 "popularity": 11,
                 "odds": 49.4,
-                "passing": null,
+                "passing": [
+                  8,
+                  8,
+                  7,
+                  10
+                ],
                 "horseId": "5"
               },
               {
@@ -28433,7 +29591,12 @@
                 "margin": "3/4",
                 "popularity": 4,
                 "odds": 10.7,
-                "passing": null,
+                "passing": [
+                  6,
+                  5,
+                  5,
+                  5
+                ],
                 "horseId": "8"
               },
               {
@@ -28447,7 +29610,12 @@
                 "margin": "10",
                 "popularity": 9,
                 "odds": 42.6,
-                "passing": null,
+                "passing": [
+                  5,
+                  5,
+                  5,
+                  5
+                ],
                 "horseId": "14"
               }
             ],
@@ -28842,7 +30010,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T15:52:43.759Z",
+            "updatedAt": "2026-11-09T07:44:53.132Z",
             "winnerHorseId": "6",
             "winnerHorseName": "アヴィオン",
             "top3HorseIds": [
@@ -28867,7 +30035,10 @@
                 "margin": "",
                 "popularity": 1,
                 "odds": 2.1,
-                "passing": null,
+                "passing": [
+                  2,
+                  2
+                ],
                 "horseId": "6"
               },
               {
@@ -28881,7 +30052,10 @@
                 "margin": "3/4",
                 "popularity": 2,
                 "odds": 2.8,
-                "passing": null,
+                "passing": [
+                  3,
+                  3
+                ],
                 "horseId": "8"
               },
               {
@@ -28895,7 +30069,10 @@
                 "margin": "1/2",
                 "popularity": 5,
                 "odds": 18.6,
-                "passing": null,
+                "passing": [
+                  1,
+                  1
+                ],
                 "horseId": "2"
               },
               {
@@ -28909,7 +30086,10 @@
                 "margin": "1",
                 "popularity": 4,
                 "odds": 8.4,
-                "passing": null,
+                "passing": [
+                  3,
+                  4
+                ],
                 "horseId": "3"
               },
               {
@@ -28923,7 +30103,10 @@
                 "margin": "クビ",
                 "popularity": 3,
                 "odds": 6.7,
-                "passing": null,
+                "passing": [
+                  9,
+                  9
+                ],
                 "horseId": "1"
               },
               {
@@ -28937,7 +30120,10 @@
                 "margin": "1.1/4",
                 "popularity": 6,
                 "odds": 28.3,
-                "passing": null,
+                "passing": [
+                  10,
+                  10
+                ],
                 "horseId": "10"
               },
               {
@@ -28951,7 +30137,10 @@
                 "margin": "ハナ",
                 "popularity": 9,
                 "odds": 72,
-                "passing": null,
+                "passing": [
+                  7,
+                  7
+                ],
                 "horseId": "4"
               },
               {
@@ -28965,7 +30154,10 @@
                 "margin": "ハナ",
                 "popularity": 10,
                 "odds": 137.1,
-                "passing": null,
+                "passing": [
+                  5,
+                  4
+                ],
                 "horseId": "9"
               },
               {
@@ -28979,7 +30171,10 @@
                 "margin": "クビ",
                 "popularity": 7,
                 "odds": 34.8,
-                "passing": null,
+                "passing": [
+                  5,
+                  4
+                ],
                 "horseId": "7"
               },
               {
@@ -28993,7 +30188,10 @@
                 "margin": "クビ",
                 "popularity": 8,
                 "odds": 38.3,
-                "passing": null,
+                "passing": [
+                  7,
+                  7
+                ],
                 "horseId": "5"
               }
             ],
@@ -29580,7 +30778,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T15:52:44.591Z",
+            "updatedAt": "2026-11-09T07:44:53.300Z",
             "winnerHorseId": "11",
             "winnerHorseName": "ロードクロンヌ",
             "top3HorseIds": [
@@ -29605,7 +30803,12 @@
                 "margin": "",
                 "popularity": 2,
                 "odds": 4.5,
-                "passing": null,
+                "passing": [
+                  3,
+                  3,
+                  3,
+                  3
+                ],
                 "horseId": "11"
               },
               {
@@ -29619,7 +30822,12 @@
                 "margin": "1.1/2",
                 "popularity": 5,
                 "odds": 7.6,
-                "passing": null,
+                "passing": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
                 "horseId": "8"
               },
               {
@@ -29633,7 +30841,12 @@
                 "margin": "1.1/2",
                 "popularity": 14,
                 "odds": 117.1,
-                "passing": null,
+                "passing": [
+                  3,
+                  5,
+                  3,
+                  3
+                ],
                 "horseId": "3"
               },
               {
@@ -29647,7 +30860,12 @@
                 "margin": "クビ",
                 "popularity": 9,
                 "odds": 22,
-                "passing": null,
+                "passing": [
+                  10,
+                  10,
+                  9,
+                  8
+                ],
                 "horseId": "5"
               },
               {
@@ -29661,7 +30879,12 @@
                 "margin": "クビ",
                 "popularity": 4,
                 "odds": 7.3,
-                "passing": null,
+                "passing": [
+                  2,
+                  2,
+                  2,
+                  2
+                ],
                 "horseId": "10"
               },
               {
@@ -29675,7 +30898,12 @@
                 "margin": "クビ",
                 "popularity": 1,
                 "odds": 3.6,
-                "passing": null,
+                "passing": [
+                  13,
+                  13,
+                  13,
+                  9
+                ],
                 "horseId": "4"
               },
               {
@@ -29689,7 +30917,12 @@
                 "margin": "ハナ",
                 "popularity": 7,
                 "odds": 17.9,
-                "passing": null,
+                "passing": [
+                  7,
+                  7,
+                  7,
+                  6
+                ],
                 "horseId": "1"
               },
               {
@@ -29703,7 +30936,12 @@
                 "margin": "1",
                 "popularity": 3,
                 "odds": 5.1,
-                "passing": null,
+                "passing": [
+                  6,
+                  5,
+                  3,
+                  5
+                ],
                 "horseId": "15"
               },
               {
@@ -29717,7 +30955,12 @@
                 "margin": "1.1/2",
                 "popularity": 13,
                 "odds": 92.9,
-                "passing": null,
+                "passing": [
+                  10,
+                  10,
+                  9,
+                  10
+                ],
                 "horseId": "12"
               },
               {
@@ -29731,7 +30974,12 @@
                 "margin": "3.1/2",
                 "popularity": 8,
                 "odds": 21.4,
-                "passing": null,
+                "passing": [
+                  15,
+                  15,
+                  14,
+                  13
+                ],
                 "horseId": "7"
               },
               {
@@ -29745,7 +30993,12 @@
                 "margin": "クビ",
                 "popularity": 11,
                 "odds": 61.6,
-                "passing": null,
+                "passing": [
+                  14,
+                  14,
+                  14,
+                  14
+                ],
                 "horseId": "14"
               },
               {
@@ -29759,7 +31012,12 @@
                 "margin": "1/2",
                 "popularity": 6,
                 "odds": 14.4,
-                "passing": null,
+                "passing": [
+                  16,
+                  16,
+                  16,
+                  16
+                ],
                 "horseId": "9"
               },
               {
@@ -29773,7 +31031,12 @@
                 "margin": "1",
                 "popularity": 16,
                 "odds": 209.2,
-                "passing": null,
+                "passing": [
+                  7,
+                  7,
+                  6,
+                  6
+                ],
                 "horseId": "6"
               },
               {
@@ -29788,6 +31051,7 @@
                 "popularity": 15,
                 "odds": 187.8,
                 "passing": [
+                  9,
                   9,
                   8,
                   10
@@ -29805,7 +31069,12 @@
                 "margin": "クビ",
                 "popularity": 12,
                 "odds": 71.2,
-                "passing": null,
+                "passing": [
+                  12,
+                  12,
+                  12,
+                  12
+                ],
                 "horseId": "16"
               },
               {
@@ -29819,7 +31088,12 @@
                 "margin": "大",
                 "popularity": 10,
                 "odds": 52.8,
-                "passing": null,
+                "passing": [
+                  3,
+                  3,
+                  9,
+                  15
+                ],
                 "horseId": "2"
               }
             ],
@@ -30470,7 +31744,7 @@
             }
           ],
           "result": {
-            "updatedAt": "2026-11-08T15:52:45.304Z",
+            "updatedAt": "2026-11-09T07:44:53.625Z",
             "winnerHorseId": "12",
             "winnerHorseName": "ジャンヌローサ",
             "top3HorseIds": [
@@ -30495,7 +31769,10 @@
                 "margin": "",
                 "popularity": 13,
                 "odds": 57.3,
-                "passing": null,
+                "passing": [
+                  4,
+                  4
+                ],
                 "horseId": "12"
               },
               {
@@ -30509,7 +31786,10 @@
                 "margin": "3/4",
                 "popularity": 4,
                 "odds": 8.5,
-                "passing": null,
+                "passing": [
+                  11,
+                  9
+                ],
                 "horseId": "18"
               },
               {
@@ -30523,7 +31803,10 @@
                 "margin": "ハナ",
                 "popularity": 1,
                 "odds": 3.3,
-                "passing": null,
+                "passing": [
+                  4,
+                  4
+                ],
                 "horseId": "5"
               },
               {
@@ -30537,7 +31820,10 @@
                 "margin": "3/4",
                 "popularity": 11,
                 "odds": 20.2,
-                "passing": null,
+                "passing": [
+                  7,
+                  7
+                ],
                 "horseId": "4"
               },
               {
@@ -30551,7 +31837,10 @@
                 "margin": "ハナ",
                 "popularity": 12,
                 "odds": 20.6,
-                "passing": null,
+                "passing": [
+                  13,
+                  11
+                ],
                 "horseId": "11"
               },
               {
@@ -30565,7 +31854,10 @@
                 "margin": "1.3/4",
                 "popularity": 5,
                 "odds": 12.8,
-                "passing": null,
+                "passing": [
+                  16,
+                  16
+                ],
                 "horseId": "10"
               },
               {
@@ -30579,7 +31871,10 @@
                 "margin": "1/2",
                 "popularity": 16,
                 "odds": 185.1,
-                "passing": null,
+                "passing": [
+                  9,
+                  9
+                ],
                 "horseId": "13"
               },
               {
@@ -30593,7 +31888,10 @@
                 "margin": "ハナ",
                 "popularity": 3,
                 "odds": 7.2,
-                "passing": null,
+                "passing": [
+                  18,
+                  18
+                ],
                 "horseId": "7"
               },
               {
@@ -30607,7 +31905,10 @@
                 "margin": "クビ",
                 "popularity": 18,
                 "odds": 319.1,
-                "passing": null,
+                "passing": [
+                  2,
+                  2
+                ],
                 "horseId": "9"
               },
               {
@@ -30621,7 +31922,10 @@
                 "margin": "ハナ",
                 "popularity": 7,
                 "odds": 16.5,
-                "passing": null,
+                "passing": [
+                  7,
+                  7
+                ],
                 "horseId": "14"
               },
               {
@@ -30635,7 +31939,10 @@
                 "margin": "3/4",
                 "popularity": 17,
                 "odds": 278.1,
-                "passing": null,
+                "passing": [
+                  16,
+                  16
+                ],
                 "horseId": "6"
               },
               {
@@ -30649,7 +31956,10 @@
                 "margin": "クビ",
                 "popularity": 9,
                 "odds": 17.7,
-                "passing": null,
+                "passing": [
+                  13,
+                  14
+                ],
                 "horseId": "8"
               },
               {
@@ -30663,7 +31973,10 @@
                 "margin": "3/4",
                 "popularity": 10,
                 "odds": 19.6,
-                "passing": null,
+                "passing": [
+                  4,
+                  4
+                ],
                 "horseId": "17"
               },
               {
@@ -30677,7 +31990,10 @@
                 "margin": "3/4",
                 "popularity": 8,
                 "odds": 17.3,
-                "passing": null,
+                "passing": [
+                  12,
+                  11
+                ],
                 "horseId": "3"
               },
               {
@@ -30691,7 +32007,10 @@
                 "margin": "1.1/4",
                 "popularity": 14,
                 "odds": 108.2,
-                "passing": null,
+                "passing": [
+                  9,
+                  11
+                ],
                 "horseId": "1"
               },
               {
@@ -30705,7 +32024,10 @@
                 "margin": "1/2",
                 "popularity": 2,
                 "odds": 5.4,
-                "passing": null,
+                "passing": [
+                  1,
+                  1
+                ],
                 "horseId": "16"
               },
               {
@@ -30719,7 +32041,10 @@
                 "margin": "5",
                 "popularity": 6,
                 "odds": 14.1,
-                "passing": null,
+                "passing": [
+                  15,
+                  14
+                ],
                 "horseId": "2"
               },
               {
@@ -30733,7 +32058,10 @@
                 "margin": "1",
                 "popularity": 15,
                 "odds": 149,
-                "passing": null,
+                "passing": [
+                  2,
+                  3
+                ],
                 "horseId": "15"
               }
             ],
