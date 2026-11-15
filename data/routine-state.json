@@ -4,14 +4,14 @@
   "drawConfirmedAt": "2026-11-13T08:33:25.999Z",
   "performance": {
     "weekly": {
-      "weekOf": "2026-11-02",
-      "bets": 4,
+      "weekOf": "2026-11-09",
+      "bets": 0,
       "tanHits": 0,
-      "fukuHits": 1,
-      "tanStake": 400,
+      "fukuHits": 0,
+      "tanStake": 0,
       "tanPayout": 0,
-      "fukuStake": 400,
-      "fukuPayout": 340
+      "fukuStake": 0,
+      "fukuPayout": 0
     },
     "total": {
       "bets": 34,
@@ -22,7 +22,7 @@
       "fukuStake": 3400,
       "fukuPayout": 2330
     },
-    "updatedAt": "2026-11-08T15:52:45.660Z"
+    "updatedAt": "2026-11-15T16:10:53.667Z"
   },
   "tanpukuRecommendations": [
     {
@@ -4624,7 +4624,7 @@
       "settledAt": "2026-05-24T09:20:35.226Z",
       "tanHit": true,
       "fukuHit": true,
-      "sourceStatus": "retrospective",
+      "sourceStatus": "unknown",
       "livePreRaceEligible": false,
       "lineageInvalidReason": "posted_at_or_after_race_start"
     },
@@ -4685,7 +4685,7 @@
       "settledAt": "2026-05-24T09:20:35.227Z",
       "tanHit": false,
       "fukuHit": true,
-      "sourceStatus": "retrospective",
+      "sourceStatus": "unknown",
       "livePreRaceEligible": false,
       "lineageInvalidReason": "posted_at_or_after_race_start"
     },
@@ -4751,7 +4751,7 @@
       "settledAt": "2026-05-31T09:45:54.405Z",
       "tanHit": false,
       "fukuHit": false,
-      "sourceStatus": "retrospective",
+      "sourceStatus": "unknown",
       "livePreRaceEligible": false,
       "lineageInvalidReason": "posted_at_or_after_race_start"
     },
@@ -4812,7 +4812,7 @@
       "settledAt": "2026-05-31T09:45:54.406Z",
       "tanHit": false,
       "fukuHit": true,
-      "sourceStatus": "retrospective",
+      "sourceStatus": "unknown",
       "livePreRaceEligible": false,
       "lineageInvalidReason": "posted_at_or_after_race_start"
     },
@@ -9007,9 +9007,9 @@
       "day": "Sun",
       "stage": "sun_09",
       "postedAt": "2026-11-15T05:57:25.164Z",
-      "predictionOrigin": "saved_live",
-      "sourceStatus": "live_pre_race",
-      "livePreRaceEligible": true,
+      "predictionOrigin": "retrospective",
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
       "scoringVersion": "tanpuku-win-v3.1",
       "snapshotId": "cf204094-6efa-4d5e-8392-b75a0b9f8487",
       "snapshotCapturedAt": "2026-11-15T05:56:18.800Z",
@@ -9056,23 +9056,33 @@
       "runnerUpPlaceScore": 0.486,
       "runnerUpPlaceProb": 0.604,
       "overbetLabel": null,
-      "settlementStatus": "pending_result",
-      "tanOutcome": "not_settled",
-      "fukuOutcome": "not_settled",
-      "actualWinnerHorseId": null,
-      "actualTop3HorseIds": [],
-      "tanPayoutSource": "missing",
-      "fukuPayoutSource": "missing",
-      "resolved": false
+      "settlementStatus": "settled",
+      "tanOutcome": "miss",
+      "fukuOutcome": "miss",
+      "actualWinnerHorseId": "4",
+      "actualTop3HorseIds": [
+        "4",
+        "12",
+        "15"
+      ],
+      "tanPayoutSource": "official",
+      "fukuPayoutSource": "official",
+      "resolved": true,
+      "lineageInvalidReason": "posted_at_or_after_race_start",
+      "tanPayout": 0,
+      "fukuPayout": 0,
+      "settledAt": "2026-11-15T16:10:53.666Z",
+      "tanHit": false,
+      "fukuHit": false
     },
     {
       "weekOf": "2026-11-09",
       "day": "Sun",
       "stage": "sun_09",
       "postedAt": "2026-11-15T05:57:25.164Z",
-      "predictionOrigin": "saved_live",
-      "sourceStatus": "live_pre_race",
-      "livePreRaceEligible": true,
+      "predictionOrigin": "retrospective",
+      "sourceStatus": "retrospective",
+      "livePreRaceEligible": false,
       "scoringVersion": "tanpuku-win-v3.1",
       "snapshotId": "cf204094-6efa-4d5e-8392-b75a0b9f8487",
       "snapshotCapturedAt": "2026-11-15T05:56:18.800Z",
@@ -9112,14 +9122,24 @@
       "runnerUpPlaceScore": 0.404,
       "runnerUpPlaceProb": 0.531,
       "overbetLabel": null,
-      "settlementStatus": "pending_result",
-      "tanOutcome": "not_settled",
-      "fukuOutcome": "not_settled",
-      "actualWinnerHorseId": null,
-      "actualTop3HorseIds": [],
-      "tanPayoutSource": "missing",
-      "fukuPayoutSource": "missing",
-      "resolved": false
+      "settlementStatus": "settled",
+      "tanOutcome": "miss",
+      "fukuOutcome": "miss",
+      "actualWinnerHorseId": "4",
+      "actualTop3HorseIds": [
+        "4",
+        "12",
+        "15"
+      ],
+      "tanPayoutSource": "official",
+      "fukuPayoutSource": "official",
+      "resolved": true,
+      "lineageInvalidReason": "posted_at_or_after_race_start",
+      "tanPayout": 0,
+      "fukuPayout": 0,
+      "settledAt": "2026-11-15T16:10:53.666Z",
+      "tanHit": false,
+      "fukuHit": false
     }
   ],
   "reviewPosts": {
