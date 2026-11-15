@@ -9001,6 +9001,125 @@
       "settledAt": "2026-11-08T15:52:45.660Z",
       "tanHit": false,
       "fukuHit": true
+    },
+    {
+      "weekOf": "2026-11-09",
+      "day": "Sun",
+      "stage": "sun_09",
+      "postedAt": "2026-11-15T05:57:25.164Z",
+      "predictionOrigin": "saved_live",
+      "sourceStatus": "live_pre_race",
+      "livePreRaceEligible": true,
+      "scoringVersion": "tanpuku-win-v3.1",
+      "snapshotId": "cf204094-6efa-4d5e-8392-b75a0b9f8487",
+      "snapshotCapturedAt": "2026-11-15T05:56:18.800Z",
+      "raceId": "202605050412",
+      "courseId": "tokyo-turf-2000-202605050412",
+      "raceLabel": "３歳以上１勝クラス",
+      "raceDate": "2026-11-15",
+      "scheduledStartTime": "16:10",
+      "pickType": "win",
+      "classificationHint": {
+        "classification": "win",
+        "confidence": 0.7,
+        "reason": "単勝勝負(本命級): 校正勝率38%・校正単ROI96% (市場と校正が一致する適正評価帯)"
+      },
+      "recommendedBetAction": "win",
+      "recommendedBetDecision": {
+        "action": "win",
+        "confidence": "medium",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "classification_hint_win",
+          "valid_odds_source",
+          "selection_log_available",
+          "engine_agreement",
+          "classification_aligned_action"
+        ],
+        "riskFlags": [
+          "large_field_size"
+        ],
+        "source": "explicit_live_rule"
+      },
+      "horseId": "1",
+      "horseName": "プラウディッツ",
+      "realOdds": 2.5,
+      "placeOdds": 1.3,
+      "winProb": 0.522,
+      "placeProb": 0.786,
+      "placeScore": 0.716,
+      "valueScore": 0.47,
+      "selectionReason": "総合評価1位。複勝確率79%・上位安定度75%を重視。 2位差0.230",
+      "scoreGap": 0.23,
+      "runnerUpHorseId": "18",
+      "runnerUpHorseName": "イニスフェイル",
+      "runnerUpPlaceScore": 0.486,
+      "runnerUpPlaceProb": 0.604,
+      "overbetLabel": null,
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
+    },
+    {
+      "weekOf": "2026-11-09",
+      "day": "Sun",
+      "stage": "sun_09",
+      "postedAt": "2026-11-15T05:57:25.164Z",
+      "predictionOrigin": "saved_live",
+      "sourceStatus": "live_pre_race",
+      "livePreRaceEligible": true,
+      "scoringVersion": "tanpuku-win-v3.1",
+      "snapshotId": "cf204094-6efa-4d5e-8392-b75a0b9f8487",
+      "snapshotCapturedAt": "2026-11-15T05:56:18.800Z",
+      "raceId": "202605050412",
+      "courseId": "tokyo-turf-2000-202605050412",
+      "raceLabel": "３歳以上１勝クラス",
+      "raceDate": "2026-11-15",
+      "scheduledStartTime": "16:10",
+      "pickType": "value",
+      "classificationHint": null,
+      "recommendedBetAction": "unknown",
+      "recommendedBetDecision": {
+        "action": "unknown",
+        "confidence": "unknown",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "valid_odds_source"
+        ],
+        "riskFlags": [
+          "missing_classification_hint",
+          "missing_selection_log"
+        ],
+        "source": "safety_rule"
+      },
+      "horseId": "6",
+      "horseName": "ウインドラート",
+      "realOdds": 19.4,
+      "placeOdds": 4.1,
+      "winProb": 0.409,
+      "placeProb": 0.556,
+      "placeScore": 0.421,
+      "valueScore": 0.584,
+      "selectionReason": "本命次点ではなく、複勝寄り期待値65% / valueScore 0.584 / 複勝率56% / 次点差0.024を見てワイド高配当狙いに選出。",
+      "scoreGap": 0.024,
+      "runnerUpHorseId": "10",
+      "runnerUpHorseName": "ストレートブラック",
+      "runnerUpPlaceScore": 0.404,
+      "runnerUpPlaceProb": 0.531,
+      "overbetLabel": null,
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
     }
   ],
   "reviewPosts": {
@@ -9288,10 +9407,22 @@
     "sun_09:202608050109": "2026-11-08T05:39:58.124Z",
     "sun_09:202608050110": "2026-11-08T05:39:58.124Z",
     "sun_09:202608050111": "2026-11-08T05:39:58.124Z",
-    "sun_09:202608050112": "2026-11-08T05:39:58.125Z"
+    "sun_09:202608050112": "2026-11-08T05:39:58.125Z",
+    "sun_09:202603030309": "2026-11-15T05:57:29.277Z",
+    "sun_09:202603030310": "2026-11-15T05:57:29.277Z",
+    "sun_09:202603030311": "2026-11-15T05:57:29.277Z",
+    "sun_09:202603030312": "2026-11-15T05:57:29.278Z",
+    "sun_09:202605050309": "2026-11-15T05:57:29.278Z",
+    "sun_09:202605050310": "2026-11-15T05:57:29.278Z",
+    "sun_09:202605050311": "2026-11-15T05:57:29.278Z",
+    "sun_09:202605050312": "2026-11-15T05:57:29.279Z",
+    "sun_09:202608050309": "2026-11-15T05:57:29.279Z",
+    "sun_09:202608050310": "2026-11-15T05:57:29.279Z",
+    "sun_09:202608050311": "2026-11-15T05:57:29.279Z",
+    "sun_09:202608050312": "2026-11-15T05:57:29.279Z"
   },
   "lastResultReviewRun": {
-    "sun_09": "2026-11-08T05:39:58.125Z",
+    "sun_09": "2026-11-15T05:57:29.279Z",
     "mon_09": "2026-10-26T03:46:44.535Z"
   },
   "dailyVerdictPosts": {
@@ -9306,7 +9437,8 @@
     "2026-11-01": 2,
     "2026-11-07": 3,
     "2026-11-08": 3,
-    "2026-11-14": 3
+    "2026-11-14": 3,
+    "2026-11-15": 3
   },
   "preRaceRecommendationPosts": {
     "202605040109": {
@@ -9344,6 +9476,10 @@
     "202605050212": {
       "snapshotId": "b67afff3-6603-4f25-8389-da0f904c8bcf",
       "postedAt": "2026-11-08T05:39:53.759Z"
+    },
+    "202605050412": {
+      "snapshotId": "cf204094-6efa-4d5e-8392-b75a0b9f8487",
+      "postedAt": "2026-11-15T05:57:25.164Z"
     }
   }
 }
