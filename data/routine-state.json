@@ -9259,6 +9259,125 @@
       "tanPayoutSource": "missing",
       "fukuPayoutSource": "missing",
       "resolved": false
+    },
+    {
+      "weekOf": "2026-11-16",
+      "day": "Sun",
+      "stage": "sun_09",
+      "postedAt": "2026-11-22T06:13:03.412Z",
+      "predictionOrigin": "saved_live",
+      "sourceStatus": "live_pre_race",
+      "livePreRaceEligible": true,
+      "scoringVersion": "tanpuku-win-v3.1",
+      "snapshotId": "a09424fc-90c5-4868-8baa-e0d11573a026",
+      "snapshotCapturedAt": "2026-11-22T06:12:19.647Z",
+      "raceId": "202608050612",
+      "courseId": "kyoto-turf-1200-202608050612",
+      "raceLabel": "醍醐Ｓ(3勝クラス)",
+      "raceDate": "2026-11-22",
+      "scheduledStartTime": "16:20",
+      "pickType": "win",
+      "classificationHint": {
+        "classification": "win",
+        "confidence": 0.5,
+        "reason": "単勝勝負(堅軸): 校正勝率56%・1.5倍 (過熱リスク中)"
+      },
+      "recommendedBetAction": "win",
+      "recommendedBetDecision": {
+        "action": "win",
+        "confidence": "low",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "classification_hint_win",
+          "valid_odds_source",
+          "selection_log_available",
+          "engine_agreement",
+          "classification_aligned_action"
+        ],
+        "riskFlags": [
+          "overbet_moderate"
+        ],
+        "source": "explicit_live_rule"
+      },
+      "horseId": "11",
+      "horseName": "ルージュスプリヤ",
+      "realOdds": 1.5,
+      "placeOdds": 1.1,
+      "winProb": 0.579,
+      "placeProb": 0.88,
+      "placeScore": 0.775,
+      "valueScore": 0.51,
+      "selectionReason": "総合評価1位。複勝確率88%・上位安定度81%を重視。 2位差0.255",
+      "scoreGap": 0.255,
+      "runnerUpHorseId": "13",
+      "runnerUpHorseName": "ファビュラススター",
+      "runnerUpPlaceScore": 0.521,
+      "runnerUpPlaceProb": 0.626,
+      "overbetLabel": "overbet_moderate",
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
+    },
+    {
+      "weekOf": "2026-11-16",
+      "day": "Sun",
+      "stage": "sun_09",
+      "postedAt": "2026-11-22T06:13:03.412Z",
+      "predictionOrigin": "saved_live",
+      "sourceStatus": "live_pre_race",
+      "livePreRaceEligible": true,
+      "scoringVersion": "tanpuku-win-v3.1",
+      "snapshotId": "a09424fc-90c5-4868-8baa-e0d11573a026",
+      "snapshotCapturedAt": "2026-11-22T06:12:19.647Z",
+      "raceId": "202608050612",
+      "courseId": "kyoto-turf-1200-202608050612",
+      "raceLabel": "醍醐Ｓ(3勝クラス)",
+      "raceDate": "2026-11-22",
+      "scheduledStartTime": "16:20",
+      "pickType": "value",
+      "classificationHint": null,
+      "recommendedBetAction": "unknown",
+      "recommendedBetDecision": {
+        "action": "unknown",
+        "confidence": "unknown",
+        "reasons": [
+          "live_pre_race_snapshot",
+          "valid_odds_source"
+        ],
+        "riskFlags": [
+          "missing_classification_hint",
+          "missing_selection_log"
+        ],
+        "source": "safety_rule"
+      },
+      "horseId": "9",
+      "horseName": "マリノトニトゥルス",
+      "realOdds": 20.1,
+      "placeOdds": 4.2,
+      "winProb": 0.404,
+      "placeProb": 0.552,
+      "placeScore": 0.425,
+      "valueScore": 0.584,
+      "selectionReason": "本命次点ではなく、複勝寄り期待値66% / valueScore 0.584 / 複勝率55% / 次点差0.010を見てワイド高配当狙いに選出。",
+      "scoreGap": 0.01,
+      "runnerUpHorseId": "3",
+      "runnerUpHorseName": "シカゴスティング",
+      "runnerUpPlaceScore": 0.415,
+      "runnerUpPlaceProb": 0.545,
+      "overbetLabel": null,
+      "settlementStatus": "pending_result",
+      "tanOutcome": "not_settled",
+      "fukuOutcome": "not_settled",
+      "actualWinnerHorseId": null,
+      "actualTop3HorseIds": [],
+      "tanPayoutSource": "missing",
+      "fukuPayoutSource": "missing",
+      "resolved": false
     }
   ],
   "reviewPosts": {
@@ -9558,10 +9677,18 @@
     "sun_09:202608050309": "2026-11-15T05:57:29.279Z",
     "sun_09:202608050310": "2026-11-15T05:57:29.279Z",
     "sun_09:202608050311": "2026-11-15T05:57:29.279Z",
-    "sun_09:202608050312": "2026-11-15T05:57:29.279Z"
+    "sun_09:202608050312": "2026-11-15T05:57:29.279Z",
+    "sun_09:202603030509": "2026-11-22T06:13:05.508Z",
+    "sun_09:202603030510": "2026-11-22T06:13:05.508Z",
+    "sun_09:202603030511": "2026-11-22T06:13:05.508Z",
+    "sun_09:202603030512": "2026-11-22T06:13:05.509Z",
+    "sun_09:202608050509": "2026-11-22T06:13:05.509Z",
+    "sun_09:202608050510": "2026-11-22T06:13:05.509Z",
+    "sun_09:202608050511": "2026-11-22T06:13:05.509Z",
+    "sun_09:202608050512": "2026-11-22T06:13:05.510Z"
   },
   "lastResultReviewRun": {
-    "sun_09": "2026-11-15T05:57:29.279Z",
+    "sun_09": "2026-11-22T06:13:05.510Z",
     "mon_09": "2026-11-16T05:23:53.647Z"
   },
   "dailyVerdictPosts": {
@@ -9578,7 +9705,8 @@
     "2026-11-08": 3,
     "2026-11-14": 3,
     "2026-11-15": 3,
-    "2026-11-21": 2
+    "2026-11-21": 2,
+    "2026-11-22": 2
   },
   "preRaceRecommendationPosts": {
     "202605040109": {
@@ -9624,6 +9752,10 @@
     "202608050509": {
       "snapshotId": "f9686dba-f575-48a0-925f-c49155a29fd5",
       "postedAt": "2026-11-21T04:41:15.893Z"
+    },
+    "202608050612": {
+      "snapshotId": "a09424fc-90c5-4868-8baa-e0d11573a026",
+      "postedAt": "2026-11-22T06:13:03.412Z"
     }
   }
 }
