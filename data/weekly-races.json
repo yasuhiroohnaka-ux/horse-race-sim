@@ -538,7 +538,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "tokyo-dirt-1400-202605050710",
@@ -1363,7 +1364,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "tokyo-turf-1600-202605050711",
@@ -2060,7 +2062,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "tokyo-turf-2400-202605050712",
@@ -2878,7 +2881,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "tokyo-dirt-1400-202605050810",
@@ -3671,7 +3675,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "tokyo-turf-2000-202605050811",
@@ -3694,7 +3699,7 @@
         "hasRace": true,
         "raceDate": "2026-11-29",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 13,
         "horses": [
           {
             "id": "1",
@@ -4135,7 +4140,7 @@
         "hasRace": true,
         "raceDate": "2026-11-29",
         "oddsSource": "forecast",
-        "expectedFieldSize": null,
+        "expectedFieldSize": 18,
         "horses": [
           {
             "id": "1",
@@ -5378,7 +5383,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-turf-1400-202608050710",
@@ -5915,7 +5921,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-turf-2000-202608050711",
@@ -6324,7 +6331,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-turf-1200-202608050712",
@@ -6790,7 +6798,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-dirt-1800-202608050810",
@@ -7263,7 +7272,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-dirt-1400-202608050811",
@@ -7800,7 +7810,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       },
       {
         "courseId": "kyoto-turf-1200-202608050812",
@@ -8529,7 +8540,8 @@
             "lastRaceDistance": 0,
             "distanceChange": 0
           }
-        ]
+        ],
+        "excludedReason": "INCORRECT_RACE_ID"
       }
     ]
   },
